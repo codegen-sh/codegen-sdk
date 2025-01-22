@@ -38,6 +38,7 @@ DISALLOWED_REGEX="($(echo "$DISALLOWED_WORDS" | paste -s -d '|' -))"
 
 # 5) Find staged files that are Added (A) or Modified (M).
 FILES_TO_CHECK=$(git diff --cached --name-status | egrep '^[AM]' | cut -f2)
+# FILES_TO_CHECK=$(git ls-files)  # Uncomment this to check ALL files - CAUTION: SLOW!
 
 FAILED=0
 
