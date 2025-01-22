@@ -447,8 +447,14 @@ workflows:
       - unit-tests
       - hold-codemod-tests:
           type: approval
+          filters:
+            branches:
+              ignore: develop
       - hold-large-oss-codemod-tests:
           type: approval
+          filters:
+            branches:
+              ignore: develop
       - codemod-tests:
           context:
             - GHE
