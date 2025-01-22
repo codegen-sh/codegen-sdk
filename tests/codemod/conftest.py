@@ -89,7 +89,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
                 scope="session",
             )
         case "test_codemods_parse":
-            to_test = {name: repo for name, repo in repos.items() if repo.size == Size.Large or repo.repo_id is not None}
+            to_test = {name: repo for name, repo in repos.items() if repo.repo_id is None}
             metafunc.parametrize(
                 "repo",
                 [pytest.param(repo, marks=pytest.mark.xdist_group(repo.name)) for repo in to_test.values()],
