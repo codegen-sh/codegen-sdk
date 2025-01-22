@@ -3,9 +3,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
-from graph_sitter.codebase.diff_lite import DiffLite
-from graph_sitter.codebase.transactions import (
+from codegen_sdk.codebase.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
+from codegen_sdk.codebase.diff_lite import DiffLite
+from codegen_sdk.codebase.transactions import (
     EditTransaction,
     FileAddTransaction,
     FileRemoveTransaction,
@@ -16,7 +16,7 @@ from graph_sitter.codebase.transactions import (
 )
 
 if TYPE_CHECKING:
-    from graph_sitter.core.file import File
+    from codegen_sdk.core.file import File
 
 import logging
 

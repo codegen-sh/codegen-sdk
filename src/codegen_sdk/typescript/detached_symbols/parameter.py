@@ -2,23 +2,24 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.autocommit.decorators import writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.expressions.union_type import UnionType
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.placeholder.placeholder import Placeholder
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.typescript.expressions.object_type import TSObjectType
-from graph_sitter.typescript.expressions.type import TSType
-from graph_sitter.typescript.symbol_groups.dict import TSPair
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.autocommit.decorators import writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.expressions.union_type import UnionType
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.placeholder.placeholder import Placeholder
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.typescript.expressions.object_type import TSObjectType
+from codegen_sdk.typescript.expressions.type import TSType
+from codegen_sdk.typescript.symbol_groups.dict import TSPair
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.typescript.function import TSFunction
+    from codegen_sdk.typescript.function import TSFunction
 
 
 @ts_apidoc

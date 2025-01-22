@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_file_get_import_string_no_params(tmpdir) -> None:

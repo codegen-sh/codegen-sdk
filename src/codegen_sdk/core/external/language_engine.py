@@ -1,12 +1,12 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.external.external_process import ExternalProcess
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.core.external.external_process import ExternalProcess
+from codegen_sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.interfaces.editable import Editable
 
 
 class LanguageEngine(ExternalProcess):
@@ -22,7 +22,7 @@ class LanguageEngine(ExternalProcess):
 
 
 def get_language_engine(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph", use_ts: bool = False, use_v8: bool = False) -> LanguageEngine | None:
-    from graph_sitter.typescript.external.ts_analyzer_engine import NodeTypescriptEngine, V8TypescriptEngine
+    from codegen_sdk.typescript.external.ts_analyzer_engine import NodeTypescriptEngine, V8TypescriptEngine
 
     use_ts = use_ts or codebase_graph.config.feature_flags.ts_language_engine
     use_v8 = use_v8 or codebase_graph.config.feature_flags.v8_ts_engine

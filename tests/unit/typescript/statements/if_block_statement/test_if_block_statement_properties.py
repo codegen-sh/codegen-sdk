@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.file import TSFile
-from graph_sitter.typescript.statements.if_block_statement import TSIfBlockStatement
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.file import TSFile
+from codegen_sdk.typescript.statements.if_block_statement import TSIfBlockStatement
 
 
 def test_parse_if_else_statement_from_codeblock(tmpdir) -> None:

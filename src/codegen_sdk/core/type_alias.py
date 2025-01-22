@@ -3,22 +3,23 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, TypeVar, override
 
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.interfaces.has_attribute import HasAttribute
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.core.interfaces.has_value import HasValue
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.supports_generic import SupportsGenerics
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.enums import SymbolType
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.interfaces.has_attribute import HasAttribute
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.core.interfaces.has_value import HasValue
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.supports_generic import SupportsGenerics
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.enums import SymbolType
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")

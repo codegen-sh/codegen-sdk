@@ -2,18 +2,19 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.expressions.multi_expression import MultiExpression
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.assignment_statement import AssignmentStatement
-from graph_sitter.extensions.utils import find_all_descendants
-from graph_sitter.python.assignment import PyAssignment
-from graph_sitter.writer_decorators import py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.expressions.multi_expression import MultiExpression
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.assignment_statement import AssignmentStatement
+from codegen_sdk.extensions.utils import find_all_descendants
+from codegen_sdk.python.assignment import PyAssignment
+from codegen_sdk.writer_decorators import py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-    from graph_sitter.python.interfaces.has_block import PyHasBlock
+    from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+    from codegen_sdk.python.interfaces.has_block import PyHasBlock
 
 import logging
 
@@ -56,10 +57,10 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
         if assignment_node.type not in cls.assignment_types:
             raise ValueError(f"Invalid assignment node type: {assignment_node.type}")
 
-        from graph_sitter.python.class_definition import PyClass
+        from codegen_sdk.python.class_definition import PyClass
 
         if isinstance(parent, PyClass):
-            from graph_sitter.python.statements.attribute import PyAttribute
+            from codegen_sdk.python.statements.attribute import PyAttribute
 
             return PyAttribute(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
         return cls(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)

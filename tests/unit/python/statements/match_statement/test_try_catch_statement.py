@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.statements.try_catch_statement import TryCatchStatement
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.statements.try_catch_statement import TryCatchStatement
 
 
 def test_try_except_statement_parse(tmpdir) -> None:

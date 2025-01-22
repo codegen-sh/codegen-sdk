@@ -1,9 +1,10 @@
 from typing import Annotated, Any
 
-from graph_sitter.writer_decorators import apidoc
 from pydantic import BaseModel, ConfigDict, PlainSerializer, PlainValidator, WithJsonSchema
 from pydantic_core.core_schema import ValidationInfo
 from tree_sitter import Point, Range
+
+from codegen_sdk.writer_decorators import apidoc
 
 
 def validate_range(value: Any, info: ValidationInfo) -> Range:

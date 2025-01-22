@@ -1,13 +1,14 @@
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.python.expressions.named_type import PyNamedType
-from graph_sitter.writer_decorators import py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.python.expressions.named_type import PyNamedType
+from codegen_sdk.writer_decorators import py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.python.expressions.type import PyType
+    from codegen_sdk.python.expressions.type import PyType
 import logging
 
 logger = logging.getLogger(__name__)

@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.external_module import ExternalModule
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.external_module import ExternalModule
 
 
 def test_import_resolved_symbol(tmpdir) -> None:

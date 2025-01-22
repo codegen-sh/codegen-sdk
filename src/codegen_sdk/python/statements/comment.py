@@ -3,9 +3,9 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.autocommit import commiter, reader
-from graph_sitter.core.statements.comment import Comment, lowest_indentation
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
+from codegen_sdk.core.autocommit import commiter, reader
+from codegen_sdk.core.statements.comment import Comment, lowest_indentation
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     pass

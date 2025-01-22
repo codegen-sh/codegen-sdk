@@ -1,11 +1,11 @@
-from graph_sitter.core.class_definition import Class
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.function import Function
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import EdgeType, SymbolType
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.core.external_module import ExternalModule
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import EdgeType, SymbolType
 
 
 def get_codebase_summary(codebase: Codebase) -> str:

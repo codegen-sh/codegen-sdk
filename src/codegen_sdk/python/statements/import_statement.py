@@ -2,14 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.import_statement import ImportStatement
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.import_resolution import PyImport
-from graph_sitter.writer_decorators import py_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.import_statement import ImportStatement
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.import_resolution import PyImport
+from codegen_sdk.writer_decorators import py_apidoc
 
 if TYPE_CHECKING:
     pass

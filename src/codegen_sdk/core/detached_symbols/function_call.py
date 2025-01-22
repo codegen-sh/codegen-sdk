@@ -3,34 +3,34 @@ from __future__ import annotations
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.autocommit import reader, remover, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.argument import Argument
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.expressions import Expression, Name, Value
-from graph_sitter.core.expressions.chained_attribute import ChainedAttribute
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.expressions.unpack import Unpack
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.resolvable import Resolvable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.enums import NodeType, ProgrammingLanguage
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.extensions.utils import cached_property, is_descendant_of
-from graph_sitter.typescript.enums import TSFunctionTypeNames
-from graph_sitter.utils import find_first_ancestor
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
-if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.function import Function
-    from graph_sitter.core.interfaces.callable import Callable
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.autocommit import reader, remover, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.argument import Argument
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.expressions import Expression, Name, Value
+from codegen_sdk.core.expressions.chained_attribute import ChainedAttribute
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.core.expressions.unpack import Unpack
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.resolvable import Resolvable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.enums import NodeType, ProgrammingLanguage
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.extensions.utils import cached_property, is_descendant_of
+from codegen_sdk.typescript.enums import TSFunctionTypeNames
+from codegen_sdk.utils import find_first_ancestor
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
+if TYPE_CHECKING:
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.function import Function
+    from codegen_sdk.core.interfaces.callable import Callable
     from graph_visualization.enums import VizNode
 
 Parent = TypeVar("Parent", bound="Expression | None")
@@ -92,7 +92,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         # HACK: This is temporary until we establish a full parent path
         if self.file.programming_language == ProgrammingLanguage.TYPESCRIPT:
             if func := find_first_ancestor(self.ts_node, [function_type.value for function_type in TSFunctionTypeNames]):
-                from graph_sitter.typescript.function import TSFunction
+                from codegen_sdk.typescript.function import TSFunction
 
                 return TSFunction.from_function_type(func, self.file_node_id, self.G, self.parent)
         elif self.file.programming_language == ProgrammingLanguage.PYTHON:
@@ -219,7 +219,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         from graph_visualization.enums import VizNode
 
         func = self.function_definition
-        from graph_sitter.core.function import Function
+        from codegen_sdk.core.function import Function
 
         if isinstance(func, Function) and func.is_method:
             name = f"{func.parent_class.name}.{self.name}"
@@ -301,7 +301,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @noapidoc
     @reader
     def find_parameter_by_index(self, index: int) -> Parameter | None:
-        from graph_sitter.python import PyFunction
+        from codegen_sdk.python import PyFunction
 
         for function_definition in self.function_definitions:
             if function_definition.node_type == NodeType.EXTERNAL or function_definition.parameters is None:
@@ -392,7 +392,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             - Requires the function definition to be resolvable and have parameters
         """
         definition = self.function_definition
-        from graph_sitter.core.interfaces.callable import Callable
+        from codegen_sdk.core.interfaces.callable import Callable
 
         if definition is None or definition.parameters is None or not isinstance(definition, Callable):
             return
@@ -418,8 +418,8 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @reader
     @noapidoc
     def function_definition_frames(self) -> list[ResolutionStack[Callable]]:
-        from graph_sitter.core.class_definition import Class
-        from graph_sitter.core.interfaces.callable import Callable
+        from codegen_sdk.core.class_definition import Class
+        from codegen_sdk.core.interfaces.callable import Callable
 
         result = []
         for resolution in self.get_name().resolved_type_frames:
@@ -486,8 +486,8 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @noapidoc
     @override
     def _resolved_types(self) -> Generator[ResolutionStack[Self], None, None]:
-        from graph_sitter.core.class_definition import Class
-        from graph_sitter.core.function import Function
+        from codegen_sdk.core.class_definition import Class
+        from codegen_sdk.core.function import Function
 
         if self.get_name().ts_node.type == "import" or self.full_name == "require":
             # TS imports

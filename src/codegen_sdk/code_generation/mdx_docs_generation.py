@@ -1,17 +1,17 @@
 import textwrap
 
-from graph_sitter.code_generation.doc_utils.utils import (
+from codegen_sdk.code_generation.doc_utils.utils import (
     filter_undocumented_methods_list,
     get_all_classes_to_document,
     get_nearest_parent_docstring,
     is_property,
     sanitize_mdx_mintlify_desscription,
 )
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.python.detached_symbols.parameter import PyParameter
-from graph_sitter.python.function import PyFunction
-from graph_sitter.python.statements.attribute import PyAttribute
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.python.class_definition import PyClass
+from codegen_sdk.python.detached_symbols.parameter import PyParameter
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.python.statements.attribute import PyAttribute
 
 
 def render_mdx_for_codebase_page(codebase: Codebase) -> str:

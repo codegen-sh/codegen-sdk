@@ -1,15 +1,16 @@
 import textwrap
 
 import inflection
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python import PyClass
-from graph_sitter.python.function import PyFunction
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_implementation import SkillImplementation
-from graph_sitter.skills.core.utils import get_all_evaluation_skills
 from typing_extensions import deprecated
+
+from codegen_sdk.codemod import Codemod3
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.python import PyClass
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_implementation import SkillImplementation
+from codegen_sdk.skills.core.utils import get_all_evaluation_skills
 
 
 def remove_leading_tab_or_spaces(text: str) -> str:

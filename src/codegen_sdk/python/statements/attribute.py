@@ -1,17 +1,18 @@
 from typing import TYPE_CHECKING, Self
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.exceptions import APINotApplicableForLanguageError
-from graph_sitter.python.assignment import PyAssignment
-from graph_sitter.python.statements.assignment_statement import PyAssignmentStatement
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.exceptions import APINotApplicableForLanguageError
+from codegen_sdk.python.assignment import PyAssignment
+from codegen_sdk.python.statements.assignment_statement import PyAssignmentStatement
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.python.class_definition import PyClass
+    from codegen_sdk.python.class_definition import PyClass
 
 
 @py_apidoc
@@ -95,7 +96,7 @@ class PyAttribute(Attribute["PyCodeBlock", "PyAssignment"], PyAssignmentStatemen
     @reader
     def docstring(self, base_class: "PyClass") -> str | None:
         """Parse the docstring of the attribute from it's parent class docstrings."""
-        from graph_sitter.python.class_definition import PyClass
+        from codegen_sdk.python.class_definition import PyClass
 
         to_search = [base_class]
         to_search.extend(base_class.superclasses())

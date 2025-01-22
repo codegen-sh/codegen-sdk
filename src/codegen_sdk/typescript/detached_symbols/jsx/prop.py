@@ -1,19 +1,20 @@
 from typing import TYPE_CHECKING, override
 
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.expressions.name import Name
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.has_value import HasValue
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.typescript.detached_symbols.jsx.expression import JSXExpression
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.expressions.name import Name
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.has_value import HasValue
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.typescript.detached_symbols.jsx.expression import JSXExpression
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.core.function import Function
-    from graph_sitter.typescript.detached_symbols.jsx.element import JSXElement
+    from codegen_sdk.core.function import Function
+    from codegen_sdk.typescript.detached_symbols.jsx.element import JSXElement
 
 
 @ts_apidoc

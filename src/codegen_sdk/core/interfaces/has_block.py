@@ -3,16 +3,17 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.detached_symbols.decorator import Decorator
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.statements.comment import Comment
-from graph_sitter.core.symbol_groups.comment_group import CommentGroup
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.writer_decorators import apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.detached_symbols.decorator import Decorator
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.statements.comment import Comment
+from codegen_sdk.core.symbol_groups.comment_group import CommentGroup
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.writer_decorators import apidoc
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 TDecorator = TypeVar("TDecorator", bound="Decorator")

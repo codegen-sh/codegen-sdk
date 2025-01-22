@@ -1,11 +1,11 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 
-from graph_sitter import TYPE_CHECKING
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk import TYPE_CHECKING
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
 
 if TYPE_CHECKING:
-    from graph_sitter.core.function import Function
+    from codegen_sdk.core.function import Function
 
 
 @dataclass

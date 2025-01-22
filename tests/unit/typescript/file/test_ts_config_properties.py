@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.ts_config import TSConfig
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.ts_config import TSConfig
 
 
 def test_file_get_config(tmpdir) -> None:

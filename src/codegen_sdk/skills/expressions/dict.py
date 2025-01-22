@@ -1,9 +1,9 @@
-from graph_sitter.core.codebase import PyCodebaseType
-from graph_sitter.core.symbol_groups.dict import Dict
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import PyCodebaseType
+from codegen_sdk.core.symbol_groups.dict import Dict
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 test_cases = [
     SkillTestCase(files=[SkillTestCasePyFile(input='a={"foo": "bar"}', output="a=Schema(foo=bar)")]),

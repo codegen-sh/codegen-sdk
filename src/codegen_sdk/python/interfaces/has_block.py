@@ -1,12 +1,12 @@
 from functools import cached_property
 
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.detached_symbols.decorator import PyDecorator
-from graph_sitter.python.statements.comment import PyComment, PyCommentType
-from graph_sitter.python.symbol_groups.comment_group import PyCommentGroup
-from graph_sitter.writer_decorators import py_apidoc
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.detached_symbols.decorator import PyDecorator
+from codegen_sdk.python.statements.comment import PyComment, PyCommentType
+from codegen_sdk.python.symbol_groups.comment_group import PyCommentGroup
+from codegen_sdk.writer_decorators import py_apidoc
 
 
 @py_apidoc

@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Generic
 
 from typing_extensions import TypeVar
 
-from graph_sitter.core.dataclasses.usage import Usage, UsageKind, UsageType
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.enums import Edge, EdgeType
+from codegen_sdk.core.dataclasses.usage import Usage, UsageKind, UsageType
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.enums import Edge, EdgeType
 
 if TYPE_CHECKING:
-    from graph_sitter.core.import_resolution import Import
+    from codegen_sdk.core.import_resolution import Import
 
 NodeType = TypeVar("NodeType", bound=Editable)
 
@@ -71,7 +71,7 @@ class ResolutionStack(Generic[NodeType]):
             usage = Usage(kind=usage_type, match=match, usage_type=edge_usage_type, usage_symbol=dest.parent_symbol, imported_by=imported_by)
             yield dest.node_id, self.node.node_id, Edge(type=EdgeType.SYMBOL_USAGE, usage=usage)
         if self.parent_frame is not None:
-            from graph_sitter.core.import_resolution import Import
+            from codegen_sdk.core.import_resolution import Import
 
             if isinstance(self, Import):
                 imported_by = self

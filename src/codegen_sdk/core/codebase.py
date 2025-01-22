@@ -15,54 +15,6 @@ import rich.repr
 from git import Commit as GitCommit
 from git import Diff
 from git.remote import PushInfoList
-from graph_sitter._proxy import proxy_property
-from graph_sitter.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
-from graph_sitter.codebase.codebase_ai import generate_system_prompt, generate_tools
-from graph_sitter.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
-from graph_sitter.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
-from graph_sitter.codebase.control_flow import MaxAIRequestsError
-from graph_sitter.codebase.diff_lite import DiffLite
-from graph_sitter.codebase.flagging.code_flag import CodeFlag
-from graph_sitter.codebase.flagging.enums import FlagKwargs
-from graph_sitter.codebase.span import Span
-from graph_sitter.core.assignment import Assignment
-from graph_sitter.core.class_definition import Class
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.directory import Directory
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.core.file import File, SourceFile
-from graph_sitter.core.function import Function
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.core.interface import Interface
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.core.type_alias import TypeAlias
-from graph_sitter.enums import NodeType, ProgrammingLanguage, SymbolType
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.extensions.utils import uncache_all
-from graph_sitter.output.constants import ANGULAR_STYLE
-from graph_sitter.python.assignment import PyAssignment
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.detached_symbols.parameter import PyParameter
-from graph_sitter.python.file import PyFile
-from graph_sitter.python.function import PyFunction
-from graph_sitter.python.import_resolution import PyImport
-from graph_sitter.python.symbol import PySymbol
-from graph_sitter.typescript.assignment import TSAssignment
-from graph_sitter.typescript.class_definition import TSClass
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.detached_symbols.parameter import TSParameter
-from graph_sitter.typescript.file import TSFile
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.import_resolution import TSImport
-from graph_sitter.typescript.interface import TSInterface
-from graph_sitter.typescript.symbol import TSSymbol
-from graph_sitter.typescript.type_alias import TSTypeAlias
-from graph_sitter.utils import determine_project_language
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from networkx import Graph
 from rich.console import Console
 from typing_extensions import deprecated
@@ -72,6 +24,54 @@ from codegen_git.repo_operator.repo_operator import RepoOperator
 from codegen_git.schemas.enums import CheckoutResult
 from codegen_git.schemas.repo_config import BaseRepoConfig
 from codegen_git.utils.stopwatch_utils import stopwatch
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
+from codegen_sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
+from codegen_sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
+from codegen_sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
+from codegen_sdk.codebase.control_flow import MaxAIRequestsError
+from codegen_sdk.codebase.diff_lite import DiffLite
+from codegen_sdk.codebase.flagging.code_flag import CodeFlag
+from codegen_sdk.codebase.flagging.enums import FlagKwargs
+from codegen_sdk.codebase.span import Span
+from codegen_sdk.core.assignment import Assignment
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.directory import Directory
+from codegen_sdk.core.external_module import ExternalModule
+from codegen_sdk.core.file import File, SourceFile
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.core.interface import Interface
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.core.type_alias import TypeAlias
+from codegen_sdk.enums import NodeType, ProgrammingLanguage, SymbolType
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.extensions.utils import uncache_all
+from codegen_sdk.output.constants import ANGULAR_STYLE
+from codegen_sdk.python.assignment import PyAssignment
+from codegen_sdk.python.class_definition import PyClass
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.detached_symbols.parameter import PyParameter
+from codegen_sdk.python.file import PyFile
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.python.import_resolution import PyImport
+from codegen_sdk.python.symbol import PySymbol
+from codegen_sdk.typescript.assignment import TSAssignment
+from codegen_sdk.typescript.class_definition import TSClass
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.detached_symbols.parameter import TSParameter
+from codegen_sdk.typescript.file import TSFile
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.typescript.import_resolution import TSImport
+from codegen_sdk.typescript.interface import TSInterface
+from codegen_sdk.typescript.symbol import TSSymbol
+from codegen_sdk.typescript.type_alias import TSTypeAlias
+from codegen_sdk.utils import determine_project_language
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 from graph_visualization.visualization_manager import VisualizationManager
 
 if TYPE_CHECKING:
@@ -948,7 +948,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     def _enable_experimental_language_engine(self, async_start: bool = False, install_deps: bool = False, use_v8: bool = False) -> None:
         """Debug option to enable experimental language engine for the current codebase."""
         if install_deps and not self.G.language_engine:
-            from graph_sitter.core.external.dependency_manager import get_dependency_manager
+            from codegen_sdk.core.external.dependency_manager import get_dependency_manager
 
             logger.info("Cold installing dependencies...")
             logger.info("This may take a while for large repos...")
@@ -958,7 +958,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             self.G.dependency_manager.wait_until_ready(ignore_error=False)
             logger.info("Dependencies ready")
         if not self.G.language_engine:
-            from graph_sitter.core.external.language_engine import get_language_engine
+            from codegen_sdk.core.external.language_engine import get_language_engine
 
             logger.info("Cold starting language engine...")
             logger.info("This may take a while for large repos...")

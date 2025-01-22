@@ -6,7 +6,7 @@ from lazy_object_proxy import Proxy
 from lazy_object_proxy.simple import make_proxy_method
 
 try:
-    from graph_sitter.extensions.utils import cached_property
+    from codegen_sdk.extensions.utils import cached_property
 except ModuleNotFoundError:
     from functools import cached_property
 

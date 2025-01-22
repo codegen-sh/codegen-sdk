@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.file import File
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.core.file import File
 from tests.unit.python.utils.test_file_contents import file1_content, file2_content
 
 

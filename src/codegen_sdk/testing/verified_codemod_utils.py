@@ -6,9 +6,10 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import requests
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.testing.constants import GET_CODEMODS_URL_SUFFIX, UPDATE_CODEMOD_DIFF_URL_SUFFIX
 from pydantic import BaseModel
+
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.testing.constants import GET_CODEMODS_URL_SUFFIX, UPDATE_CODEMOD_DIFF_URL_SUFFIX
 
 logger = logging.getLogger(__name__)
 

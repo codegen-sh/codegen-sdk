@@ -5,24 +5,25 @@ from collections import deque
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Self, override
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.expressions import Name
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.core.import_resolution import Import, ImportResolution, WildcardImport
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.exportable import Exportable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.import_statement import ImportStatement
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import ImportType, NodeType
-from graph_sitter.utils import find_all_descendants, find_first_ancestor, find_first_descendant
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.expressions import Name
+from codegen_sdk.core.external_module import ExternalModule
+from codegen_sdk.core.import_resolution import Import, ImportResolution, WildcardImport
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.exportable import Exportable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.import_statement import ImportStatement
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import ImportType, NodeType
+from codegen_sdk.utils import find_all_descendants, find_first_ancestor, find_first_descendant
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.typescript.file import TSFile
-    from graph_sitter.typescript.statements.import_statement import TSImportStatement
+    from codegen_sdk.typescript.file import TSFile
+    from codegen_sdk.typescript.statements.import_statement import TSImportStatement
 
 
 @ts_apidoc

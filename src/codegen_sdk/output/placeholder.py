@@ -1,5 +1,6 @@
-from graph_sitter.codebase.span import Span
 from pydantic import BaseModel, ConfigDict
+
+from codegen_sdk.codebase.span import Span
 
 
 class Placeholder(BaseModel):

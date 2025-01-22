@@ -2,20 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.export import Export
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.statement import Statement, StatementType
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.export import TSExport
-from graph_sitter.typescript.statements.import_statement import TSImportStatement
-from graph_sitter.utils import find_first_ancestor
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.export import Export
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.statement import Statement, StatementType
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.export import TSExport
+from codegen_sdk.typescript.statements.import_statement import TSImportStatement
+from codegen_sdk.utils import find_first_ancestor
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
     pass

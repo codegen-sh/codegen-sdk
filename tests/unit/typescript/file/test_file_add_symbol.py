@@ -1,7 +1,7 @@
 import os
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_add_symbol_to_file_with_comments(tmpdir) -> None:

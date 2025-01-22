@@ -5,20 +5,21 @@ from functools import cached_property
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, final
 
 import rich.repr
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.output.constants import ANGULAR_STYLE
-from graph_sitter.utils import find_all_descendants
-from graph_sitter.writer_decorators import apidoc, noapidoc
+
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.output.constants import ANGULAR_STYLE
+from codegen_sdk.utils import find_all_descendants
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.detached_symbols.code_block import CodeBlock
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.detached_symbols.code_block import CodeBlock
 
 from tree_sitter import Node as TSNode
 
@@ -130,7 +131,7 @@ class Statement(Expression[Parent], Generic[Parent]):
         return nested_statements
 
     def _get_indent(self) -> int:
-        from graph_sitter.core.detached_symbols.code_block import CodeBlock
+        from codegen_sdk.core.detached_symbols.code_block import CodeBlock
 
         if isinstance(self.parent, CodeBlock):
             return self.parent.level * 4

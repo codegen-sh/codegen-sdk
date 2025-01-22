@@ -1,20 +1,20 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, overload
 
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.interfaces.usable import Usable
-from graph_sitter.core.placeholder.placeholder import Placeholder
-from graph_sitter.core.symbol_group import SymbolGroup
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.interfaces.usable import Usable
+from codegen_sdk.core.placeholder.placeholder import Placeholder
+from codegen_sdk.core.symbol_group import SymbolGroup
+from codegen_sdk.writer_decorators import apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.class_definition import Class
-    from graph_sitter.core.expressions.type import Type
-    from graph_sitter.core.external_module import ExternalModule
-    from graph_sitter.core.function import Function
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.class_definition import Class
+    from codegen_sdk.core.expressions.type import Type
+    from codegen_sdk.core.external_module import ExternalModule
+    from codegen_sdk.core.function import Function
+    from codegen_sdk.core.symbol import Symbol
 
 
 @dataclass
@@ -179,10 +179,10 @@ class Callable(Usable, Generic[TParameter, TType]):
                 possible callable definitions (Functions, Classes, or ExternalModules based on include flags). Returns empty list
                 for non-block symbols or classes without constructors.
         """
-        from graph_sitter.core.class_definition import Class
-        from graph_sitter.core.external_module import ExternalModule
-        from graph_sitter.core.function import Function
-        from graph_sitter.core.interfaces.has_block import HasBlock
+        from codegen_sdk.core.class_definition import Class
+        from codegen_sdk.core.external_module import ExternalModule
+        from codegen_sdk.core.function import Function
+        from codegen_sdk.core.interfaces.has_block import HasBlock
 
         call_graph_successors: list[FunctionCallDefinition] = []
 

@@ -1,10 +1,10 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.flagging.code_flag import CodeFlag
-from graph_sitter.codebase.flagging.enums import MessageType
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.writer_decorators import noapidoc
+from codegen_sdk.codebase.flagging.code_flag import CodeFlag
+from codegen_sdk.codebase.flagging.enums import MessageType
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.writer_decorators import noapidoc
 
 if TYPE_CHECKING:
     from app.codemod.types import Group

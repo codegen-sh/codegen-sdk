@@ -1,14 +1,14 @@
 from abc import ABC
 
-from graph_sitter.core.codebase import PyCodebaseType, TSCodebaseType
-from graph_sitter.core.function import Function
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.core.statements.if_block_statement import IfBlockStatement
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python.statements.with_statement import WithStatement
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import PyCodebaseType, TSCodebaseType
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.core.statements.if_block_statement import IfBlockStatement
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.python.statements.with_statement import WithStatement
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 py_feature_flag_def = """
 ROLLED_OUT_FLAG_TO_DELETE = False

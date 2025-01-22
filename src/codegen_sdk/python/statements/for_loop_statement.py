@@ -2,21 +2,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.for_loop_statement import ForLoopStatement
-from graph_sitter.extensions.autocommit import commiter, reader
-from graph_sitter.python.statements.block_statement import PyBlockStatement
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.for_loop_statement import ForLoopStatement
+from codegen_sdk.extensions.autocommit import commiter, reader
+from codegen_sdk.python.statements.block_statement import PyBlockStatement
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
 
 
 @py_apidoc

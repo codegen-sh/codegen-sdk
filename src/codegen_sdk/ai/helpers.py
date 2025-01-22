@@ -10,10 +10,11 @@ import openai
 import openai.types.chat as openai_types
 import tiktoken
 from anthropic import Anthropic
-from graph_sitter.ai.converters import convert_openai_messages_to_claude
-from graph_sitter.utils import XMLUtils
 from openai import OpenAI
 from tenacity import retry, stop_after_attempt, wait_random_exponential
+
+from codegen_sdk.ai.converters import convert_openai_messages_to_claude
+from codegen_sdk.utils import XMLUtils
 
 CLAUDE_OPENAI_MODEL_MAP = {
     "gpt-4o": "claude-3-5-sonnet-20240620",

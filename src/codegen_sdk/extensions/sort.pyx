@@ -6,7 +6,7 @@ from collections.abc import Iterable, Sequence
 from tree_sitter import Node as TSNode
 from typing_extensions import TypeVar
 
-from graph_sitter.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.editable import Editable
 
 E = TypeVar("E", bound=Editable)
 

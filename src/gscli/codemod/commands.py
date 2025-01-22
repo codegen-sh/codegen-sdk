@@ -9,10 +9,10 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.testing.models import BASE_TMP_DIR, REPO_ID_TO_URL, VERIFIED_CODEMOD_DATA_DIR, ClonedRepoTestCase, Size
-from graph_sitter.testing.test_discovery import filter_repos, find_codemod_test_cases, find_codemods, find_repos, find_verified_codemod_repos
-from graph_sitter.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.testing.models import BASE_TMP_DIR, REPO_ID_TO_URL, VERIFIED_CODEMOD_DATA_DIR, ClonedRepoTestCase, Size
+from codegen_sdk.testing.test_discovery import filter_repos, find_codemod_test_cases, find_codemods, find_repos, find_verified_codemod_repos
+from codegen_sdk.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata
 
 
 @click.group()
@@ -35,8 +35,8 @@ def generate_cases(extra_repos: bool = False):
 
 def _generate_diffs(extra_repos: bool = False):
     """Generate diffs for codemod tests"""
-    os.system(f"pytest codegen_tests/graph_sitter/codemod/test_codemods.py::test_codemods_cloned_repos  --size small --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
-    os.system(f"pytest codegen_tests/graph_sitter/codemod/test_codemods.py::test_codemods_cloned_repos  --size large --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
+    os.system(f"pytest codegen_tests/codegen_sdk/codemod/test_codemods.py::test_codemods_cloned_repos  --size small --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
+    os.system(f"pytest codegen_tests/codegen_sdk/codemod/test_codemods.py::test_codemods_cloned_repos  --size large --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
 
 
 @codemod.command()

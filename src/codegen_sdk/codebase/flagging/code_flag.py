@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.flagging.enums import MessageType
+from codegen_sdk.codebase.flagging.enums import MessageType
 
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.core.interfaces.editable import Editable
 
 
 @dataclass

@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.import_resolution import Import, ImportResolution
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.import_resolution import Import, ImportResolution
 
 
 def test_import_properties_basic(tmpdir) -> None:

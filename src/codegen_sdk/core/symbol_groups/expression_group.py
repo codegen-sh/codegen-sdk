@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import Generic, TypeVar
 
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.symbol_group import SymbolGroup
-from graph_sitter.extensions.autocommit import reader
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.symbol_group import SymbolGroup
+from codegen_sdk.extensions.autocommit import reader
+from codegen_sdk.writer_decorators import apidoc
 
 Parent = TypeVar("Parent")
 

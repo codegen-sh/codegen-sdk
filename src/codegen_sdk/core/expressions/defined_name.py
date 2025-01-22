@@ -1,13 +1,13 @@
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.expressions import Name
-from graph_sitter.extensions.autocommit import reader
-from graph_sitter.writer_decorators import noapidoc
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.expressions import Name
+from codegen_sdk.extensions.autocommit import reader
+from codegen_sdk.writer_decorators import noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.symbol import Symbol
 
 
 Parent = TypeVar("Parent", bound="Symbol")

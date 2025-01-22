@@ -7,9 +7,9 @@ import networkx as nx
 from networkx import DiGraph, Graph
 
 from codegen_git.repo_operator.repo_operator import RepoOperator
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.output.utils import DeterministicJSONEncoder
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.output.utils import DeterministicJSONEncoder
 from graph_visualization.enums import GraphJson, GraphType
 
 if TYPE_CHECKING:

@@ -1,11 +1,11 @@
 from collections import deque
 
-from graph_sitter.core.codebase import CodebaseType, PyCodebaseType, TSCodebaseType
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import CodebaseType, PyCodebaseType, TSCodebaseType
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 py_input1 = """
 def func_to_convert(a: int) -> int:

@@ -1,12 +1,12 @@
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions.type import Type
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.extensions.autocommit import reader
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions.type import Type
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.extensions.autocommit import reader
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     pass

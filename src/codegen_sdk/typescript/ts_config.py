@@ -5,13 +5,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pyjson5
-from graph_sitter.core.directory import Directory
-from graph_sitter.core.file import File
-from graph_sitter.writer_decorators import ts_apidoc
+
+from codegen_sdk.core.directory import Directory
+from codegen_sdk.core.file import File
+from codegen_sdk.writer_decorators import ts_apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.typescript.config_parser import TSConfigParser
-    from graph_sitter.typescript.file import TSFile
+    from codegen_sdk.typescript.config_parser import TSConfigParser
+    from codegen_sdk.typescript.file import TSFile
 
 logger = logging.getLogger(__name__)
 

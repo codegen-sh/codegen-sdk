@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions.none_type import NoneType
-from graph_sitter.core.expressions.type import Type
-from graph_sitter.python import PyAssignment, PyClass, PyFunction
-from graph_sitter.python.expressions.union_type import PyUnionType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.expressions.none_type import NoneType
+from codegen_sdk.core.expressions.type import Type
+from codegen_sdk.python import PyAssignment, PyClass, PyFunction
+from codegen_sdk.python.expressions.union_type import PyUnionType
 
 
 def test_type_basic(tmpdir):

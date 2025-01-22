@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 class ConfigParser(ABC):
@@ -16,7 +16,7 @@ class ConfigParser(ABC):
 
 
 def get_config_parser_for_language(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph") -> ConfigParser | None:
-    from graph_sitter.typescript.config_parser import TSConfigParser
+    from codegen_sdk.typescript.config_parser import TSConfigParser
 
     if language == ProgrammingLanguage.TYPESCRIPT:
         return TSConfigParser(codebase_graph)

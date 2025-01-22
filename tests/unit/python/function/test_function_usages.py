@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageType
 
 
 def test_function_usages_recursive_function(tmpdir) -> None:

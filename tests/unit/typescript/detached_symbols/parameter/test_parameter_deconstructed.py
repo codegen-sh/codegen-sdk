@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.file import TSFile
-from graph_sitter.typescript.function import TSFunction
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.file import TSFile
+from codegen_sdk.typescript.function import TSFunction
 
 
 def test_edit_parameter_in_function_definition(tmpdir) -> None:

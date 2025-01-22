@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.python import PyClass, PyFile
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.python import PyClass, PyFile
 
 
 def test_add_method_basic(tmpdir) -> None:

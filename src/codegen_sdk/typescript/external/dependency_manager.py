@@ -10,8 +10,9 @@ from enum import Enum
 
 import pyjson5
 import requests
-from graph_sitter.core.external.dependency_manager import DependencyManager
-from graph_sitter.utils import shadow_files
+
+from codegen_sdk.core.external.dependency_manager import DependencyManager
+from codegen_sdk.utils import shadow_files
 
 logger = logging.getLogger(__name__)
 

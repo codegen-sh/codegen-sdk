@@ -3,7 +3,7 @@ from __future__ import annotations
 from enum import IntEnum, StrEnum, auto
 from typing import TYPE_CHECKING, NamedTuple
 
-from graph_sitter.core.dataclasses.usage import Usage
+from codegen_sdk.core.dataclasses.usage import Usage
 
 if TYPE_CHECKING:
     pass

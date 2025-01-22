@@ -1,6 +1,6 @@
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.expressions.expression import Expression
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.expressions.expression import Expression
+from codegen_sdk.writer_decorators import apidoc
 
 
 @apidoc

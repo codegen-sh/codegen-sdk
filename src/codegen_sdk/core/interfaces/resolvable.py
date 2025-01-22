@@ -1,11 +1,12 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic
 
-from graph_sitter.core.autocommit import writer
-from graph_sitter.core.interfaces.chainable import Chainable
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.writer_decorators import noapidoc
 from typing_extensions import TypeVar
+
+from codegen_sdk.core.autocommit import writer
+from codegen_sdk.core.interfaces.chainable import Chainable
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.writer_decorators import noapidoc
 
 if TYPE_CHECKING:
     pass

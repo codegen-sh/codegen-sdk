@@ -14,7 +14,7 @@ TODO: update the test structure to:
 
 There are three categories of tests (each in their own folder):
 
-- [codegen_tests/graph_sitter](graph_sitter/README.md) -> tests for GraphSitter and Codebase
+- [codegen_tests/codegen_sdk](codegen_sdk/README.md) -> tests for GraphSitter and Codebase
 - [codegen_tests/rojects](projects/README.md) -> tests for hardcoded Codemods (i.e. the ones stored in `codegen-backend/app/projects`)
 - [codegen_tests/app](app/README.md) -> everything else 💀
 
@@ -31,7 +31,7 @@ Lots of overlap between these two and at some point we should consolidate into o
 
 Category specific testing guidelines can be found in the respective READMEs.
 
-- [graph_sitter README](graph_sitter/README.md)
+- [codegen_sdk README](codegen_sdk/README.md)
 - [projects README](projects/README.md)
 - [app README](app/README.md)
 

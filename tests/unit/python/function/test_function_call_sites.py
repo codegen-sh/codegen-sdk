@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.python import PyFile, PyFunction
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.python import PyFile, PyFunction
 
 
 def test_function_callsites(tmpdir) -> None:

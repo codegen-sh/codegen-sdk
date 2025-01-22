@@ -1,12 +1,13 @@
 from typing import Generic, TypeVar
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.typescript.expressions.named_type import TSNamedType
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.typescript.expressions.named_type import TSNamedType
+from codegen_sdk.writer_decorators import ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

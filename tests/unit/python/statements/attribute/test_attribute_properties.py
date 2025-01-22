@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions.number import Number
-from graph_sitter.python.statements.assignment_statement import PyAssignmentStatement
-from graph_sitter.python.statements.attribute import PyAttribute
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions.number import Number
+from codegen_sdk.python.statements.assignment_statement import PyAssignmentStatement
+from codegen_sdk.python.statements.attribute import PyAttribute
 
 
 def test_attribute(tmpdir) -> None:

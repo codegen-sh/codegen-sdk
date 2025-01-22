@@ -1,8 +1,9 @@
 from typing import TYPE_CHECKING, TypeVar
 
-from graph_sitter.typescript.expressions.named_type import TSNamedType
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.typescript.expressions.named_type import TSNamedType
+from codegen_sdk.writer_decorators import ts_apidoc
 
 if TYPE_CHECKING:
     pass

@@ -2,7 +2,7 @@ from enum import IntEnum, unique
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.core.interfaces.editable import Editable
 
 REMOVED = "REMOVED"
 
@@ -38,7 +38,7 @@ class OutdatedNodeError(Exception):
 
     def __init__(self, node: "Editable") -> None:
         parent = node
-        from graph_sitter.core.symbol import Symbol
+        from codegen_sdk.core.symbol import Symbol
 
         while parent is not None and not isinstance(parent, Symbol):
             parent = parent.parent

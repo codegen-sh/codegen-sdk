@@ -1,5 +1,5 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
+from codegen_sdk.codemod import Codemod3
+from codegen_sdk.core.codebase import Codebase
 
 
 def test_codemod_execute():

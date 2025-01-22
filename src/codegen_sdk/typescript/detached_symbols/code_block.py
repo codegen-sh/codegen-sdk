@@ -1,15 +1,15 @@
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.extensions.utils import find_line_start_and_end_nodes
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.extensions.utils import find_line_start_and_end_nodes
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.typescript.interfaces.has_block import TSHasBlock
+    from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
 
 
 Parent = TypeVar("Parent", bound="TSHasBlock")

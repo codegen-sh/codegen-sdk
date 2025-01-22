@@ -1,33 +1,34 @@
-from graph_sitter.codebase.node_classes.node_classes import NodeClasses
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import String, Type
-from graph_sitter.core.expressions.await_expression import AwaitExpression
-from graph_sitter.core.expressions.binary_expression import BinaryExpression
-from graph_sitter.core.expressions.boolean import Boolean
-from graph_sitter.core.expressions.comparison_expression import ComparisonExpression
-from graph_sitter.core.expressions.name import Name
-from graph_sitter.core.expressions.none_type import NoneType
-from graph_sitter.core.expressions.number import Number
-from graph_sitter.core.expressions.parenthesized_expression import ParenthesizedExpression
-from graph_sitter.core.expressions.subscript_expression import SubscriptExpression
-from graph_sitter.core.expressions.unary_expression import UnaryExpression
-from graph_sitter.core.expressions.unpack import Unpack
-from graph_sitter.core.statements.comment import Comment
-from graph_sitter.core.symbol_groups.dict import Dict
-from graph_sitter.core.symbol_groups.list import List
-from graph_sitter.core.symbol_groups.tuple import Tuple
-from graph_sitter.core.symbol_groups.type_parameters import TypeParameters
-from graph_sitter.python import PyClass, PyFile, PyFunction, PyImport, PySymbol
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.detached_symbols.parameter import PyParameter
-from graph_sitter.python.expressions.chained_attribute import PyChainedAttribute
-from graph_sitter.python.expressions.conditional_expression import PyConditionalExpression
-from graph_sitter.python.expressions.generic_type import PyGenericType
-from graph_sitter.python.expressions.named_type import PyNamedType
-from graph_sitter.python.expressions.string import PyString
-from graph_sitter.python.expressions.union_type import PyUnionType
-from graph_sitter.python.statements.import_statement import PyImportStatement
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.node_classes.node_classes import NodeClasses
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import String, Type
+from codegen_sdk.core.expressions.await_expression import AwaitExpression
+from codegen_sdk.core.expressions.binary_expression import BinaryExpression
+from codegen_sdk.core.expressions.boolean import Boolean
+from codegen_sdk.core.expressions.comparison_expression import ComparisonExpression
+from codegen_sdk.core.expressions.name import Name
+from codegen_sdk.core.expressions.none_type import NoneType
+from codegen_sdk.core.expressions.number import Number
+from codegen_sdk.core.expressions.parenthesized_expression import ParenthesizedExpression
+from codegen_sdk.core.expressions.subscript_expression import SubscriptExpression
+from codegen_sdk.core.expressions.unary_expression import UnaryExpression
+from codegen_sdk.core.expressions.unpack import Unpack
+from codegen_sdk.core.statements.comment import Comment
+from codegen_sdk.core.symbol_groups.dict import Dict
+from codegen_sdk.core.symbol_groups.list import List
+from codegen_sdk.core.symbol_groups.tuple import Tuple
+from codegen_sdk.core.symbol_groups.type_parameters import TypeParameters
+from codegen_sdk.python import PyClass, PyFile, PyFunction, PyImport, PySymbol
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.detached_symbols.parameter import PyParameter
+from codegen_sdk.python.expressions.chained_attribute import PyChainedAttribute
+from codegen_sdk.python.expressions.conditional_expression import PyConditionalExpression
+from codegen_sdk.python.expressions.generic_type import PyGenericType
+from codegen_sdk.python.expressions.named_type import PyNamedType
+from codegen_sdk.python.expressions.string import PyString
+from codegen_sdk.python.expressions.union_type import PyUnionType
+from codegen_sdk.python.statements.import_statement import PyImportStatement
 
 
 def parse_subscript(node: TSNode, file_node_id, G, parent):

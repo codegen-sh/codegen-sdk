@@ -1,8 +1,8 @@
 from typing import TypeVar
 
-from graph_sitter.core.expressions.ternary_expression import TernaryExpression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.writer_decorators import py_apidoc
+from codegen_sdk.core.expressions.ternary_expression import TernaryExpression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.writer_decorators import py_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

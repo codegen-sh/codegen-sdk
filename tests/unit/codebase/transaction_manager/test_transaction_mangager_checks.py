@@ -1,9 +1,9 @@
 import pytest
 
-from graph_sitter.codebase.config import SessionOptions
-from graph_sitter.codebase.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.config import SessionOptions
+from codegen_sdk.codebase.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_check_max_preview_time_exceeded(tmpdir):

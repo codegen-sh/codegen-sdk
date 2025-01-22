@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 class Parseable(ABC):

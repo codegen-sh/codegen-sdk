@@ -1,10 +1,10 @@
 import re
 
-from graph_sitter.core.codebase import TSCodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCaseTSFile
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import TSCodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCaseTSFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 # Case 1: all rules disabled in a SINGLE line comment are no longer required - should remove entire comment
 ts_case_1_input = """

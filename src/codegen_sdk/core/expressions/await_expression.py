@@ -1,12 +1,12 @@
 from typing import Generic, TypeVar
 
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_value import HasValue
-from graph_sitter.core.interfaces.wrapper_expression import IWrapper
-from graph_sitter.extensions.autocommit import reader
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_value import HasValue
+from codegen_sdk.core.interfaces.wrapper_expression import IWrapper
+from codegen_sdk.extensions.autocommit import reader
+from codegen_sdk.writer_decorators import apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

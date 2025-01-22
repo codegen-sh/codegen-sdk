@@ -1,11 +1,11 @@
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.core.expressions.union_type import UnionType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python.assignment import PyAssignment
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.typescript.assignment import TSAssignment
+from codegen_sdk.core.codebase import CodebaseType
+from codegen_sdk.core.expressions.union_type import UnionType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.python.assignment import PyAssignment
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
+from codegen_sdk.typescript.assignment import TSAssignment
 
 test_cases_append_py = [
     SkillTestCase(files=[SkillTestCasePyFile(input="a: int | None", output="a: int | None | str")]),

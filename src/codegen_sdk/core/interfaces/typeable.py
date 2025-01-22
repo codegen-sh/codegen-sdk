@@ -3,15 +3,15 @@ from __future__ import annotations
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.autocommit import commiter, reader
-from graph_sitter.core.interfaces.chainable import Chainable
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.placeholder.placeholder_type import TypePlaceholder
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.autocommit import commiter, reader
+from codegen_sdk.core.interfaces.chainable import Chainable
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.placeholder.placeholder_type import TypePlaceholder
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.expressions.type import Type
+    from codegen_sdk.core.expressions.type import Type
 
 
 TType = TypeVar("TType", bound="Type")

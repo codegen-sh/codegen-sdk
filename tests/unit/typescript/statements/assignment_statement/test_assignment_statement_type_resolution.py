@@ -1,8 +1,8 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.expressions.object_type import TSObjectType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.expressions.object_type import TSObjectType
 
 
 def test_assignment_statement_type_resolution_simple(tmpdir) -> None:

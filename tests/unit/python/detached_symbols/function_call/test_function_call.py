@@ -1,6 +1,6 @@
 # TODO: this file needs to be broken up into API specific tests
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.python import PyFunction
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.python import PyFunction
 
 
 def test_basic(tmpdir) -> None:

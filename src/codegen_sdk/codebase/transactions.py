@@ -6,10 +6,10 @@ from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from graph_sitter.codebase.diff_lite import ChangeType, DiffLite
+from codegen_sdk.codebase.diff_lite import ChangeType, DiffLite
 
 if TYPE_CHECKING:
-    from graph_sitter.core.file import File
+    from codegen_sdk.core.file import File
 
 
 class TransactionPriority(IntEnum):

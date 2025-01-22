@@ -4,27 +4,28 @@ from abc import abstractmethod
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.expressions.name import Name
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.has_value import HasValue
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.typeable import Typeable
-from graph_sitter.core.interfaces.usable import Usable
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.extensions.resolution import UsageKind
-from graph_sitter.utils import find_first_descendant
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 from typing_extensions import deprecated
 
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.expressions.name import Name
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.has_value import HasValue
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.typeable import Typeable
+from codegen_sdk.core.interfaces.usable import Usable
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.extensions.resolution import UsageKind
+from codegen_sdk.utils import find_first_descendant
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.core.expressions.type import Type
-    from graph_sitter.core.function import Function
+    from codegen_sdk.core.expressions.type import Type
+    from codegen_sdk.core.function import Function
 
 import logging
 

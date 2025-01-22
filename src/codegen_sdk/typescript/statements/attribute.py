@@ -2,20 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.typescript.assignment import TSAssignment
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.statements.assignment_statement import TSAssignmentStatement
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.typescript.assignment import TSAssignment
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.statements.assignment_statement import TSAssignmentStatement
+from codegen_sdk.writer_decorators import ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.typescript.interfaces.has_block import TSHasBlock
+    from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
 
 
 @ts_apidoc

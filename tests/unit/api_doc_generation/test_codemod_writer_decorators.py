@@ -4,7 +4,7 @@ from contextlib import redirect_stderr, redirect_stdout
 
 import pytest
 
-from graph_sitter.code_generation.current_code_codebase import import_all_graph_sitter_modules
+from codegen_sdk.code_generation.current_code_codebase import import_all_codegen_sdk_modules
 
 
 @pytest.mark.skip("broken after repo split, fix or move over")
@@ -22,7 +22,7 @@ def test_get_documented_objects():
     logger = logging.getLogger("test_logger")
 
     with redirect_stdout(stdout), redirect_stderr(stderr):
-        import_all_graph_sitter_modules()
+        import_all_codegen_sdk_modules()
 
     assert stdout.getvalue() == "", "Logs were written to stdout"
     assert stderr.getvalue() == "", "Logs were written to stderr"

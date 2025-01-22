@@ -12,13 +12,14 @@ from xml.dom.minidom import parseString
 
 import dicttoxml
 import xmltodict
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.extensions.utils import find_all_descendants, find_first_descendant, get_all_identifiers
-from graph_sitter.typescript.enums import TSFunctionTypeNames
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.extensions.utils import find_all_descendants, find_first_descendant, get_all_identifiers
+from codegen_sdk.typescript.enums import TSFunctionTypeNames
+
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.core.interfaces.editable import Editable
 """
 Utility functions for traversing the tree sitter structure.
 Do not include language specific traversals, or string manipulations here.
@@ -239,8 +240,8 @@ __all__ = [
 
 def get_language_file_extensions(language: ProgrammingLanguage):
     """Returns the file extensions for the given language."""
-    from graph_sitter.python import PyFile
-    from graph_sitter.typescript.file import TSFile
+    from codegen_sdk.python import PyFile
+    from codegen_sdk.typescript.file import TSFile
 
     if language == ProgrammingLanguage.PYTHON:
         return set(PyFile.get_extensions())
@@ -249,8 +250,8 @@ def get_language_file_extensions(language: ProgrammingLanguage):
 
 
 def determine_project_language(folder_path: str):
-    from graph_sitter.python import PyFile
-    from graph_sitter.typescript.file import TSFile
+    from codegen_sdk.python import PyFile
+    from codegen_sdk.typescript.file import TSFile
 
     EXTENSIONS = {
         ProgrammingLanguage.PYTHON: PyFile.get_extensions(),

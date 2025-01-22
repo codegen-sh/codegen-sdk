@@ -4,16 +4,16 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
-from graph_sitter.core.autocommit.constants import REMOVED, AutoCommitState, AutoCommitSymbol, IllegalWriteError, NodeNotFoundError, OutdatedNodeError
-from graph_sitter.core.autocommit.utils import is_file, is_on_graph, is_symbol
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.extensions.autocommit import update_dict
+from codegen_sdk.core.autocommit.constants import REMOVED, AutoCommitState, AutoCommitSymbol, IllegalWriteError, NodeNotFoundError, OutdatedNodeError
+from codegen_sdk.core.autocommit.utils import is_file, is_on_graph, is_symbol
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.extensions.autocommit import update_dict
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.file import File
-    from graph_sitter.core.import_resolution import Import
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.file import File
+    from codegen_sdk.core.import_resolution import Import
+    from codegen_sdk.core.symbol import Symbol
 
 import logging
 

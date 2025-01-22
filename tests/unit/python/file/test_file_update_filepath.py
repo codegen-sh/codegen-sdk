@@ -1,6 +1,6 @@
 import os
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_rename_file(tmpdir) -> None:

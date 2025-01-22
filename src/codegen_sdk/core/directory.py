@@ -3,15 +3,15 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.writer_decorators import apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.assignment import Assignment
-    from graph_sitter.core.class_definition import Class
-    from graph_sitter.core.file import File
-    from graph_sitter.core.function import Function
-    from graph_sitter.core.import_resolution import ImportStatement
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.assignment import Assignment
+    from codegen_sdk.core.class_definition import Class
+    from codegen_sdk.core.file import File
+    from codegen_sdk.core.function import Function
+    from codegen_sdk.core.import_resolution import ImportStatement
+    from codegen_sdk.core.symbol import Symbol
 
 import logging
 
@@ -170,7 +170,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
 
     def get_file(self, filename: str, ignore_case: bool = False) -> TFile | None:
         """Get a file by its name relative to the directory."""
-        from graph_sitter.core.file import File
+        from codegen_sdk.core.file import File
 
         if ignore_case:
             return next((f for name, f in self.items.items() if name.lower() == filename.lower() and isinstance(f, File)), None)

@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Name, Value
-from graph_sitter.python import PyFile
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Name, Value
+from codegen_sdk.python import PyFile
 
 
 def test_with_statement_single_var(tmpdir):

@@ -1,8 +1,8 @@
 from typing import Generic, TypeVar
 
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.placeholder.placeholder import Placeholder
-from graph_sitter.writer_decorators import py_apidoc
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.placeholder.placeholder import Placeholder
+from codegen_sdk.writer_decorators import py_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

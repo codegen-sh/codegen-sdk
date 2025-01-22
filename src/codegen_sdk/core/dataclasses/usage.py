@@ -5,16 +5,17 @@ from enum import IntEnum, IntFlag, auto, unique
 from typing import TYPE_CHECKING
 
 from dataclasses_json import dataclass_json
-from graph_sitter.writer_decorators import apidoc
+
+from codegen_sdk.writer_decorators import apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.detached_symbols.function_call import FunctionCall
-    from graph_sitter.core.export import Export
-    from graph_sitter.core.expressions import Name
-    from graph_sitter.core.expressions.chained_attribute import ChainedAttribute
-    from graph_sitter.core.file import SourceFile
-    from graph_sitter.core.import_resolution import Import
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen_sdk.core.export import Export
+    from codegen_sdk.core.expressions import Name
+    from codegen_sdk.core.expressions.chained_attribute import ChainedAttribute
+    from codegen_sdk.core.file import SourceFile
+    from codegen_sdk.core.import_resolution import Import
+    from codegen_sdk.core.symbol import Symbol
 
 
 @apidoc

@@ -2,16 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.if_block_statement import IfBlockStatement
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.writer_decorators import apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.if_block_statement import IfBlockStatement
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.writer_decorators import apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 import logging
 
@@ -60,7 +61,7 @@ class TSIfBlockStatement(IfBlockStatement[Parent, "TSIfBlockStatement"], Generic
 
     @reader
     def _parse_consequence_block(self) -> TSCodeBlock:
-        from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
+        from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
         if self.is_if_statement or self.is_elif_statement:
             consequence_node = self.ts_node.child_by_field_name("consequence")

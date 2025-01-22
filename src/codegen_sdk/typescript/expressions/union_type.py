@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from graph_sitter.core.expressions.union_type import UnionType
-from graph_sitter.writer_decorators import ts_apidoc
+from codegen_sdk.core.expressions.union_type import UnionType
+from codegen_sdk.writer_decorators import ts_apidoc
 
 if TYPE_CHECKING:
     pass

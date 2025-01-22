@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageKind, UsageType
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import SymbolType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageKind, UsageType
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import SymbolType
 
 
 def test_class_dependencies(tmpdir) -> None:

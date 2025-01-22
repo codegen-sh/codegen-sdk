@@ -8,13 +8,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import emoji
-from graph_sitter.codemod import Codemod3
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.testing.constants import DIFF_FILEPATH
-from graph_sitter.testing.models import BASE_PATH, CODEMOD_PATH, REPO_ID_TO_URL, TEST_DIR, VERIFIED_CODEMOD_DATA_DIR, VERIFIED_CODEMOD_DIFFS, ClonedRepoTestCase, CodemodMetadata, Repo, Size
-from graph_sitter.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata, SkillTestConfig, anonymize_id
 from loguru import logger
 
+from codegen_sdk.codemod import Codemod3
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.testing.constants import DIFF_FILEPATH
+from codegen_sdk.testing.models import BASE_PATH, CODEMOD_PATH, REPO_ID_TO_URL, TEST_DIR, VERIFIED_CODEMOD_DATA_DIR, VERIFIED_CODEMOD_DIFFS, ClonedRepoTestCase, CodemodMetadata, Repo, Size
+from codegen_sdk.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata, SkillTestConfig, anonymize_id
 from gscli.generate.runner_imports import get_runner_imports
 
 if TYPE_CHECKING:

@@ -1,18 +1,18 @@
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Optional, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Name
-from graph_sitter.core.expressions.expression import Expression
-from graph_sitter.core.interfaces.chainable import Chainable
-from graph_sitter.core.interfaces.resolvable import Resolvable
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Name
+from codegen_sdk.core.expressions.expression import Expression
+from codegen_sdk.core.interfaces.chainable import Chainable
+from codegen_sdk.core.interfaces.resolvable import Resolvable
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.has_name import HasName
+    from codegen_sdk.core.interfaces.has_name import HasName
 
 
 Object = TypeVar("Object", bound="Chainable")

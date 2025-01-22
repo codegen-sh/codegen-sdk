@@ -2,9 +2,9 @@ import inspect
 from abc import ABC
 from pathlib import Path
 
-from graph_sitter.core.codebase import Codebase, CodebaseType, PyCodebaseType, TSCodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill_implementation import SkillImplementation
+from codegen_sdk.core.codebase import Codebase, CodebaseType, PyCodebaseType, TSCodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill_implementation import SkillImplementation
 
 
 class Skill(ABC):

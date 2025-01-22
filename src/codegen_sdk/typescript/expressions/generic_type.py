@@ -1,10 +1,11 @@
 from typing import TYPE_CHECKING, Self, TypeVar
 
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.core.symbol_groups.dict import Dict
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.core.symbol_groups.dict import Dict
+from codegen_sdk.writer_decorators import ts_apidoc
 
 if TYPE_CHECKING:
     pass

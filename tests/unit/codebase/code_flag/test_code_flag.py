@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.codebase.flagging.enums import MessageType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.codebase.flagging.enums import MessageType
 
 
 def test_code_flag_properties(tmpdir):

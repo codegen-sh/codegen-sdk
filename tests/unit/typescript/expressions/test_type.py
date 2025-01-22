@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.core.expressions import String
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.expressions.undefined_type import TSUndefinedType
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.core.expressions import String
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.expressions.undefined_type import TSUndefinedType
 
 
 def test_type_basic(tmpdir) -> None:

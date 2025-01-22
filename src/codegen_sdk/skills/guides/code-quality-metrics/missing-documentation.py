@@ -1,10 +1,10 @@
 from abc import ABC
 
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import CodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase, SkillTestCasePyFile
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 AutoDocstringGeneratorTest = SkillTestCase(
     [

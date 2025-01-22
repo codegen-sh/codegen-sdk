@@ -26,8 +26,8 @@ source = "vcs"
 raw-options = { root = ".." }
 
 [tool.hatch.metadata.hooks.vcs]
-Homepage = "https://github.com/codegen-sh/graph_sitter"
-source_archive = "https://github.com/codegen-sh/graph_sitter/archive/{commit_hash}.zip"
+Homepage = "https://github.com/codegen-sh/codegen_sdk"
+source_archive = "https://github.com/codegen-sh/codegen_sdk/archive/{commit_hash}.zip"
 
 #[tool.hatch.build.targets.wheel.hooks.mypyc]
 #dependencies = ["hatch-mypyc", "pydantic"]

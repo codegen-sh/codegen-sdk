@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.python import PyFile
-from graph_sitter.python.statements.if_block_statement import PyIfBlockStatement
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.python import PyFile
+from codegen_sdk.python.statements.if_block_statement import PyIfBlockStatement
 
 
 def test_parse_conditional_statement_from_codeblock(tmpdir) -> None:

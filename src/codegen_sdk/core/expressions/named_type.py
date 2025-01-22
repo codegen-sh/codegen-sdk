@@ -2,21 +2,22 @@ from abc import abstractmethod
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.resolution_stack import ResolutionStack
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Name, String
-from graph_sitter.core.expressions.type import Type
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.resolvable import Resolvable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.resolution_stack import ResolutionStack
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Name, String
+from codegen_sdk.core.expressions.type import Type
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.resolvable import Resolvable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 Parent = TypeVar("Parent", bound="Editable")
 
@@ -30,7 +31,7 @@ class NamedType(Resolvable, Type[Parent], HasName, Generic[Parent]):
         self._name_node = self._parse_expression(self._get_name_node(), default=Name)
 
     def __eq__(self, other: object) -> bool:
-        from graph_sitter.core.symbol import Symbol
+        from codegen_sdk.core.symbol import Symbol
 
         if isinstance(other, Symbol):
             for resolved in self.resolved_types:

@@ -2,21 +2,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Self, override
 
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.try_catch_statement import TryCatchStatement
-from graph_sitter.extensions.autocommit import commiter, reader
-from graph_sitter.typescript.statements.block_statement import TSBlockStatement
-from graph_sitter.typescript.statements.catch_statement import TSCatchStatement
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.try_catch_statement import TryCatchStatement
+from codegen_sdk.extensions.autocommit import commiter, reader
+from codegen_sdk.typescript.statements.block_statement import TSBlockStatement
+from codegen_sdk.typescript.statements.catch_statement import TSCatchStatement
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.interfaces.importable import Importable
-    from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.interfaces.importable import Importable
+    from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 
 @ts_apidoc

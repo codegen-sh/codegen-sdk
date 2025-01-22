@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.class_definition import Class
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_import_rename_usage_with_alias(tmpdir) -> None:

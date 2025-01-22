@@ -1,5 +1,5 @@
-from graph_sitter.core.file import File
-from graph_sitter.core.interfaces.editable import Editable
+from codegen_sdk.core.file import File
+from codegen_sdk.core.interfaces.editable import Editable
 
 
 def generate_system_prompt(target: Editable | None = None, context: None | str | Editable | list[Editable] | dict[str, str | Editable | list[Editable]] = None) -> str:

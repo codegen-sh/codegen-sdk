@@ -1,8 +1,8 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.codebase.validation import get_edges
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.codebase.validation import get_edges
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_codebase_reset_exception(tmpdir, caplog) -> None:

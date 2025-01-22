@@ -1,17 +1,18 @@
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions.expression import Expression
-from graph_sitter.core.expressions.type import Type
-from graph_sitter.core.expressions.value import Value
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.typescript.symbol_groups.dict import TSDict, TSPair
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions.expression import Expression
+from codegen_sdk.core.expressions.type import Type
+from codegen_sdk.core.expressions.value import Value
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.typescript.symbol_groups.dict import TSDict, TSPair
+from codegen_sdk.writer_decorators import ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 import logging
 
@@ -29,7 +30,7 @@ class TSObjectPair(TSPair, Generic[Parent]):
     """
 
     def _get_key_value(self) -> tuple[Expression[Self] | None, Expression[Self] | None]:
-        from graph_sitter.typescript.expressions.function_type import TSFunctionType
+        from codegen_sdk.typescript.expressions.function_type import TSFunctionType
 
         key, value = None, None
         if self.ts_node_type == "property_signature":

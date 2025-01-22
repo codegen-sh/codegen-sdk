@@ -1,13 +1,13 @@
 import re
 from copy import deepcopy
 
-from graph_sitter.code_generation.enums import DocumentationDecorators
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.function import Function
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import NodeType, ProgrammingLanguage
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.python.function import PyFunction
+from codegen_sdk.code_generation.enums import DocumentationDecorators
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import NodeType, ProgrammingLanguage
+from codegen_sdk.python.class_definition import PyClass
+from codegen_sdk.python.function import PyFunction
 
 
 def get_api_classes_by_decorator(
@@ -106,7 +106,7 @@ def filter_undocumented_methods_list(doc_methods: list[Function]) -> list[Functi
     return filtered_doc_methods
 
 
-def get_graph_sitter_class_docstring(cls: PyClass, codebase: Codebase) -> str:
+def get_codegen_sdk_class_docstring(cls: PyClass, codebase: Codebase) -> str:
     """Get the documentation for a single GraphSitter class and its methods."""
     # =====[ Parent classes ]=====
     parent_classes = cls.parent_class_names

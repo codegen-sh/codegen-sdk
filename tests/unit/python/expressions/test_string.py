@@ -1,7 +1,7 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions import String
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.expressions import String
 
 
 def test_string_edit(tmpdir) -> None:

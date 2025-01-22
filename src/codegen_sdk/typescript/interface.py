@@ -2,23 +2,24 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.interface import Interface
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.core.symbol_groups.parents import Parents
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.expressions.type import TSType
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.interfaces.has_block import TSHasBlock
-from graph_sitter.typescript.statements.attribute import TSAttribute
-from graph_sitter.typescript.symbol import TSSymbol
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.interface import Interface
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.core.symbol_groups.parents import Parents
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.expressions.type import TSType
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
+from codegen_sdk.typescript.statements.attribute import TSAttribute
+from codegen_sdk.typescript.symbol import TSSymbol
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 Parent = TypeVar("Parent", bound="TSHasBlock")
 
@@ -39,7 +40,7 @@ class TSInterface(Interface[TSCodeBlock, TSAttribute, TSFunction, TSType], TSSym
         G: CodebaseGraph,
         parent: Statement[CodeBlock[Parent, ...]],
     ) -> None:
-        from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
+        from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
         super().__init__(ts_node, file_id, G, parent)
         body_node = ts_node.child_by_field_name("body")

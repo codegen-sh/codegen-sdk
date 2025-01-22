@@ -11,12 +11,12 @@ from pyinstrument import Profiler
 
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen_git.repo_operator.repo_operator import RepoOperator
-from graph_sitter.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.testing.constants import DIFF_FILEPATH
-from graph_sitter.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
-from graph_sitter.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
+from codegen_sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
+from codegen_sdk.codemod import Codemod3
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.testing.constants import DIFF_FILEPATH
+from codegen_sdk.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
+from codegen_sdk.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
 from tests.utils.recursion import set_recursion_limit
 
 logger = logging.getLogger(__name__)

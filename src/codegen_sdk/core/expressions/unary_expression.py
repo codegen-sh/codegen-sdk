@@ -1,18 +1,18 @@
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions.expression import Expression
-from graph_sitter.core.interfaces.chainable import Chainable
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.extensions.autocommit import commiter, reader
-from graph_sitter.extensions.resolution import ResolutionStack
-from graph_sitter.extensions.utils import TSNode
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions.expression import Expression
+from codegen_sdk.core.interfaces.chainable import Chainable
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.extensions.autocommit import commiter, reader
+from codegen_sdk.extensions.resolution import ResolutionStack
+from codegen_sdk.extensions.utils import TSNode
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
     pass

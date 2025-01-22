@@ -2,12 +2,12 @@ import re
 from abc import ABC
 from pathlib import Path
 
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python import PyFunction
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_test import SkillTestCase
-from graph_sitter.skills.core.utils import skill, skill_impl
+from codegen_sdk.core.codebase import CodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.python import PyFunction
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_test import SkillTestCase
+from codegen_sdk.skills.core.utils import skill, skill_impl
 
 EVAL_SKILLS_TEST_DIR = Path(__file__).parents[3] / "src" / "codemods" / "eval" / "test_files"
 

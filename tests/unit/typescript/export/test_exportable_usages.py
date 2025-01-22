@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.enums import ImportType, ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.enums import ImportType, ProgrammingLanguage
 
 
 def test_exportable_usage_symbol_export(tmpdir) -> None:

@@ -3,20 +3,21 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.expressions import Name
-from graph_sitter.core.import_resolution import ExternalImportResolver, Import, ImportResolution
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.exportable import Exportable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.import_statement import ImportStatement
-from graph_sitter.enums import ImportType, NodeType
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.expressions import Name
+from codegen_sdk.core.import_resolution import ExternalImportResolver, Import, ImportResolution
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.exportable import Exportable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.import_statement import ImportStatement
+from codegen_sdk.enums import ImportType, NodeType
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.python.file import PyFile
+    from codegen_sdk.python.file import PyFile
 
 import logging
 

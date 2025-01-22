@@ -1,10 +1,11 @@
 from abc import abstractmethod
 from typing import Generic
 
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.writer_decorators import apidoc
 from typing_extensions import TypeVar
+
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.writer_decorators import apidoc
 
 Parent = TypeVar("Parent", bound=Editable)
 

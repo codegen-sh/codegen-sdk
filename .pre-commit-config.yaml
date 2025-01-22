@@ -71,7 +71,7 @@ repos:
   #       types: [file]
   #       language: system
   #       pass_filenames: false
-  #       files: "codegen-backend/codegen_tests/graph_sitter/codemod/.*/expected_diff.patch"
+  #       files: "codegen-backend/codegen_tests/codegen_sdk/codemod/.*/expected_diff.patch"
   - repo: https://github.com/fpgmaas/deptry.git
     rev: "0.22.0"
     hooks:

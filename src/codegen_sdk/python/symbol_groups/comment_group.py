@@ -4,17 +4,18 @@ import re
 from typing import TYPE_CHECKING
 
 from docstring_parser import Docstring, DocstringStyle, parse
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.core.symbol_groups.comment_group import CommentGroup
-from graph_sitter.enums import SymbolType
-from graph_sitter.python.statements.comment import PyComment
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.core.symbol_groups.comment_group import CommentGroup
+from codegen_sdk.enums import SymbolType
+from codegen_sdk.python.statements.comment import PyComment
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.python.function import PyFunction
-    from graph_sitter.python.symbol import PySymbol
+    from codegen_sdk.python.function import PyFunction
+    from codegen_sdk.python.symbol import PySymbol
 
 
 @py_apidoc
@@ -48,7 +49,7 @@ class PyCommentGroup(CommentGroup):
             else:
                 break  # Stop if a non-comment node is encountered
 
-        from graph_sitter.python.class_definition import PyClass
+        from codegen_sdk.python.class_definition import PyClass
 
         # Check if the function node is a method
         if symbol.symbol_type == SymbolType.Function:

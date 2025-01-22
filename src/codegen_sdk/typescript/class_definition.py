@@ -3,27 +3,28 @@ from __future__ import annotations
 import os
 from typing import Self
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.class_definition import Class
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.expressions.placeholder_type import PlaceholderType
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.symbol_statement import SymbolStatement
-from graph_sitter.core.symbol_group import SymbolGroup
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.core.symbol_groups.parents import Parents
-from graph_sitter.typescript.detached_symbols.decorator import TSDecorator
-from graph_sitter.typescript.detached_symbols.parameter import TSParameter
-from graph_sitter.typescript.expressions.type import TSType
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.interfaces.has_block import TSHasBlock
-from graph_sitter.typescript.symbol import TSSymbol
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.core.expressions.placeholder_type import PlaceholderType
+from codegen_sdk.core.external_module import ExternalModule
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.symbol_statement import SymbolStatement
+from codegen_sdk.core.symbol_group import SymbolGroup
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.core.symbol_groups.parents import Parents
+from codegen_sdk.typescript.detached_symbols.decorator import TSDecorator
+from codegen_sdk.typescript.detached_symbols.parameter import TSParameter
+from codegen_sdk.typescript.expressions.type import TSType
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
+from codegen_sdk.typescript.symbol import TSSymbol
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 
 @ts_apidoc

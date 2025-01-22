@@ -7,15 +7,16 @@ from collections import Counter, defaultdict
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from graph_sitter.enums import NodeType
-from graph_sitter.utils import truncate_line
 from rustworkx import PyDiGraph
 from tabulate import tabulate
+
+from codegen_sdk.enums import NodeType
+from codegen_sdk.utils import truncate_line
 
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from graph_sitter.core.codebase import CodebaseType
+    from codegen_sdk.core.codebase import CodebaseType
 
 
 class PostInitValidationStatus(StrEnum):
@@ -130,7 +131,7 @@ Missing nodes
 ```
 """
     for node in set_nodes - set_init_nodes:
-        from graph_sitter.core.external_module import ExternalModule
+        from codegen_sdk.core.external_module import ExternalModule
 
         if isinstance(node, ExternalModule):
             message += "External Module persisted with following dependencies: " + str(list((node.G.get_node(source), edge) for source, _, edge in node.G.in_edges(node.node_id)))

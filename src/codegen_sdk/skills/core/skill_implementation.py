@@ -3,13 +3,12 @@ import inspect
 import textwrap
 from collections.abc import Callable
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill_test import SkillTestCase
-from graph_sitter.skills.utils.utils import verify_skill_output
-
 from codegen_git.schemas.repo_config import BaseRepoConfig
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.codebase import CodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill_test import SkillTestCase
+from codegen_sdk.skills.utils.utils import verify_skill_output
 
 
 class SkillImplementation:

@@ -2,28 +2,29 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.core.statements.symbol_statement import SymbolStatement
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import SymbolType
-from graph_sitter.extensions.utils import cached_property
-from graph_sitter.typescript.class_definition import TSClass
-from graph_sitter.typescript.enum_definition import TSEnum
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.interface import TSInterface
-from graph_sitter.typescript.interfaces.has_block import TSHasBlock
-from graph_sitter.typescript.symbol import TSSymbol
-from graph_sitter.typescript.type_alias import TSTypeAlias
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.core.statements.symbol_statement import SymbolStatement
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import SymbolType
+from codegen_sdk.extensions.utils import cached_property
+from codegen_sdk.typescript.class_definition import TSClass
+from codegen_sdk.typescript.enum_definition import TSEnum
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.typescript.interface import TSInterface
+from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
+from codegen_sdk.typescript.symbol import TSSymbol
+from codegen_sdk.typescript.type_alias import TSTypeAlias
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 
 @ts_apidoc

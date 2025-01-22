@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.detached_symbols.decorator import Decorator
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.detached_symbols.decorator import Decorator
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.writer_decorators import ts_apidoc
 
 
 @ts_apidoc

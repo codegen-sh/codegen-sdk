@@ -3,7 +3,7 @@ import os
 import shutil
 import subprocess
 
-from graph_sitter.core.external.external_process import ExternalProcess
+from codegen_sdk.core.external.external_process import ExternalProcess
 
 logger = logging.getLogger(__name__)
 

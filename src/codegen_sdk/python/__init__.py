@@ -1,9 +1,9 @@
-from graph_sitter.python.assignment import PyAssignment
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.python.file import PyFile
-from graph_sitter.python.function import PyFunction
-from graph_sitter.python.import_resolution import PyImport
-from graph_sitter.python.symbol import PySymbol
+from codegen_sdk.python.assignment import PyAssignment
+from codegen_sdk.python.class_definition import PyClass
+from codegen_sdk.python.file import PyFile
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.python.import_resolution import PyImport
+from codegen_sdk.python.symbol import PySymbol
 
 __all__ = [
     "PyAssignment",

@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.interface import Interface
-from graph_sitter.enums import ImportType, ProgrammingLanguage
-from graph_sitter.extensions.utils import iter_all_descendants
-from graph_sitter.python import PyAssignment
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.expressions.type import PyType
-from graph_sitter.python.function import PyFunction
-from graph_sitter.python.import_resolution import PyImport
-from graph_sitter.python.interfaces.has_block import PyHasBlock
-from graph_sitter.python.statements.attribute import PyAttribute
-from graph_sitter.python.statements.import_statement import PyImportStatement
-from graph_sitter.python.symbol import PySymbol
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.interface import Interface
+from codegen_sdk.enums import ImportType, ProgrammingLanguage
+from codegen_sdk.extensions.utils import iter_all_descendants
+from codegen_sdk.python import PyAssignment
+from codegen_sdk.python.class_definition import PyClass
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.expressions.type import PyType
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.python.import_resolution import PyImport
+from codegen_sdk.python.interfaces.has_block import PyHasBlock
+from codegen_sdk.python.statements.attribute import PyAttribute
+from codegen_sdk.python.statements.import_statement import PyImportStatement
+from codegen_sdk.python.symbol import PySymbol
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
 
 
 @py_apidoc

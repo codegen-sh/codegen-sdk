@@ -1,11 +1,11 @@
 from typing import Generic, TypeVar, override
 
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.expressions.builtin import Builtin
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.expressions.builtin import Builtin
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 Parent = TypeVar("Parent", bound="Expression")
 

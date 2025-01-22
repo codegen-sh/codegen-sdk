@@ -20,7 +20,7 @@ class DocumentedObject:
 
 def canonical(codemod):
     """Decorator for canonical Codemods that will be used for AI-agent prompts."""
-    from graph_sitter.enums import ProgrammingLanguage
+    from codegen_sdk.enums import ProgrammingLanguage
 
     codemod._canonical = True
     if not hasattr(codemod, "language") or codemod.language not in (ProgrammingLanguage.PYTHON, ProgrammingLanguage.TYPESCRIPT):

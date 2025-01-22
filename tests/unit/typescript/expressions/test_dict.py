@@ -2,11 +2,11 @@ from itertools import product
 
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions.unpack import Unpack
-from graph_sitter.core.symbol_groups.dict import Dict
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.function import TSFunction
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.expressions.unpack import Unpack
+from codegen_sdk.core.symbol_groups.dict import Dict
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.function import TSFunction
 
 
 def test_dict_basic(tmpdir):

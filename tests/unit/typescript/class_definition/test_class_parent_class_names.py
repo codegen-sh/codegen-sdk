@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_class_definition_parent_class_names_single(tmpdir) -> None:

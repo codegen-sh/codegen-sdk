@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.detached_symbols.jsx.element import JSXElement
+from codegen_sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.detached_symbols.jsx.element import JSXElement
 
 
 def test_basic_component_parsing(tmpdir) -> None:

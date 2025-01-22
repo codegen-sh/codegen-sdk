@@ -8,15 +8,16 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.external.language_engine import LanguageEngine
-from graph_sitter.typescript.external.mega_racer import MegaRacer
 from py_mini_racer import MiniRacer
 from py_mini_racer._objects import JSMappedObject
 from py_mini_racer._types import JSEvalException
 
+from codegen_sdk.core.external.language_engine import LanguageEngine
+from codegen_sdk.typescript.external.mega_racer import MegaRacer
+
 if TYPE_CHECKING:
-    from graph_sitter.core.external.dependency_manager import DependencyManager
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.core.external.dependency_manager import DependencyManager
+    from codegen_sdk.core.interfaces.editable import Editable
 
 
 logger = logging.getLogger(__name__)

@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, TypeVar
 
-from graph_sitter.core.autocommit import repr_func
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.core.autocommit import repr_func
+from codegen_sdk.writer_decorators import apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.editable import Editable
+    from codegen_sdk.core.interfaces.editable import Editable
 
 
 Parent = TypeVar("Parent", bound="Editable")

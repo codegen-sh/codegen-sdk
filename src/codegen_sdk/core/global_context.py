@@ -1,13 +1,13 @@
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.config import DefaultConfig, GraphSitterConfig
-from graph_sitter.codebase.multigraph import MultiGraph
-from graph_sitter.core.plugins import PLUGINS
+from codegen_sdk.codebase.config import DefaultConfig, GraphSitterConfig
+from codegen_sdk.codebase.multigraph import MultiGraph
+from codegen_sdk.core.plugins import PLUGINS
 
 if TYPE_CHECKING:
-    from graph_sitter.core.codebase import Codebase
-    from graph_sitter.core.function import Function
+    from codegen_sdk.core.codebase import Codebase
+    from codegen_sdk.core.function import Function
 
 
 @dataclass

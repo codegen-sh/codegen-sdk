@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
 
 
 def test_function_call_from_usage(tmpdir) -> None:

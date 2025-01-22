@@ -2,8 +2,8 @@ import inspect
 from enum import StrEnum
 from itertools import chain
 
-from graph_sitter.code_generation.current_code_codebase import get_documented_objects
-from graph_sitter.core import codebase
+from codegen_sdk.code_generation.current_code_codebase import get_documented_objects
+from codegen_sdk.core import codebase
 
 
 class LanguageType(StrEnum):
@@ -37,7 +37,7 @@ from app.codemod.compilation.models.pr_options import PROptions
 from app.codemod.compilation.models.github_named_user_context import GithubNamedUserContext
 from app.codemod.compilation.models.pr_part_context import PRPartContext
 from app.codemod.compilation.models.pull_request_context import PullRequestContext
-from graph_sitter.codebase.flagging.code_flag import MessageType as MessageType
+from codegen_sdk.codebase.flagging.code_flag import MessageType as MessageType
 
 {"\n".join(inspect.getsource(codebase).splitlines()[-2:])}
 CodebaseType = {codebase_type}

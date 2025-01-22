@@ -1,7 +1,7 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.python import PyClass
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.python import PyClass
 
 
 def test_classes(tmpdir) -> None:

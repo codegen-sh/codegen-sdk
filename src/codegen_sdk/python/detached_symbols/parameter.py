@@ -1,9 +1,10 @@
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.python.expressions.type import PyType
-from graph_sitter.writer_decorators import py_apidoc
 from typing_extensions import deprecated
+
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.python.expressions.type import PyType
+from codegen_sdk.writer_decorators import py_apidoc
 
 
 @py_apidoc

@@ -1,11 +1,11 @@
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.external.external_process import ExternalProcess
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.core.external.external_process import ExternalProcess
+from codegen_sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 class DependencyManager(ExternalProcess):
@@ -28,7 +28,7 @@ class DependencyManager(ExternalProcess):
 
 
 def get_dependency_manager(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph", enabled: bool = False) -> DependencyManager | None:
-    from graph_sitter.typescript.external.dependency_manager import TypescriptDependencyManager
+    from codegen_sdk.typescript.external.dependency_manager import TypescriptDependencyManager
 
     ts_enabled = enabled or codebase_graph.config.feature_flags.ts_dependency_manager
     if language == ProgrammingLanguage.TYPESCRIPT:

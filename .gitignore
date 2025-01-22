@@ -55,7 +55,7 @@ alembic_versions_backup
 **/.virtual_documents
 /.nvmrc
 **/build/test-results/test/TEST*.xml
-src/graph_sitter/__init__.py
+src/codegen_sdk/__init__.py
 src/**/*.html
 .ccache/
 uv-*.tar.gz

@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ImportType, ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.enums import ImportType, ProgrammingLanguage
 
 
 def test_export_get_import_string(tmpdir) -> None:

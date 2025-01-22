@@ -13,35 +13,35 @@ from typing import TYPE_CHECKING, Any
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Commit as GitCommit
-from graph_sitter.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
-from graph_sitter.codebase.config_parser import ConfigParser, get_config_parser_for_language
-from graph_sitter.codebase.control_flow import StopCodemodException
-from graph_sitter.codebase.diff_lite import ChangeType, DiffLite
-from graph_sitter.codebase.flagging.flags import Flags
-from graph_sitter.codebase.transaction_manager import TransactionManager
-from graph_sitter.codebase.validation import get_edges, post_reset_validation
-from graph_sitter.core.autocommit import AutoCommit, commiter
-from graph_sitter.core.dataclasses.usage import Usage
-from graph_sitter.core.directory import Directory
-from graph_sitter.core.external.dependency_manager import DependencyManager, get_dependency_manager
-from graph_sitter.core.external.language_engine import LanguageEngine, get_language_engine
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.extensions.utils import uncache_all
-from graph_sitter.typescript.external.ts_declassify.ts_declassify import TSDeclassify
 from rustworkx import PyDiGraph, WeightedEdgeList
 
 from codegen_git.repo_operator.repo_operator import RepoOperator
 from codegen_git.utils.stopwatch_utils import stopwatch, stopwatch_with_sentry
+from codegen_sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
+from codegen_sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
+from codegen_sdk.codebase.control_flow import StopCodemodException
+from codegen_sdk.codebase.diff_lite import ChangeType, DiffLite
+from codegen_sdk.codebase.flagging.flags import Flags
+from codegen_sdk.codebase.transaction_manager import TransactionManager
+from codegen_sdk.codebase.validation import get_edges, post_reset_validation
+from codegen_sdk.core.autocommit import AutoCommit, commiter
+from codegen_sdk.core.dataclasses.usage import Usage
+from codegen_sdk.core.directory import Directory
+from codegen_sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
+from codegen_sdk.core.external.language_engine import LanguageEngine, get_language_engine
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.extensions.utils import uncache_all
+from codegen_sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
 
 if TYPE_CHECKING:
-    from graph_sitter.codebase.node_classes.node_classes import NodeClasses
-    from graph_sitter.core.expressions import Expression
-    from graph_sitter.core.external_module import ExternalModule
-    from graph_sitter.core.file import SourceFile
-    from graph_sitter.core.parser import Parser
+    from codegen_sdk.codebase.node_classes.node_classes import NodeClasses
+    from codegen_sdk.core.expressions import Expression
+    from codegen_sdk.core.external_module import ExternalModule
+    from codegen_sdk.core.file import SourceFile
+    from codegen_sdk.core.parser import Parser
 
 import logging
 
@@ -63,11 +63,11 @@ class SyncType(IntEnum):
 
 def get_node_classes(programming_language: ProgrammingLanguage) -> NodeClasses:
     if programming_language == ProgrammingLanguage.PYTHON:
-        from graph_sitter.codebase.node_classes.py_node_classes import PyNodeClasses
+        from codegen_sdk.codebase.node_classes.py_node_classes import PyNodeClasses
 
         return PyNodeClasses
     elif programming_language == ProgrammingLanguage.TYPESCRIPT:
-        from graph_sitter.codebase.node_classes.ts_node_classes import TSNodeClasses
+        from codegen_sdk.codebase.node_classes.ts_node_classes import TSNodeClasses
 
         return TSNodeClasses
     else:
@@ -114,7 +114,7 @@ class CodebaseGraph:
         config: CodebaseConfig = DefaultConfig,
     ) -> None:
         """Initializes codebase graph and TransactionManager"""
-        from graph_sitter.core.parser import Parser
+        from codegen_sdk.core.parser import Parser
 
         self._graph = PyDiGraph()
         self.filepath_idx = {}
@@ -436,7 +436,7 @@ class CodebaseGraph:
                         node.compute_export_dependencies()
                         to_resolve.extend(node.symbol_usages)
             if counter[NodeType.SYMBOL] > 0:
-                from graph_sitter.core.interfaces.inherits import Inherits
+                from codegen_sdk.core.interfaces.inherits import Inherits
 
                 logger.info("> Computing superclass dependencies")
                 for symbol in to_resolve:

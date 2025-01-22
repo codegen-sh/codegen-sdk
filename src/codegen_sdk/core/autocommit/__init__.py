@@ -17,9 +17,9 @@ Edge Cases:
 - We skip commits when you do raw edits and inserts, but will fall back to autocommit if needed
 """
 
-from graph_sitter.core.autocommit.constants import enabled
-from graph_sitter.core.autocommit.decorators import mover, remover, repr_func, writer
-from graph_sitter.core.autocommit.manager import AutoCommit
-from graph_sitter.extensions.autocommit import commiter, reader
+from codegen_sdk.core.autocommit.constants import enabled
+from codegen_sdk.core.autocommit.decorators import mover, remover, repr_func, writer
+from codegen_sdk.core.autocommit.manager import AutoCommit
+from codegen_sdk.extensions.autocommit import commiter, reader
 
 __all__ = ["AutoCommit", "commiter", "enabled", "mover", "reader", "remover", "repr_func", "writer"]

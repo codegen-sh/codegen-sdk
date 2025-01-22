@@ -2,15 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.switch_statement import SwitchStatement
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.statements.switch_case import TSSwitchCase
-from graph_sitter.writer_decorators import ts_apidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.switch_statement import SwitchStatement
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.statements.switch_case import TSSwitchCase
+from codegen_sdk.writer_decorators import ts_apidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 @ts_apidoc

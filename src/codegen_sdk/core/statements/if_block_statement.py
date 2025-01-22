@@ -4,21 +4,21 @@ from abc import abstractmethod
 from functools import cached_property
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.function import Function
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.statements.statement import Statement, StatementType
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.statements.statement import Statement, StatementType
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.detached_symbols.code_block import CodeBlock
+    from codegen_sdk.core.detached_symbols.code_block import CodeBlock
 
 
 TIfBlockStatement = TypeVar("TIfBlockStatement", bound="IfBlockStatement")

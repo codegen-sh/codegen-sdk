@@ -10,34 +10,34 @@ from os import PathLike
 from pathlib import Path
 from typing import Generic, Literal, Self, TypeVar, override
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.codebase.range_index import RangeIndex
-from graph_sitter.codebase.span import Range
-from graph_sitter.core.assignment import Assignment
-from graph_sitter.core.autocommit import commiter, mover, reader, remover, writer
-from graph_sitter.core.class_definition import Class
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.directory import Directory
-from graph_sitter.core.function import Function
-from graph_sitter.core.import_resolution import Import, WildcardImport
-from graph_sitter.core.interface import Interface
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_attribute import HasAttribute
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.usable import Usable
-from graph_sitter.core.statements.import_statement import ImportStatement
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import EdgeType, ImportType, NodeType, SymbolType
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.topological_sort import pseudo_topological_sort
-from graph_sitter.tree_sitter_parser import get_parser_by_filepath_or_extension, parse_file
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.codebase.range_index import RangeIndex
+from codegen_sdk.codebase.span import Range
+from codegen_sdk.core.assignment import Assignment
+from codegen_sdk.core.autocommit import commiter, mover, reader, remover, writer
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.directory import Directory
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.import_resolution import Import, WildcardImport
+from codegen_sdk.core.interface import Interface
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_attribute import HasAttribute
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.usable import Usable
+from codegen_sdk.core.statements.import_statement import ImportStatement
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import EdgeType, ImportType, NodeType, SymbolType
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.topological_sort import pseudo_topological_sort
+from codegen_sdk.tree_sitter_parser import get_parser_by_filepath_or_extension, parse_file
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 from graph_visualization.enums import VizNode
 
 logger = logging.getLogger(__name__)

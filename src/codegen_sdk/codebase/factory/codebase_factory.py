@@ -1,12 +1,11 @@
-from graph_sitter.codebase.config import CodebaseConfig, ProjectConfig
-from graph_sitter.core.codebase import (
+from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen_git.schemas.repo_config import BaseRepoConfig
+from codegen_sdk.codebase.config import CodebaseConfig, ProjectConfig
+from codegen_sdk.core.codebase import (
     Codebase,
     CodebaseType,
 )
-from graph_sitter.enums import ProgrammingLanguage
-
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen_git.schemas.repo_config import BaseRepoConfig
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 class CodebaseFactory:

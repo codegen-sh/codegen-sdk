@@ -1,16 +1,16 @@
 from typing import Generic, TypeVar, override
 
-from graph_sitter.codebase.transactions import TransactionPriority
-from graph_sitter.core.autocommit import writer
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_value import HasValue
-from graph_sitter.core.interfaces.unwrappable import Unwrappable
-from graph_sitter.core.interfaces.wrapper_expression import IWrapper
-from graph_sitter.extensions.autocommit import reader
-from graph_sitter.typescript.statements.if_block_statement import TSIfBlockStatement
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk.codebase.transactions import TransactionPriority
+from codegen_sdk.core.autocommit import writer
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_value import HasValue
+from codegen_sdk.core.interfaces.unwrappable import Unwrappable
+from codegen_sdk.core.interfaces.wrapper_expression import IWrapper
+from codegen_sdk.extensions.autocommit import reader
+from codegen_sdk.typescript.statements.if_block_statement import TSIfBlockStatement
+from codegen_sdk.writer_decorators import apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

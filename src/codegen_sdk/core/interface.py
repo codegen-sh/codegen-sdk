@@ -2,22 +2,22 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.detached_symbols.code_block import CodeBlock
-from graph_sitter.core.expressions.type import Type
-from graph_sitter.core.function import Function
-from graph_sitter.core.interfaces.has_attribute import HasAttribute
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.core.interfaces.inherits import Inherits
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.core.symbol_groups.parents import Parents
-from graph_sitter.enums import SymbolType
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.writer_decorators import noapidoc
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+from codegen_sdk.core.expressions.type import Type
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.interfaces.has_attribute import HasAttribute
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.core.interfaces.inherits import Inherits
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.core.symbol_groups.parents import Parents
+from codegen_sdk.enums import SymbolType
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.writer_decorators import noapidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.class_definition import Class
+    from codegen_sdk.core.class_definition import Class
 
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")

@@ -5,8 +5,9 @@ import autoflake
 import black
 import isort
 import jsbeautifier
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
+
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def get_jsbeautifier_options() -> jsbeautifier.default_options:

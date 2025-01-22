@@ -3,39 +3,39 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, overload, override
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.detached_symbols.decorator import Decorator
-from graph_sitter.core.detached_symbols.parameter import Parameter
-from graph_sitter.core.expressions import Name
-from graph_sitter.core.expressions.chained_attribute import ChainedAttribute
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.core.function import Function
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.core.interface import Interface
-from graph_sitter.core.interfaces.callable import Callable
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_attribute import HasAttribute
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.core.interfaces.inherits import Inherits
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.core.statements.symbol_statement import SymbolStatement
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.core.symbol_groups.parents import Parents
-from graph_sitter.enums import SymbolType
-from graph_sitter.extensions.utils import cached_property
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.detached_symbols.decorator import Decorator
+from codegen_sdk.core.detached_symbols.parameter import Parameter
+from codegen_sdk.core.expressions import Name
+from codegen_sdk.core.expressions.chained_attribute import ChainedAttribute
+from codegen_sdk.core.external_module import ExternalModule
+from codegen_sdk.core.function import Function
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.core.interface import Interface
+from codegen_sdk.core.interfaces.callable import Callable
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_attribute import HasAttribute
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.core.interfaces.inherits import Inherits
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.core.statements.symbol_statement import SymbolStatement
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.core.symbol_groups.parents import Parents
+from codegen_sdk.enums import SymbolType
+from codegen_sdk.extensions.utils import cached_property
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 from graph_visualization.enums import VizNode
 
 if TYPE_CHECKING:
-    from graph_sitter.core.detached_symbols.code_block import CodeBlock
-    from graph_sitter.core.expressions.type import Type
+    from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen_sdk.core.expressions.type import Type
 
 import logging
 

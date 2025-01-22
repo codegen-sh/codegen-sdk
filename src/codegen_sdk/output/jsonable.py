@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 from functools import cached_property
 
-from graph_sitter._proxy import ProxyProperty
-from graph_sitter.codebase.span import Span
-from graph_sitter.output.inspect import is_noapidoc, only_default_args
-from graph_sitter.output.placeholder import Placeholder
-from graph_sitter.output.utils import safe_getattr
-from graph_sitter.types import JSON
-from graph_sitter.writer_decorators import noapidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk._proxy import ProxyProperty
+from codegen_sdk.codebase.span import Span
+from codegen_sdk.output.inspect import is_noapidoc, only_default_args
+from codegen_sdk.output.placeholder import Placeholder
+from codegen_sdk.output.utils import safe_getattr
+from codegen_sdk.types import JSON
+from codegen_sdk.writer_decorators import noapidoc
 
 BLACKLIST = ["json", "G", "viz", "autocommit_cache", "ts_node", "symbol_usages", "usages"]
 

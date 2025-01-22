@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.assignment import Assignment
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.function import TSFunction
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.assignment import Assignment
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.function import TSFunction
 
 
 def test_add_symbol_from_source(tmpdir) -> None:

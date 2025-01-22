@@ -1,25 +1,26 @@
 from typing import Self
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.class_definition import Class
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.symbol_group import SymbolGroup
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.core.symbol_groups.parents import Parents
-from graph_sitter.extensions.utils import cached_property
-from graph_sitter.python.detached_symbols.code_block import PyCodeBlock
-from graph_sitter.python.detached_symbols.decorator import PyDecorator
-from graph_sitter.python.detached_symbols.parameter import PyParameter
-from graph_sitter.python.expressions.type import PyType
-from graph_sitter.python.function import PyFunction
-from graph_sitter.python.interfaces.has_block import PyHasBlock
-from graph_sitter.python.symbol import PySymbol
-from graph_sitter.writer_decorators import noapidoc, py_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.class_definition import Class
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.symbol_group import SymbolGroup
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.core.symbol_groups.parents import Parents
+from codegen_sdk.extensions.utils import cached_property
+from codegen_sdk.python.detached_symbols.code_block import PyCodeBlock
+from codegen_sdk.python.detached_symbols.decorator import PyDecorator
+from codegen_sdk.python.detached_symbols.parameter import PyParameter
+from codegen_sdk.python.expressions.type import PyType
+from codegen_sdk.python.function import PyFunction
+from codegen_sdk.python.interfaces.has_block import PyHasBlock
+from codegen_sdk.python.symbol import PySymbol
+from codegen_sdk.writer_decorators import noapidoc, py_apidoc
 
 
 @py_apidoc

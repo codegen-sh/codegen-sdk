@@ -4,33 +4,34 @@ from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, TypeVar
 
 import rich.repr
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind, UsageType
-from graph_sitter.core.detached_symbols.argument import Argument
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Name, Value
-from graph_sitter.core.expressions.chained_attribute import ChainedAttribute
-from graph_sitter.core.expressions.defined_name import DefinedName
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.interfaces.usable import Usable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.core.symbol_groups.comment_group import CommentGroup
-from graph_sitter.enums import ImportType, NodeType, SymbolType
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.output.constants import ANGULAR_STYLE
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from rich.markup import escape
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind, UsageType
+from codegen_sdk.core.detached_symbols.argument import Argument
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Name, Value
+from codegen_sdk.core.expressions.chained_attribute import ChainedAttribute
+from codegen_sdk.core.expressions.defined_name import DefinedName
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.interfaces.usable import Usable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.core.symbol_groups.comment_group import CommentGroup
+from codegen_sdk.enums import ImportType, NodeType, SymbolType
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.output.constants import ANGULAR_STYLE
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.core.detached_symbols.code_block import CodeBlock
-    from graph_sitter.core.export import Export
-    from graph_sitter.core.file import SourceFile
-    from graph_sitter.core.import_resolution import Import
-    from graph_sitter.core.interfaces.has_block import HasBlock
+    from codegen_sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen_sdk.core.export import Export
+    from codegen_sdk.core.file import SourceFile
+    from codegen_sdk.core.import_resolution import Import
+    from codegen_sdk.core.interfaces.has_block import HasBlock
 
 Parent = TypeVar("Parent", bound="HasBlock")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
@@ -58,7 +59,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         super().__init__(ts_node, file_id, G, parent)
         name_node = self._get_name_node(ts_node) if name_node is None else name_node
         self._name_node = self._parse_expression(name_node, default=name_node_type)
-        from graph_sitter.core.interfaces.has_block import HasBlock
+        from codegen_sdk.core.interfaces.has_block import HasBlock
 
         if isinstance(self, HasBlock):
             self.code_block = self._parse_code_block()
@@ -75,7 +76,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
     @noapidoc
     def parent_symbol(self) -> Symbol | SourceFile | Import | Export:
         """Returns the parent symbol of the symbol."""
-        from graph_sitter.core.export import Export
+        from codegen_sdk.core.export import Export
 
         parent = super().parent_symbol
         if parent == self.file or isinstance(parent, Export):
@@ -103,7 +104,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
             list[Editable]: A list of Editable nodes containing the current symbol and its extended symbols,
                 sorted in the correct order.
         """
-        from graph_sitter.core.interfaces.has_block import HasBlock
+        from codegen_sdk.core.interfaces.has_block import HasBlock
 
         comment_nodes = self.comment.symbols if self.comment else []
         inline_comment_nodes = self.inline_comment.symbols if self.inline_comment else []
@@ -286,7 +287,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
     @noapidoc
     def _move_to_file(self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports") -> tuple[NodeId, NodeId]:
         """Helper recursive function for `move_to_file`"""
-        from graph_sitter.core.import_resolution import Import
+        from codegen_sdk.core.import_resolution import Import
 
         # =====[ Arg checking ]=====
         if file == self.file:
@@ -371,7 +372,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
     @noapidoc
     def is_top_level(self) -> bool:
         """Is this symbol a top-level symbol: does it have a level of 0?"""
-        from graph_sitter.core.file import File
+        from codegen_sdk.core.file import File
 
         parent = self.parent
         while not isinstance(parent, Symbol | Argument):
@@ -410,7 +411,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
     @property
     @noapidoc
     def descendant_symbols(self) -> list[Importable]:
-        from graph_sitter.core.interfaces.has_block import HasBlock
+        from codegen_sdk.core.interfaces.has_block import HasBlock
 
         symbols = [self]
         if isinstance(self, HasBlock):

@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from graph_sitter._proxy import proxy_property
-from graph_sitter.core.autocommit import reader
-from graph_sitter.core.dataclasses.usage import Usage, UsageType
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.enums import EdgeType
-from graph_sitter.writer_decorators import apidoc
+from codegen_sdk._proxy import proxy_property
+from codegen_sdk.core.autocommit import reader
+from codegen_sdk.core.dataclasses.usage import Usage, UsageType
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.enums import EdgeType
+from codegen_sdk.writer_decorators import apidoc
 
 if TYPE_CHECKING:
-    from graph_sitter.core.export import Export
-    from graph_sitter.core.import_resolution import Import
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.export import Export
+    from codegen_sdk.core.import_resolution import Import
+    from codegen_sdk.core.symbol import Symbol
 Parent = TypeVar("Parent", bound="Editable")
 
 

@@ -1,9 +1,9 @@
 from typing import Generic, TypeVar
 
-from graph_sitter.core.expressions import Expression, Name
-from graph_sitter.core.expressions.chained_attribute import ChainedAttribute
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.writer_decorators import py_apidoc
+from codegen_sdk.core.expressions import Expression, Name
+from codegen_sdk.core.expressions.chained_attribute import ChainedAttribute
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.writer_decorators import py_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

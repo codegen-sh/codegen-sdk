@@ -62,7 +62,7 @@ classifiers = [
 
 [project.scripts]
 gs = "gscli.main:main"
-run_string = "graph_sitter.core.main:main"
+run_string = "codegen_sdk.core.main:main"
 [project.optional-dependencies]
 types = [
     "types-networkx>=3.2.1.20240918",

@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.function import Function
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.function import Function
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_edit_arg_in_function_call(tmpdir) -> None:

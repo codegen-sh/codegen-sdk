@@ -4,11 +4,12 @@ from collections.abc import Callable
 from pathlib import Path
 
 import inflection
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.skill_implementation import SkillImplementation
-from graph_sitter.skills.core.skill_test import SkillTestCase
+
+from codegen_sdk.core.codebase import CodebaseType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.skill_implementation import SkillImplementation
+from codegen_sdk.skills.core.skill_test import SkillTestCase
 
 ExecuteFuncType = Callable[[CodebaseType], None]
 
@@ -156,7 +157,7 @@ def import_skills_from(path: Path, package: str):
 
 
 def import_all_skills():
-    import_skills_from(SKILLS_PATH, "graph_sitter.skills")
+    import_skills_from(SKILLS_PATH, "codegen_sdk.skills")
     import_skills_from(CODEMODS_PATH, "codemods.canonical")
 
 
@@ -166,7 +167,7 @@ def import_all_guide_skill_files():
         relative_path = file.relative_to(SKILLS_PATH)
         if "evaluation" in relative_path.parts or "__init__" in file.name or "guides" not in relative_path.parts:
             continue
-        module_name = "graph_sitter.skills." + str(relative_path).replace("/", ".").removesuffix(".py")
+        module_name = "codegen_sdk.skills." + str(relative_path).replace("/", ".").removesuffix(".py")
         importlib.import_module(module_name)
 
 

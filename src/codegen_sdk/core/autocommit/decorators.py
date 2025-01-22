@@ -3,12 +3,12 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, ParamSpec, TypeVar, Union, overload
 
 import wrapt
-from graph_sitter.core.autocommit.constants import AutoCommitState, enabled
-from graph_sitter.core.node_id_factory import NodeId
+from codegen_sdk.core.autocommit.constants import AutoCommitState, enabled
+from codegen_sdk.core.node_id_factory import NodeId
 
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.editable import Editable
-    from graph_sitter.core.symbol import Symbol
+    from codegen_sdk.core.interfaces.editable import Editable
+    from codegen_sdk.core.symbol import Symbol
 
 import logging
 

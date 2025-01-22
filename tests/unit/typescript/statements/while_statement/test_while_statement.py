@@ -1,9 +1,9 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions.binary_expression import BinaryExpression
-from graph_sitter.core.expressions.boolean import Boolean
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.core.statements.while_statement import WhileStatement
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.expressions.binary_expression import BinaryExpression
+from codegen_sdk.core.expressions.boolean import Boolean
+from codegen_sdk.core.statements.statement import StatementType
+from codegen_sdk.core.statements.while_statement import WhileStatement
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_while_statement_parse(tmpdir) -> None:

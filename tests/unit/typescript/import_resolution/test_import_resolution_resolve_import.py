@@ -1,8 +1,8 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.import_resolution import Import, ImportResolution
-from graph_sitter.enums import ImportType, ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.import_resolution import Import, ImportResolution
+from codegen_sdk.enums import ImportType, ProgrammingLanguage
 
 
 def test_dynamic_import_module_export_const(tmpdir) -> None:

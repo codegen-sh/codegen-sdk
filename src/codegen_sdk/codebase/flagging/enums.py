@@ -1,8 +1,9 @@
 from enum import IntFlag, auto
 from typing import TypedDict
 
-from graph_sitter.writer_decorators import apidoc
 from typing_extensions import ReadOnly
+
+from codegen_sdk.writer_decorators import apidoc
 
 
 @apidoc

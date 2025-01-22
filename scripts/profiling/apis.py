@@ -6,8 +6,8 @@ from pathlib import Path
 import networkx as nx
 from tabulate import tabulate
 
-from graph_sitter.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
+from codegen_sdk.enums import ProgrammingLanguage
 
 logging.basicConfig(level=logging.INFO)
 codegen = get_codebase_codegen("../codegen", ".")
@@ -21,7 +21,7 @@ for file in codegen.files:
     if "test" not in file.filepath:
         if file.ctx.repo_name == "codegen":
             color = "yellow"
-        elif file.ctx.repo_name == "graph_sitter":
+        elif file.ctx.repo_name == "codegen_sdk":
             color = "red"
             if file.ctx.base_path == "codegen-git":
                 color = "green"

@@ -1,14 +1,14 @@
 from functools import cached_property
 from typing import TYPE_CHECKING, Self, override
 
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Expression
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.unwrappable import Unwrappable
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Expression
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.unwrappable import Unwrappable
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     pass
@@ -65,8 +65,8 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
         Returns:
             None
         """
-        from graph_sitter.typescript.detached_symbols.jsx.element import JSXElement
-        from graph_sitter.typescript.detached_symbols.jsx.prop import JSXProp
+        from codegen_sdk.typescript.detached_symbols.jsx.element import JSXElement
+        from codegen_sdk.typescript.detached_symbols.jsx.prop import JSXProp
 
         if node is None:
             node = self

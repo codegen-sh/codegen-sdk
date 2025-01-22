@@ -6,9 +6,10 @@ from typing import Union
 import tree_sitter_javascript as ts_javascript
 import tree_sitter_python as ts_python
 import tree_sitter_typescript as ts_typescript
-from graph_sitter.output.utils import stylize_error
 from tree_sitter import Language, Parser
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.output.utils import stylize_error
 
 PY_LANGUAGE = Language(ts_python.language())
 JS_LANGUAGE = Language(ts_javascript.language())

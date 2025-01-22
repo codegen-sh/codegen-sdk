@@ -3,30 +3,30 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import commiter, mover, reader, writer
-from graph_sitter.core.file import SourceFile
-from graph_sitter.core.interfaces.exportable import Exportable
-from graph_sitter.core.statements.export_statement import ExportStatement
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import ImportType, NodeType, ProgrammingLanguage, SymbolType
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.extensions.utils import cached_property
-from graph_sitter.typescript.assignment import TSAssignment
-from graph_sitter.typescript.class_definition import TSClass
-from graph_sitter.typescript.detached_symbols.code_block import TSCodeBlock
-from graph_sitter.typescript.export import TSExport
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.import_resolution import TSImport
-from graph_sitter.typescript.interface import TSInterface
-from graph_sitter.typescript.interfaces.has_block import TSHasBlock
-from graph_sitter.typescript.namespace import TSNamespace
-from graph_sitter.typescript.statements.import_statement import TSImportStatement
-from graph_sitter.typescript.symbol import TSSymbol
-from graph_sitter.typescript.ts_config import TSConfig
-from graph_sitter.typescript.type_alias import TSTypeAlias
-from graph_sitter.utils import calculate_base_path, find_all_descendants
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import commiter, mover, reader, writer
+from codegen_sdk.core.file import SourceFile
+from codegen_sdk.core.interfaces.exportable import Exportable
+from codegen_sdk.core.statements.export_statement import ExportStatement
+from codegen_sdk.core.symbol import Symbol
+from codegen_sdk.enums import ImportType, NodeType, ProgrammingLanguage, SymbolType
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.extensions.utils import cached_property
+from codegen_sdk.typescript.assignment import TSAssignment
+from codegen_sdk.typescript.class_definition import TSClass
+from codegen_sdk.typescript.detached_symbols.code_block import TSCodeBlock
+from codegen_sdk.typescript.export import TSExport
+from codegen_sdk.typescript.function import TSFunction
+from codegen_sdk.typescript.import_resolution import TSImport
+from codegen_sdk.typescript.interface import TSInterface
+from codegen_sdk.typescript.interfaces.has_block import TSHasBlock
+from codegen_sdk.typescript.namespace import TSNamespace
+from codegen_sdk.typescript.statements.import_statement import TSImportStatement
+from codegen_sdk.typescript.symbol import TSSymbol
+from codegen_sdk.typescript.ts_config import TSConfig
+from codegen_sdk.typescript.type_alias import TSTypeAlias
+from codegen_sdk.utils import calculate_base_path, find_all_descendants
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     pass

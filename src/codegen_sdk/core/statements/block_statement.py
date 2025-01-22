@@ -3,20 +3,21 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.interfaces.has_block import HasBlock
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.statement import Statement
-from graph_sitter.extensions.autocommit import commiter, reader
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.interfaces.has_block import HasBlock
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.statement import Statement
+from codegen_sdk.extensions.autocommit import commiter, reader
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
-    from graph_sitter.core.detached_symbols.code_block import CodeBlock
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.core.detached_symbols.code_block import CodeBlock
 
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")

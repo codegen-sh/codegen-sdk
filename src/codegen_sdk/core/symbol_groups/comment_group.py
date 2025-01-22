@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TypeVar
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.statements.comment import Comment
-from graph_sitter.core.symbol_group import SymbolGroup
-from graph_sitter.writer_decorators import apidoc, noapidoc
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.statements.comment import Comment
+from codegen_sdk.core.symbol_group import SymbolGroup
+from codegen_sdk.writer_decorators import apidoc, noapidoc
 
 Parent = TypeVar("Parent")
 

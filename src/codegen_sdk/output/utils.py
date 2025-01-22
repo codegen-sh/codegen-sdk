@@ -4,12 +4,13 @@ from decimal import Decimal
 from os import PathLike
 from pathlib import Path
 
-from graph_sitter.output.constants import MAX_EDITABLE_LINES
 from rich.console import Console, RenderResult
 from rich.syntax import Syntax
 from rich.text import Text
 from tree_sitter import Node as TSNode
 from tree_sitter import Point
+
+from codegen_sdk.output.constants import MAX_EDITABLE_LINES
 
 
 def style_editable(ts_node: TSNode, filepath: PathLike, file_node: TSNode) -> RenderResult:

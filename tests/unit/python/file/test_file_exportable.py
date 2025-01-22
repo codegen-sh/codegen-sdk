@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.core.symbol import Symbol
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.core.dataclasses.usage import UsageType
+from codegen_sdk.core.symbol import Symbol
 
 
 def test_file_usages_basic(tmpdir) -> None:

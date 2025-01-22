@@ -7,13 +7,13 @@ from pathlib import Path
 from shutil import which
 from typing import TYPE_CHECKING, NamedTuple
 
-from graph_sitter.codebase.config import GSFeatureFlags
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.testing.constants import DIFF_FILEPATH
-from graph_sitter.testing.verified_codemod_utils import CodemodAPI
 from pydantic import BaseModel, ConfigDict
 
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen_sdk.codebase.config import GSFeatureFlags
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.testing.constants import DIFF_FILEPATH
+from codegen_sdk.testing.verified_codemod_utils import CodemodAPI
 
 BASE_TMP_DIR = Path(os.getenv("GITHUB_WORKSPACE", tempfile.gettempdir()))
 BASE_PATH: Path = Path(__file__).parent.parent.parent.parent
@@ -29,7 +29,7 @@ try:
 except FileNotFoundError:
     REPO_ID_TO_URL = {}
 if TYPE_CHECKING:
-    from graph_sitter.codemod import Codemod3
+    from codegen_sdk.codemod import Codemod3
 
 
 @unique

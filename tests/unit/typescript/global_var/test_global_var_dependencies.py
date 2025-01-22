@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.core.import_resolution import Import
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.assignment import TSAssignment
+from codegen_sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen_sdk.core.import_resolution import Import
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.typescript.assignment import TSAssignment
 
 
 def test_dependencies_gets_symbols_in_same_file(tmpdir) -> None:

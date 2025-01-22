@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from graph_sitter.python import PyFile
-from graph_sitter.typescript.file import TSFile
+from codegen_sdk.python import PyFile
+from codegen_sdk.typescript.file import TSFile
 
 
 @dataclass

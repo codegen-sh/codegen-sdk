@@ -1,6 +1,6 @@
-from graph_sitter.core.plugins.axios import AxiosApiFinder
-from graph_sitter.core.plugins.flask import FlaskApiFinder
-from graph_sitter.core.plugins.modal import ModalApiFinder
+from codegen_sdk.core.plugins.axios import AxiosApiFinder
+from codegen_sdk.core.plugins.flask import FlaskApiFinder
+from codegen_sdk.core.plugins.modal import ModalApiFinder
 
 PLUGINS = [
     FlaskApiFinder(),

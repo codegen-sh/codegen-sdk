@@ -1,10 +1,10 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen_sdk.codemod import Codemod3
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.core.expressions.generic_type import GenericType
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.skills.core.skill import Skill
+from codegen_sdk.skills.core.utils import skill, skill_impl
+from codegen_sdk.writer_decorators import canonical
 
 
 @skill(

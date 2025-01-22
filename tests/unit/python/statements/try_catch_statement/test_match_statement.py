@@ -1,4 +1,4 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen_sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_match_switch_statement_parse(tmpdir) -> None:

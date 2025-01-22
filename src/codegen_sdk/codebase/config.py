@@ -1,8 +1,8 @@
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.secrets import Secrets
 from pydantic import BaseModel, ConfigDict, Field
 
 from codegen_git.repo_operator.repo_operator import RepoOperator
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.secrets import Secrets
 
 HARD_MAX_AI_LIMIT = 500  # Global limit for AI requests
 

@@ -1,8 +1,8 @@
 import logging
 import os
 
-from graph_sitter.core import autocommit
-from graph_sitter.testing.models import Size
+from codegen_sdk.core import autocommit
+from codegen_sdk.testing.models import Size
 
 
 def find_dirs_to_ignore(start_dir, prefix):
@@ -15,7 +15,7 @@ def find_dirs_to_ignore(start_dir, prefix):
     return dirs_to_ignore
 
 
-collect_ignore_glob = ["codegen_tests/graph_sitter/codemod/**/*.py"]
+collect_ignore_glob = ["codegen_tests/codegen_sdk/codemod/**/*.py"]
 if not autocommit.enabled:
     collect_ignore_glob.append("**/test_autocommit.py")
 

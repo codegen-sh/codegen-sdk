@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.core.assignment import Assignment
-from graph_sitter.core.function import Function
-from graph_sitter.enums import ProgrammingLanguage
+from codegen_sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen_sdk.core.assignment import Assignment
+from codegen_sdk.core.function import Function
+from codegen_sdk.enums import ProgrammingLanguage
 
 
 def test_parse_global_vars(tmpdir) -> None:

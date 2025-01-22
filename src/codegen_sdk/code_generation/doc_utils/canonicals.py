@@ -1,12 +1,12 @@
 import textwrap
 
-from graph_sitter.code_generation.doc_utils.utils import (
+from codegen_sdk.code_generation.doc_utils.utils import (
     format_python_codeblock,
 )
-from graph_sitter.code_generation.enums import DocumentationDecorators
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python.class_definition import PyClass
+from codegen_sdk.code_generation.enums import DocumentationDecorators
+from codegen_sdk.core.codebase import Codebase
+from codegen_sdk.enums import ProgrammingLanguage
+from codegen_sdk.python.class_definition import PyClass
 
 
 def get_canonical_codemod_classes(codebase: Codebase, language: ProgrammingLanguage) -> dict[str, PyClass]:

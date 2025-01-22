@@ -2,14 +2,15 @@ from collections import defaultdict
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.core.symbol_groups.collection import Collection
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.core.symbol_groups.collection import Collection
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.codebase.codebase_graph import CodebaseGraph
+    from codegen_sdk.codebase.codebase_graph import CodebaseGraph
 
 
 Child = TypeVar("Child", bound=Editable)

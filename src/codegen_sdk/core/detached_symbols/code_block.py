@@ -5,31 +5,32 @@ from collections import deque
 from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from graph_sitter.core.assignment import Assignment
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind, UsageType
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions import Expression, Value
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.interfaces.importable import Importable
-from graph_sitter.core.statements.assignment_statement import AssignmentStatement
-from graph_sitter.core.statements.attribute import Attribute
-from graph_sitter.core.statements.return_statement import ReturnStatement
-from graph_sitter.core.statements.statement import Statement, StatementType
-from graph_sitter.core.statements.symbol_statement import SymbolStatement
-from graph_sitter.core.symbol_groups.multi_line_collection import MultiLineCollection
-from graph_sitter.extensions.sort import sort_editables
-from graph_sitter.extensions.utils import find_line_start_and_end_nodes
-from graph_sitter.output.ast import AST
-from graph_sitter.writer_decorators import apidoc, noapidoc
 from tree_sitter import Node as TSNode
 from typing_extensions import deprecated
 
+from codegen_sdk.core.assignment import Assignment
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind, UsageType
+from codegen_sdk.core.detached_symbols.function_call import FunctionCall
+from codegen_sdk.core.expressions import Expression, Value
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.interfaces.importable import Importable
+from codegen_sdk.core.statements.assignment_statement import AssignmentStatement
+from codegen_sdk.core.statements.attribute import Attribute
+from codegen_sdk.core.statements.return_statement import ReturnStatement
+from codegen_sdk.core.statements.statement import Statement, StatementType
+from codegen_sdk.core.statements.symbol_statement import SymbolStatement
+from codegen_sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+from codegen_sdk.extensions.sort import sort_editables
+from codegen_sdk.extensions.utils import find_line_start_and_end_nodes
+from codegen_sdk.output.ast import AST
+from codegen_sdk.writer_decorators import apidoc, noapidoc
+
 if TYPE_CHECKING:
-    from graph_sitter.core.interfaces.has_block import HasBlock
-    from graph_sitter.core.statements.comment import Comment
-    from graph_sitter.core.statements.if_block_statement import IfBlockStatement
+    from codegen_sdk.core.interfaces.has_block import HasBlock
+    from codegen_sdk.core.statements.comment import Comment
+    from codegen_sdk.core.statements.if_block_statement import IfBlockStatement
 
 
 Parent = TypeVar("Parent", bound="HasBlock")

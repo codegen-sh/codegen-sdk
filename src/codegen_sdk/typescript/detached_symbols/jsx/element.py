@@ -3,20 +3,21 @@ from __future__ import annotations
 from functools import cached_property
 from typing import Generic, TypeVar, override
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.core.autocommit import reader, writer
-from graph_sitter.core.dataclasses.usage import UsageKind
-from graph_sitter.core.expressions import Expression, Value
-from graph_sitter.core.expressions.name import Name
-from graph_sitter.core.interfaces.editable import Editable
-from graph_sitter.core.interfaces.has_name import HasName
-from graph_sitter.core.node_id_factory import NodeId
-from graph_sitter.extensions.autocommit import commiter
-from graph_sitter.typescript.detached_symbols.jsx.expression import JSXExpression
-from graph_sitter.typescript.detached_symbols.jsx.prop import JSXProp
-from graph_sitter.utils import find_all_descendants
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
+
+from codegen_sdk.codebase.codebase_graph import CodebaseGraph
+from codegen_sdk.core.autocommit import reader, writer
+from codegen_sdk.core.dataclasses.usage import UsageKind
+from codegen_sdk.core.expressions import Expression, Value
+from codegen_sdk.core.expressions.name import Name
+from codegen_sdk.core.interfaces.editable import Editable
+from codegen_sdk.core.interfaces.has_name import HasName
+from codegen_sdk.core.node_id_factory import NodeId
+from codegen_sdk.extensions.autocommit import commiter
+from codegen_sdk.typescript.detached_symbols.jsx.expression import JSXExpression
+from codegen_sdk.typescript.detached_symbols.jsx.prop import JSXProp
+from codegen_sdk.utils import find_all_descendants
+from codegen_sdk.writer_decorators import noapidoc, ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 
