@@ -46,18 +46,26 @@ commands:
           command: |
             curl -LsSf https://astral.sh/uv/install.sh | sh
             source $HOME/.local/bin/env
-  cache-extra-repos:
+  clone-repos:
+    parameters:
+      extra_repos:
+        type: boolean
+        default: true
     steps:
       - restore_cache:
           keys:
-            - extra-repos
+            - repos-<<parameters.extra_repos>>
       - run:
           command: |
-            uv run --frozen gs codemod clone-repos --extra-repos --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
+            EXTRA_REPOS_ARG=""
+            if [ "<<parameters.extra_repos>>" = "true" ]; then
+              EXTRA_REPOS_ARG="--extra-repos"
+            fi
+            uv run --frozen gs codemod clone-repos ${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
-          key: extra-repos
+          key: repos-<<parameters.extra_repos>>
   fetch-verified-codemods:
     steps:
       - run:
@@ -242,6 +250,33 @@ jobs:
         branch_pattern: "develop"
         channel: "alerts-codemod-tests"
         template: basic_fail_1
+  oss-codemod-tests:
+    parameters:
+      sync_graph:
+        type: boolean
+        default: true
+      size:
+        type: string
+        default: "small"
+    parallelism: 2
+    executor: default_vm
+    resource_class: xlarge
+    steps:
+    - install-uv
+    - setup-uv
+    - clone-repos:
+        extra_repos: false
+    - run_ats:
+        default_tests: "tests/codemod/test_codemods.py"
+        codecov_flags: "smart-tests-codemod-oss"
+        collect_args: --size=<<parameters.size>> --sync-graph=<<parameters.sync_graph>> --token ${CODEGEN_BOT_GHE_TOKEN}
+        ats_collect_args: --size=<<parameters.size>>,--sync-graph=<<parameters.sync_graph>>,--token=${CODEGEN_BOT_GHE_TOKEN},
+        split_tests: false
+    - slack/notify:
+        event: fail
+        branch_pattern: "develop"
+        channel: "alerts-codemod-tests"
+        template: basic_fail_1
   parse-tests:
     parameters:
       extra_repos:
@@ -257,10 +292,15 @@ jobs:
         install-pnpm: true
         install-yarn: true
         use-nvm-cache: true
-    - cache-extra-repos
+    - clone-repos:
+        extra_repos: <<parameters.extra_repos>>
     - run:
         command: |
-          PYTEST_ARGS='--extra-repos=<<parameters.extra_repos>> --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name="${CIRCLE_JOB}" tests/codemod/test_parse.py'
+          EXTRA_REPOS_ARG=""
+          if [ "<<parameters.extra_repos>>" = "true" ]; then
+            EXTRA_REPOS_ARG="--extra-repos"
+          fi
+          PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/codemod/test_parse.py"
           echo "Running tests with args: $PYTEST_ARGS"
           TESTS_TO_RUN=$(PYTEST_ARGS=${PYTEST_ARGS} ./.circleci/collect.sh)
           echo $TESTS_TO_RUN | circleci tests run --command "ulimit -s unlimited; xargs uv run --frozen pytest -n auto ${PYTEST_ARGS}"
@@ -370,6 +410,9 @@ workflows:
             - GHE
           requires:
             - hold-parse-tests
+          matrix:
+            parameters:
+              extra_repos: [true, false]
       - parse-tests:
           context:
             - GHE
@@ -377,19 +420,66 @@ workflows:
           filters:
             branches:
               only: develop
+          extra_repos: true
+      - parse-tests:
+          name: oss-parse-tests
+          context:
+            - GHE
+            - slack
+          filters:
+            branches:
+              only: develop
+          extra_repos: false
+      - oss-codemod-tests:
+          name: oss-codemod-tests
+          context:
+            - GHE
+            - slack
+          filters:
+            branches:
+              only: develop
+          matrix:
+            parameters:
+              sync_graph: [true, false]
+              size: [small, large]
   pr_checks:
     jobs:
-      - unit-tests:
-          context:
-            - Codecov
+      - unit-tests
+      - hold-codemod-tests:
+          type: approval
+      - hold-large-oss-codemod-tests:
+          type: approval
       - codemod-tests:
           context:
-            - Codecov
             - GHE
             - Codemod
             - slack
+          requires:
+            - hold-codemod-tests
       - pre-commit
       - doctests
+      - oss-codemod-tests:
+          filters:
+            branches:
+              ignore: develop
+          context:
+            - GHE
+            - slack
+          matrix:
+            parameters:
+              sync_graph: [true, false]
+              size: [small]
+      - oss-codemod-tests:
+          name: large-oss-codemod-tests
+          context:
+            - GHE
+            - slack
+          matrix:
+            parameters:
+              sync_graph: [true, false]
+              size: [large]
+          requires:
+            - hold-large-oss-codemod-tests
   publish-packages:
     jobs:
       - linux-wheels:
