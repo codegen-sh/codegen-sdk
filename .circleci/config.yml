@@ -258,9 +258,8 @@ jobs:
       size:
         type: string
         default: "small"
-    parallelism: 2
     executor: default_vm
-    resource_class: xlarge
+    resource_class: "2xlarge"
     steps:
     - install-uv
     - setup-uv
