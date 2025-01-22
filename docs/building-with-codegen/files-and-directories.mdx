@@ -1,0 +1,239 @@
+---
+title: "Files and Directories"
+sidebarTitle: "Files & Directories"
+icon: "folder-tree"
+iconType: "solid"
+---
+
+Codegen provides two primary abstractions for working with your codebase's file structure:
+
+- [`File`](../api-reference/core/File)
+- [`Directory`](../api-reference/core/Directory)
+
+Both of these expose a rich API for accessing and manipulating their contents.
+
+This guide explains how to effectively use these classes to manage your codebase.
+
+## Accessing Files and Directories
+
+You typically access files from the [`Codebase`](/api-reference/core/Codebase) object with two APIs:
+
+- [`Codebase.get_file(...)`](../api-reference/core/Codebase#get_file) - Get a file by its path
+- [`Codebase.files`](../api-reference/core/Codebase#files) - Enables iteration over all files in the codebase
+
+```python
+# Get a file from the codebase
+file = codebase.get_file("path/to/file.py")
+
+# Iterate over all files in the codebase
+for file in codebase.files:
+    pass
+
+# Check if a file exists
+exists = codebase.has_file("path/to/file.py")
+```
+
+These APIs are similar for [`Directory`](../api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
+
+```python
+# Get a directory
+dir = codebase.get_directory("path/to/dir")
+
+# Iterate over all files in the directory
+for file in dir.files:
+    pass
+
+# Get the directory containing a file:
+dir = file.directory
+
+# Check if a directory exists
+exists = codebase.has_directory("path/to/dir")
+```
+
+## Raw Content and Metadata
+
+```python
+# Grab raw file string content
+content = file.content # For text files
+print('Length:', len(content))
+print('# of functions:', len(file.functions))
+
+# Access file metadata
+name = file.name # Base name without extension
+extension = file.extension # File extension with dot
+filepath = file.filepath # Full relative path
+dir = file.directory # Parent directory
+
+# Access directory metadata
+name = dir.name # Base name without extension
+path = dir.path # Full relative path from repository root
+parent = dir.parent # Parent directory
+```
+
+## Accessing Code
+
+Files and Directories provide several APIs for accessing and iterating over their code.
+
+See, for example:
+
+- `.functions` ([`File`](../api-reference/core/File#functions) / [`Directory`](../api-reference/core/Directory#functions)) - All [`Functions`](../api-reference/core/Function) in the file/directory
+- `.classes` ([`File`](../api-reference/core/File#classes) / [`Directory`](../api-reference/core/Directory#classes)) - All [`Classes`](../api-reference/core/Class) in the file/directory
+- `.imports` ([`File`](../api-reference/core/File#imports) / [`Directory`](../api-reference/core/Directory#imports)) - All [`Imports`](../api-reference/core/Import) in the file/directory
+- [`File.code_block`](../api-reference/core/File#code-block) - The top-level [`CodeBlock`](../api-reference/core/CodeBlock) containing the file's statements
+
+```python
+# Get all functions in a file
+for function in file.functions:
+    print(f"Found function: {function.name}")
+    print(f"Parameters: {[p.name for p in function.parameters]}")
+    print(f"Return type: {function.return_type}")
+
+# Get all classes
+for cls in file.classes:
+    print(f"Found class: {cls.name}")
+    print(f"Methods: {[m.name for m in cls.methods]}")
+    print(f"Attributes: {[a.name for a in cls.attributes]}")
+
+# Get imports
+for import_stmt in file.import_statements:
+    print(f"Import from: {import_stmt.module}")
+    print(f"Imported symbols: {[s.name for s in import_stmt.symbols]}")
+
+# Get specific symbols
+main_function = file.get_function("main")
+user_class = file.get_class("User")
+config = file.get_global_var("CONFIG")
+
+# Access code blocks
+if main_function:
+    for statement in main_function.code_block.statements:
+        print(f"Statement type: {statement.statement_type}")
+
+# Get local variables in a function
+if main_function:
+    local_vars = main_function.code_block.get_local_var_assignments()
+    for var in local_vars:
+        print(f"Local var: {var.name} = {var.value}")
+```
+
+## Editing Files Directly
+
+Files themselves are [`Editable`](../api-reference/core/Editable.mdx) objects, just like Functions and Classes.
+
+<Tip>
+  Learn more about the [Editable API](/building-with-codegen/editable-api).
+</Tip>
+
+This means they expose many useful operations, including:
+
+- [`File.search`](../api-reference/core/File#search) - Search for all functions named "main"
+- [`File.edit`](../api-reference/core/Editable#edit) - Edit the file
+- [`File.replace`](../api-reference/core/File#replace) - Replace all instances of a string with another string
+- [`File.insert_before`](../api-reference/core/File#insert-before) - Insert text before a specific string
+- [`File.insert_after`](../api-reference/core/File#insert-after) - Insert text after a specific string
+- [`File.remove`](../api-reference/core/File#remove) - Remove a specific string
+
+```python
+# Get a file
+file = codebase.get_file("path/to/file.py")
+
+# Replace all instances of a string
+file.replace("name", "new_name")
+file.replace("name", "new_name", include_comments=False) # Don't edit comments
+
+# Replace entire text of the file
+file.edit('hello, world!')
+
+# Get + delete all instances of a string
+for editable in file.search("foo"):
+    editable.remove()
+
+# Insert text at the top of the file
+file.insert_before("def main():\npass")
+# ... or at the bottom
+file.insert_after("def end():\npass")
+
+# Delete the file
+file.remove()
+```
+
+You can frequently do bulk modifictions via the [`.edit(...)`](../api-reference/core/Editable#edit) method or [`.replace(...)`](../api-reference/core/File#replace) method.
+
+<Note>
+  Most useful operations will have bespoke APIs that handle edge cases, update
+  references, etc.
+</Note>
+
+## Moving and Renaming Files
+
+Files can be manipulated through methods like [`File.update_filepath()`](../api-reference/core/File#update-filepath), [`File.rename()`](../api-reference/core/File#rename), and [`File.remove()`](../api-reference/core/File#remove):
+
+```python
+# Move/rename a file
+file.update_filepath("/path/to/foo.py")  # Move to new location
+file.rename("bar")  # Rename preserving extension, e.g. `bar.py`
+
+# Remove a file (potentially destructive)
+file.remove()
+
+# Move all tests to a tests directory
+for file in codebase.files:
+    if 'test_' in file.name:
+        # This will handle updating imports and other references
+        file.update_filepath('tests/' + file.filepath.replace("test_", ""))
+```
+
+<Warning>
+  Removing files is a potentially breaking operation. Only remove files if they
+  have no external usages.
+</Warning>
+
+## Directories
+
+[`Directories`](/api-reference/core/Directory) expose a similar API to the [File](../api-reference/core/File.mdx) class, with the addition of the `subdirectories` property.
+
+```python
+# Get a directory
+dir = codebase.get_directory("path/to/dir")
+
+# Iterate over all directories in the codebase
+for directory in codebase.directories:
+    print(f"Found directory: {directory.path}")
+
+# Check directory existence
+exists = codebase.has_directory("path/to/dir")
+
+# Access metadata
+name = dir.name  # Directory name
+path = dir.path  # Full path
+parent = dir.parent  # Parent directory
+
+# Get specific items
+file = dir.get_file("file.py")
+subdir = dir.get_subdirectory("subdir")
+
+# Get all ancestor subdirectories
+subdirs = dir.subdirectories
+
+# Get the parent directory
+parent_dir = dir.parent
+
+# Find all child directories
+for subdir in dir.subdirectories:
+    if dir.parent == subdir:
+        print(f"Found child subdirectory: {subdir.path}")
+
+# Move to new location
+dir.update_filepath("new/path")
+
+# Rename directory in place
+dir.rename("new_name")
+
+# Remove a directory and all contents (potentially destructive)
+dir.remove()
+```
+
+<Warning>
+  Removing directories is a potentially destructive operation. Only remove
+  directories if they have no external usages.
+</Warning>

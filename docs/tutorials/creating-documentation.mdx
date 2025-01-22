@@ -1,0 +1,258 @@
+---
+title: "Creating Documentation"
+sidebarTitle: "Documentation"
+icon: "book"
+iconType: "solid"
+---
+
+This guide demonstrates how to determine docs coverage and create documentation for your codebase.
+
+This primarily leverages two APIs:
+- [`codebase.ai(...)`](/api-reference/Codebase#ai) for generating docstrings
+- [`function.set_docstring(...)`](/codebase-sdk/core/HasBlock#set-docstring) for modifying them
+
+## Determining Documentation Coverage
+
+In order to determine the extent of your documentation coverage, you can iterate through all symbols of interest and count the number of docstrings:
+
+To see your current documentation coverage, you can iterate through all symbols of interest and count the number of docstrings:
+
+```python python
+# Initialize counters
+total_functions = 0
+functions_with_docs = 0
+total_classes = 0
+classes_with_docs = 0
+
+# Check functions
+for function in codebase.functions:
+    total_functions += 1
+    if function.docstring:
+        functions_with_docs += 1
+
+# Check classes
+for cls in codebase.classes:
+    total_classes += 1
+    if cls.docstring:
+        classes_with_docs += 1
+
+# Calculate percentages
+func_coverage = (functions_with_docs / total_functions * 100) if total_functions > 0 else 0
+class_coverage = (classes_with_docs / total_classes * 100) if total_classes > 0 else 0
+
+# Print results with emojis
+print("\n📊 Documentation Coverage Report:")
+print(f"\n📝 Functions:")
+print(f"  • Total: {total_functions}")
+print(f"  • Documented: {functions_with_docs}")
+print(f"  • Coverage: {func_coverage:.1f}%")
+
+print(f"\n📚 Classes:")
+print(f"  • Total: {total_classes}")
+print(f"  • Documented: {classes_with_docs}")
+print(f"  • Coverage: {class_coverage:.1f}%")
+
+print(f"\n🎯 Overall Coverage: {((functions_with_docs + classes_with_docs) / (total_functions + total_classes) * 100):.1f}%")
+```
+
+Which provides the following output:
+```
+📊 Documentation Coverage Report:
+📝 Functions:
+  • Total: 1384
+  • Documented: 331
+  • Coverage: 23.9%
+📚 Classes:
+  • Total: 453
+  • Documented: 91
+  • Coverage: 20.1%
+🎯 Overall Coverage: 23.0%
+```
+
+## Identifying Areas of Low Documentation Coverage
+
+
+To identify areas of low documentation coverage, you can iterate through all directories and count the number of functions with docstrings.
+
+<Note>Learn more about [`Directories` here](/building-with-codegen/files-and-directories).</Note>
+
+```python python
+# Track directory stats
+dir_stats = {}
+
+# Analyze each directory
+for directory in codebase.directories:
+    # Skip test, sql and alembic directories
+    if any(x in directory.path.lower() for x in ['test', 'sql', 'alembic']):
+        continue
+        
+    # Get undecorated functions
+    funcs = [f for f in directory.functions if not f.is_decorated]
+    total = len(funcs)
+    
+    # Only analyze dirs with >10 functions
+    if total > 10:
+        documented = sum(1 for f in funcs if f.docstring)
+        coverage = (documented / total * 100)
+        dir_stats[directory.path] = {
+            'total': total,
+            'documented': documented,
+            'coverage': coverage
+        }
+
+# Find lowest coverage directory
+if dir_stats:
+    lowest_dir = min(dir_stats.items(), key=lambda x: x[1]['coverage'])
+    path, stats = lowest_dir
+    
+    print(f"📉 Lowest coverage directory: '{path}'")
+    print(f"  • Total functions: {stats['total']}")
+    print(f"  • Documented: {stats['documented']}")
+    print(f"  • Coverage: {stats['coverage']:.1f}%")
+    
+    # Print all directory stats for comparison
+    print("\n📊 All directory coverage rates:")
+    for path, stats in sorted(dir_stats.items(), key=lambda x: x[1]['coverage']):
+        print(f"  '{path}': {stats['coverage']:.1f}% ({stats['documented']}/{stats['total']} functions)")
+```
+
+Which provides the following output:
+```python
+📉 Lowest coverage directory: 'codegen-backend/app/utils/github_utils/branch'
+  • Total functions: 12
+  • Documented: 0
+  • Coverage: 0.0%
+📊 All directory coverage rates:
+  'codegen-backend/app/utils/github_utils/branch': 0.0% (0/12 functions)
+  'codegen-backend/app/utils/slack': 14.3% (2/14 functions)
+  'codegen-backend/app/modal_app/github': 18.2% (2/11 functions)
+  'codegen-backend/app/modal_app/slack': 18.2% (2/11 functions)
+  'codegen-backend/app/utils/github_utils/webhook': 21.4% (6/28 functions)
+  'codegen-backend/app/modal_app/cron': 23.1% (3/13 functions)
+  'codegen-backend/app/utils/github_utils': 23.5% (39/166 functions)
+  'codegen-backend/app/codemod': 25.0% (7/28 functions)
+```
+
+## Leveraging AI for Generating Documentation
+
+For non-trivial codebases, it can be challenging to achieve full documentation coverage.
+
+The most efficient way to edit informative docstrings is to use [codebase.ai](/codebase-sdk/core/HasBlock#set-docstring) to generate docstrings, then use the [set_docstring](/codebase-sdk/core/HasBlock#set-docstring) method to update the docstring.
+
+<Tip>Learn more about using AI in our [guides](/building-with-codegen/calling-out-to-llms).</Tip>
+
+```python python
+# Import datetime for timestamp
+from datetime import datetime
+
+# Get current timestamp
+timestamp = datetime.now().strftime("%B %d, %Y")
+
+print("📚 Generating and Updating Function Documentation")
+
+# Process all functions in the codebase
+for function in codebase.functions:
+    current_docstring = function.docstring()
+
+    if current_docstring:
+        # Update existing docstring to be more descriptive
+        new_docstring = codebase.ai(
+            f"Update the docstring for {function.name} to be more descriptive and comprehensive.",
+            target=function
+        )
+        new_docstring += f"\n\nUpdated on: {timestamp}"
+    else:
+        # Generate new docstring for function
+        new_docstring = codebase.ai(
+            f"Generate a comprehensive docstring for {function.name} including parameters, return type, and description.",
+            target=function
+        )
+        new_docstring += f"\n\nCreated on: {timestamp}"
+
+    # Set the new or updated docstring
+    function.set_docstring(new_docstring)
+```
+
+
+
+## Adding Explicit Parameter Names and Types
+
+Alternatively, you can also rely on deterministic string formatting to edit docstrings.
+
+To add "Google-style" parameter names and types to a function docstring, you can use the following code snippet:
+
+```python python
+# Iterate through all functions in the codebase
+for function in codebase.functions:
+    # Skip if function already has a docstring
+    if function.docstring:
+        continue
+
+    # Build parameter documentation
+    param_docs = []
+    for param in function.parameters:
+        param_type = param.type.source if param.is_typed else "Any"
+        param_docs.append(f"    {param.name} ({param_type}): Description of {param.name}")
+
+    # Get return type if present
+    return_type = function.return_type.source if function.return_type else "None"
+
+    # Create Google-style docstring
+    docstring = f'''"""
+    Description of {function.name}.
+
+    Args:
+{chr(10).join(param_docs)}
+
+    Returns:
+        {return_type}: Description of return value
+    """'''
+
+    # Set the new docstring
+    function.set_docstring(docstring)
+```
+
+## Migrating to Google-Style Docstrings
+
+You can use [`docstring.to_google_docstring`](/api-reference/Docstring#to-google-docstring) to convert existing docstrings to Google style format. This is particularly useful when standardizing documentation across a codebase:
+
+```python python
+# Convert all docstrings to Google style
+for function in codebase.functions:
+    # Check if function has a docstring using walrus operator
+    if docstring := function.docstring:
+        # Convert to Google style using the docstring API
+        google_style_docstring = docstring.to_google_docstring(function)
+        # Update the function's docstring
+        function.set_docstring(google_style_docstring)
+```
+
+This will convert docstrings from various formats (e.g., reST, NumPy) to Google style, preserving all parameter descriptions, return types, and other documentation elements.
+
+For example, this reST style docstring:
+```python
+"""
+Process the input data.
+
+:param data: The input data to process
+:type data: pd.DataFrame
+:param inplace: Whether to modify in place
+:type inplace: bool
+:returns: The processed data
+:rtype: pd.DataFrame
+"""
+```
+
+Will be converted to:
+```python
+"""
+Process the input data.
+
+Args:
+    data (pd.DataFrame): The input data to process
+    inplace (bool): Whether to modify in place
+
+Returns:
+    pd.DataFrame: The processed data
+"""
+```
