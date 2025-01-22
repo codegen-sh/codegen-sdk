@@ -431,13 +431,17 @@ workflows:
               only: develop
           extra_repos: false
       - oss-codemod-tests:
+          name: oss-codemod-tests
           context:
             - GHE
             - slack
+          filters:
+            branches:
+              only: develop
           matrix:
             parameters:
               sync_graph: [true, false]
-              size: [large]
+              size: [small, large]
   pr_checks:
     jobs:
       - unit-tests
@@ -455,6 +459,9 @@ workflows:
       - pre-commit
       - doctests
       - oss-codemod-tests:
+          filters:
+            branches:
+              ignore: develop
           context:
             - GHE
             - slack
