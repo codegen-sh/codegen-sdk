@@ -57,7 +57,11 @@ commands:
             - repos-{{ parameters.extra_repos }}
       - run:
           command: |
-            uv run --frozen gs codemod clone-repos --extra-repos=<<parameters.extra_repos>> --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
+            EXTRA_REPOS_ARG=""
+            if [ "<<parameters.extra_repos>>" = "true" ]; then
+              EXTRA_REPOS_ARG="--extra-repos"
+            fi
+            uv run --frozen gs codemod clone-repos ${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
@@ -294,7 +298,7 @@ jobs:
         command: |
           EXTRA_REPOS_ARG=""
           if [ "<<parameters.extra_repos>>" = "true" ]; then
-            EXTRA_REPOS_ARG="--extra-repos=true"
+            EXTRA_REPOS_ARG="--extra-repos"
           fi
           PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/codemod/test_parse.py"
           echo "Running tests with args: $PYTEST_ARGS"
