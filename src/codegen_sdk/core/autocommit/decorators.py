@@ -3,6 +3,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, ParamSpec, TypeVar, Union, overload
 
 import wrapt
+
 from codegen_sdk.core.autocommit.constants import AutoCommitState, enabled
 from codegen_sdk.core.node_id_factory import NodeId
 
