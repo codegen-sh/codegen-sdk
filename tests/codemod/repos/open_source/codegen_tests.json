@@ -1,0 +1,8 @@
+{
+	"name": "codegen_tests",
+	"commit": "ca20e29727d9f82d48c2581717edbf3254e11958",
+	"url": "https://github.codegen.app/codegen-sh-staging/codegen-staging.git",
+	"subdirectories": ["codegen-backend/codegen_tests"],
+	"language": "PYTHON",
+	"repo_id": 1
+}

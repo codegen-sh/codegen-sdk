@@ -1,0 +1,73 @@
+codecov:
+  branch: develop
+  max_report_age: '12h'
+component_management:
+  default_rules:  # default rules that will be inherited by all components
+    statuses:
+      - type: project # in this case every component that doens't have a status defined will have a project type one
+        threshold: 0 # Shouldn't remove coverage
+  individual_components:
+    - component_id: graph-sitter-python  # this is an identifier that should not be changed
+      name: graph-sitter-python  # this is a display name, and can be changed freely
+      paths:
+        - src/graph_sitter/python/**
+      statuses:
+        - type: project # in this case every component that doens't have a status defined will have a project type one
+          threshold: 0 # Shouldn't remove coverage
+        - type: patch
+          target: 50 # Language specific featues must be 100% covered
+    - component_id: graph-sitter-typescript
+      name: graph-sitter-typescript
+      paths:
+        - src/graph_sitter/typescript/**
+      statuses:
+        - type: project # in this case every component that doens't have a status defined will have a project type one
+          threshold: 0 # Shouldn't remove coverage
+        - type: patch
+          target: 50 # Language specific featues must be 100% covered
+    - component_id: graph-sitter-core
+      name: graph-sitter-core
+      paths:
+        - src/graph_sitter/**
+    - component_id: codegen-git
+      name: codegen-git
+      paths:
+        - codegen-git/**
+
+
+flag_management:
+  default_rules:
+    carryforward: true
+    carryforward_mode: 'labels'
+    statuses:
+      - type: project
+  individual_flags:
+    - name: smart-tests
+      carryforward: true
+      carryforward_mode: 'labels'
+      statuses:
+        - type: 'project'
+        - type: 'patch'
+    - name: smart-tests-codemod
+      carryforward: true
+      carryforward_mode: 'labels'
+      statuses:
+        - type: 'project'
+        - type: 'patch'
+comment:
+  layout: "condensed_header, condensed_files"
+  hide_project_coverage: true
+cli:
+  plugins:
+    pycoverage:
+      report_type: 'json'
+      include_contexts: true
+  runners:
+    pytest:
+      coverage_root: "./"
+      execute_tests_options:
+        - "cov-report=xml"
+        - "--verbose"
+        - "-n=auto"
+      python_path: ".venv/bin/python"
+

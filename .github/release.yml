@@ -1,0 +1,11 @@
+# .github/release.yml
+
+changelog:
+  categories:
+    - title: BREAKING CHANGES! 🚨
+      labels:
+        - breaking-change
+        - unburdened by what has been
+    - title: Other Changes
+      labels:
+        - "*"

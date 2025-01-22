@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":automergeLinters",
+    ":automergeMinor",
+    ":automergePatch",
+    ":enablePreCommit",
+    ":maintainLockFilesWeekly",
+    ":automergeLinters",
+    "group:githubArtifactActions"
+  ],
+  lockFileMaintenance: {
+    enabled: true,
+    "automerge": true
+  },
+}

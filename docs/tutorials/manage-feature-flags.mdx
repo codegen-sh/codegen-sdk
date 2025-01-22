@@ -1,0 +1,117 @@
+---
+title: "Managing Feature Flags"
+sidebarTitle: "Feature Flags"
+icon: "flag"
+iconType: "solid"
+---
+
+Codegen SDK provides powerful APIs for managing feature flag usage in code. This guide will walk you through the basics of how to detect and clean up obsolete feature flags.
+
+
+## Removing rolled out flags
+
+Once a feature has been fully rolled out behind a flag and is stable on production, the next step is to remove old fallback code paths.
+
+Common syntax for feature flags include:
+
+<AccordionGroup defaultExpanded={true}>
+    <Accordion title="Typsecript">
+    ```python
+feature_flag = codebase.get_symbol("ROLLED_OUT_FLAG_TO_DELETE")
+feature_flag_name = feature_flag.name
+
+# Iterate over all usages of the feature flag import
+for usage_symbol in feature_flag.get_all_symbol_usages():
+    if isinstance(usage_symbol, Function):
+        # Check statements within the function
+        for statement in usage_symbol.code_block.get_statements():
+            if isinstance(statement, IfBlockStatement) and feature_flag_name in statement.condition.source:
+                # Simplify the condition of the if statement
+                statement.reduce_condition(bool_condition=feature_flag_name == statement.condition.source)
+    elif isinstance(usage_symbol, Import):
+        # Remove the import of the feature flag
+        usage_symbol.remove()
+      ```
+  </Accordion>
+
+  <Accordion title="Python">
+      ```python
+flag_name = "CODEMOD_RUN_SYNTAX_PREHIGHLIGHT"
+
+# Get the feature flag variable
+feature_flag_file = codebase.get_file("codegen-backend/app/utils/posthog/feature_flags.py")
+flag_class = feature_flag_file.get_class("FeatureFlag")
+
+# Check if the flag_var is None before proceeding
+flag_var = flag_class.get_attribute(flag_name)
+if not flag_var:
+    raise Exception(f'No such flag: {flag_name}')
+
+# Remove the feature flag from the class
+flag_var.remove()
+
+# Remove all usages of the feature flag
+for usage in flag_var.usages():
+    # If the usage is in an if statement, remove the entire if statement
+    if isinstance(usage.parent, IfBlockStatement):
+        usage.parent.remove()
+    # If the usage is in a with statement, unwrap the with statement
+    elif isinstance(usage.parent, WithStatement):
+        usage.parent.code_block.unwrap()
+    # Otherwise, just remove the usage
+    else:
+        usage.remove()
+      ```
+  </Accordion>
+</AccordionGroup>
+
+
+## Deleting unused feature flags
+
+Detecting unused feature flag is a specific use case of [deleting dead code](/codebase-sdk/guides/deleting-dead-code), isolated to a specific search space.
+```python Delete unused flag
+print = codebase.log
+
+feature_flag_usage = {}
+feature_flag_class = codebase.get_class('FeatureFlag')
+
+if feature_flag_class:
+    # Initialize usage count for all attributes
+    for attr in feature_flag_class.attributes:
+        feature_flag_usage[attr.name] = 0
+
+    # Get all usages of the FeatureFlag class
+    for usage in feature_flag_class.usages():
+        usage_source = usage.usage_symbol.source if hasattr(usage, 'usage_symbol') else str(usage)
+        for flag_name in feature_flag_usage.keys():
+            if f"FeatureFlag.{flag_name}" in usage_source:
+                feature_flag_usage[flag_name] += 1
+
+    sorted_flags = sorted(feature_flag_usage.items(), key=lambda x: x[1], reverse=True)
+
+    print("Feature Flag Usage Table:")
+    print("-------------------------")
+    print(f"{'Feature Flag':<30} | {'Usage Count':<12}")
+    print("-" * 45)
+    for flag, count in sorted_flags:
+        print(f"{flag:<30} | {count:<12}")
+
+    print(f"\nTotal feature flags: {len(sorted_flags)}")
+else:
+    print("❗ FeatureFlag enum not found in the codebase")
+```
+
+
+#### Recommended Next Steps
+Once rolled out feature flags are removed, new dead code paths may have been created. Run a delete dead code codemod to ensure complete clean-up.
+
+
+## Best Practices
+1. **Use Caution**: Ensure that flags have been fully rolled out before deleting.
+
+2. **Fix Tests**: Check for additional ways feature flags are used in the codebase (e.g. string arguments in test patches).
+
+
+### Related Skills
+- [reduce if statements](/codebase-sdk/examples/skills#reduce-if-statement-condition-python)
+- [unwrap with statements](/codebase-sdk/examples/skills#unwrap-with-statement-python)
