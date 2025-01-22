@@ -4,7 +4,7 @@ requires-python = ">=3.12, <3.14"
 [manifest]
 members = [
     "codegen-git",
-    "graph-sitter",
+    "codegen-sdk",
 ]
 
 [[package]]
@@ -669,7 +669,7 @@ wheels = [
 ]
 
 [[package]]
-name = "graph-sitter"
+name = "codegen-sdk"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },

@@ -60,8 +60,8 @@ src/**/*.html
 .ccache/
 uv-*.tar.gz
 .venv
-graph-sitter-types/out/**
-graph-sitter-types/typings/**
+codegen-sdk-types/out/**
+codegen-sdk-types/typings/**
 coverage.json
 tests/verified_codemods/codemod_data/repo_commits.json
 
