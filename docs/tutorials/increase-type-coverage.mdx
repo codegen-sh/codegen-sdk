@@ -1,0 +1,231 @@
+---
+title: "Increasing Type Coverage"
+sidebarTitle: "Type Coverage"
+icon: "shield-check"
+iconType: "solid"
+---
+
+This guide demonstrates how to analyze and manipulate type annotations with Codegen SDK.
+
+Common use cases include:
+
+- Adding a type to a union or generic type
+- Checking if a generic type has a given subtype
+- Resolving a type annotation
+
+## Finding the extent of your type coverage
+
+First, to get an indication of your progress on type coverage, count the number of function arguments that have type hints in your codebase:
+
+<CodeGroup>
+```python python
+total_parameters = 0
+typed_parameters = 0
+
+# Iterate through all functions in the file
+for function in codebase.functions:
+    # Count the total number of parameters
+    total_parameters += len(function.parameters)
+    # Count the number of parameters that have type hints
+    typed_parameters += sum(1 for param in function.parameters if param.is_typed)
+
+# Calculate the percentage of parameters with type hints
+if total_parameters > 0:
+    percentage_typed = (typed_parameters / total_parameters) * 100
+else:
+    percentage_typed = 0
+
+# Print the result
+print(f"Percentage of function arguments with type hints: {percentage_typed:.2f}%")
+```
+
+```python typescript
+total_parameters = 0
+typed_parameters = 0
+
+# Iterate through all functions in the file
+for function in codebase.functions:
+    # Count the total number of parameters
+    total_parameters += len(function.parameters)
+    # Count the number of parameters that have type hints
+    typed_parameters += sum(1 for param in function.parameters if param.is_typed)
+
+# Calculate the percentage of parameters with type hints
+if total_parameters > 0:
+    percentage_typed = (typed_parameters / total_parameters) * 100
+else:
+    percentage_typed = 0
+
+# Print the result
+print(f"Percentage of function arguments with type hints: {percentage_typed:.2f}%")
+```
+</CodeGroup>
+
+
+
+You can perform an analogous operation for return types, method parameters, and more. Note that the code presented here only analyzes non-method functions.
+
+## Adding simple return type annotations
+
+To add a return type, use `function.set_return_type`. The script below will add a `-> None` return type to all functions that contain no return statements:
+
+<CodeGroup>
+```python python
+for file in codebase.files:
+    # Check if 'app' is in the file's filepath
+    if "app" in file.filepath:
+        # Iterate through all functions in the file
+        for function in file.functions:
+            # Check if the function has no return statements
+            if len(function.return_statements) == 0:
+                # Set the return type to None
+                function.set_return_type("None")
+```
+
+```python typescript
+for file in codebase.files:
+    # Check if 'app' is in the file's filepath
+    if "app" in file.filepath:
+        # Iterate through all functions in the file
+        for function in file.functions:
+            # Check if the function has no return statements
+            if len(function.return_statements) == 0:
+                # Set the return type to None
+                function.set_return_type("null")
+```
+</CodeGroup>
+
+
+## Adding a type to a union type
+
+Since a union type is a collection, you can call standard methods such as append to add new types to it.
+
+<CodeGroup>
+```python python
+target_file = codebase.get_file("path/to/file.py")
+function = target_file.get_function("function_name")
+# def function_name() -> a | b: ...
+
+# import c from module
+c = codebase.get_file("path/to/module.py").get_symbol("c")
+target_file.add_symbol_import(c)
+
+# Add a new option to the return type
+function.return_type.append("c")
+```
+
+```python typescript
+target_file = codebase.get_file("path/to/file.ts")
+function = target_file.get_function("functionName")
+# function functionName(): a | b: ...
+c = codebase.get_file("path/to/module.ts").get_symbol("c")
+target_file.add_symbol_import(c)
+
+# Add a new option to the return type
+function.return_type.append("c")
+```
+</CodeGroup>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Adding a type to a generic type
+
+You can add parameters to a generic type in a similar fashion
+
+```python
+function = codebase.get_file("path/to/file.py").get_function("function_name")
+# def function_name() -> tuple[a, b]: ...
+
+# Add a new parameter to the return type
+function.return_type.parameters.append("float")
+```
+
+## Checking if a generic type contains a given type
+
+You can also check if a given type is in the list of parameters
+
+
+```python
+function = codebase.get_file("path/to/file.py").get_function("function_name")
+# def function_name() -> tuple[a, b]: ...
+
+# Check if "a" is in the function's return_type's parameters
+if "a" in function.return_type.parameters:
+    # type "a" is present in the return type parameters
+    print("type 'a' is present in the return type parameters.")
+```
+## Resolving a type_annotation
+
+You can find the referenced symbol of any type
+
+<CodeGroup>
+```python python
+function = codebase.get_file("path/to/file.py").get_function("function_name")
+# from xyz import MyContainer, a, b
+# def function_name() -> MyContainer[a, b]: ...
+print(function.return_type.resolved_types)  # Resolves to MyContainer
+for parameter in function.return_type.parameters:
+    print(parameter.resolved_types)  # Resolves to a and b
+```
+
+```python typescript
+function = codebase.get_file("path/to/file.ts").get_function("functionName")
+# import { MyContainer, a, b } './types'
+# function function_name(): MyContainer<a, b> { ... }
+print(function.return_type.resolved_types)  # Resolves to MyContainer
+for parameter in function.return_type.parameters:
+    print(parameter.resolved_types)  # Resolves to a and b
+```
+</CodeGroup>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Resolving a type_annotation of an assignment
+You can also use resolved_type directly on assignments to get the resolved_symbol
+
+```python
+a = codebase.get_file("path/to/file.py").get_global_var("a")
+# a: MyType = ...
+print(a.type)  # Resolves to MyType
+a.type.rename("MyNewType")  # Renames the symbol `MyType` to `MyNewType` throughout the codebase
+```

@@ -1,0 +1,72 @@
+codegen-frontend/.cache/*
+codegen-frontend/build/*
+**/node_modules
+codegen-frontend/api/index.js
+codegen-frontend/api/index.js.map
+codegen-frontend/api/*.json
+codegen-frontend/app/styles/app.css
+**/.run/*
+test-repos
+**/__pycache__/
+.pytest_cache/
+.mypy_cache
+*/.diffs/**
+**.profiles/**
+*.pyc
+*.pyd
+.DS_Store
+*.so
+*.sw[op]
+.idea/*
+codegen-frontend/scripts/.ipynb_checkpoints/*
+.python-version
+**/.vscode/settings.json
+**/.vscode/launch.json
+**/.ipynb_checkpoints/**
+supabase/config.toml
+**/.env.local
+**/alembic/versions/*
+**/scripts/scratch/*
+**/scripts/*.md
+**/scripts/Personal/*
+**/infrastructure/aws_infra/.terraform/*
+Edwards Scratchpad.ipynb
+
+# Allowing .env files to exist in repository, but not allowing updates
+.env
+
+# Required folders
+extra-repos/
+pr-logs/#
+
+# Remove local files
+**/.coverage
+alembic_versions_backup
+.idea/
+**/*.egg-info/**
+**/*.c
+**/build/
+**/dist/
+**/*.so
+**/.diffs/**
+**/.coverage*
+**/coverage.xml
+.nvmrc
+**/.virtual_documents
+/.nvmrc
+**/build/test-results/test/TEST*.xml
+src/graph_sitter/__init__.py
+src/**/*.html
+.ccache/
+uv-*.tar.gz
+.venv
+graph-sitter-types/out/**
+graph-sitter-types/typings/**
+coverage.json
+tests/verified_codemods/codemod_data/repo_commits.json
+
+# =====[ Docs ]=====
+# These are auto-generated
+docs/api-reference/core/*
+docs/api-reference/python/*
+docs/api-reference/typescript/*

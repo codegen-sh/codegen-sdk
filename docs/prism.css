@@ -1,0 +1,151 @@
+pre[class*="language-"] {
+	font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+pre[class*="language-"]::-moz-selection,
+pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection,
+code[class*="language-"] ::-moz-selection {
+	text-shadow: none;
+	background: #362d45;
+}
+pre[class*="language-"]::selection,
+pre[class*="language-"] ::selection,
+code[class*="language-"]::selection,
+code[class*="language-"] ::selection {
+	text-shadow: none;
+	background: #362d45;
+}
+@media print {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		text-shadow: none;
+	}
+}
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: 0.5em 0;
+	overflow: auto;
+}
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	color: white;
+}
+:not(pre) > code[class*="language-"] {
+	padding: 0.1em;
+	border-radius: 0.3em;
+	white-space: normal;
+}
+
+.language-python .language-bash {
+	background-color: #15141b !important;
+	font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
+	font-weight: 600 !important;
+	font-size: 16px !important;
+}
+
+.dark .bg-codeblock {
+	background-color: #18181b !important;
+}
+
+.codeblock-dark {
+	background-color: #18181b !important;
+	color: #edecee !important;
+	font-size: 20px !important;
+}
+
+.dark .prose {
+	color: #edecee !important;
+	font-size: 16px !important;
+}
+
+/* single backticks are orange */
+.dark .prose p code {
+	color: #ffca85 !important;
+}
+.dark .prose ul code {
+	color: #ffca85 !important;
+}
+
+/* links are purple */
+.prose a {
+	color: #a277ff !important;
+}
+
+.token.tag {
+	color: #a277ff !important;
+}
+.token.variable {
+	color: #a277ff !important;
+}
+.token.keyword {
+	color: #a277ff !important;
+}
+.token.operator {
+	color: #a277ff !important;
+}
+.token.attr-name {
+	color: #a277ff !important;
+}
+.token.punctuation {
+	color: #a277ff !important;
+}
+.token.constant {
+	color: #a277ff !important;
+}
+.token.string {
+	color: #61ffca !important;
+}
+.token.inserted {
+	color: #61ffca !important;
+}
+.token.changed {
+	color: #ffca85 !important;
+}
+.token.function {
+	color: #ffca85 !important;
+}
+.token.deleted {
+	color: #ff6767 !important;
+}
+.token.builtin {
+	color: #ffca85 !important;
+}
+.token.property {
+	color: #ffca85 !important;
+}
+.token.comment {
+	color: #6d6d6d !important;
+}
+.token.class-name {
+	color: #82e2ff !important;
+}
+.token.important,
+.token.bold {
+	font-weight: bold !important;
+}
+.token.italic {
+	font-style: italic !important;
+}
+
+.language-bash {
+	color: #ffca85 !important;
+}
+
+.language-bash .token {
+	color: #ffca85 !important;
+	font-weight: 700 !important;
+}
