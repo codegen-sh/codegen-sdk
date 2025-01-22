@@ -269,8 +269,8 @@ jobs:
     - run_ats:
         default_tests: "tests/codemod/test_codemods.py"
         codecov_flags: "smart-tests-codemod-oss"
-        collect_args: --size=${parameters.size} --sync-graph=${parameters.sync_graph} --token ${CODEGEN_BOT_GHE_TOKEN}
-        ats_collect_args: --size=${parameters.size},--sync-graph=${parameters.sync_graph},--token=${CODEGEN_BOT_GHE_TOKEN},
+        collect_args: --size=<<parameters.size>> --sync-graph=<<parameters.sync_graph>> --token ${CODEGEN_BOT_GHE_TOKEN}
+        ats_collect_args: --size=<<parameters.size>>,--sync-graph=<<parameters.sync_graph>>,--token=${CODEGEN_BOT_GHE_TOKEN},
         split_tests: false
     - slack/notify:
         event: fail
