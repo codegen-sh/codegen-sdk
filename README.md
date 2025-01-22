@@ -1,8 +1,8 @@
 # Graph sitter
 
 [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
-[![Upload Python Package](https://github.com/codegen-sh/graph-sitter/actions/workflows/release.yml/badge.svg)](https://github.com/codegen-sh/graph-sitter/actions/workflows/release.yml)
-[![Unit Tests](https://github.com/codegen-sh/graph-sitter/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/codegen-sh/graph-sitter/actions/workflows/unit-tests.yml)
+[![Upload Python Package](https://github.com/codegen-sh/codegen-sdk/actions/workflows/release.yml/badge.svg)](https://github.com/codegen-sh/codegen-sdk/actions/workflows/release.yml)
+[![Unit Tests](https://github.com/codegen-sh/codegen-sdk/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/codegen-sh/codegen-sdk/actions/workflows/unit-tests.yml)
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
