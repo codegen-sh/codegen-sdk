@@ -1,6 +1,9 @@
+import base64
 import logging
+import pickle
 from pathlib import Path
 
+import networkx as nx
 from tabulate import tabulate
 
 from graph_sitter.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
@@ -9,7 +12,6 @@ from graph_sitter.enums import ProgrammingLanguage
 logging.basicConfig(level=logging.INFO)
 codegen = get_codebase_codegen("../codegen", ".")
 res = []
-import networkx as nx
 
 # Create a directed graph
 G = nx.DiGraph()
@@ -53,8 +55,6 @@ print(tabulate(res, headers=["URL", "Function Name", "Filepath", "Usages"]))
 # Print some basic statistics
 print(f"Number of files: {G.number_of_nodes()}")
 print(f"Number of import relationships: {G.number_of_edges()}")
-import base64
-import pickle
 
 # Serialize the graph to a pickle
 graph_pickle = pickle.dumps(G)

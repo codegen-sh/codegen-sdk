@@ -77,8 +77,8 @@ packages = [
 ]
 
 [metadata.hooks.vcs]
-Homepage = "https://github.com/codegen-sh/graph_sitter"
-source_archive = "https://github.com/codegen-sh/graph_sitter/archive/{commit_hash}.zip"
+Homepage = "https://github.com/codegen-sh/codegen-sdk"
+source_archive = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash}.zip"
 
 
 [build.targets.wheel.hooks.custom]
