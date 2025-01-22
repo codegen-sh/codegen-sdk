@@ -54,7 +54,7 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - repos-{{ parameters.extra_repos }}
+            - repos-<<parameters.extra_repos>>
       - run:
           command: |
             EXTRA_REPOS_ARG=""
@@ -65,7 +65,7 @@ commands:
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
-          key: repos-{{ parameters.extra_repos }}
+          key: repos-<<parameters.extra_repos>>
   fetch-verified-codemods:
     steps:
       - run:
