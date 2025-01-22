@@ -292,7 +292,11 @@ jobs:
         extra_repos: <<parameters.extra_repos>>
     - run:
         command: |
-          PYTEST_ARGS='--extra-repos=<<parameters.extra_repos>> --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name="${CIRCLE_JOB}" tests/codemod/test_parse.py'
+          EXTRA_REPOS_ARG=""
+          if [ "<<parameters.extra_repos>>" = "true" ]; then
+            EXTRA_REPOS_ARG="--extra-repos=true"
+          fi
+          PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/codemod/test_parse.py"
           echo "Running tests with args: $PYTEST_ARGS"
           TESTS_TO_RUN=$(PYTEST_ARGS=${PYTEST_ARGS} ./.circleci/collect.sh)
           echo $TESTS_TO_RUN | circleci tests run --command "ulimit -s unlimited; xargs uv run --frozen pytest -n auto ${PYTEST_ARGS}"
