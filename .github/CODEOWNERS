@@ -1,3 +1,4 @@
 * @codegen-sh/graph-sitter @codegen-team
 **/skills @codegen-sh/capabilities @codegen-team @codegen-sh/capabilities
 **/code_generation @codegen-sh/graph-sitter @codegen-team
+**/uv.lock **/pyproject.toml **/*.yml @codegen-sh/graph-sitter @codegen-team @renovate-approve[bot]
