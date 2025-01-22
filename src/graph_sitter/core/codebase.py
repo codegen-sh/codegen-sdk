@@ -43,6 +43,7 @@ from graph_sitter.core.external_module import ExternalModule
 from graph_sitter.core.file import File, SourceFile
 from graph_sitter.core.function import Function
 from graph_sitter.core.import_resolution import Import
+from graph_sitter.core.export import Export
 from graph_sitter.core.interface import Interface
 from graph_sitter.core.interfaces.editable import Editable
 from graph_sitter.core.interfaces.has_name import HasName
@@ -87,6 +88,7 @@ TSymbol = TypeVar("TSymbol", bound="Symbol")
 TClass = TypeVar("TClass", bound="Class")
 TFunction = TypeVar("TFunction", bound="Function")
 TImport = TypeVar("TImport", bound="Import")
+TExport = TypeVar("TExport", bound="Export")
 TGlobalVar = TypeVar("TGlobalVar", bound="Assignment")
 TInterface = TypeVar("TInterface", bound="Interface")
 TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
@@ -261,6 +263,24 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+
+    @property
+    def exports(self) -> list[TExport]:
+        """Returns a list of all Export nodes in the codebase.
+
+        Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
+        including exports from both internal modules and external packages.
+
+        Args:
+            None
+
+        Returns:
+            list[TExport]: A list of Export nodes representing all exports in the codebase.
+            TExport can be PyExport for Python codebases or TSExport for TypeScript codebases.
+        """
+        if self.language == ProgrammingLanguage.PYTHON:
+            raise NotImplementedError("Exports are not supported for Python codebases since Python does not have an export mechanism.")
+        return self.G.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:

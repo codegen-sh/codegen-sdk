@@ -12,6 +12,8 @@ if TYPE_CHECKING:
     from graph_sitter.core.function import Function
     from graph_sitter.core.import_resolution import ImportStatement
     from graph_sitter.core.symbol import Symbol
+    from graph_sitter.core.export import Export
+    from graph_sitter.core.import_resolution import Import
 
 import logging
 
@@ -24,10 +26,12 @@ TImportStatement = TypeVar("TImportStatement", bound="ImportStatement")
 TGlobalVar = TypeVar("TGlobalVar", bound="Assignment")
 TClass = TypeVar("TClass", bound="Class")
 TFunction = TypeVar("TFunction", bound="Function")
+TExport = TypeVar("TExport", bound="Export")
+TImport = TypeVar("TImport", bound="Import")
 
 
 @apidoc
-class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction]):
+class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TExport, TImport]):
     """Directory representation for codebase.
     GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory.
     """
@@ -119,6 +123,16 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         return list(chain.from_iterable(f.import_statements for f in self.files))
 
     @property
+    def exports(self) -> list[TExport]:
+        """Get a recursive list of all exports in the directory and its subdirectories."""
+        return list(chain.from_iterable(f.exports for f in self.files))
+
+    @property
+    def imports(self) -> list[TImport]:
+        """Get a recursive list of all imports in the directory and its subdirectories."""
+        return list(chain.from_iterable(f.imports for f in self.files))
+
+    @property
     def global_vars(self) -> list[TGlobalVar]:
         """Get a recursive list of all global variables in the directory and its subdirectories."""
         return list(chain.from_iterable(f.global_vars for f in self.files))
@@ -140,6 +154,14 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
     def get_import_statement(self, name: str) -> TImportStatement | None:
         """Get an import statement by name in the directory and its subdirectories."""
         return next((s for s in self.import_statements if s.name == name), None)
+
+    def get_export(self, name: str) -> TExport | None:
+        """Get an export by name in the directory and its subdirectories."""
+        return next((s for s in self.exports if s.name == name), None)
+
+    def get_import(self, name: str) -> TImport | None:
+        """Get an import by name in the directory and its subdirectories."""
+        return next((s for s in self.imports if s.name == name), None)
 
     def get_global_var(self, name: str) -> TGlobalVar | None:
         """Get a global variable by name in the directory and its subdirectories."""
