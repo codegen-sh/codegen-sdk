@@ -1,0 +1,15 @@
+export const Return = ({return_type, description}) => (
+  <div className="pl-6 divide-y">
+    <h4 className="font-bold">Returns</h4>
+    <div className="border-gray-600 ">
+        <div className="py-6 first:pt-3 text-sm font-normal">
+            <div className="flex gap-4 items-center">
+                <div className="relative">
+                    {return_type}
+                </div>
+            </div>
+            <p className="mt-2 text-white">{description}</p>
+        </div>
+    </div>
+  </div>
+)

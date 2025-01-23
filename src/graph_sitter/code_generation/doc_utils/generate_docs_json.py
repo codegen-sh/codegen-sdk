@@ -1,4 +1,3 @@
-import json
 from typing import Any
 
 from loguru import logger
@@ -7,7 +6,6 @@ from tqdm import tqdm
 from graph_sitter.code_generation.doc_utils.parse_docstring import parse_docstring
 from graph_sitter.code_generation.doc_utils.schemas import ClassDoc, GSDocs, MethodDoc
 from graph_sitter.code_generation.doc_utils.utils import IGNORED_ATTRIBUTES, create_path, get_langauge, get_type, get_type_str, has_documentation, is_settter, replace_multiple_types
-from graph_sitter.code_generation.graph_sitter_codebase import get_graph_sitter_codebase
 from graph_sitter.core.class_definition import Class
 from graph_sitter.core.codebase import Codebase
 
@@ -24,7 +22,6 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
         dict[str, dict[str, Any]]: the documentation for the codebase
     """
     graph_sitter_docs = GSDocs(classes=[])
-    docstring_cache = {}
     types_cache = {}
     attr_cache = {}
 
@@ -52,47 +49,43 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
         method_path = create_path(method, cls)
         original_method_path = create_path(method)
         parameters = []
-        # Parse docstring only if not cached
-        if original_method_path not in docstring_cache:
-            parsed = parse_docstring(method.docstring.source)
-            if parsed is None:
-                raise ValueError(f"Method {cls.name}.{method.name} does not have a docstring")
 
-            # Update parameter types
-            for param, parsed_param in zip(method.parameters[1:], parsed["arguments"]):
-                if param.name == parsed_param.name:
-                    parsed_param.type = replace_multiple_types(
-                        codebase=codebase, input_str=parsed_param.type, resolved_types=param.type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
-                    )
-                    if param.default:
-                        parsed_param.default = param.default
+        parsed = parse_docstring(method.docstring.source)
+        if parsed is None:
+            raise ValueError(f"Method {cls.name}.{method.name} does not have a docstring")
 
-                    parameters.append(parsed_param)
-            # Update return type
-            from graph_sitter.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
-
-            if not isinstance(method.return_type, PyReturnTypePlaceholder):
-                return_type = replace_multiple_types(
-                    codebase=codebase, input_str=method.return_type.source, resolved_types=method.return_type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
+        # Update parameter types
+        for param, parsed_param in zip(method.parameters[1:], parsed["arguments"]):
+            if param.name == parsed_param.name:
+                parsed_param.type = replace_multiple_types(
+                    codebase=codebase, input_str=parsed_param.type, resolved_types=param.type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
                 )
-            else:
-                return_type = None
-            parsed["return_types"] = [return_type]
+                if param.default:
+                    parsed_param.default = param.default
 
-            docstring_cache[original_method_path] = parsed
+                parameters.append(parsed_param)
+        # Update return type
+        from graph_sitter.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
 
-        parsed_docstring = docstring_cache[original_method_path]
+        if not isinstance(method.return_type, PyReturnTypePlaceholder):
+            return_type = replace_multiple_types(
+                codebase=codebase, input_str=method.return_type.source, resolved_types=method.return_type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
+            )
+        else:
+            return_type = None
+        parsed["return_types"] = [return_type]
+
         meta_data = {"parent": create_path(method.parent_class), "path": method.file.filepath}
-        method_doc = MethodDoc(
+        return MethodDoc(
             name=method.name,
-            description=parsed_docstring["description"],
-            parameters=parsed_docstring["arguments"],
-            return_type=parsed_docstring["return_types"],
-            return_description=parsed_docstring["return_description"],
+            description=parsed["description"],
+            parameters=parsed["arguments"],
+            return_type=parsed["return_types"],
+            return_description=parsed["return_description"],
             method_type=get_type(method),
             code=method.function_signature,
             path=method_path,
-            raises=parsed_docstring["raises"],
+            raises=parsed["raises"],
             metainfo=meta_data,
             version=str(head_commit),
         )
@@ -169,10 +162,3 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             continue
 
     return graph_sitter_docs
-
-
-if __name__ == "__main__":
-    codebase = get_graph_sitter_codebase()
-    docs = generate_docs_json(codebase, "HEAD")
-    with open("/Users/jesusmeza/Documents/graph-sitter/src/graph_sitter/code_generation/docs.json", "w") as f:
-        json.dump(docs.model_dump(), f, indent=4)

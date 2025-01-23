@@ -1,0 +1,17 @@
+export const Parameter = ({name, type, required, description, defaultValue}) => (
+  <div className="py-6 first:pt-3 border-gray-600 text-sm font-normal">
+    <div className="flex gap-4 items-center">
+      <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">{name}</code>
+
+        {type}
+
+
+      {required && <span className="text-sm border border-purple-500 px-2 py-0.5 rounded">required</span>}
+      { defaultValue && <div className="flex gap-4 items-center text-sm border border-purple-500 px-2 py-0.5 rounded">
+        <span className="text-gray-500">Default:</span>
+        <span className="text-purple-500">{defaultValue}</span>
+      </div>}
+    </div>
+    <p className="mt-2 text-white">{description}</p>
+  </div>
+)
