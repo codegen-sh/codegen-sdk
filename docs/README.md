@@ -1,7 +1,7 @@
 # Codegen Docs
 
 This unites docs from:
-- graph-sitter (this repo)
+- codegen-sdk (this repo)
 - codegen-cli
 
 ## Development

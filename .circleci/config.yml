@@ -9,7 +9,7 @@ executors:
   default_image:
     docker:
       - image: ghcr.io/astral-sh/uv:python<<pipeline.parameters.python_version>>-bookworm
-    working_directory: /graph-sitter
+    working_directory: /codegen-sdk
     environment:
       UV_COMPILE_BYTECODE: 1
       UV_LINK_MODE: copy

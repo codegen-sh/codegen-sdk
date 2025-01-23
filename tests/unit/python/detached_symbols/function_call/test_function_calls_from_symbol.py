@@ -1,13 +1,13 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.argument import Argument
-from graph_sitter.core.statements.expression_statement import ExpressionStatement
-from graph_sitter.core.statements.return_statement import ReturnStatement
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.python import PyAssignment
-from graph_sitter.python.detached_symbols.decorator import PyDecorator
-from graph_sitter.python.statements.if_block_statement import PyIfBlockStatement
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.detached_symbols.argument import Argument
+from codegen.sdk.core.statements.expression_statement import ExpressionStatement
+from codegen.sdk.core.statements.return_statement import ReturnStatement
+from codegen.sdk.core.statements.statement import StatementType
+from codegen.sdk.python import PyAssignment
+from codegen.sdk.python.detached_symbols.decorator import PyDecorator
+from codegen.sdk.python.statements.if_block_statement import PyIfBlockStatement
 
 
 def test_function_calls_from_file(tmpdir):

@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_file_owners_non_codeowners_parser_returns_empty_set(tmpdir) -> None:

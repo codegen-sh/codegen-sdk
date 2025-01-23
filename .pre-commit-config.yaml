@@ -63,15 +63,6 @@ repos:
   #         - tomli
   #       files: "codegen-backend/docs/.*/.*.mdx"
 
-  # - repo: "local"
-  #   hooks:
-  #     - id: clean-diffs
-  #       name: Clean codemod diffs
-  #       entry: bash -c "cd codegen-backend && poetry run cg codemod clean-diffs"
-  #       types: [file]
-  #       language: system
-  #       pass_filenames: false
-  #       files: "codegen-backend/codegen_tests/graph_sitter/codemod/.*/expected_diff.patch"
   - repo: https://github.com/fpgmaas/deptry.git
     rev: "0.22.0"
     hooks:

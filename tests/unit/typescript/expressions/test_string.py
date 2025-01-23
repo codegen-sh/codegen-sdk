@@ -1,8 +1,8 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions import String
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.expressions import String
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_string_edit(tmpdir) -> None:

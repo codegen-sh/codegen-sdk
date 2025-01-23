@@ -8,9 +8,9 @@ from pathlib import Path
 from Levenshtein import distance as levenshtein_distance
 from pytest_snapshot.plugin import Snapshot
 
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.testing.constants import DIFF_FILEPATH
 from codegen_git.schemas.enums import DiffChangeType
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.testing.constants import DIFF_FILEPATH
 
 logger = logging.getLogger(__name__)
 

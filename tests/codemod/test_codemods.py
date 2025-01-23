@@ -4,9 +4,9 @@ from typing import TypeVar
 import pytest
 from pytest_snapshot.plugin import Snapshot
 
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.testing.models import BASE_PATH
+from codegen.sdk.codemod import Codemod3
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.testing.models import BASE_PATH
 from tests.utils.codebase_comparison_utils import compare_codebase_diff
 
 DIFF_ROOT = BASE_PATH / ".diffs"

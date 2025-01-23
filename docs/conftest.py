@@ -6,11 +6,11 @@ from sybil.parsers.rest import DocTestParser
 from sybil.parsers.markdown import PythonCodeBlockParser
 from doctest import ELLIPSIS
 
-from graph_sitter.code_generation.current_code_codebase import get_documented_objects
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.class_definition import TSClass
-from graph_sitter.typescript.file import TSFile
+from codegen.sdk.code_generation.current_code_codebase import get_documented_objects
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.class_definition import TSClass
+from codegen.sdk.typescript.file import TSFile
 from gscli.generate.runner_imports import EXTERNAL_IMPORTS
 SAMPLE_FILENAME = {
     ProgrammingLanguage.PYTHON: "sample.py",
