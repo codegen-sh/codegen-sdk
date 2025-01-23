@@ -25,25 +25,6 @@
         "id": 17
       },
       {
-        "name": "MyClass",
-        "text": null,
-        "code": null,
-        "color": null,
-        "shape": null,
-        "start_point": [
-          4,
-          15
-        ],
-        "emoji": null,
-        "end_point": [
-          4,
-          24
-        ],
-        "file_path": "path/to/file1.py",
-        "symbol_name": "FunctionCall",
-        "id": "range=<Range start_point=(4, 15), end_point=(4, 24), start_byte=75, end_byte=84> filepath='path/to/file1.py'"
-      },
-      {
         "name": "MyClass.get",
         "text": null,
         "code": null,
@@ -159,26 +140,6 @@
       }
     ],
     "links": [
-      {
-        "name": "MyClass",
-        "text": null,
-        "code": null,
-        "color": null,
-        "shape": null,
-        "start_point": [
-          1,
-          0
-        ],
-        "emoji": null,
-        "end_point": [
-          21,
-          51
-        ],
-        "file_path": "path/to/file.py",
-        "symbol_name": "PyClass",
-        "source": 17,
-        "target": "range=<Range start_point=(4, 15), end_point=(4, 24), start_byte=75, end_byte=84> filepath='path/to/file1.py'"
-      },
       {
         "name": "MyClass",
         "text": null,
