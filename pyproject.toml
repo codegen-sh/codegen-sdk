@@ -70,7 +70,9 @@ classifiers = [
 
 [project.scripts]
 codegen = "codegen.cli.cli:main"
-gs = "gscli.main:main"
+gs = "codegen.gscli.main:main"
+run_string = "codegen.sdk.core.main:main"
+
 [project.optional-dependencies]
 types = [
     "types-networkx>=3.2.1.20240918",
