@@ -165,7 +165,49 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
         else:
             self.insert_before(import_string, priority=1)
 
-    @noapidoc
+    @py_apidoc
+    def remove_unused_imports(self) -> None:
+        """Removes unused imports from the file.
+
+        Handles different Python import styles:
+        - Single imports (import x)
+        - From imports (from y import z)
+        - Multi-imports (from y import (a, b as c))
+
+        Preserves comments and whitespace where possible.
+        """
+        processed_imports = set()
+
+        for import_stmt in self.imports:
+            if import_stmt in processed_imports:
+                continue
+
+            if not import_stmt.usages:
+                processed_imports.add(import_stmt)
+
+                # For from-style imports, we need to check if other imports from same module are used
+                if import_stmt.is_from_import():
+                    module_imports = {imp for imp in self.imports if imp.module_name == import_stmt.module_name}
+
+                    if all(not imp.usages for imp in module_imports):
+                        # Remove entire import statement if no imports from module are used
+                        for imp in module_imports:
+                            processed_imports.add(imp)
+                            imp.remove()
+                    else:
+                        # Remove only this specific import
+                        import_stmt.remove()
+                else:
+                    # Simple import x case
+                    import_stmt.remove()
+
+        self.G.commit_transactions()
+
+    @py_apidoc
     def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file. NO-OP for python"""
-        pass
+        """Removes unused exports from the file.
+
+        In Python this is equivalent to removing unused imports since Python doesn't have
+        explicit export statements. Calls remove_unused_imports() internally.
+        """
+        self.remove_unused_imports()

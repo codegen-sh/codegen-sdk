@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from codegen.utils.codemod.codemod_writer_decorators import noapidoc, ts_apidoc
 from tree_sitter import Node as TSNode
 
 from graph_sitter.core.assignment import Assignment
@@ -22,7 +23,6 @@ from graph_sitter.enums import ImportType, NodeType
 from graph_sitter.typescript.import_resolution import TSImport
 from graph_sitter.typescript.statements.comment import TSComment, TSCommentType
 from graph_sitter.typescript.symbol_groups.comment_group import TSCommentGroup
-from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from graph_sitter.core.file import SourceFile
@@ -251,12 +251,26 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         return self.semicolon_node is not None
 
     @noapidoc
-    def _move_to_file(self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports") -> tuple[NodeId, NodeId]:
+    def _move_to_file(
+        self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True
+    ) -> tuple[NodeId, NodeId]:
         # TODO: Prevent creation of import loops (!) - raise a ValueError and make the agent fix it
         # TODO: Implement `update_all_imports` strategy
+        # Track original file and imports used by this symbol before moving
+        symbol_imports = set()
+
+        # Collect imports used by this symbol BEFORE moving it
+        for dep in self.dependencies:
+            if isinstance(dep, TSImport):
+                symbol_imports.add(dep)
+
         # =====[ Arg checking ]=====
         if file == self.file:
             return file.file_node_id, self.node_id
+        if imp := file.get_import(self.name):
+            encountered_symbols.add(imp)
+            if remove_unused_imports:
+                imp.remove()
 
         # =====[ Move over dependencies recursively ]=====
         if include_dependencies:
@@ -266,10 +280,14 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                         continue
 
                     # =====[ Symbols - move over ]=====
-                    elif isinstance(dep, TSSymbol):
-                        if dep.is_top_level:
-                            encountered_symbols.add(dep)
-                            dep._move_to_file(file, encountered_symbols=encountered_symbols, include_dependencies=True, strategy=strategy)
+                    elif isinstance(dep, TSSymbol) and dep.is_top_level:
+                        encountered_symbols.add(dep)
+                        dep._move_to_file(
+                            file=file,
+                            encountered_symbols=encountered_symbols,
+                            include_dependencies=include_dependencies,
+                            strategy=strategy,
+                        )
 
                     # =====[ Imports - copy over ]=====
                     elif isinstance(dep, TSImport):
@@ -314,6 +332,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         # =====[ Checks if symbol is used in original file ]=====
         # Takes into account that it's dependencies will be moved
         is_used_in_file = any(usage.file == self.file and usage.node_type == NodeType.SYMBOL and usage not in encountered_symbols for usage in self.symbol_usages)
+
         # ======[ Strategy: Add Back Edge ]=====
         # Here, we will add a "back edge" to the old file importing the self
         if strategy == "add_back_edge":
@@ -344,8 +363,43 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                         usage.usage_symbol.file.add_import_from_import_string(import_line)
             if is_used_in_file:
                 self.file.add_import_from_import_string(import_line)
+
         # =====[ Delete the original symbol ]=====
         self.remove()
+
+        # After moving a symbol, remove any imports that are now unused
+        if remove_unused_imports:
+            # Check each import that was used by the moved symbol
+            for import_symbol in symbol_imports:
+                try:
+                    # Try to access any property - if the import was removed this will fail
+                    _ = import_symbol.file
+                except (AttributeError, ReferenceError):
+                    # Skip if import was already removed
+                    continue
+
+                # Check if import is still used by any remaining symbols
+                still_used = False
+                for usage in import_symbol.usages:
+                    # Skip usages from the moved symbol
+                    if usage.usage_symbol == self:
+                        continue
+
+                    # Skip usages from symbols we moved
+                    if usage.usage_symbol in encountered_symbols:
+                        continue
+
+                    # For TypeScript, also check if the import is used in type positions
+                    if usage.is_type_usage:
+                        still_used = True
+                        break
+
+                    still_used = True
+                    break
+
+                # Remove import if it's no longer used
+                if not still_used:
+                    import_symbol.remove()
 
     def _convert_proptype_to_typescript(self, prop_type: Editable, param: Parameter | None, level: int) -> str:
         """Converts a PropType definition to its TypeScript equivalent."""

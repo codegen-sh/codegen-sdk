@@ -263,7 +263,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                 return first_node.insert_before(new_src, fix_indentation, newline, priority, dedupe)
         return super().insert_before(new_src, fix_indentation, newline, priority, dedupe)
 
-    def move_to_file(self, file: SourceFile, include_dependencies: bool = True, strategy: str = "update_all_imports") -> None:
+    def move_to_file(self, file: SourceFile, include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True) -> None:
         """Moves the given symbol to a new file and updates its imports and references.
 
         This method moves a symbol to a new file and updates all references to that symbol throughout the codebase. The way imports are handled can be controlled via the strategy parameter.
@@ -274,6 +274,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
             strategy (str): The strategy to use for updating imports. Can be either 'add_back_edge' or 'update_all_imports'. Defaults to 'update_all_imports'.
                 - 'add_back_edge': Moves the symbol and adds an import in the original file
                 - 'update_all_imports': Updates all imports and usages of the symbol to reference the new file
+            remove_unused_imports (bool): If True, removes any imports in the original file that become unused after moving the symbol. Defaults to True.
 
         Returns:
             None
@@ -282,19 +283,25 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
             AssertionError: If an invalid strategy is provided.
         """
         encountered_symbols = {self}
-        self._move_to_file(file, encountered_symbols, include_dependencies, strategy)
+        self._move_to_file(file, encountered_symbols, include_dependencies, strategy, remove_unused_imports)
 
     @noapidoc
-    def _move_to_file(self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports") -> tuple[NodeId, NodeId]:
+    def _move_to_file(
+        self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True
+    ) -> tuple[NodeId, NodeId]:
         """Helper recursive function for `move_to_file`"""
         from graph_sitter.core.import_resolution import Import
+
+        # Track original file and imports used by this symbol before moving
+        symbol_imports = set()
 
         # =====[ Arg checking ]=====
         if file == self.file:
             return file.file_node_id, self.node_id
         if imp := file.get_import(self.name):
             encountered_symbols.add(imp)
-            imp.remove()
+            if remove_unused_imports:
+                imp.remove()
 
         if include_dependencies:
             # =====[ Move over dependencies recursively ]=====
@@ -366,6 +373,40 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                 self.file.add_import_from_import_string(import_line)
         # =====[ Delete the original symbol ]=====
         self.remove()
+
+        # After moving a symbol (function or class) out of a file, if there are imports that are now unused because that was the only thing using them, remove those as well
+        if remove_unused_imports:
+            # Get all imports that were used by the moved symbol
+            for dep in self.dependencies:
+                if isinstance(dep, Import):
+                    symbol_imports.add(dep)
+
+            # Check each import that was used by the moved symbol
+            for import_symbol in symbol_imports:
+                try:
+                    # Try to access any property - if the import was removed this will fail
+                    _ = import_symbol.file
+                except (AttributeError, ReferenceError):
+                    # Skip if import was already removed
+                    continue
+
+                # Check if import is still used by any remaining symbols
+                still_used = False
+                for usage in import_symbol.usages:
+                    # Skip usages from the moved symbol
+                    if usage.usage_symbol == self:
+                        continue
+
+                    # Skip usages from symbols we moved
+                    if usage.usage_symbol in encountered_symbols:
+                        continue
+
+                    still_used = True
+                    break
+
+                # Remove import if it's no longer used
+                if not still_used:
+                    import_symbol.remove()
 
     @property
     @reader
