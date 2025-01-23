@@ -1,5 +1,8 @@
 import logging
+
+# ramp
 import os
+
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 from graph_sitter.core.codebase import Codebase
 
@@ -10,6 +13,7 @@ DEFAULT_CODEGEN_DIR = "/tmp/codegen"
 
 def fetch_codebase(repo_name: str, *, tmp_dir: str | None = None, shallow: bool = True, commit_hash: str | None = None) -> Codebase:
     """Fetches a codebase from GitHub and returns a Codebase instance.
+
     Args:
         repo_name (str): The name of the repository in format "owner/repo"
         tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
@@ -56,7 +60,7 @@ def fetch_codebase(repo_name: str, *, tmp_dir: str | None = None, shallow: bool 
             repo_path=repo_path,
             default_branch="main",  # We'll get the actual default branch after clone
             commit=commit_hash or "HEAD",
-            url=repo_url
+            url=repo_url,
         )
         logger.info("Clone completed successfully")
 
