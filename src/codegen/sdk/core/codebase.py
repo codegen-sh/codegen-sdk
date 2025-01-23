@@ -67,12 +67,12 @@ from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
 from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.visualizations.visualization_manager import VisualizationManager
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen_git.repo_operator.repo_operator import RepoOperator
 from codegen_git.schemas.enums import CheckoutResult
 from codegen_git.schemas.repo_config import BaseRepoConfig
 from codegen_git.utils.stopwatch_utils import stopwatch
-from graph_visualization.visualization_manager import VisualizationManager
 
 if TYPE_CHECKING:
     from app.codemod.types import Group
