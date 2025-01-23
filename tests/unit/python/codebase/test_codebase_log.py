@@ -3,9 +3,9 @@ from unittest.mock import patch
 import pytest
 
 from codegen.sdk.codebase.config import SessionOptions
-from codegen.sdk.codebase.control_flow import MaxPreviewTimeExceeded
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
+from codegen.utils.exceptions.control_flow import MaxPreviewTimeExceeded
 
 
 def test_log_writes_to_console(tmpdir) -> None:

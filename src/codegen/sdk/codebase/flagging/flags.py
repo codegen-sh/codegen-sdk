@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import MessageType
 from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.utils.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from app.codemod.types import Group

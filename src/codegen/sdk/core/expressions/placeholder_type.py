@@ -8,7 +8,7 @@ from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.extensions.autocommit import reader
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     pass

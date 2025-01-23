@@ -16,7 +16,7 @@ from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.core.symbol_groups.expression_group import ExpressionGroup
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.extensions.sort import sort_editables
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

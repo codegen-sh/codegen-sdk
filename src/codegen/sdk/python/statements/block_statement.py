@@ -6,7 +6,7 @@ from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.utils.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     pass

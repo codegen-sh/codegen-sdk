@@ -3,7 +3,7 @@ from typing import Generic, TypeVar
 from tree_sitter import Node as TSNode
 
 from codegen.sdk.core.expressions.named_type import NamedType
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.utils.decorators.docs import py_apidoc
 
 Parent = TypeVar("Parent")
 

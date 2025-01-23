@@ -5,7 +5,7 @@ from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.builtin import Builtin
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 Parent = TypeVar("Parent", bound="Expression")
 

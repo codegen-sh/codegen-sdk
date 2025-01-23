@@ -9,7 +9,7 @@ from codegen.sdk.core.expressions.expression import Expression
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.resolvable import Resolvable
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.has_name import HasName

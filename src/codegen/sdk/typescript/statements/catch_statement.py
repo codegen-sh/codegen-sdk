@@ -8,7 +8,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.catch_statement import CatchStatement
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
-from codegen.sdk.writer_decorators import apidoc
+from codegen.utils.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

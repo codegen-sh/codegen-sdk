@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.statements.comment import Comment, lowest_indentation
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.utils.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     pass

@@ -62,6 +62,7 @@ dependencies = [
     "toml>=0.10.2",
     "PyGithub==2.5.0",
     "GitPython==3.1.44",
+    "psutil>=5.8.0",
 ]
 license = {file = "LICENSE"}
 classifiers = [

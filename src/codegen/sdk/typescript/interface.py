@@ -19,7 +19,7 @@ from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.statements.attribute import TSAttribute
 from codegen.sdk.typescript.symbol import TSSymbol
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 Parent = TypeVar("Parent", bound="TSHasBlock")
 

@@ -12,7 +12,7 @@ from codegen.sdk.typescript.detached_symbols.decorator import TSDecorator
 from codegen.sdk.typescript.statements.comment import TSComment, TSCommentType
 from codegen.sdk.typescript.symbol_groups.comment_group import TSCommentGroup
 from codegen.sdk.utils import find_index
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement

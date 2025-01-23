@@ -7,7 +7,7 @@ from rustworkx import NoSuitableNeighbors
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.interfaces.usable import Usable
 from codegen.sdk.enums import EdgeType, ImportType, NodeType
-from codegen.sdk.writer_decorators import apidoc
+from codegen.utils.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.export import Export

@@ -5,7 +5,7 @@ from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.core.interfaces.wrapper_expression import IWrapper
-from codegen.sdk.writer_decorators import apidoc
+from codegen.utils.decorators.docs import apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

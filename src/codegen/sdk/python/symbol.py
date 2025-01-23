@@ -12,7 +12,7 @@ from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ImportType
 from codegen.sdk.python.statements.comment import PyComment, PyCommentType
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.utils.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     pass

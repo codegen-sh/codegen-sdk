@@ -25,7 +25,7 @@ from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property, is_descendant_of
 from codegen.sdk.typescript.enums import TSFunctionTypeNames
 from codegen.sdk.utils import find_first_ancestor
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

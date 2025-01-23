@@ -5,7 +5,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.defined_name import DefinedName
 from codegen.sdk.core.expressions.name import Name
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 
 @apidoc

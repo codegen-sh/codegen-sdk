@@ -7,7 +7,7 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.while_statement import WhileStatement
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

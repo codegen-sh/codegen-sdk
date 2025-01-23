@@ -16,7 +16,7 @@ from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.statements.attribute import PyAttribute
 from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.sdk.python.symbol import PySymbol
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.utils.decorators.docs import noapidoc, py_apidoc
 
 
 @py_apidoc

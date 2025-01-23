@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.writer_decorators import apidoc
+from codegen.utils.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

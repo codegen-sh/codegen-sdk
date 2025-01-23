@@ -16,7 +16,7 @@ from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.typescript.expressions.object_type import TSObjectType
 from codegen.sdk.typescript.expressions.type import TSType
 from codegen.sdk.typescript.symbol_groups.dict import TSPair
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.function import TSFunction

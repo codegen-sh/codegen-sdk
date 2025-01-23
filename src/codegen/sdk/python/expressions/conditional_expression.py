@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from codegen.sdk.core.expressions.ternary_expression import TernaryExpression
 from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.utils.decorators.docs import py_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

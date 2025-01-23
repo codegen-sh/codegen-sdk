@@ -13,7 +13,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.for_loop_statement import ForLoopStatement
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

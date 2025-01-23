@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING, TypeVar
 from tree_sitter import Node as TSNode
 
 from codegen.sdk.core.expressions.named_type import NamedType
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     pass
