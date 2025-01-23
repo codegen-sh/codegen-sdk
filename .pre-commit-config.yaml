@@ -87,7 +87,7 @@ repos:
         language: script
         files: ''  # Check all files
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.120.3
+    rev: 39.120.4
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
