@@ -15,7 +15,7 @@ class Bar:
         file = codebase.get_file("test.py")
         foo_class = file.get_class("Foo")
         ast = foo_class.ast()
-        snapshot.assert_match(ast.model_dump_json(indent=4), "ast.json")
+        snapshot.assert_match(ast.model_dump_json(indent=4) + "\n", "ast.json")
 
 
 def test_ast_nested(tmpdir: str, snapshot) -> None:
@@ -33,4 +33,4 @@ class Foo:
         file = codebase.get_file("test.py")
         foo_class = file.get_class("Foo")
         ast = foo_class.ast()
-        snapshot.assert_match(ast.model_dump_json(indent=4), "ast-nested.json")
+        snapshot.assert_match(ast.model_dump_json(indent=4) + "\n", "ast-nested.json")
