@@ -18,7 +18,7 @@ executors:
       image: ubuntu-2404:current
 orbs:
   aws-cli: circleci/aws-cli@5.1.2
-  codecov: codecov/codecov@5.0.3
+  codecov: codecov/codecov@5.2.0
   node: circleci/node@7.0.0
   github-cli: circleci/github-cli@2.6.2
   slack: circleci/slack@5.1.1
