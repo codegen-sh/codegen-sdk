@@ -44,14 +44,14 @@ class SwapClassAttributeUsages(Codemod3, Skill):
                 # Add import of `CacheConfig` to function definition file
                 function.file.add_symbol_import(class_b_symb)
 
-                # Check if the function body is using `bill_pay_vendor`
+                # Check if the function body is using `cache_config`
                 if len(function.code_block.get_variable_usages(class_a_param.name)) > 0:
                     # Add "wrapper" inside the function
-                    # This creates the `business_vendor` variable internally
+                    # This creates the `cache_config` variable internally
                     proxy_var_declaration = f"""{class_a_param.name} = cache_config.settings  # added by Codegen"""
                     function.prepend_statements(proxy_var_declaration)
 
-                # Update all callsites of original function to take in `payee` instead of `bill_pay_vendor`
+                # Update all callsites of original function to take in `cache_config` instead of `graph_rag_config`
                 fcalls = function.call_sites
                 for fcall in fcalls:
                     arg = fcall.get_arg_by_parameter_name(class_a_param.name)
