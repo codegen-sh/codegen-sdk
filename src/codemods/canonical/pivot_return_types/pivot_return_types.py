@@ -35,9 +35,9 @@ class PivotReturnTypes(Codemod3, Skill):
     def execute(self, codebase: Codebase) -> None:
         # Iterate over all functions in the codebase
         for function in codebase.functions:
-            # Check if the function's return type annotation is 'BillPayVendor'
+            # Check if the function's return type annotation is 'str'
             if (return_type := function.return_type) and return_type.source == "str":
-                # Update the return type to 'Payee'
+                # Update the return type to 'FastStr'
                 function.set_return_type("FastStr")
 
                 # Add import for 'FastStr' if it doesn't exist
