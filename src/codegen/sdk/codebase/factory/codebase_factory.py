@@ -1,11 +1,11 @@
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.config import CodebaseConfig, ProjectConfig
 from codegen.sdk.core.codebase import (
     Codebase,
     CodebaseType,
 )
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen_git.schemas.repo_config import BaseRepoConfig
 
 
 class CodebaseFactory:
