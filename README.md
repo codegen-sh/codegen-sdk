@@ -1,7 +1,6 @@
 # Graph sitter
 
 [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
-[![Unit Tests](https://github.com/codegen-sh/codegen-sdk/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/codegen-sh/codegen-sdk/actions/workflows/unit-tests.yml)
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
@@ -42,7 +41,7 @@ We built Codegen backwards from real-world refactors performed on enterprise cod
 
 - **Natural mental model**: Write transforms that read like your thought process - "move this function", "rename this variable", "add this parameter". No more wrestling with ASTs or manual import management.
 
-- **Battle-tested on complex codebases**: Handle Python, TypeScript, and React codebases with millions of lines of code. Built and validated on refactors at companies like [Ramp](https://ramp.com).
+- **Battle-tested on complex codebases**: Handle Python, TypeScript, and React codebases with millions of lines of code.
 
 - **Built for advanced intelligences**: As AI developers become more sophisticated, they need expressive yet precise tools to manipulate code. Codegen provides a programmatic interface that both humans and AI can use to express complex transformations through code itself.
 
