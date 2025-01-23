@@ -6,7 +6,7 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
 
 def update_init_file(file: Path) -> None:
-    path = Path(__file__).parent.parent
+    path = Path(__file__).parent.parent.parent
     sys.path.append(str(path))
     from codegen.gscli.generate.runner_imports import generate_exported_modules, get_runner_imports
 
@@ -19,7 +19,7 @@ class SpecialBuildHook(BuildHookInterface):
     PLUGIN_NAME = "codegen_build"
 
     def initialize(self, version: str, build_data: dict[str, Any]) -> None:
-        file = Path(self.root).parent / "src" / "codegen" / "sdk" / "__init__.py"
+        file = Path(self.root) / "src" / "codegen" / "sdk" / "__init__.py"
         update_init_file(file)
 
         build_data["artifacts"].append(f"/{file}")
