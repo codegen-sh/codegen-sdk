@@ -4,12 +4,12 @@ import logging
 from pathlib import Path
 from typing import TypedDict
 
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase, CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.writer_decorators import DocumentedObject, apidoc_objects, no_apidoc_objects, py_apidoc_objects, ts_apidoc_objects
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen_git.schemas.repo_config import BaseRepoConfig
 
 logger = logging.getLogger(__name__)
 

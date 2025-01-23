@@ -1,8 +1,8 @@
 from urllib.parse import urlparse
 
-from codegen_git.configs.token import get_token_for_repo_config
-from codegen_git.schemas.github import GithubType
-from codegen_git.schemas.repo_config import RepoConfig
+from codegen.git.configs.token import get_token_for_repo_config
+from codegen.git.schemas.github import GithubType
+from codegen.git.schemas.repo_config import RepoConfig
 
 
 def url_to_github(url: str, branch: str) -> str:

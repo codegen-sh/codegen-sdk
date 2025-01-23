@@ -1,8 +1,8 @@
 import logging
 
-from codegen_git.configs.config import config
-from codegen_git.schemas.github import GithubType
-from codegen_git.schemas.repo_config import RepoConfig
+from codegen.git.configs.config import config
+from codegen.git.schemas.github import GithubType
+from codegen.git.schemas.repo_config import RepoConfig
 
 logger = logging.getLogger(__name__)
 

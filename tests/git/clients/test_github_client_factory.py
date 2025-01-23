@@ -1,5 +1,5 @@
-from codegen_git.clients.github_client_factory import GithubClientFactory
-from codegen_git.schemas.github import GithubType
+from codegen.git.clients.github_client_factory import GithubClientFactory
+from codegen.git.schemas.github import GithubType
 
 
 def test_github_client_factory_create_from_token_no_token():

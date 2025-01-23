@@ -9,11 +9,11 @@ from typing import TYPE_CHECKING, NamedTuple
 
 from pydantic import BaseModel, ConfigDict
 
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.sdk.codebase.config import GSFeatureFlags
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.testing.constants import DIFF_FILEPATH
 from codegen.sdk.testing.verified_codemod_utils import CodemodAPI
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 
 BASE_TMP_DIR = Path(os.getenv("GITHUB_WORKSPACE", tempfile.gettempdir()))
 BASE_PATH: Path = Path(__file__).parent.parent.parent.parent.parent

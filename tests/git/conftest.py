@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from codegen_git.schemas.repo_config import RepoConfig
+from codegen.git.schemas.repo_config import RepoConfig
 
 
 @pytest.fixture(autouse=True)
@@ -19,7 +19,7 @@ def mock_config():
 
 @pytest.fixture(autouse=True)
 def repo_config() -> RepoConfig:
-    with patch("codegen_git.utils.clone.get_authenticated_clone_url_for_repo_config") as mock_clone_url:
+    with patch("codegen.git.utils.clone.get_authenticated_clone_url_for_repo_config") as mock_clone_url:
         mock_clone_url.return_value = "https://github.com/codegen-sh/Kevin-s-Adventure-Game.git"
         repo_config = RepoConfig(id=321, name="Kevin-s-Adventure-Game", full_name="codegen-sh/Kevin-s-Adventure-Game", organization_id="123", organization_name="codegen-sh")
         yield repo_config

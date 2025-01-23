@@ -1,8 +1,8 @@
-from codegen_git.clients.github_client import GithubClient
-from codegen_git.clients.github_enterprise_client import GithubEnterpriseClient
-from codegen_git.clients.types import GithubClientType
-from codegen_git.schemas.github import GithubType
-from codegen_git.schemas.repo_config import RepoConfig
+from codegen.git.clients.github_client import GithubClient
+from codegen.git.clients.github_enterprise_client import GithubEnterpriseClient
+from codegen.git.clients.types import GithubClientType
+from codegen.git.schemas.github import GithubType
+from codegen.git.schemas.repo_config import RepoConfig
 
 
 class GithubClientFactory:

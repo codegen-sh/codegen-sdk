@@ -3,12 +3,12 @@ import inspect
 import textwrap
 from collections.abc import Callable
 
+from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.codebase import CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill_test import SkillTestCase
 from codegen.sdk.skills.utils.utils import verify_skill_output
-from codegen_git.schemas.repo_config import BaseRepoConfig
 
 
 class SkillImplementation:

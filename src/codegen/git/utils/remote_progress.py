@@ -3,7 +3,7 @@ import time
 
 from git import RemoteProgress
 
-from codegen_git.schemas.enums import FetchResult
+from codegen.git.schemas.enums import FetchResult
 
 logger = logging.getLogger(__name__)
 
