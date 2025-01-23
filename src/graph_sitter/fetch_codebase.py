@@ -1,6 +1,4 @@
 import logging
-
-# ramp
 import os
 
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
