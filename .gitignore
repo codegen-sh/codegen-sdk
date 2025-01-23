@@ -55,13 +55,15 @@ alembic_versions_backup
 **/.virtual_documents
 /.nvmrc
 **/build/test-results/test/TEST*.xml
-src/graph_sitter/__init__.py
+src/codegen/sdk/__init__.py
 src/**/*.html
 .ccache/
 uv-*.tar.gz
 .venv
 graph-sitter-types/out/**
 graph-sitter-types/typings/**
+codegen-sdk/out/**
+codegen-sdk/typings/**
 coverage.json
 tests/verified_codemods/codemod_data/repo_commits.json
 

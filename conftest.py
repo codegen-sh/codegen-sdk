@@ -1,7 +1,6 @@
 import logging
 import os
 
-from codegen.sdk.core import autocommit
 from codegen.sdk.testing.models import Size
 
 
@@ -13,11 +12,6 @@ def find_dirs_to_ignore(start_dir, prefix):
             if any(dd.startswith("original_input") or dd.startswith("output") or dd.startswith("input") or dd.startswith("expected") for dd in dir.split("/")):
                 dirs_to_ignore.append(full_path)
     return dirs_to_ignore
-
-
-collect_ignore_glob = ["codegen_tests/graph_sitter/codemod/**/*.py"]
-if not autocommit.enabled:
-    collect_ignore_glob.append("**/test_autocommit.py")
 
 
 def pytest_addoption(parser):

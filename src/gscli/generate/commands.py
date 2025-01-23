@@ -12,7 +12,7 @@ from codegen.sdk.code_generation.doc_utils.canonicals import get_canonical_codem
 from codegen.sdk.code_generation.doc_utils.skills import format_all_skills
 from codegen.sdk.code_generation.doc_utils.utils import get_all_classes_to_document
 from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_for_codebase_page, render_mdx_page_for_class
-from codegen.sdk.code_generation.prompts.api_docs import get_graph_sitter_codebase
+from codegen.sdk.code_generation.prompts.api_docs import get_codegen_sdk_codebase
 from codegen.sdk.core.codebase import PyCodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python import PyClass
@@ -80,7 +80,7 @@ def _generate_codebase_typestubs() -> None:
         # remove typings dir if it exists
         shutil.rmtree(frontend_typestubs_dir)
     # generate typestubs in codegen-frontend/assets/typestubs/graphsitter  using pyright
-    os.system("uv run pyright -p . --createstub graph_sitter.core.codebase")
+    os.system("uv run pyright -p . --createstub codegen.sdk.core.codebase")
     os.system("uv run pyright -p . --createstub codegen.git")
     os.system("uv run pyright -p . --createstub networkx")
     # also generate for codemod context model and all its nested models
@@ -110,8 +110,8 @@ def generate_docs(docs_dir: str) -> None:
 
     This will generate docs using the codebase locally, including any unstaged changes
     """
-    codebase = get_graph_sitter_codebase()
-    generate_graph_sitter_docs(docs_dir, codebase)
+    codebase = get_codegen_sdk_codebase()
+    generate_codegen_sdk_docs(docs_dir, codebase)
     # generate_canonical_codemod_docs(docs_dir, codebase)
     generate_skills_docs(docs_dir)
     generate_guides(docs_dir)
@@ -143,9 +143,9 @@ def get_snippet_pattern(target_name: str) -> str:
     return pattern
 
 
-def generate_graph_sitter_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
-    """Generate the docs for the graph_sitter API and update the mint.json"""
-    print(colored("Generating GraphSitter docs", "green"))
+def generate_codegen_sdk_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
+    """Generate the docs for the codegen_sdk API and update the mint.json"""
+    print(colored("Generating codegen_sdk docs", "green"))
 
     # Generate docs page for codebase api and write to the file system
     mdx_page = render_mdx_for_codebase_page(codebase)

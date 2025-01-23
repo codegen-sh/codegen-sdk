@@ -1,2 +1,2 @@
-extend = "../../../../pyproject.toml"
+extend = "../../../../../pyproject.toml"
 lint.extend-select = ["G"]

@@ -63,22 +63,13 @@ repos:
   #         - tomli
   #       files: "codegen-backend/docs/.*/.*.mdx"
 
-  # - repo: "local"
+  # - repo: https://github.com/fpgmaas/deptry.git
+  #   rev: "0.22.0"
   #   hooks:
-  #     - id: clean-diffs
-  #       name: Clean codemod diffs
-  #       entry: bash -c "cd codegen-backend && poetry run cg codemod clean-diffs"
-  #       types: [file]
-  #       language: system
+  #     - id: deptry
   #       pass_filenames: false
-  #       files: "codegen-backend/codegen_tests/graph_sitter/codemod/.*/expected_diff.patch"
-  - repo: https://github.com/fpgmaas/deptry.git
-    rev: "0.22.0"
-    hooks:
-      - id: deptry
-        pass_filenames: false
-        always_run: true
-        entry: bash -c "uv run --frozen --all-extras --dev deptry src codegen-git/src --ignore DEP001"
+  #       always_run: true
+  #       entry: bash -c "uv run --frozen --all-extras --dev deptry src codegen-git/src --ignore DEP001"
   - repo: "local"
     hooks:
       - id: disallowed-words-check

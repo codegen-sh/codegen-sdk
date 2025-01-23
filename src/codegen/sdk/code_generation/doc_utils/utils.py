@@ -106,7 +106,7 @@ def filter_undocumented_methods_list(doc_methods: list[Function]) -> list[Functi
     return filtered_doc_methods
 
 
-def get_graph_sitter_class_docstring(cls: PyClass, codebase: Codebase) -> str:
+def get_codegen_sdk_class_docstring(cls: PyClass, codebase: Codebase) -> str:
     """Get the documentation for a single GraphSitter class and its methods."""
     # =====[ Parent classes ]=====
     parent_classes = cls.parent_class_names

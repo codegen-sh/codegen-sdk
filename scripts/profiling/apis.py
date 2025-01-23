@@ -21,7 +21,7 @@ for file in codegen.files:
     if "test" not in file.filepath:
         if file.ctx.repo_name == "codegen":
             color = "yellow"
-        elif file.ctx.repo_name == "graph_sitter":
+        elif file.ctx.repo_name == "codegen-sdk":
             color = "red"
             if file.ctx.base_path == "codegen-git":
                 color = "green"

@@ -1,10 +1,10 @@
 import logging
 
+from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.utils import (
     get_api_classes_by_decorator,
-    get_graph_sitter_class_docstring,
+    get_codegen_sdk_class_docstring,
 )
-from codegen.sdk.code_generation.graph_sitter_codebase import get_graph_sitter_codebase
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 def get_docstrings_for_classes(codebase: Codebase, language: ProgrammingLanguage, classnames: list[str]) -> dict[str, str]:
     """Returns map of ClassName -> Docstring"""
     classes = get_api_classes_by_decorator(codebase=codebase, language=language)
-    class_docstrings = {k: get_graph_sitter_class_docstring(cls=v, codebase=codebase) for k, v in classes.items()}
+    class_docstrings = {k: get_codegen_sdk_class_docstring(cls=v, codebase=codebase) for k, v in classes.items()}
     return {k: class_docstrings[k] for k in classnames}
 
 
@@ -125,7 +125,7 @@ def get_language_specific_docstring(codebase: Codebase, language: ProgrammingLan
 
     # =====[ Grab docstrings ]=====
     classes = get_api_classes_by_decorator(codebase=codebase, language=language)
-    class_docstrings = {k: get_graph_sitter_class_docstring(cls=v, codebase=codebase) for k, v in classes.items()}
+    class_docstrings = {k: get_codegen_sdk_class_docstring(cls=v, codebase=codebase) for k, v in classes.items()}
     docstrings = {k: v for k, v in class_docstrings.items() if k.startswith(prefix)}
 
     # =====[ Get mapping from e.g. File => PyFile and TFile => PyFile ]=====
@@ -150,14 +150,14 @@ For example, all `File` that you encounter will be of type {prefix}File, {prefix
 ########################################################################################################################
 
 
-def get_graph_sitter_docs(language: ProgrammingLanguage = ProgrammingLanguage.PYTHON, codebase: Codebase | None = None) -> str:
+def get_codegen_sdk_docs(language: ProgrammingLanguage = ProgrammingLanguage.PYTHON, codebase: Codebase | None = None) -> str:
     """Computes the GraphSitter docs from scratch"""
-    codebase = codebase or get_graph_sitter_codebase()
+    codebase = codebase or get_codegen_sdk_codebase()
     with codebase.session(sync_graph=False, commit=False):
         return f"""
-# GraphSitter Docs
+# Codegen SDK Docs
 
-GraphSitter is a Python SDK for writing powerful programs that operate on codebases. In essence, it is a scriptable, multi-language language server that is optimized for fast code transformations and analytics.
+Codegen SDK is a Python SDK for writing powerful programs that operate on codebases. In essence, it is a scriptable, multi-language language server that is optimized for fast code transformations and analytics.
 
 Consider the following:
 ```python
@@ -232,7 +232,7 @@ Given a Codemod like so, the Codegen infrastructure will:
     - Hierarchical logging, with filenames in single quotes
 - You do not need to explain to the developer the code you are going to write before calling CREATE_CODEMOD
     - This will just make the code
-- You *DO NOT* need to import `graph_sitter`, (this module does not exist) `codebase` or any types.
+- You *DO NOT* need to import `codegen.sdk`, (this module does not exist) `codebase` or any types.
     - All types in the library are available in the global namespace and are automatically imported, as is the `codebase` object.
 - You *DO NOT* need to do anything to parse the codebase.
     - This is done automatically by the Codegen infrastructure and pre-cached for fast execution. Just interact with the `codebase` object.

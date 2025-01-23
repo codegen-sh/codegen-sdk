@@ -157,7 +157,7 @@ def import_skills_from(path: Path, package: str):
 
 
 def import_all_skills():
-    import_skills_from(SKILLS_PATH, "graph_sitter.skills")
+    import_skills_from(SKILLS_PATH, "codegen.sdk.skills")
     import_skills_from(CODEMODS_PATH, "codemods.canonical")
 
 
@@ -167,7 +167,7 @@ def import_all_guide_skill_files():
         relative_path = file.relative_to(SKILLS_PATH)
         if "evaluation" in relative_path.parts or "__init__" in file.name or "guides" not in relative_path.parts:
             continue
-        module_name = "graph_sitter.skills." + str(relative_path).replace("/", ".").removesuffix(".py")
+        module_name = "codegen.sdk.skills." + str(relative_path).replace("/", ".").removesuffix(".py")
         importlib.import_module(module_name)
 
 

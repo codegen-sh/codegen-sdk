@@ -1137,4 +1137,4 @@ class Editable(JSONable, Generic[Parent]):
     @final
     def ast(self) -> AST:
         children = self._get_ast_children()
-        return AST(graph_sitter_type=self.__class__.__name__, span=self.span, tree_sitter_type=self.ts_node_type, children=children)
+        return AST(codegen_sdk_type=self.__class__.__name__, span=self.span, tree_sitter_type=self.ts_node_type, children=children)
