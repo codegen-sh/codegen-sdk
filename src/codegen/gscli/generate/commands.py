@@ -8,6 +8,8 @@ import click
 import inflection
 from termcolor import colored
 
+from codegen.gscli.generate.runner_imports import _generate_runner_imports
+from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
 from codegen.sdk.code_generation.doc_utils.canonicals import get_canonical_codemod_class_mdx, get_canonical_codemod_classes
 from codegen.sdk.code_generation.doc_utils.skills import format_all_skills
 from codegen.sdk.code_generation.doc_utils.utils import get_all_classes_to_document
@@ -17,8 +19,6 @@ from codegen.sdk.core.codebase import PyCodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python import PyClass
 from codegen.sdk.skills.core.utils import get_all_skills, get_guide_skills_dict
-from gscli.generate.runner_imports import _generate_runner_imports
-from gscli.generate.utils import LanguageType, generate_builtins_file
 
 logger = logging.getLogger(__name__)
 

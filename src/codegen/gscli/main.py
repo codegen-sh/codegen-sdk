@@ -3,8 +3,8 @@ import logging
 
 import click
 
-from gscli.codemod.commands import codemod
-from gscli.generate.commands import generate
+from codegen.gscli.codemod.commands import codemod
+from codegen.gscli.generate.commands import generate
 
 
 @click.group()
