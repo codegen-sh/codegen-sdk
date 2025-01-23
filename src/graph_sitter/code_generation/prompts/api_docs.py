@@ -1,10 +1,10 @@
 import logging
 
-from graph_sitter.code_generation.doc_utils.utils import (
+from graph_sitter.code_generation.graph_sitter_codebase import get_graph_sitter_codebase
+from graph_sitter.code_generation.prompts.utils import (
     get_api_classes_by_decorator,
     get_graph_sitter_class_docstring,
 )
-from graph_sitter.code_generation.graph_sitter_codebase import get_graph_sitter_codebase
 from graph_sitter.core.codebase import Codebase
 from graph_sitter.enums import ProgrammingLanguage
 
