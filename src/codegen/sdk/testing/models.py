@@ -16,7 +16,7 @@ from codegen.sdk.testing.verified_codemod_utils import CodemodAPI
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 
 BASE_TMP_DIR = Path(os.getenv("GITHUB_WORKSPACE", tempfile.gettempdir()))
-BASE_PATH: Path = Path(__file__).parent.parent.parent.parent
+BASE_PATH: Path = Path(__file__).parent.parent.parent.parent.parent
 TEST_DIR: Path = BASE_PATH / "tests" / "codemod"
 CODEMOD_PATH: Path = BASE_PATH / "src" / "codemods"
 VERIFIED_CODEMOD_DIR: Path = BASE_PATH / "tests" / "verified_codemods"
