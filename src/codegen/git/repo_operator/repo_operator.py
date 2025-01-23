@@ -14,11 +14,11 @@ from git import Diff, GitCommandError, InvalidGitRepositoryError, Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
 
-from codegen_git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
-from codegen_git.schemas.enums import CheckoutResult, FetchResult
-from codegen_git.schemas.repo_config import BaseRepoConfig
-from codegen_git.utils.stopwatch_utils import stopwatch
-from codegen_git.utils.time_utils import humanize_duration
+from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
+from codegen.git.schemas.enums import CheckoutResult, FetchResult
+from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.utils.stopwatch_utils import stopwatch
+from codegen.git.utils.time_utils import humanize_duration
 
 logger = logging.getLogger(__name__)
 

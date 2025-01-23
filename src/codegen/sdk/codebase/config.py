@@ -1,8 +1,8 @@
 from pydantic import BaseModel, ConfigDict, Field
 
+from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
-from codegen_git.repo_operator.repo_operator import RepoOperator
 
 HARD_MAX_AI_LIMIT = 500  # Global limit for AI requests
 

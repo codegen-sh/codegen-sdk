@@ -7,9 +7,9 @@ from github.MainClass import Github
 from github.Organization import Organization
 from github.Repository import Repository
 
-from codegen_git.configs.token import get_token_for_repo_config
-from codegen_git.schemas.github import GithubScope, GithubType
-from codegen_git.schemas.repo_config import RepoConfig
+from codegen.git.configs.token import get_token_for_repo_config
+from codegen.git.schemas.github import GithubScope, GithubType
+from codegen.git.schemas.repo_config import RepoConfig
 
 logger = logging.getLogger(__name__)
 

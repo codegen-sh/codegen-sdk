@@ -1,4 +1,4 @@
-from codegen_git.schemas.github import GithubType
+from codegen.git.schemas.github import GithubType
 
 
 def test_github_type_base_url():

@@ -96,9 +96,6 @@ commands:
     - run:
         command: |
           uv run --frozen cibuildwheel --output-dir dist
-          if [[ "<<parameters.base_packages>>" == "true" ]]; then
-            uv build --package codegen-git --wheel --sdist
-          fi
           rm dist/.gitignore || true
         environment:
           HATCH_BUILD_HOOKS_ENABLE: "true"

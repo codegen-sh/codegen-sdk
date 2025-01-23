@@ -2,10 +2,10 @@ import logging
 import os
 import subprocess
 
-from codegen_git.schemas.github import GithubType
-from codegen_git.schemas.repo_config import RepoConfig
-from codegen_git.utils.clone_url import get_authenticated_clone_url_for_repo_config
-from codegen_git.utils.stopwatch_utils import subprocess_with_stopwatch
+from codegen.git.schemas.github import GithubType
+from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config
+from codegen.git.utils.stopwatch_utils import subprocess_with_stopwatch
 
 logger = logging.getLogger(__name__)
 

@@ -7,11 +7,11 @@ from git import Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
 
-from codegen_git.repo_operator.repo_operator import RepoOperator
-from codegen_git.schemas.enums import FetchResult
-from codegen_git.schemas.repo_config import BaseRepoConfig
-from codegen_git.utils.clone_url import url_to_github
-from codegen_git.utils.file_utils import create_files
+from codegen.git.repo_operator.repo_operator import RepoOperator
+from codegen.git.schemas.enums import FetchResult
+from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.utils.clone_url import url_to_github
+from codegen.git.utils.file_utils import create_files
 
 
 class OperatorIsLocal(Exception):
