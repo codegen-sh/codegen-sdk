@@ -7,7 +7,7 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

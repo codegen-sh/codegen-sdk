@@ -2,7 +2,7 @@ from typing import Generic, TypeVar
 
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.placeholder.placeholder import Placeholder
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

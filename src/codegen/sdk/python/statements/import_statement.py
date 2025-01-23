@@ -10,7 +10,7 @@ from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.import_resolution import PyImport
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.utils.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     pass

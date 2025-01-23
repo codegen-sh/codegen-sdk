@@ -16,7 +16,7 @@ from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
 from codegen.git.utils.clone_url import get_clone_url_for_repo_config, url_to_github
 from codegen.git.utils.codeowner_utils import create_codeowners_parser_for_repo
 from codegen.git.utils.remote_progress import CustomRemoteProgress
-from codegen.git.utils.stopwatch_utils import stopwatch
+from codegen.utils.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
 

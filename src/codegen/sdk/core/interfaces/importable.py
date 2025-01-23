@@ -11,7 +11,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import EdgeType
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.extensions.sort import sort_editables
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

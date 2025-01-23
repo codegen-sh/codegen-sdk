@@ -9,7 +9,7 @@ from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.exceptions import APINotApplicableForLanguageError
 from codegen.sdk.python.assignment import PyAssignment
 from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.utils.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.class_definition import PyClass

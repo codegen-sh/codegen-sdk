@@ -14,7 +14,7 @@ from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.utils.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class

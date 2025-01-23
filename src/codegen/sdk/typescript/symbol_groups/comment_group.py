@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 from codegen.sdk.typescript.statements.comment import TSComment, TSCommentType
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.symbol import TSSymbol

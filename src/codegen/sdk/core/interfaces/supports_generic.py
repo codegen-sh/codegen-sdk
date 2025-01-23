@@ -6,7 +6,7 @@ from codegen.sdk.core.expressions.named_type import NamedType
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.type_parameters import TypeParameters
 from codegen.sdk.extensions.utils import cached_property
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.utils.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.expressions import Type

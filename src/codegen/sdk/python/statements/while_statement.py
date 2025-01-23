@@ -14,7 +14,7 @@ from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.statements.if_block_statement import PyIfBlockStatement
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.utils.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

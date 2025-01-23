@@ -5,7 +5,7 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.expressions.generic_type import GenericType
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.core.symbol_groups.dict import Dict
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     pass

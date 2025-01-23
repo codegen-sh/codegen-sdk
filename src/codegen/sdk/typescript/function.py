@@ -23,7 +23,7 @@ from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnTypePlaceholder
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.utils import find_all_descendants
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.statements.export_statement import ExportStatement

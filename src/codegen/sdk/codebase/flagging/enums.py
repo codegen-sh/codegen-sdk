@@ -3,7 +3,7 @@ from typing import TypedDict
 
 from typing_extensions import ReadOnly
 
-from codegen.sdk.writer_decorators import apidoc
+from codegen.utils.decorators.docs import apidoc
 
 
 @apidoc

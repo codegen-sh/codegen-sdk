@@ -11,7 +11,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.typescript.assignment import TSAssignment
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock

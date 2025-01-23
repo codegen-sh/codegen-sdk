@@ -35,7 +35,7 @@ from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentS
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import find_all_descendants
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.utils.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.statements.export_statement import ExportStatement

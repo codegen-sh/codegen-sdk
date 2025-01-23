@@ -23,13 +23,11 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
-from codegen.git.utils.stopwatch_utils import stopwatch
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
 from codegen.sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
-from codegen.sdk.codebase.control_flow import MaxAIRequestsError
 from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import FlagKwargs
@@ -71,7 +69,9 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.utils.exceptions.control_flow import MaxAIRequestsError
+from codegen.utils.performance.stopwatch_utils import stopwatch
 from graph_visualization.visualization_manager import VisualizationManager
 
 if TYPE_CHECKING:

@@ -30,7 +30,7 @@ from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.typescript.expressions.object_type import TSObjectType
 from codegen.sdk.utils import find_index
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.expressions.type import Type

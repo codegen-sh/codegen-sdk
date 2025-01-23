@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.expressions import Name
 from codegen.sdk.extensions.autocommit import reader
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.utils.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.symbol import Symbol

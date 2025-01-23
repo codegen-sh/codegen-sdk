@@ -22,7 +22,7 @@ from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 from graph_visualization.enums import VizNode
 
 if TYPE_CHECKING:

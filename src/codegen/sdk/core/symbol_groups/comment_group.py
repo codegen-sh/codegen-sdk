@@ -7,7 +7,7 @@ from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.comment import Comment
 from codegen.sdk.core.symbol_group import SymbolGroup
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.utils.decorators.docs import apidoc, noapidoc
 
 Parent = TypeVar("Parent")
 

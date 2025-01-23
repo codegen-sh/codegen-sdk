@@ -72,6 +72,8 @@ macos-max-compat = false
 [build]
 packages = [
     "src/codegen/sdk",
+    "src/codegen/git",
+    "src/codegen/utils",
     "src/graph_visualization",
     "src/gscli",
 ]

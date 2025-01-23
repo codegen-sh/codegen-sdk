@@ -19,7 +19,7 @@ from app.codemod.compilation.models.pull_request_context import PullRequestConte
 """
 # TODO: these should also be made public (i.e. included in the docs site)
 GS_PRIVATE_IMPORTS = """
-from codegen.sdk.codebase.control_flow import StopCodemodException
+from codegen.utils.exceptions.control_flow import StopCodemodException
 """.strip()
 
 IMPORT_STRING_TEMPLATE = """

@@ -10,7 +10,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.typescript.import_resolution import TSImport
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.utils.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
