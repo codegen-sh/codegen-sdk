@@ -53,6 +53,8 @@ dependencies = [
     "pyinstrument>=5.0.0",
     "pip>=24.3.1", # This is needed for some NPM/YARN/PNPM post-install scripts to work!
     "emoji>=2.14.0",
+    "PyGithub==2.5.0",
+    "GitPython==3.1.44",
 ]
 license = {file = "LICENSE"}
 classifiers = [
