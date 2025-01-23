@@ -15,7 +15,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.placeholder.placeholder_stub import StubPlaceholder
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.sdk.writer_decorators import apidoc, noapidoc
-from graph_visualization.enums import VizNode
+from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.parameter import Parameter
