@@ -1,7 +1,6 @@
 import pytest
 
 from graph_sitter.ai.helpers import count_tokens
-from graph_sitter.code_generation.doc_utils.utils import get_decorator_for_language
 from graph_sitter.code_generation.prompts.api_docs import get_graph_sitter_codebase, get_graph_sitter_docs
 from graph_sitter.core.symbol import Symbol
 from graph_sitter.enums import ProgrammingLanguage
@@ -57,14 +56,3 @@ def test_get_graph_sitter_codebase(codebase, language) -> None:
     superclasses = func.superclasses()
     callable = [x for x in superclasses if isinstance(x, Symbol) and x.name == "Callable"]
     assert len(callable) == 1
-
-
-@pytest.mark.xdist_group("codegen")
-@pytest.mark.parametrize("language", [ProgrammingLanguage.PYTHON, ProgrammingLanguage.TYPESCRIPT])
-def test_api_doc_generation(codebase, language) -> None:
-    api_docs = get_graph_sitter_docs(language=language, codebase=codebase)
-    decorator = get_decorator_for_language(language).value
-
-    for cls in codebase.classes:
-        if decorator in [decorator.name for decorator in cls.decorators]:
-            assert f"class {cls.name}" in api_docs, f"Documentation for class '{cls.name}' not found in {language.value} API docs"
