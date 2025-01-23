@@ -74,8 +74,8 @@ packages = [
     "src/codegen/sdk",
     "src/codegen/git",
     "src/codegen/utils",
+    "src/codegen/gscli",
     "src/graph_visualization",
-    "src/gscli",
 ]
 
 [metadata.hooks.vcs]

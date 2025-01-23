@@ -72,7 +72,7 @@ from codegen.sdk.utils import determine_project_language
 from codegen.utils.decorators.docs import apidoc, noapidoc
 from codegen.utils.exceptions.control_flow import MaxAIRequestsError
 from codegen.utils.performance.stopwatch_utils import stopwatch
-from graph_visualization.visualization_manager import VisualizationManager
+from codegen.visualizations.visualization_manager import VisualizationManager
 
 if TYPE_CHECKING:
     from app.codemod.types import Group

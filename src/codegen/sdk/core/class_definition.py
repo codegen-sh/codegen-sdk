@@ -31,7 +31,7 @@ from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.utils.decorators.docs import apidoc, noapidoc
-from graph_visualization.enums import VizNode
+from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

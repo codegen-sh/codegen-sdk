@@ -47,7 +47,7 @@ if TYPE_CHECKING:
     from codegen.sdk.core.statements.statement import Statement
     from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.core.symbol_group import SymbolGroup
-    from graph_visualization.enums import VizNode
+    from codegen.visualizations.enums import VizNode
 CONTAINER_CHARS = (b"(", b")", b"{", b"}", b"[", b"]", b"<", b">", b"import")
 MAX_REPR_LEN: int = 200
 
@@ -975,7 +975,7 @@ class Editable(JSONable, Generic[Parent]):
     @noapidoc
     def viz(self) -> VizNode:
         from codegen.sdk.core.interfaces.has_name import HasName
-        from graph_visualization.enums import VizNode
+        from codegen.visualizations.enums import VizNode
 
         if isinstance(self, HasName):
             return VizNode(file_path=self.filepath, start_point=self.start_point, end_point=self.end_point, name=self.name, symbol_name=self.__class__.__name__)

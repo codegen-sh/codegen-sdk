@@ -10,7 +10,7 @@ from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.output.utils import DeterministicJSONEncoder
-from graph_visualization.enums import GraphJson, GraphType
+from codegen.visualizations.enums import GraphJson, GraphType
 
 if TYPE_CHECKING:
     pass
