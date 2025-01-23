@@ -402,7 +402,7 @@ workflows:
             branches:
               ignore: develop
       - parse-tests:
-          name: Manual Parse Tests
+          name: Manual-Parse-Tests
           filters:
             branches:
               ignore: develop
