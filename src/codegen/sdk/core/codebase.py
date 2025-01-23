@@ -72,7 +72,7 @@ from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
 from codegen.sdk.writer_decorators import apidoc, noapidoc
-from graph_visualization.visualization_manager import VisualizationManager
+from codegen.visualizations.visualization_manager import VisualizationManager
 
 if TYPE_CHECKING:
     from app.codemod.types import Group

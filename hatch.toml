@@ -72,8 +72,8 @@ macos-max-compat = false
 [build]
 packages = [
     "src/codegen/sdk",
+    "src/codegen/gscli",
     "src/graph_visualization",
-    "src/gscli",
 ]
 
 [metadata.hooks.vcs]

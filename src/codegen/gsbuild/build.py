@@ -8,7 +8,7 @@ from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 def update_init_file(file: Path) -> None:
     path = Path(__file__).parent.parent
     sys.path.append(str(path))
-    from gscli.generate.runner_imports import generate_exported_modules, get_runner_imports
+    from codegen.gscli.generate.runner_imports import generate_exported_modules, get_runner_imports
 
     content = file.read_text()
     content = get_runner_imports(include_codegen=False) + "\n" + content + "\n" + generate_exported_modules()

@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.interfaces.callable import Callable
-    from graph_visualization.enums import VizNode
+    from codegen.visualizations.enums import VizNode
 
 Parent = TypeVar("Parent", bound="Expression | None")
 
@@ -216,7 +216,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @noapidoc
     @override
     def viz(self) -> VizNode:
-        from graph_visualization.enums import VizNode
+        from codegen.visualizations.enums import VizNode
 
         func = self.function_definition
         from codegen.sdk.core.function import Function

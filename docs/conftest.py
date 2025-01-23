@@ -11,7 +11,8 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.file import TSFile
-from gscli.generate.runner_imports import EXTERNAL_IMPORTS
+from codegen.gscli.generate.runner_imports import EXTERNAL_IMPORTS
+
 SAMPLE_FILENAME = {
     ProgrammingLanguage.PYTHON: "sample.py",
     ProgrammingLanguage.TYPESCRIPT: "sample.tsx",
@@ -20,6 +21,7 @@ SAMPLE_INPUT_PATH = {
     language: Path(__file__).parent / "samples" / name for language, name in SAMPLE_FILENAME.items()}
 SAMPLE_INPUT = {language: path.read_text() for language, path in SAMPLE_INPUT_PATH.items()}
 DEFAULT_LANGUAGE = ProgrammingLanguage.TYPESCRIPT
+
 @pytest.fixture(scope="function")
 def codebase(tmpdir):
     with get_codebase_session(tmpdir, programming_language=DEFAULT_LANGUAGE, files={SAMPLE_FILENAME[DEFAULT_LANGUAGE]: SAMPLE_INPUT[DEFAULT_LANGUAGE]}) as codebase:
