@@ -4,7 +4,7 @@ from contextlib import redirect_stderr, redirect_stdout
 
 import pytest
 
-from graph_sitter.code_generation.current_code_codebase import import_all_graph_sitter_modules
+from codegen.sdk.code_generation.current_code_codebase import import_all_graph_sitter_modules
 
 
 @pytest.mark.skip("broken after repo split, fix or move over")

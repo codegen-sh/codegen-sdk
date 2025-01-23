@@ -1,9 +1,9 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.file import File
-from graph_sitter.enums import EdgeType
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.file import File
+from codegen.sdk.enums import EdgeType
 from tests.unit.python.utils.test_file_contents import file1_content, file2_content
 
 

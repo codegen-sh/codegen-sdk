@@ -1,4 +1,4 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_class_definition_add_attribute_adds_source(tmpdir) -> None:

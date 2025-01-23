@@ -1,4 +1,4 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_import_set_import_symbol_alias_from_no_alias(tmpdir) -> None:

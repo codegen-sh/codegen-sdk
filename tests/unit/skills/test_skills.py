@@ -1,11 +1,11 @@
 import pytest
 
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.skills.core.skill_implementation import SkillImplementation
+from codegen.sdk.skills.core.skill_test import SkillTestCase
+from codegen.sdk.skills.core.utils import get_all_skill_implementations
+from codegen.sdk.skills.utils.utils import verify_skill_output
 from codegen_git.schemas.repo_config import BaseRepoConfig
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.skills.core.skill_implementation import SkillImplementation
-from graph_sitter.skills.core.skill_test import SkillTestCase
-from graph_sitter.skills.core.utils import get_all_skill_implementations
-from graph_sitter.skills.utils.utils import verify_skill_output
 
 skill_implementations = get_all_skill_implementations()
 cases = [(skill, test_case, idx) for skill in skill_implementations for idx, test_case in enumerate(skill.test_cases) if not skill.external]

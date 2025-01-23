@@ -1,8 +1,8 @@
 import logging
 import os
 
-from graph_sitter.core import autocommit
-from graph_sitter.testing.models import Size
+from codegen.sdk.core import autocommit
+from codegen.sdk.testing.models import Size
 
 
 def find_dirs_to_ignore(start_dir, prefix):

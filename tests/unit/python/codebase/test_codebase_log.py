@@ -2,10 +2,10 @@ from unittest.mock import patch
 
 import pytest
 
-from graph_sitter.codebase.config import SessionOptions
-from graph_sitter.codebase.control_flow import MaxPreviewTimeExceeded
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.config import SessionOptions
+from codegen.sdk.codebase.control_flow import MaxPreviewTimeExceeded
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_log_writes_to_console(tmpdir) -> None:

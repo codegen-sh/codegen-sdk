@@ -1,6 +1,6 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_function_insert_statements_add_source(tmpdir) -> None:

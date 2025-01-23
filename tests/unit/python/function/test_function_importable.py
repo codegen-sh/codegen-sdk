@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.import_resolution import Import
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.import_resolution import Import
 
 
 def test_function_symbol_dependencies(tmpdir) -> None:

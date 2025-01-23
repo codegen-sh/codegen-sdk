@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_class_definition_parent_class_names_single(tmpdir) -> None:

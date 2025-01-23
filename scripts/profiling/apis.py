@@ -6,8 +6,8 @@ from pathlib import Path
 import networkx as nx
 from tabulate import tabulate
 
-from graph_sitter.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
+from codegen.sdk.enums import ProgrammingLanguage
 
 logging.basicConfig(level=logging.INFO)
 codegen = get_codebase_codegen("../codegen", ".")

@@ -2,8 +2,8 @@ from itertools import product
 
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.symbol_groups.list import List
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.symbol_groups.list import List
 
 
 def test_list_basic(tmpdir) -> None:

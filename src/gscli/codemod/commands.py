@@ -9,10 +9,10 @@ import click
 from rich.console import Console
 from rich.table import Table
 
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.testing.models import BASE_TMP_DIR, REPO_ID_TO_URL, VERIFIED_CODEMOD_DATA_DIR, ClonedRepoTestCase, Size
-from graph_sitter.testing.test_discovery import filter_repos, find_codemod_test_cases, find_codemods, find_repos, find_verified_codemod_repos
-from graph_sitter.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.testing.models import BASE_TMP_DIR, REPO_ID_TO_URL, VERIFIED_CODEMOD_DATA_DIR, ClonedRepoTestCase, Size
+from codegen.sdk.testing.test_discovery import filter_repos, find_codemod_test_cases, find_codemods, find_repos, find_verified_codemod_repos
+from codegen.sdk.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata
 
 
 @click.group()

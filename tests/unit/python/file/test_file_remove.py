@@ -1,6 +1,6 @@
 import os
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_file_remove_after_create(tmpdir) -> None:

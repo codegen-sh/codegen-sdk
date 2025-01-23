@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.external_module import ExternalModule
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.external_module import ExternalModule
 
 
 def test_function_call_graph_successors(tmpdir) -> None:

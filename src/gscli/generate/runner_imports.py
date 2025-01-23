@@ -2,7 +2,7 @@ from itertools import chain
 
 from termcolor import colored
 
-from graph_sitter.code_generation.current_code_codebase import get_documented_objects
+from codegen.sdk.code_generation.current_code_codebase import get_documented_objects
 
 EXTERNAL_IMPORTS = """
 import os
@@ -19,7 +19,7 @@ from app.codemod.compilation.models.pull_request_context import PullRequestConte
 """
 # TODO: these should also be made public (i.e. included in the docs site)
 GS_PRIVATE_IMPORTS = """
-from graph_sitter.codebase.control_flow import StopCodemodException
+from codegen.sdk.codebase.control_flow import StopCodemodException
 """.strip()
 
 IMPORT_STRING_TEMPLATE = """

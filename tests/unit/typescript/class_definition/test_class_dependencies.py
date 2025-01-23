@@ -1,7 +1,7 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 @pytest.mark.skip(reason="CG-9539 TODO @caroljung")

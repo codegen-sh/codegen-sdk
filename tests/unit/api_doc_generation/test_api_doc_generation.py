@@ -1,10 +1,10 @@
 import pytest
 
-from graph_sitter.ai.helpers import count_tokens
-from graph_sitter.code_generation.doc_utils.utils import get_decorator_for_language
-from graph_sitter.code_generation.prompts.api_docs import get_graph_sitter_codebase, get_graph_sitter_docs
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.ai.helpers import count_tokens
+from codegen.sdk.code_generation.doc_utils.utils import get_decorator_for_language
+from codegen.sdk.code_generation.prompts.api_docs import get_graph_sitter_codebase, get_graph_sitter_docs
+from codegen.sdk.core.symbol import Symbol
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 @pytest.fixture(scope="module")

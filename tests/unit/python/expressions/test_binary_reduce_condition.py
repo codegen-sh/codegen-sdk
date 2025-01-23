@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python.file import PyFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.python.file import PyFile
 
 
 def test_reduce_binary_simple(tmpdir):

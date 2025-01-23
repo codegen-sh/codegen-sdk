@@ -1,4 +1,4 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from tests.unit.python.utils.test_file_contents import file1_content, file2_content
 
 

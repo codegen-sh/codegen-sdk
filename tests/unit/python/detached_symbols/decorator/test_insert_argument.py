@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_insert_single_arg(tmpdir) -> None:

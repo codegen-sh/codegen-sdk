@@ -8,15 +8,15 @@ import click
 import inflection
 from termcolor import colored
 
-from graph_sitter.code_generation.doc_utils.canonicals import get_canonical_codemod_class_mdx, get_canonical_codemod_classes
-from graph_sitter.code_generation.doc_utils.skills import format_all_skills
-from graph_sitter.code_generation.doc_utils.utils import get_all_classes_to_document
-from graph_sitter.code_generation.mdx_docs_generation import render_mdx_for_codebase_page, render_mdx_page_for_class
-from graph_sitter.code_generation.prompts.api_docs import get_graph_sitter_codebase
-from graph_sitter.core.codebase import PyCodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python import PyClass
-from graph_sitter.skills.core.utils import get_all_skills, get_guide_skills_dict
+from codegen.sdk.code_generation.doc_utils.canonicals import get_canonical_codemod_class_mdx, get_canonical_codemod_classes
+from codegen.sdk.code_generation.doc_utils.skills import format_all_skills
+from codegen.sdk.code_generation.doc_utils.utils import get_all_classes_to_document
+from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_for_codebase_page, render_mdx_page_for_class
+from codegen.sdk.code_generation.prompts.api_docs import get_graph_sitter_codebase
+from codegen.sdk.core.codebase import PyCodebaseType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.python import PyClass
+from codegen.sdk.skills.core.utils import get_all_skills, get_guide_skills_dict
 from gscli.generate.runner_imports import _generate_runner_imports
 from gscli.generate.utils import LanguageType, generate_builtins_file
 
