@@ -102,6 +102,7 @@
 				"building-with-codegen/variable-assignments",
 				"building-with-codegen/local-variables",
 				"building-with-codegen/comments-and-docstrings",
+				"building-with-codegen/external-modules",
 				"building-with-codegen/moving-symbols",
 				"building-with-codegen/collections",
 				"building-with-codegen/traversing-the-call-graph",
