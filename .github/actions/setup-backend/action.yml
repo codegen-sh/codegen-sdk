@@ -15,7 +15,7 @@ runs:
 #        create-symlink: true
 #        key: ${{ runner.os }}
     - name: Install UV
-      uses: astral-sh/setup-uv@v5.0
+      uses: astral-sh/setup-uv@v5.2
       id: setup-uv
       with:
         enable-cache: true
