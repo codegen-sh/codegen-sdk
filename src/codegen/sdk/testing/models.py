@@ -26,7 +26,7 @@ VERIFIED_CODEMOD_DIFFS: Path = VERIFIED_CODEMOD_DIR / "verified_codemod_diffs"
 
 try:
     REPO_ID_TO_URL = json.loads((TEST_DIR / "repos" / "repos.json").read_text())
-except FileNotFoundError:
+except (FileNotFoundError, json.decoder.JSONDecodeError):
     REPO_ID_TO_URL = {}
 if TYPE_CHECKING:
     from codegen.sdk.codemod import Codemod3
