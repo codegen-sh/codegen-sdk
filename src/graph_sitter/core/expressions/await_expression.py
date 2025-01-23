@@ -13,13 +13,7 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class AwaitExpression(Expression[Parent], HasValue, IWrapper, Generic[Parent]):
-    """An awaited expression, only found in asynchronous context.
-
-    Example:
-        ```python
-        await (foo(bar))
-        ```
-    """
+    """An awaited expression, only found in asynchronous contexts, e.g. await(foo(bar))"""
 
     def __init__(self, ts_node, file_node_id, G, parent: Parent):
         super().__init__(ts_node, file_node_id, G, parent=parent)

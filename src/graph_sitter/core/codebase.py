@@ -48,7 +48,7 @@ from graph_sitter.core.interfaces.editable import Editable
 from graph_sitter.core.interfaces.has_name import HasName
 from graph_sitter.core.symbol import Symbol
 from graph_sitter.core.type_alias import TypeAlias
-from graph_sitter.enums import NodeType, SymbolType
+from graph_sitter.enums import NodeType, ProgrammingLanguage, SymbolType
 from graph_sitter.extensions.sort import sort_editables
 from graph_sitter.extensions.utils import uncache_all
 from graph_sitter.output.constants import ANGULAR_STYLE
@@ -159,7 +159,11 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
     @noapidoc
     def __str__(self) -> str:
-        return f"<Codebase for repo={self.G.repo_name} with {len(self.G.nodes)} nodes and {len(self.G.edges)} edges>"
+        return f"<Codebase(name={self.name}, language={self.language}, path={self.repo_path})>"
+
+    @noapidoc
+    def __repr__(self):
+        return str(self)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "repo", self.G.repo_name
@@ -173,6 +177,20 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @noapidoc
     def op(self) -> RepoOperator:
         return self._op
+
+    ####################################################################################################################
+    # SIMPLE META
+    ####################################################################################################################
+
+    @property
+    def name(self) -> str:
+        """The name of the repository."""
+        return self.G.repo_name
+
+    @property
+    def language(self) -> ProgrammingLanguage:
+        """The programming language of the repository."""
+        return self.G.programming_language
 
     ####################################################################################################################
     # NODES

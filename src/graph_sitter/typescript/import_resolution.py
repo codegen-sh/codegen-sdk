@@ -564,3 +564,29 @@ class TSImport(Import["TSFile"], Exportable):
         if self.import_type == ImportType.SIDE_EFFECT:
             return
         yield from super().names
+
+    @override
+    def set_import_module(self, new_module: str) -> None:
+        """Sets the module of an import.
+
+        Updates the module of an import statement while maintaining the import symbol.
+        Uses single quotes by default (TypeScript standard), falling back to double quotes
+        only if the path contains single quotes.
+
+        Args:
+            new_module (str): The new module path to import from.
+
+        Returns:
+            None
+        """
+        if self.module is None:
+            return
+
+        # If already quoted, use as is
+        if (new_module.startswith('"') and new_module.endswith('"')) or (new_module.startswith("'") and new_module.endswith("'")):
+            self.module.source = new_module
+            return
+
+        # Use double quotes if path contains single quotes, otherwise use single quotes (TypeScript standard)
+        quote = '"' if "'" in new_module else "'"
+        self.module.source = f"{quote}{new_module}{quote}"

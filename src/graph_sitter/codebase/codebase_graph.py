@@ -6,6 +6,7 @@ from collections.abc import Generator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from enum import IntEnum, auto, unique
+from functools import lru_cache
 from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -149,6 +150,7 @@ class CodebaseGraph:
         self.config_parser = get_config_parser_for_language(context.programming_language, self)
         self.dependency_manager = get_dependency_manager(context.programming_language, self)
         self.language_engine = get_language_engine(context.programming_language, self)
+        self.programming_language = context.programming_language
 
         # Build the graph
         self.build_graph(context.repo_operator)
@@ -597,12 +599,14 @@ class CodebaseGraph:
             exec.map(lambda f: f.write_pending_content(), to_write)
         self.pending_files.difference_update(to_write)
 
+    @lru_cache(maxsize=10000)
     def to_absolute(self, filepath: PathLike | str) -> Path:
         path = Path(filepath)
         if not path.is_absolute():
             path = Path(self.repo_path) / path
         return path.resolve()
 
+    @lru_cache(maxsize=10000)
     def to_relative(self, filepath: PathLike | str) -> Path:
         path = self.to_absolute(filepath)
         if path == Path(self.repo_path) or Path(self.repo_path) in path.parents:
