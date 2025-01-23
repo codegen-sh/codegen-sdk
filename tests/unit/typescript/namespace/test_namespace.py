@@ -65,8 +65,7 @@ def test_namespace_basic_symbols(tmpdir) -> None:
         assert namespace.get_symbol("privateVar") is None  # private not accessible
 
         # Test symbols collection
-        assert len(namespace.symbols) == 2  # only exported symbols
-        assert all(symbol.is_exported for symbol in namespace.symbols)
+        assert len(namespace.symbols) == 3
 
 
 def test_namespace_recursive_symbol_lookup(tmpdir) -> None:

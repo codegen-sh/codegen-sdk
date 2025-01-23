@@ -23,6 +23,7 @@ from graph_sitter.writer_decorators import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from graph_sitter.typescript.file import TSFile
+    from graph_sitter.typescript.namespace import TSNamespace
     from graph_sitter.typescript.statements.import_statement import TSImportStatement
 
 
@@ -564,6 +565,34 @@ class TSImport(Import["TSFile"], Exportable):
         if self.import_type == ImportType.SIDE_EFFECT:
             return
         yield from super().names
+
+    @property
+    def namespace_imports(self) -> list[TSNamespace]:
+        """Returns any namespace objects imported by this import statement.
+
+        For example:
+        import * as MyNS from './mymodule';
+
+        Returns:
+            List of namespace objects imported
+        """
+        if not self.is_namespace_import():
+            return []
+
+        resolved = self.resolved_symbol
+        if resolved is None or not isinstance(resolved, TSNamespace):
+            return []
+
+        return [resolved]
+
+    def is_namespace_import(self) -> bool:
+        """Returns True if this import is importing a namespace.
+
+        Examples:
+        import * as MyNS from './mymodule';  # True
+        import { foo } from './mymodule';    # False
+        """
+        return self.import_type == ImportType.NAMESPACE and self.alias is not None
 
     @override
     def set_import_module(self, new_module: str) -> None:

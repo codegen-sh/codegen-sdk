@@ -6,13 +6,12 @@ from tree_sitter import Node as TSNode
 
 from graph_sitter.codebase.codebase_graph import CodebaseGraph
 from graph_sitter.core.autocommit import commiter
-from graph_sitter.core.dataclasses.usage import UsageKind
+from graph_sitter.core.dataclasses.usage import Usage, UsageKind, UsageType
 from graph_sitter.core.interfaces.has_name import HasName
 from graph_sitter.core.node_id_factory import NodeId
 from graph_sitter.core.statements.statement import Statement
-from graph_sitter.core.statements.symbol_statement import SymbolStatement
 from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import SymbolType
+from graph_sitter.enums import EdgeType, SymbolType
 from graph_sitter.extensions.utils import cached_property
 from graph_sitter.typescript.class_definition import TSClass
 from graph_sitter.typescript.enum_definition import TSEnum
@@ -51,7 +50,19 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
         # Use self as destination if none provided
         dest = dest or self.self_dest
 
-        # Compute dependencies from the namespace's code block
+        if dest and dest != self:
+            # Add direct usage of namespace itself
+            usage = Usage(kind=usage_type, match=self, usage_type=UsageType.DIRECT, usage_symbol=dest.parent_symbol, imported_by=None)
+            self.G.add_edge(self.node_id, dest.node_id, EdgeType.SYMBOL_USAGE, usage)
+
+            # For each exported symbol accessed through namespace
+            for symbol in self.symbols:
+                if symbol and symbol.ts_node_type == "export_statement":
+                    # Add chained usage edge
+                    chained_usage = Usage(kind=usage_type, match=symbol, usage_type=UsageType.CHAINED, usage_symbol=dest.parent_symbol, imported_by=None)
+                    self.G.add_edge(symbol.node_id, dest.node_id, EdgeType.SYMBOL_USAGE, chained_usage)
+
+        # Compute dependencies from namespace's code block
         self.code_block._compute_dependencies(usage_type, dest)
 
     @cached_property
@@ -59,33 +70,48 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
         """Returns all symbols defined within this namespace, including nested ones."""
         all_symbols = []
         for stmt in self.code_block.statements:
-            # Handle export statements
             if stmt.ts_node_type == "export_statement":
                 for export in stmt.exports:
                     all_symbols.append(export.declared_symbol)
-            # Handle direct symbols
-            elif isinstance(stmt, SymbolStatement):
+            elif hasattr(stmt, "assignments"):
+                all_symbols.extend(stmt.assignments)
+            else:
                 all_symbols.append(stmt)
         return all_symbols
 
-    def get_symbol(self, name: str, recursive: bool = True) -> Symbol | None:
-        """Get a symbol by name from this namespace.
+    def get_symbol(self, name: str, recursive: bool = True, get_private: bool = False) -> Symbol | None:
+        """Get an exported or private symbol by name from this namespace. Returns only exported symbols by default.
 
         Args:
             name: Name of the symbol to find
             recursive: If True, also search in nested namespaces
+            get_private: If True, also search in private symbols
 
         Returns:
             Symbol | None: The found symbol, or None if not found
         """
         # First check direct symbols in this namespace
         for symbol in self.symbols:
+            # Handle TSAssignmentStatement case
+            if hasattr(symbol, "assignments"):
+                for assignment in symbol.assignments:
+                    if assignment.name == name:
+                        # If we are looking for private symbols then return it, else only return exported symbols
+                        if get_private:
+                            return assignment
+                        elif assignment.is_exported:
+                            return assignment
+
+            # Handle regular symbol case
             if hasattr(symbol, "name") and symbol.name == name:
-                return symbol
+                if get_private:
+                    return symbol
+                elif symbol.is_exported:
+                    return symbol
 
             # If recursive and this is a namespace, check its symbols
             if recursive and isinstance(symbol, TSNamespace):
-                nested_symbol = symbol.get_symbol(name, recursive=True)
+                nested_symbol = symbol.get_symbol(name, recursive=True, get_private=get_private)
                 return nested_symbol
 
         return None
@@ -201,3 +227,159 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
                 nested.append(symbol)
                 nested.extend(symbol.get_nested_namespaces())
         return nested
+
+    @ts_apidoc
+    @commiter
+    def add_symbol(self, symbol: TSSymbol | str, export: bool = False, remove_original: bool = False) -> TSSymbol:
+        """Adds a new symbol to the namespace.
+
+        Args:
+            symbol: The symbol to add to the namespace (either a TSSymbol instance or source code string)
+            export: Whether to export the symbol. Defaults to False.
+            remove_original: Whether to remove the original symbol. Defaults to False.
+
+        Returns:
+            The added symbol
+        """
+        # TODO: Do we need to check if symbol can be added to the namespace?
+        # if not self.symbol_can_be_added(symbol):
+        #     raise ValueError(f"Symbol {symbol.name} cannot be added to the namespace.")
+        # TODO: add symbol by moving
+        # TODO: use self.export_symbol() to export the symbol if needed ?
+
+        print("SYMBOL to be added: ", symbol, "export: ", export)
+        symbol_name = symbol.name if isinstance(symbol, TSSymbol) else symbol.split(" ")[2 if export else 1]
+
+        # Check if the symbol already exists in file
+        existing_symbol = self.get_symbol(symbol_name)
+        if existing_symbol is not None:
+            return existing_symbol
+
+        # Export symbol if needed, then append to code block
+        if isinstance(symbol, str):
+            if export and not symbol.startswith("export "):
+                symbol = f"export {symbol}"
+        elif isinstance(symbol, TSSymbol):
+            if export and not symbol.is_exported:
+                export_src = f"export {symbol.source};"
+                self.code_block.statements.append(export_src)
+        self.code_block.statements.append(symbol)
+        self.G.commit_transactions()
+
+        # Remove symbol from original location if remove_original is True
+        if remove_original and symbol.parent is not None:
+            symbol.parent.remove_symbol(symbol_name)
+
+        self.G.commit_transactions()
+        added_symbol = self.get_symbol(symbol_name)
+        if added_symbol is None:
+            raise ValueError(f"Failed to add symbol {symbol_name} to namespace")
+        return added_symbol
+
+    @ts_apidoc
+    @commiter
+    def remove_symbol(self, symbol_name: str) -> TSSymbol | None:
+        """Removes a symbol from the namespace by name.
+
+        Args:
+            symbol_name: Name of the symbol to remove
+
+        Returns:
+            The removed symbol if found, None otherwise
+        """
+        symbol = self.get_symbol(symbol_name)
+        if symbol:
+            # Remove from code block statements
+            for i, stmt in enumerate(self.code_block.statements):
+                if symbol.source == stmt.source:
+                    print("stmt to be removed: ", stmt)
+                    self.code_block.statements.pop(i)
+                    self.G.commit_transactions()
+                    return symbol
+        return None
+
+    @ts_apidoc
+    @commiter
+    def rename_symbol(self, old_name: str, new_name: str) -> None:
+        """Renames a symbol within the namespace.
+
+        Args:
+            old_name: Current symbol name
+            new_name: New symbol name
+        """
+        symbol = self.get_symbol(old_name)
+        if symbol:
+            symbol.rename(new_name)
+        self.G.commit_transactions()
+
+    @commiter
+    def export_symbol(self, name: str) -> None:
+        """Marks a symbol as exported in the namespace.
+
+        Args:
+            name: Name of symbol to export
+        """
+        symbol = self.get_symbol(name)
+        if not symbol or symbol.is_exported:
+            return
+
+        export_source = f"export {symbol.source}"
+        symbol.parent.edit(export_source)
+        self.G.commit_transactions()
+
+    @property
+    def valid_import_names(self) -> set[str]:
+        """Returns set of valid import names for this namespace.
+
+        This includes all exported symbols plus the namespace name itself
+        for namespace imports.
+        """
+        names = {self.name}  # Namespace itself can be imported
+        for stmt in self.code_block.statements:
+            if stmt.ts_node_type == "export_statement":
+                for export in stmt.exports:
+                    names.add(export.name)
+        return names
+
+    def resolve_import(self, import_name: str) -> Symbol | None:
+        """Resolves an import name to a symbol within this namespace.
+
+        Args:
+            import_name: Name to resolve
+
+        Returns:
+            Resolved symbol or None if not found
+        """
+        # First check direct symbols
+        for symbol in self.symbols:
+            if symbol.is_exported and symbol.name == import_name:
+                return symbol
+
+        # Then check nested namespaces
+        for nested in self.get_nested_namespaces():
+            resolved = nested.resolve_import(import_name)
+            if resolved is not None:
+                return resolved
+
+        return None
+
+    @ts_apidoc
+    def resolve_attribute(self, name: str) -> Symbol | None:
+        """Resolves an attribute access on the namespace.
+
+        Args:
+            name: Name of the attribute to resolve
+
+        Returns:
+            The resolved symbol or None if not found
+        """
+        # First check direct symbols
+        if symbol := self.get_symbol(name):
+            return symbol
+
+        # Then check nested namespaces recursively
+        for nested in self.get_nested_namespaces():
+            if symbol := nested.get_symbol(name):
+                return symbol
+
+        return None
