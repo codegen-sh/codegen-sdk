@@ -9,7 +9,7 @@ from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.skill_test import SkillTestCase
 from codegen.sdk.skills.core.utils import skill, skill_impl
 
-EVAL_SKILLS_TEST_DIR = Path(__file__).parents[3] / "src" / "codemods" / "eval" / "test_files"
+EVAL_SKILLS_TEST_DIR = Path(__file__).parent.parents[3] / "src" / "codemods" / "eval" / "test_files"
 
 
 ########################################################################################################################
