@@ -7,16 +7,16 @@ from codeowners import CodeOwners as CodeOwnersParser
 from git import GitCommandError, Remote
 from git.remote import PushInfoList
 
-from codegen_git.clients.git_repo_client import GitRepoClient
-from codegen_git.repo_operator.repo_operator import RepoOperator
-from codegen_git.schemas.enums import CheckoutResult, FetchResult, SetupOption
-from codegen_git.schemas.github import GithubScope, GithubType
-from codegen_git.schemas.repo_config import RepoConfig
-from codegen_git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
-from codegen_git.utils.clone_url import get_clone_url_for_repo_config, url_to_github
-from codegen_git.utils.codeowner_utils import create_codeowners_parser_for_repo
-from codegen_git.utils.remote_progress import CustomRemoteProgress
-from codegen_git.utils.stopwatch_utils import stopwatch
+from codegen.git.clients.git_repo_client import GitRepoClient
+from codegen.git.repo_operator.repo_operator import RepoOperator
+from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
+from codegen.git.schemas.github import GithubScope, GithubType
+from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
+from codegen.git.utils.clone_url import get_clone_url_for_repo_config, url_to_github
+from codegen.git.utils.codeowner_utils import create_codeowners_parser_for_repo
+from codegen.git.utils.remote_progress import CustomRemoteProgress
+from codegen.git.utils.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
 

@@ -4,9 +4,9 @@ import os
 import plotly.graph_objects as go
 from networkx import Graph
 
+from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.visualizations.viz_utils import graph_to_json
-from codegen_git.repo_operator.repo_operator import RepoOperator
 
 logger = logging.getLogger(__name__)
 

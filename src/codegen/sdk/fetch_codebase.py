@@ -1,10 +1,10 @@
 import logging
 import os
 
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.sdk.codebase.config import DefaultConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.utils import determine_project_language
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
 
 logger = logging.getLogger(__name__)
 

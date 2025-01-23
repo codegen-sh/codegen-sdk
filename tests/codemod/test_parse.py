@@ -5,11 +5,11 @@ import os
 import psutil
 import pytest
 
+from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultFlags, ProjectConfig
 from codegen.sdk.codebase.validation import PostInitValidationStatus, post_init_validation
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.testing.models import Repo
-from codegen_git.repo_operator.repo_operator import RepoOperator
 from tests.utils.recursion import set_recursion_limit
 
 BYTES_IN_GIGABYTE = 1024**3

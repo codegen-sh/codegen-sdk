@@ -14,11 +14,11 @@ from github.Repository import Repository
 from github.Tag import Tag
 from github.Workflow import Workflow
 
-from codegen_git.clients.github_client_factory import GithubClientFactory
-from codegen_git.clients.types import GithubClientType
-from codegen_git.schemas.github import GithubScope, GithubType
-from codegen_git.schemas.repo_config import RepoConfig
-from codegen_git.utils.format import format_comparison
+from codegen.git.clients.github_client_factory import GithubClientFactory
+from codegen.git.clients.types import GithubClientType
+from codegen.git.schemas.github import GithubScope, GithubType
+from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.format import format_comparison
 
 logger = logging.getLogger(__name__)
 

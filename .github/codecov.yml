@@ -29,11 +29,6 @@ component_management:
       name: codegen-sdk-core
       paths:
         - src/codegen/sdk/**
-    - component_id: codegen-git
-      name: codegen-git
-      paths:
-        - codegen-git/**
-
 
 flag_management:
   default_rules:

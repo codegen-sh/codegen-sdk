@@ -19,6 +19,11 @@ from networkx import Graph
 from rich.console import Console
 from typing_extensions import deprecated
 
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.repo_operator.repo_operator import RepoOperator
+from codegen.git.schemas.enums import CheckoutResult
+from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.utils.stopwatch_utils import stopwatch
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -68,11 +73,6 @@ from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
 from codegen.sdk.writer_decorators import apidoc, noapidoc
 from codegen.visualizations.visualization_manager import VisualizationManager
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen_git.repo_operator.repo_operator import RepoOperator
-from codegen_git.schemas.enums import CheckoutResult
-from codegen_git.schemas.repo_config import BaseRepoConfig
-from codegen_git.utils.stopwatch_utils import stopwatch
 
 if TYPE_CHECKING:
     from app.codemod.types import Group

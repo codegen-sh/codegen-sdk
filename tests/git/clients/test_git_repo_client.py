@@ -1,10 +1,10 @@
 from unittest.mock import MagicMock, patch
 
-from codegen_git.clients.git_repo_client import GitRepoClient
-from codegen_git.schemas.github import GithubScope
+from codegen.git.clients.git_repo_client import GitRepoClient
+from codegen.git.schemas.github import GithubScope
 
 
-@patch("codegen_git.clients.git_repo_client.GithubClientFactory")
+@patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_default(
     mock_github_client_factory,
 ):
@@ -15,7 +15,7 @@ def test_delete_branch_default(
     assert git_repo_client._write_client.call_count == 0
 
 
-@patch("codegen_git.clients.git_repo_client.GithubClientFactory")
+@patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_non_default_branch(
     mock_github_client_factory,
 ):
@@ -27,7 +27,7 @@ def test_delete_branch_non_default_branch(
     assert mock_ref.delete.call_count == 1
 
 
-@patch("codegen_git.clients.git_repo_client.GithubClientFactory")
+@patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_cannot_write_branch(
     mock_github_client_factory,
 ):

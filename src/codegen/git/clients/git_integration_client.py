@@ -6,7 +6,7 @@ from github.GithubIntegration import GithubIntegration
 from github.Installation import Installation
 from github.InstallationAuthorization import InstallationAuthorization
 
-from codegen_git.schemas.github import GithubType
+from codegen.git.schemas.github import GithubType
 
 logger = logging.getLogger(__name__)
 

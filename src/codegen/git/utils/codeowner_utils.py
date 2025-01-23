@@ -3,8 +3,8 @@ import logging
 from codeowners import CodeOwners
 from github.PullRequest import PullRequest
 
-from codegen_git.clients.git_repo_client import GitRepoClient
-from codegen_git.configs.constants import CODEOWNERS_FILEPATHS
+from codegen.git.clients.git_repo_client import GitRepoClient
+from codegen.git.configs.constants import CODEOWNERS_FILEPATHS
 
 logger = logging.getLogger(__name__)
 

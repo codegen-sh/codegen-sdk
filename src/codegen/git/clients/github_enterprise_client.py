@@ -1,6 +1,6 @@
-from codegen_git.clients.github_client import GithubClient
-from codegen_git.configs.config import config
-from codegen_git.schemas.github import GithubType
+from codegen.git.clients.github_client import GithubClient
+from codegen.git.configs.config import config
+from codegen.git.schemas.github import GithubType
 
 
 class GithubEnterpriseClient(GithubClient):

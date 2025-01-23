@@ -32,7 +32,6 @@ dependencies = [
     "docstring-parser<1.0,>=0.16",
     "plotly<6.0.0,>=5.24.0",
     "humanize<5.0.0,>=4.10.0",
-    "codegen-git",
     "autoflake>=2.3.1",
     "black>=24.8.0",
     "pytest-snapshot>=0.9.0",
@@ -54,6 +53,8 @@ dependencies = [
     "pyinstrument>=5.0.0",
     "pip>=24.3.1", # This is needed for some NPM/YARN/PNPM post-install scripts to work!
     "emoji>=2.14.0",
+    "PyGithub==2.5.0",
+    "GitPython==3.1.44",
 ]
 license = {file = "LICENSE"}
 classifiers = [
@@ -101,7 +102,7 @@ keyring-provider = "subprocess"
 #extra-index-url = ["https://aws@codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/simple/"]
 publish-url = "https://codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/"
 [tool.uv.workspace]
-members = ["codegen-git"]
+members = []
 
 [tool.cython-lint]
 max-line-length = 200
@@ -147,7 +148,7 @@ lint.exclude = [
 ] # disable just linting for notebooks (allow for formatting)
 lint.pydocstyle.convention = "google"
 [tool.ruff.lint.isort]
-known-first-party = ["app", "codegen_git"]
+known-first-party = ["app"]
 known-third-party = ["git"]
 #known-local-folder=[]
 [tool.coverage.run]
@@ -200,9 +201,6 @@ junit_logging = "all"
 requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"
 
-[tool.uv.sources]
-codegen-git = { workspace = true }
-
 [tool.deptry]
 extend_exclude = [".*/eval/test_files/.*.py", ".*conftest.py"]
 pep621_dev_dependency_groups = ["types"]
@@ -213,6 +211,7 @@ DEP004 = "pytest"
 
 [tool.deptry.package_module_name_map]
 python-levenshtein = ["Levenshtein"]
+PyGithub = ["github"]
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
 skip = ["*-musllinux_i686", "*-manylinux_i686", "*-musllinux_x86_64"]
