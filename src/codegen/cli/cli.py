@@ -3,7 +3,6 @@ from rich.traceback import install
 
 from codegen.cli.commands.create.main import create_command
 from codegen.cli.commands.deploy.main import deploy_command
-from codegen.cli.commands.docs_search.main import docs_search_command
 from codegen.cli.commands.expert.main import expert_command
 from codegen.cli.commands.init.main import init_command
 from codegen.cli.commands.list.main import list_command
@@ -29,7 +28,6 @@ main.add_command(init_command)
 main.add_command(logout_command)
 main.add_command(login_command)
 main.add_command(run_command)
-main.add_command(docs_search_command)
 main.add_command(profile_command)
 main.add_command(create_command)
 main.add_command(expert_command)
