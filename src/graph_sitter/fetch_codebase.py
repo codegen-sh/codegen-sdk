@@ -2,7 +2,9 @@ import logging
 import os
 
 from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
+from graph_sitter.codebase.config import DefaultConfig, ProjectConfig
 from graph_sitter.core.codebase import Codebase
+from graph_sitter.utils import determine_project_language
 
 logger = logging.getLogger(__name__)
 
@@ -54,7 +56,7 @@ def fetch_codebase(repo_name: str, *, tmp_dir: str | None = None, shallow: bool 
     try:
         # Use LocalRepoOperator to fetch the repository
         logger.info("Cloning repository...")
-        LocalRepoOperator.create_from_commit(
+        repo_operator = LocalRepoOperator.create_from_commit(
             repo_path=repo_path,
             default_branch="main",  # We'll get the actual default branch after clone
             commit=commit_hash or "HEAD",
@@ -62,9 +64,10 @@ def fetch_codebase(repo_name: str, *, tmp_dir: str | None = None, shallow: bool 
         )
         logger.info("Clone completed successfully")
 
-        # Initialize and return codebase
+        # Initialize and return codebase with proper context
         logger.info("Initializing Codebase...")
-        codebase = Codebase(repo_path)
+        project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
+        codebase = Codebase(projects=[project], config=DefaultConfig)
         logger.info("Codebase initialization complete")
         return codebase
     except Exception as e:
