@@ -32,11 +32,6 @@ codebase = Codebase("./")
   here.](/introduction/how-it-works)
 </Tip>
 
-<Note>
-  This will automatically infer the programming language of the codebase and
-  parse all files in the codebase.
-</Note>
-
 ## Remote Repositories
 
 To fetch and parse a repository directly from GitHub, use the `fetch_codebase` function.
@@ -45,19 +40,20 @@ To fetch and parse a repository directly from GitHub, use the `fetch_codebase` f
 import codegen
 
 # Fetch and parse a repository (defaults to /tmp/codegen/{repo_name})
-codebase = codegen.fetch_codebase('facebook/react')
+codebase = codegen.fetch_codebase('fastapi/fastapi')
 
-# Customize temp directory and clone depth
+# Customize temp directory, clone depth, or specific commit
 codebase = codegen.fetch_codebase(
-    'facebook/react',
+    'fastapi/fastapi',
     tmp_dir='/custom/temp/dir',  # Optional: custom temp directory
-    shallow=False  # Optional: full clone instead of shallow
+    shallow=False,  # Optional: full clone instead of shallow
+    commit_hash='fe513719ea98abade167d8a89e92f600d9d8f0e5'  # Optional: specific commit
 )
 ```
 
 <Note>
-  Remote repositories are cloned to a temporary directory by default. The clone
-  is shallow by default for better performance.
+  Remote repositories are cloned to the `/tmp/codegen/{repo_name}` directory by
+  default. The clone is shallow by default for better performance.
 </Note>
 
 ## Supported Languages
