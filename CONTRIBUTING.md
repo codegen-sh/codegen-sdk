@@ -41,10 +41,10 @@ uv sync --dev
 ### Running Tests
 
 ```bash
-# Unit tests
+# Unit tests (tests atomic functionality)
 uv run pytest tests/unit -n auto
 
-# Codemod tests
+# Codemod tests (tests larger programs)
 uv run pytest tests/codemod/test_codemods.py -n auto
 ```
 
