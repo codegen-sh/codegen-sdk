@@ -224,6 +224,9 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if extensions is None:
             # Return all source files
             files = self.G.get_nodes(NodeType.FILE)
+        elif isinstance(extensions, str) and extensions != "*":
+            print("HERE")
+            raise ValueError("extensions must be a list of extensions or '*'")
         else:
             files = []
             # Get all files with the specified extensions
