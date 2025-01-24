@@ -26,6 +26,11 @@ description: "{sanitize_mdx_mintlify_description(page_desc)}"
 import {{Parameter}} from '/snippets/Parameter.mdx';
 import {{ParameterWrapper}} from '/snippets/ParameterWrapper.mdx';
 import {{Return}} from '/snippets/Return.mdx';
+import {{HorizontalDivider}} from '/snippets/HorizontalDivider.mdx';
+import {{GithubLinkNote}} from '/snippets/GithubLinkNote.mdx';
+import {{Attribute}} from '/snippets/Attribute.mdx';
+
+<GithubLinkNote link="{cls_doc.github_url}" />
 """
 
 
@@ -49,7 +54,7 @@ def render_mdx_attributes_section(cls_doc: ClassDoc) -> str:
     attributes_mdx_string = "\n".join([render_mdx_for_attribute(attribute) for attribute in sorted_attributes])
 
     return f"""## Attributes
----
+<HorizontalDivider />
 {attributes_mdx_string}
 """
 
@@ -62,13 +67,7 @@ def render_mdx_methods_section(cls_doc: ClassDoc) -> str:
     methods_mdx_string = "\n".join([render_mdx_for_method(method) for method in sorted_methods if method.method_type == "method"])
 
     return f"""## Methods
-<div className="divide-y">
-    <div className="divide-y">
-    </div>
-    <div className="divide-y">
-    </div>
-</div>
-
+<HorizontalDivider />
 {methods_mdx_string}
 """
 
@@ -77,13 +76,14 @@ def render_mdx_for_attribute(attribute: MethodDoc) -> str:
     """Renders the MDX for a single attribute"""
     attribute_docstring = sanitize_mdx_mintlify_description(attribute.description)
     if len(attribute.return_type) > 0:
-        return_type = f": {parse_link(attribute.return_type[0])}"
+        return_type = f"{resolve_type_string(attribute.return_type[0])}"
     else:
         return_type = ""
     if not attribute_docstring:
         attribute_docstring = "\n"
-    return f"""### `{attribute.name}` {return_type}
-{attribute_docstring}
+    return f"""### <span className="text-primary">{attribute.name}</span>
+<HorizontalDivider light={{true}} />
+<Attribute type={{ {return_type if return_type else "<span></span>"} }} description="{attribute_docstring}" />
 """
 
 
@@ -98,7 +98,6 @@ def format_parameter_for_mdx(parameter: ParameterDoc) -> str:
 <Parameter
     name="{parameter.name}"
     type={{ {type_string} }}
-    required="{"true" if isinstance(parameter.default, str) and not parameter.default else ""}"
     description="{sanitize_html_for_mdx(parameter.description)}"
     defaultValue="{sanitize_html_for_mdx(parameter.default)}"
 />
@@ -123,8 +122,9 @@ def render_mdx_for_method(method: MethodDoc) -> str:
     # =====[ RENDER ]=====
     # TODO add links here
     # TODO add inheritence info here
-    mdx_string = f"""### `{method.name}`
+    mdx_string = f"""### <span className="text-primary">{method.name}</span>
 {description}
+<GithubLinkNote link="{method.github_url}" />
 """
     if method.parameters:
         mdx_string += f"""
@@ -153,17 +153,29 @@ def get_mdx_route_for_class(cls_doc: ClassDoc) -> str:
         return f"codebase-sdk/core/{cls_doc.title}"
 
 
+def format_type_string(type_string: str) -> str:
+    type_string = type_string.split("|")
+    return " | ".join([type_str.strip() for type_str in type_string])
+
+
 def resolve_type_string(type_string: str) -> str:
     if "<" in type_string:
         return f"<>{parse_link(type_string, href=True)}</>"
     else:
-        return f'<code className="text-sm bg-gray-100 px-2 py-0.5 rounded">{type_string}</code>'
+        return f'<code className="text-sm bg-gray-100 px-2 py-0.5 rounded">{format_type_string(type_string)}</code>'
 
 
 def format_builtin_type_string(type_string: str) -> str:
     if "|" in type_string:
         type_strings = type_string.split("|")
         return " | ".join([type_str.strip() for type_str in type_strings])
+    return type_string
+
+
+def span_type_string_by_pipe(type_string: str) -> str:
+    if "|" in type_string:
+        type_strings = type_string.split("|")
+        return " | ".join([f"<span>{type_str.strip()}</span>" for type_str in type_strings])
     return type_string
 
 

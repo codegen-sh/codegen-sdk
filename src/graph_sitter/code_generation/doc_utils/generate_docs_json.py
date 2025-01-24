@@ -9,7 +9,7 @@ from graph_sitter.code_generation.doc_utils.utils import IGNORED_ATTRIBUTES, cre
 from graph_sitter.core.class_definition import Class
 from graph_sitter.core.codebase import Codebase
 
-ATTRIBUTES_TO_IGNORE = ["G", "node_id"]
+ATTRIBUTES_TO_IGNORE = ["G", "node_id", "angular"]
 
 
 def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[str, Any]]:
@@ -25,12 +25,21 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
     types_cache = {}
     attr_cache = {}
 
-    def update_class_doc(cls):
+    def process_class_doc(cls):
         """Update or create documentation for a class."""
         description = cls.docstring.source.strip('"""') if cls.docstring else None
         parent_classes = [f"<{create_path(parent)}>" for parent in cls.superclasses if isinstance(parent, Class) and has_documentation(parent)]
 
-        cls_doc = ClassDoc(title=cls.name, description=description, content=" ", path=create_path(cls), inherits_from=parent_classes, language=get_langauge(cls), version=str(head_commit))
+        cls_doc = ClassDoc(
+            title=cls.name,
+            description=description,
+            content=" ",
+            path=create_path(cls),
+            inherits_from=parent_classes,
+            language=get_langauge(cls),
+            version=str(head_commit),
+            github_url=cls.github_url,
+        )
 
         return cls_doc
 
@@ -47,7 +56,6 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             return
 
         method_path = create_path(method, cls)
-        original_method_path = create_path(method)
         parameters = []
 
         parsed = parse_docstring(method.docstring.source)
@@ -88,6 +96,7 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             raises=parsed["raises"],
             metainfo=meta_data,
             version=str(head_commit),
+            github_url=method.github_url,
         )
 
     def process_attribute(attr, cls, cls_doc, seen_methods):
@@ -122,6 +131,7 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             raises=[],
             metainfo=meta_data,
             version=str(head_commit),
+            github_url=attr.github_url,
         )
 
     # Process all documented classes
@@ -129,7 +139,7 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
 
     for cls in tqdm(documented_classes):
         try:
-            cls_doc = update_class_doc(cls)
+            cls_doc = process_class_doc(cls)
             graph_sitter_docs.classes.append(cls_doc)
             seen_methods = set()
 

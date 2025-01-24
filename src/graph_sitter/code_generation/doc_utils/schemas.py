@@ -22,6 +22,7 @@ class MethodDoc(BaseModel):
     raises: list[dict] | None = Field(..., description="The raises of the method")
     metainfo: dict = Field(..., description="Information about the method's true parent class and path")
     version: str = Field(..., description="The commit hash of the git commit that generated the docs")
+    github_url: str = Field(..., description="The github url of the method")
 
 
 class ClassDoc(BaseModel):
@@ -34,6 +35,7 @@ class ClassDoc(BaseModel):
     version: str = Field(..., description="The commit hash of the git commit that generated the docs")
     methods: list[MethodDoc] = Field(default=[], description="The methods of the class")
     attributes: list[MethodDoc] = Field(default=[], description="The attributes of the class")
+    github_url: str = Field(..., description="The github url of the class")
 
 
 class GSDocs(BaseModel):

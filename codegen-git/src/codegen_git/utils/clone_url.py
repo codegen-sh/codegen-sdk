@@ -7,7 +7,7 @@ from codegen_git.schemas.repo_config import RepoConfig
 
 def url_to_github(url: str, branch: str) -> str:
     clone_url = url.removesuffix(".git").replace("git@github.com:", "github.com/")
-    return f"https://{clone_url}/blob/{branch}"
+    return f"{clone_url}/blob/{branch}"
 
 
 def get_clone_url_for_repo_config(repo_config: RepoConfig, github_type: GithubType = GithubType.GithubEnterprise) -> str:
