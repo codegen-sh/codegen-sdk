@@ -20,11 +20,6 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
 
-      - name: Get history and tags for SCM versioning to work
-        run: |
-          git branch
-          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
-
       - name: Build release distributions
         run: |
           uv build --wheel
