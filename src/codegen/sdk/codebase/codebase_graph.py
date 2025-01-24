@@ -108,6 +108,7 @@ class CodebaseGraph:
     flags: Flags
     session_options: SessionOptions = SessionOptions()
     projects: list[ProjectConfig]
+    unapplied_diffs: list[DiffLite]
 
     def __init__(
         self,
@@ -162,6 +163,7 @@ class CodebaseGraph:
             self.synced_commit = None
         self.pending_syncs = []
         self.all_syncs = []
+        self.unapplied_diffs = []
         self.pending_files = set()
         self.flags = Flags()
 
@@ -234,11 +236,11 @@ class CodebaseGraph:
         self._process_diff_files(by_sync_type)
 
     @stopwatch
-    def reset_codebase(self) -> None:
+    def _reset_files(self, syncs: list[DiffLite]) -> None:
         files_to_write = []
         files_to_remove = []
         modified_files = set()
-        for sync in self.pending_syncs + self.all_syncs:
+        for sync in syncs:
             if sync.path in modified_files:
                 continue
             if sync.change_type == ChangeType.Removed:
@@ -256,6 +258,11 @@ class CodebaseGraph:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
         write_changes(files_to_remove, files_to_write)
+
+    @stopwatch
+    def reset_codebase(self) -> None:
+        self._reset_files(self.pending_syncs + self.all_syncs + self.unapplied_diffs)
+        self.unapplied_diffs.clear()
 
     @stopwatch
     def undo_applied_diffs(self) -> None:
@@ -656,9 +663,11 @@ class CodebaseGraph:
         # Commit transactions for all contexts
         files_to_lock = self.transaction_manager.to_commit(files)
         diffs = self.transaction_manager.commit(files_to_lock)
-        # Filter diffs to only include files that are still in the graph
-        diffs = [diff for diff in diffs if self.get_file(diff.path) is not None]
-        self.pending_syncs.extend(diffs)
+        for diff in diffs:
+            if self.get_file(diff.path) is None:
+                self.unapplied_diffs.append(diff)
+            else:
+                self.pending_syncs.append(diff)
 
         # Write files if requested
         if sync_file:
