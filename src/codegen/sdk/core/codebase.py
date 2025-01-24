@@ -1085,16 +1085,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
-
     @classmethod
-    def fetch_codebase(
-            cls,
-            repo_name: str,
-            *,
-            tmp_dir: str | None = None,
-            shallow: bool = True,
-            commit_hash: str | None = None
-    ) -> "Codebase":
+    def fetch_codebase(cls, repo_name: str, *, tmp_dir: str | None = None, shallow: bool = True, commit_hash: str | None = None) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1149,14 +1141,14 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
-            project = ProjectConfig(repo_operator=repo_operator,
-                                    programming_language=determine_project_language(repo_path))
+            project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
             codebase = Codebase(projects=[project], config=DefaultConfig)
             logger.info("Codebase initialization complete")
             return codebase
         except Exception as e:
             logger.error(f"Failed to initialize codebase: {e}")
             raise
+
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
