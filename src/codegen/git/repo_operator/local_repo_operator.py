@@ -1,6 +1,6 @@
 import os
 from functools import cached_property
-from typing import Self, override
+from typing import Self, override, Optional
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Remote
@@ -81,6 +81,48 @@ class LocalRepoOperator(RepoOperator):
             op.git_cli.remotes["origin"].fetch(commit, depth=1)
             op.checkout_commit(commit)
         return op
+
+    @classmethod
+    def create_from_repo(cls, repo_path: str, url: str) -> Self:
+        """Create a fresh clone of a repository or use existing one if up to date.
+        
+        Args:
+            repo_path (str): Path where the repo should be cloned
+            url (str): Git URL of the repository
+        """
+        # Check if repo already exists
+        if os.path.exists(repo_path):
+            try:
+                # Try to initialize git repo from existing path
+                git_cli = GitCLI(repo_path)
+                # Check if it has our remote URL
+                if any(remote.url == url for remote in git_cli.remotes):
+                    # Fetch to check for updates
+                    git_cli.remotes.origin.fetch()
+                    # Get current and remote HEADs
+                    local_head = git_cli.head.commit
+                    remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
+                    # If up to date, use existing repo
+                    if local_head.hexsha == remote_head.hexsha:
+                        default_branch = git_cli.active_branch.name
+                        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
+            except Exception:
+                # If any git operations fail, fallback to fresh clone
+                pass
+            
+            # If we get here, repo exists but is not up to date or valid
+            # Remove the existing directory to do a fresh clone
+            import shutil
+            shutil.rmtree(repo_path)
+        
+        # Do a fresh clone with depth=1 to get latest commit
+        GitCLI.clone_from(url=url, to_path=repo_path, depth=1)
+        
+        # Initialize with the cloned repo
+        git_cli = GitCLI(repo_path)
+        default_branch = git_cli.active_branch.name
+        
+        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
 
     ####################################################################################################################
     # PROPERTIES

@@ -1086,29 +1086,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def fetch_codebase(cls, repo_name: str, *, tmp_dir: str | None = None, shallow: bool = True, commit_hash: str | None = None) -> "Codebase":
+    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
             repo_name (str): The name of the repository in format "owner/repo"
             tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
+            commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
-            commit_hash (Optional[str]): The specific commit hash to clone. Defaults to HEAD
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
-        Example:
-            ```python
-            import codegen.sdk as sdk
-            import logging
-            # Enable logging to see progress
-            logging.basicConfig(level=logging.INFO)
-            # Clone a repository to default location (/tmp/codegen)
-            codebase = sdk.fetch_codebase('facebook/react')
-            # Or specify a custom directory
-            codebase = sdk.fetch_codebase('facebook/react', tmp_dir='~/my_repos')
-            # Or clone a specific commit
-            codebase = sdk.fetch_codebase('facebook/react', commit_hash='abc123')
-            ```
         """
         logger.info(f"Fetching codebase for {repo_name}")
 
@@ -1131,10 +1118,14 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         try:
             # Use LocalRepoOperator to fetch the repository
             logger.info("Cloning repository...")
-            repo_operator = LocalRepoOperator.create_from_commit(
+            if commit is None:
+                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url)
+            else:
+                # Ensure the operator can handle remote operations
+                repo_operator = LocalRepoOperator.create_from_commit(
                 repo_path=repo_path,
                 default_branch="main",  # We'll get the actual default branch after clone
-                commit=commit_hash or "HEAD",
+                commit=commit,
                 url=repo_url,
             )
             logger.info("Clone completed successfully")
