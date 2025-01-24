@@ -113,6 +113,7 @@ class LocalRepoOperator(RepoOperator):
             # If we get here, repo exists but is not up to date or valid
             # Remove the existing directory to do a fresh clone
             import shutil
+
             shutil.rmtree(repo_path)
 
         # Do a fresh clone with depth=1 to get latest commit

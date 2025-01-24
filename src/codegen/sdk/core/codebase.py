@@ -1123,11 +1123,11 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             else:
                 # Ensure the operator can handle remote operations
                 repo_operator = LocalRepoOperator.create_from_commit(
-                repo_path=repo_path,
-                default_branch="main",  # We'll get the actual default branch after clone
-                commit=commit,
-                url=repo_url,
-            )
+                    repo_path=repo_path,
+                    default_branch="main",  # We'll get the actual default branch after clone
+                    commit=commit,
+                    url=repo_url,
+                )
             logger.info("Clone completed successfully")
 
             # Initialize and return codebase with proper context
