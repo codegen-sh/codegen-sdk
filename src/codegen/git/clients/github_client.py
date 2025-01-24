@@ -25,8 +25,8 @@ class GithubClient:
     @classmethod
     def from_repo_config(cls, repo_config: RepoConfig) -> Self:
         gh_wrapper = cls()
-        gh_wrapper.read_client = gh_wrapper._create_client_for_repo(repo_config)
-        gh_wrapper._write_client = gh_wrapper._create_client_for_repo(repo_config)
+        gh_wrapper.read_client = gh_wrapper._create_client_for_repo(repo_config, github_scope=GithubScope.READ)
+        gh_wrapper._write_client = gh_wrapper._create_client_for_repo(repo_config, github_scope=GithubScope.WRITE)
         return gh_wrapper
 
     @classmethod
@@ -37,8 +37,8 @@ class GithubClient:
         gh_wrapper._write_client = Github(token, base_url=cls.base_url)
         return gh_wrapper
 
-    def _create_client_for_repo(self, repo_config: RepoConfig) -> Github:
-        token = get_token_for_repo_config(repo_config=repo_config, github_type=self.type)
+    def _create_client_for_repo(self, repo_config: RepoConfig, github_scope: GithubScope = GithubScope.READ) -> Github:
+        token = get_token_for_repo_config(repo_config=repo_config, github_type=self.type, github_scope=github_scope)
         return Github(token, base_url=self.base_url)
 
     def _get_client_for_scope(self, github_scope: GithubScope) -> Github:
