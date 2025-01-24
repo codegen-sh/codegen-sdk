@@ -1,8 +1,8 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.python import PyFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.statements.statement import StatementType
+from codegen.sdk.python import PyFile
 
 
 def test_reduce_condition_to_true_elif(tmpdir):

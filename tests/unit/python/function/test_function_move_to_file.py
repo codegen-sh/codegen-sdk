@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.function import Function
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.function import Function
 
 
 def test_move_to_file_add_back_edge(tmpdir) -> None:

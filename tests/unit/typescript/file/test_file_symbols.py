@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.class_definition import TSClass
+from codegen.sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.class_definition import TSClass
 
 
 def test_symbols_gets_class_symbol_with_correct_name(tmpdir) -> None:

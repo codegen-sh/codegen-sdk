@@ -2,8 +2,8 @@ import sys
 
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.file import File, SourceFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.file import File, SourceFile
 
 
 def test_file(tmpdir) -> None:

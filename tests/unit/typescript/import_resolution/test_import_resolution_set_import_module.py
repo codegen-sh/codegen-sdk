@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_set_import_module_updates_source(tmpdir) -> None:
