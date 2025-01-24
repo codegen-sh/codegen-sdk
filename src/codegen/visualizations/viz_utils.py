@@ -1,7 +1,6 @@
 import json
 import os
 from dataclasses import asdict
-from typing import TYPE_CHECKING
 
 import networkx as nx
 from networkx import DiGraph, Graph
@@ -11,10 +10,6 @@ from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.output.utils import DeterministicJSONEncoder
 from codegen.visualizations.enums import GraphJson, GraphType
-
-if TYPE_CHECKING:
-    pass
-
 
 ####################################################################################################################
 # READING GRAPH VISUALIZATION DATA

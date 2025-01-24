@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Generic
+from typing import Generic
 
 from typing_extensions import TypeVar
 
@@ -8,8 +8,6 @@ from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.shared.decorators.docs import noapidoc
 
-if TYPE_CHECKING:
-    pass
 Parent = TypeVar("Parent", bound=Editable)
 
 

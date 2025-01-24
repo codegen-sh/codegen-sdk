@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
+from typing import Generic, Self, TypeVar, override
 
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import writer
@@ -13,10 +13,6 @@ from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.extensions.resolution import ResolutionStack
 from codegen.sdk.extensions.utils import TSNode
 from codegen.shared.decorators.docs import apidoc, noapidoc
-
-if TYPE_CHECKING:
-    pass
-
 
 Parent = TypeVar("Parent", bound="Expression")
 
