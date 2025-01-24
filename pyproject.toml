@@ -1,6 +1,7 @@
 [project]
 name = "codegen-sdk"
-dynamic = ["version", "urls"]
+dynamic = [ "urls"]
+version = "7.1.0"
 description = "Add your description here"
 readme = "README.md"
 # renovate: datasource=python-version depName=python
