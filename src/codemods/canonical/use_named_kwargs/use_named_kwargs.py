@@ -5,7 +5,7 @@ from codegen.sdk.python.class_definition import PyClass
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
-from codemods.canonical.codemod import Codemod
+from codemods.codemod import Codemod
 
 
 @skill(
