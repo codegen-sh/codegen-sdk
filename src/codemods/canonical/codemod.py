@@ -1,7 +1,7 @@
 from collections.abc import Callable
 
 
-class Codemod3:
+class Codemod:
     execute: Callable | None = None
 
     def __init__(self, name: str | None = None, execute: Callable | None = None, *args, **kwargs):

@@ -1,10 +1,10 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -16,7 +16,7 @@ calls, and modify the arguments accordingly. Specifically, it should replace `in
     uid="1c43f274-e4bc-49c7-abca-8b273e9cad9a",
 )
 @canonical
-class InviteFactoryCreateParams(Codemod3, Skill):
+class InviteFactoryCreateParams(Codemod, Skill):
     """This codemod updates calls to InviteFactory.create, InviteFactory.build and InviteFactory(...) to use the `invitee` parameter instead of `invitee_id`, `invitee["email"]`, or `invitee.id`.
 
     For example:

@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ in curly braces, replace the quotes with backticks, updating the prop value acco
     uid="bf22f4d7-a93a-458f-be78-470c24487d4c",
 )
 @canonical
-class ClassNamesToBackTick(Codemod3, Skill):
+class ClassNamesToBackTick(Codemod, Skill):
     """This Codemod converts all `classNames="..."` props in JSX elements to use backticks.
 
     Example:
