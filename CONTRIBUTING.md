@@ -45,7 +45,7 @@ uv sync --dev
 uv run pytest tests/unit -n auto
 
 # Codemod tests (tests larger programs)
-uv run pytest tests/codemod/test_codemods.py -n auto
+uv run pytest tests/integration/codemod/test_codemods.py -n auto
 ```
 
 ## Pull Request Process

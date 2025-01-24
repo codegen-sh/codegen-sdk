@@ -196,6 +196,7 @@ pythonVersion = "3.12"
 enableExperimentalFeatures = true
 [tool.pytest.ini_options]
 # addopts = -v
+pythonpath = "."
 norecursedirs = "repos expected"
 # addopts = -v --cov=app --cov-report=term
 
