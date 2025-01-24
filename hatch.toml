@@ -81,7 +81,7 @@ source_archive = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash
 
 [build.targets.wheel.hooks.custom]
 enable-by-default = false
-path = "src/codegen/gsbuild/build.py"
+path = "scripts/build.py"
 require-runtime-dependencies = true
 [envs.default]
 installer = "uv"
