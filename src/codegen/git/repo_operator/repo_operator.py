@@ -18,7 +18,7 @@ from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.utils.performance.stopwatch_utils import stopwatch
-from codegen.utils.time_utils import humanize_duration
+from codegen.utils.performance.time_utils import humanize_duration
 
 logger = logging.getLogger(__name__)
 
