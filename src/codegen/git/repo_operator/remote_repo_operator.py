@@ -36,15 +36,12 @@ class RemoteRepoOperator(RepoOperator):
         self,
         repo_config: RepoConfig,
         base_dir: str = "/tmp",
-        commit: str | None = None,
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
         bot_commit: bool = True,
     ) -> None:
         super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
-        if commit:
-            self.checkout_commit(commit)
 
     ####################################################################################################################
     # PROPERTIES
