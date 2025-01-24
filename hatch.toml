@@ -72,7 +72,6 @@ macos-max-compat = false
 [build]
 packages = [
     "src/codegen",
-    "src/graph_visualization",
 ]
 
 [metadata.hooks.vcs]
