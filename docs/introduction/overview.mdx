@@ -52,6 +52,11 @@ pip install codegen
 
 ## Get Started
 
+import {
+  COMMUNITY_SLACK_URL,
+  CODEGEN_SDK_GITHUB_URL,
+} from "/snippets/links.mdx";
+
 <CardGroup cols={2}>
   <Card
     title="Get Started"
@@ -63,18 +68,10 @@ pip install codegen
   <Card title="Tutorials" icon="diagram-project" href="/tutorials/at-a-glance">
     Learn how to use Codegen for common code transformation tasks.
   </Card>
-  <Card
-    title="View on GitHub"
-    icon="github"
-    href="https://github.com/codegen-sh/codegen-sdk"
-  >
+  <Card title="View on GitHub" icon="github" href={CODEGEN_SDK_GITHUB_URL}>
     Star us on GitHub and contribute to the project.
   </Card>
-  <Card
-    title="Join our Slack"
-    icon="slack"
-    href="https://join.slack.com/t/codegen-community/shared_invite/..."
-  >
+  <Card title="Join our Slack" icon="slack" href={COMMUNITY_SLACK_URL}>
     Get help and connect with the Codegen community.
   </Card>
 </CardGroup>
