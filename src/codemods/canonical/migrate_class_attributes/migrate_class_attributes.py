@@ -1,12 +1,12 @@
 import logging
 import textwrap
 
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import PyCodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import PyCodebaseType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ attribute and maintain a copy in the source class.""",
     uid="739061ae-4f4f-48eb-a825-7424417ce540",
 )
 @canonical
-class MigrateClassAttributes(Codemod3, Skill):
+class MigrateClassAttributes(Codemod, Skill):
     """Migrates class attributes from a source class to another class.
     Any migrated attributes are made private in the source class.
     """

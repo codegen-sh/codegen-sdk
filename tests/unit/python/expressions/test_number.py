@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.expressions.binary_expression import BinaryExpression
-from graph_sitter.core.expressions.number import Number
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.expressions.binary_expression import BinaryExpression
+from codegen.sdk.core.expressions.number import Number
 
 
 def test_number_parse(tmpdir):

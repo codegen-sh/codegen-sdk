@@ -1,12 +1,12 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.expressions import Type
-from graph_sitter.core.expressions.generic_type import GenericType
-from graph_sitter.core.expressions.union_type import UnionType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.expressions import Type
+from codegen.sdk.core.expressions.generic_type import GenericType
+from codegen.sdk.core.expressions.union_type import UnionType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -17,7 +17,7 @@ typed parameters, and modifies their annotations as needed. Additionally, includ
     uid="0e2d60db-bff0-4020-bda7-f264ff6c7f46",
 )
 @canonical
-class UpdateOptionalTypeAnnotations(Codemod3, Skill):
+class UpdateOptionalTypeAnnotations(Codemod, Skill):
     """Replaces type annotations with builtin ones, e.g.:
         def f(x: Optional[int]):
     becomes

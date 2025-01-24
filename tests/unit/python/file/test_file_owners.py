@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, patch
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_file_owners_non_codeowners_parser_returns_empty_set(tmpdir) -> None:
@@ -21,7 +21,7 @@ print("hello world")
 """
     mock_codeowners = MagicMock()
     mock_codeowners.of = lambda file_path: [("TEAM", "@team-owner"), ("USER", "@user-owner")] if file_path == "file.py" else {}
-    with patch("codegen_git.repo_operator.local_repo_operator.LocalRepoOperator.codeowners_parser", mock_codeowners):
+    with patch("codegen.git.repo_operator.local_repo_operator.LocalRepoOperator.codeowners_parser", mock_codeowners):
         with get_codebase_session(tmpdir=tmpdir, files={"file.py": content}) as codebase:
             file = codebase.get_file("file.py")
             owners = file.owners

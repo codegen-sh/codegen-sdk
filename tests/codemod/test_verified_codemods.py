@@ -5,9 +5,9 @@ from typing import TypeVar
 import pytest
 from pytest_snapshot.plugin import Snapshot
 
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.testing.models import BASE_PATH
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.testing.models import BASE_PATH
+from codemods.canonical.codemod import Codemod
 from tests.utils.codebase_comparison_utils import compare_codebase_diff
 from tests.utils.recursion import set_recursion_limit
 
@@ -18,7 +18,7 @@ T = TypeVar("T")
 
 @pytest.mark.timeout(120, func_only=True)
 def test_verified_codemods(
-    verified_codemod: Codemod3,
+    verified_codemod: Codemod,
     codebase: Codebase,
     expected: Path,
     tmp_path: Path,

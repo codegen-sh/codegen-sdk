@@ -1,11 +1,11 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.detached_symbols.decorator import Decorator
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.detached_symbols.decorator import Decorator
+from codegen.sdk.core.symbol import Symbol
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -17,7 +17,7 @@ decorator to the method.""",
     uid="c1596668-8169-44b4-9e0e-b244eb7671d9",
 )
 @canonical
-class OpenAPIAddResponseNone(Codemod3, Skill):
+class OpenAPIAddResponseNone(Codemod, Skill):
     """This one adds a `@xys_ns.response(200)` decorator to Flask Resource methods that do not contain any return status codes
 
     Before:

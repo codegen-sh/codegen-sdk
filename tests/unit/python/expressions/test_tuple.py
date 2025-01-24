@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.symbol_groups.tuple import Tuple
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.symbol_groups.tuple import Tuple
 
 
 def test_tuple_basic(tmpdir) -> None:

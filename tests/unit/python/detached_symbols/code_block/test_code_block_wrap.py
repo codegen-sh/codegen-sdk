@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.python import PyFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.python import PyFile
 
 
 def test_wrap_with_with_statement(tmpdir):

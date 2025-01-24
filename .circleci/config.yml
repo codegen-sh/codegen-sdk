@@ -9,7 +9,7 @@ executors:
   default_image:
     docker:
       - image: ghcr.io/astral-sh/uv:python<<pipeline.parameters.python_version>>-bookworm
-    working_directory: /graph-sitter
+    working_directory: /codegen-sdk
     environment:
       UV_COMPILE_BYTECODE: 1
       UV_LINK_MODE: copy
@@ -18,7 +18,7 @@ executors:
       image: ubuntu-2404:current
 orbs:
   aws-cli: circleci/aws-cli@5.1.2
-  codecov: codecov/codecov@5.0.3
+  codecov: codecov/codecov@5.2.0
   node: circleci/node@7.0.0
   github-cli: circleci/github-cli@2.6.2
   slack: circleci/slack@5.1.1
@@ -96,9 +96,6 @@ commands:
     - run:
         command: |
           uv run --frozen cibuildwheel --output-dir dist
-          if [[ "<<parameters.base_packages>>" == "true" ]]; then
-            uv build --package codegen-git --wheel --sdist
-          fi
           rm dist/.gitignore || true
         environment:
           HATCH_BUILD_HOOKS_ENABLE: "true"
@@ -298,7 +295,7 @@ jobs:
         command: |
           EXTRA_REPOS_ARG=""
           if [ "<<parameters.extra_repos>>" = "true" ]; then
-            EXTRA_REPOS_ARG="--extra-repos"
+            EXTRA_REPOS_ARG="--extra-repos=true"
           fi
           PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/codemod/test_parse.py"
           echo "Running tests with args: $PYTEST_ARGS"
@@ -307,11 +304,14 @@ jobs:
 
     - store_test_results:
         path: build/test-results/test/TEST.xml
-    - slack/notify:
-        event: fail
-        branch_pattern: "develop"
-        channel: "alerts-parse-tests"
-        template: basic_fail_1
+    - when:
+        condition: <<parameters.extra_repos>>
+        steps:
+          - slack/notify:
+              event: fail
+              branch_pattern: "develop"
+              channel: "alerts-parse-tests"
+              template: basic_fail_1
 
   pre-commit:
     executor: default_image
@@ -402,7 +402,7 @@ workflows:
             branches:
               ignore: develop
       - parse-tests:
-          name: Manual Parse Tests
+          name: Manual-Parse-Tests
           filters:
             branches:
               ignore: develop

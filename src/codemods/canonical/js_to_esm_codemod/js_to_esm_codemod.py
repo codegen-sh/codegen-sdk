@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ directory structure.""",
     uid="f93122d3-f469-4740-a8bf-f53016de41b2",
 )
 @canonical
-class JsToEsmCodemod(Codemod3, Skill):
+class JsToEsmCodemod(Codemod, Skill):
     """This codemod will convert all JS files that have .router in their name to be proper ESM modules"""
 
     language = ProgrammingLanguage.TYPESCRIPT

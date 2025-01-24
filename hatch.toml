@@ -1,6 +1,6 @@
 [build.hooks.vcs]
 dependencies = ["hatch-vcs>=0.4.0"]
-version-file = "src/graph_sitter/__init__.py"
+version-file = "src/codegen/sdk/__init__.py"
 
 [metadata]
 allow-direct-references = true
@@ -32,7 +32,7 @@ dependencies = [
 ]
 
 [build.targets.wheel.hooks.cython.options]
-src = "graph_sitter"
+src = "codegen/sdk"
 compile_args = [
     "-O3",
     { platforms = [
@@ -71,9 +71,11 @@ macos-max-compat = false
 
 [build]
 packages = [
-    "src/graph_sitter",
+    "src/codegen/sdk",
+    "src/codegen/git",
+    "src/codegen/utils",
+    "src/codegen/gscli",
     "src/graph_visualization",
-    "src/gscli",
 ]
 
 [metadata.hooks.vcs]
@@ -83,7 +85,7 @@ source_archive = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash
 
 [build.targets.wheel.hooks.custom]
 enable-by-default = false
-path = "src/graph_sitter_build/build.py"
+path = "src/codegen/gsbuild/build.py"
 require-runtime-dependencies = true
 [envs.default]
 installer = "uv"

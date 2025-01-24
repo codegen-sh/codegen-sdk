@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ decorator. Ensure that the original decorator's ordering is preserved by editing
     uid="3f6325b8-02c3-4d90-a726-830f8bccce3a",
 )
 @canonical
-class SplitDecorators(Codemod3, Skill):
+class SplitDecorators(Codemod, Skill):
     """This codemod splits a single decorator call into multiple
 
     For example:
