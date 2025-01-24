@@ -12,7 +12,7 @@ from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.extensions.autocommit import commiter, reader
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

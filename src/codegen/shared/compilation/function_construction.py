@@ -1,7 +1,7 @@
 import logging
 import re
 
-from codegen.utils.compilation.function_imports import get_generated_imports
+from codegen.shared.compilation.function_imports import get_generated_imports
 
 logger = logging.getLogger(__name__)
 

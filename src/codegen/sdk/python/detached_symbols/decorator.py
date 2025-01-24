@@ -5,7 +5,7 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.detached_symbols.decorator import Decorator
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.utils.decorators.docs import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 
 @py_apidoc

@@ -6,7 +6,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.extensions.autocommit import reader
-from codegen.utils.decorators.docs import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     pass

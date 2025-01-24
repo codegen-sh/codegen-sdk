@@ -24,7 +24,7 @@ from codegen.runner.models.apis import (
 from codegen.runner.models.configs import get_repo_config
 from codegen.runner.sandbox.middlewares import CodemodRunMiddleware
 from codegen.runner.sandbox.runner import SandboxRunner
-from codegen.utils.performance.memory_utils import get_memory_stats
+from codegen.shared.performance.memory_utils import get_memory_stats
 
 logger = logging.getLogger(__name__)
 

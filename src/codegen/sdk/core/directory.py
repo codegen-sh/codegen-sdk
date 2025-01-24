@@ -3,7 +3,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.assignment import Assignment

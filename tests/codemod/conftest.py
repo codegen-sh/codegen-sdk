@@ -17,7 +17,7 @@ from codegen.sdk.testing.constants import DIFF_FILEPATH
 from codegen.sdk.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
 from codegen.sdk.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
 from codemods.canonical.codemod import Codemod
-from tests.utils.recursion import set_recursion_limit
+from tests.shared.recursion import set_recursion_limit
 
 logger = logging.getLogger(__name__)
 

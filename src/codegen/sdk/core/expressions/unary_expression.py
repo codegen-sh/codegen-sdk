@@ -12,7 +12,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.extensions.resolution import ResolutionStack
 from codegen.sdk.extensions.utils import TSNode
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     pass

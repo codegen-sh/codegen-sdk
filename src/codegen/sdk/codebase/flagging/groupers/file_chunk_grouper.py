@@ -5,7 +5,7 @@ from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.flagging.groupers.base_grouper import BaseGrouper
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
-from codegen.utils.string.csv_utils import comma_separated_to_list, list_to_comma_separated
+from codegen.shared.string.csv_utils import comma_separated_to_list, list_to_comma_separated
 
 logger = logging.getLogger(__name__)
 

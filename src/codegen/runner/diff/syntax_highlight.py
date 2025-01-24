@@ -8,7 +8,7 @@ import time
 
 from unidiff import PatchedFile, PatchSet
 
-from codegen.utils.performance.stopwatch_utils import stopwatch
+from codegen.shared.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
 

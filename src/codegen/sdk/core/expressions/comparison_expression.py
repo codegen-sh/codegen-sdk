@@ -4,7 +4,7 @@ from typing import Self, TypeVar
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.binary_expression import BinaryExpression
 from codegen.sdk.core.symbol_groups.expression_group import ExpressionGroup
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 Parent = TypeVar("Parent")
 

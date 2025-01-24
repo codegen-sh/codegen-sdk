@@ -7,7 +7,7 @@ from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

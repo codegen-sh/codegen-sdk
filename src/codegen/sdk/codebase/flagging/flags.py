@@ -4,7 +4,7 @@ from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import MessageType
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.core.interfaces.editable import Editable
-from codegen.utils.decorators.docs import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 
 @dataclass

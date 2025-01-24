@@ -70,9 +70,9 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
-from codegen.utils.decorators.docs import apidoc, noapidoc
-from codegen.utils.exceptions.control_flow import MaxAIRequestsError
-from codegen.utils.performance.stopwatch_utils import stopwatch
+from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.exceptions.control_flow import MaxAIRequestsError
+from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
 
 logger = logging.getLogger(__name__)

@@ -12,7 +12,7 @@ from starlette.responses import JSONResponse, Response
 
 from codegen.runner.models.apis import ServerInfo
 from codegen.runner.sandbox.runner import SandboxRunner
-from codegen.utils.exceptions.compilation import UserCodeException
+from codegen.shared.exceptions.compilation import UserCodeException
 
 logger = logging.getLogger(__name__)
 

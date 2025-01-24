@@ -9,7 +9,7 @@ from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_group import SymbolGroup
-from codegen.utils.decorators.docs import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

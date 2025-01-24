@@ -4,7 +4,7 @@ import sys
 import traceback
 from collections.abc import Callable
 
-from codegen.utils.exceptions.compilation import InvalidUserCodeException
+from codegen.shared.exceptions.compilation import InvalidUserCodeException
 
 logger = logging.getLogger(__name__)
 

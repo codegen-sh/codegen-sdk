@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     pass

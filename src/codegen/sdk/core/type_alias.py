@@ -16,7 +16,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.enums import SymbolType
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

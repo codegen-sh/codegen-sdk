@@ -21,7 +21,7 @@ from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.extensions.resolution import UsageKind
 from codegen.sdk.utils import find_first_descendant
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.expressions.type import Type

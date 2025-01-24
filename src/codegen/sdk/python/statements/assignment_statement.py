@@ -10,7 +10,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.extensions.utils import find_all_descendants
 from codegen.sdk.python.assignment import PyAssignment
-from codegen.utils.decorators.docs import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock

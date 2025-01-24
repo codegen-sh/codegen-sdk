@@ -24,7 +24,7 @@ from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 from codegen.sdk.enums import ImportType, NodeType, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.output.constants import ANGULAR_STYLE
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

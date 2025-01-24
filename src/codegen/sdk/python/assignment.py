@@ -11,7 +11,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
-from codegen.utils.decorators.docs import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement

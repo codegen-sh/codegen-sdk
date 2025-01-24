@@ -6,7 +6,7 @@ from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
 from codegen.sdk.extensions.utils import find_line_start_and_end_nodes
-from codegen.utils.decorators.docs import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock

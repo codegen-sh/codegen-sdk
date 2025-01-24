@@ -12,7 +12,7 @@ from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.resolvable import Resolvable
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.has_name import HasName
