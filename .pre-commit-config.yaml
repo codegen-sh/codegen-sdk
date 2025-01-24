@@ -55,13 +55,13 @@ repos:
     hooks:
       - id: sync-pre-commit-deps
 
-  # - repo: https://github.com/codespell-project/codespell
-  #   rev: v2.2.4
-  #   hooks:
-  #     - id: codespell
-  #       additional_dependencies:
-  #         - tomli
-  #       files: "codegen-backend/docs/.*/.*.mdx"
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.4
+    hooks:
+      - id: codespell
+        additional_dependencies:
+          - tomli
+        files: "docs/.*/.*.mdx"
 
   - repo: https://github.com/fpgmaas/deptry.git
     rev: "0.22.0"
