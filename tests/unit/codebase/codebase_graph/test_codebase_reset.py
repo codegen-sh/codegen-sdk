@@ -395,12 +395,10 @@ py_cases = [(generate_files(i, "py"), generate_files(i, "py")) for i in cases]
 
 
 @pytest.mark.timeout(5, func_only=True)
-@pytest.mark.parametrize(
-    "original, expected", txt_cases + py_cases, indirect=["original", "expected"], ids=[f"{i}-files" for i in cases] + [f"{i}-txt-files" for i in cases] + [f"{i}-py-files" for i in cases]
-)
+@pytest.mark.parametrize("original, expected", txt_cases + py_cases, indirect=["original", "expected"], ids=[f"{i}-txt-files" for i in cases] + [f"{i}-py-files" for i in cases])
 def test_codebase_reset_stress_test(codebase: Codebase, assert_expected, original):
     for file in original:
-        codebase.get_file(file).edit(f"# comment2 {file.filepath}")
+        codebase.get_file(file).edit(f"# comment2 {file}")
     codebase.commit()
     codebase.reset()
     assert_expected(codebase)
