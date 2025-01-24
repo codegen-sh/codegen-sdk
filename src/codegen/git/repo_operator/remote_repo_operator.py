@@ -27,6 +27,7 @@ class RemoteRepoOperator(RepoOperator):
     # __init__ attributes
     repo_config: RepoConfig
     base_dir: str
+    github_type: GithubType
 
     # lazy attributes
     _remote_git_repo: GitRepoClient | None = None
@@ -43,6 +44,7 @@ class RemoteRepoOperator(RepoOperator):
         github_type: GithubType = GithubType.GithubEnterprise,
     ) -> None:
         super().__init__(repo_config=repo_config, base_dir=base_dir)
+        self.github_type = github_type
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################
@@ -74,17 +76,17 @@ class RemoteRepoOperator(RepoOperator):
     @override
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""
-        pull_repo(repo=self.repo_config, path=self.base_dir)
+        pull_repo(repo=self.repo_config, path=self.base_dir, github_type=self.github_type)
 
     def clone_repo(self, shallow: bool = True) -> None:
-        clone_repo(repo=self.repo_config, path=self.base_dir, shallow=shallow)
+        clone_repo(repo=self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
 
     def clone_or_pull_repo(self, shallow: bool = True) -> None:
         """If repo exists, pulls changes. otherwise, clones the repo."""
         # TODO(CG-7804): if repo is not valid we should delete it and re-clone. maybe we can create a pull_repo util + use the existing clone_repo util
         if self.repo_exists():
             self.clean_repo()
-        clone_or_pull_repo(self.repo_config, path=self.base_dir, shallow=shallow)
+        clone_or_pull_repo(self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
 
     def setup_repo_dir(self, setup_option: SetupOption = SetupOption.PULL_OR_CLONE, shallow: bool = True) -> None:
         os.makedirs(self.base_dir, exist_ok=True)
