@@ -235,7 +235,8 @@ class CodebaseGraph:
     @stopwatch
     def reset_codebase(self) -> None:
         files = {}
-        for sync in self.all_syncs:
+        # Start at the oldest sync and work backwards
+        for sync in reversed(self.pending_syncs + self.all_syncs):
             if sync.change_type == ChangeType.Removed:
                 files[sync.path] = sync.old_content
             elif sync.change_type == ChangeType.Modified:
