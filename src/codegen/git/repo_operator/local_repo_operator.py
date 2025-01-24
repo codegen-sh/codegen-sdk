@@ -85,7 +85,6 @@ class LocalRepoOperator(RepoOperator):
     @classmethod
     def create_from_repo(cls, repo_path: str, url: str) -> Self:
         """Create a fresh clone of a repository or use existing one if up to date.
-        
         Args:
             repo_path (str): Path where the repo should be cloned
             url (str): Git URL of the repository
