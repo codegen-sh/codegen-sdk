@@ -12,6 +12,14 @@ if TYPE_CHECKING:
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.import_resolution import ImportStatement
     from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.typescript.export import TSExport
+    from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.typescript.file import TSFile
+    from codegen.sdk.typescript.function import TSFunction
+    from codegen.sdk.typescript.import_resolution import TSImport
+    from codegen.sdk.typescript.statements.import_statement import TSImportStatement
+    from codegen.sdk.typescript.symbol import TSSymbol
+    from codegen.sdk.typescript.class_definition import TSClass
 
 import logging
 
@@ -24,10 +32,12 @@ TImportStatement = TypeVar("TImportStatement", bound="ImportStatement")
 TGlobalVar = TypeVar("TGlobalVar", bound="Assignment")
 TClass = TypeVar("TClass", bound="Class")
 TFunction = TypeVar("TFunction", bound="Function")
+TImport = TypeVar("TImport", bound="Import")
 
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
 
 @apidoc
-class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction]):
+class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Directory representation for codebase.
     GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory.
     """
@@ -133,6 +143,16 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         """Get a recursive list of all functions in the directory and its subdirectories."""
         return list(chain.from_iterable(f.functions for f in self.files))
 
+    @property
+    def exports(self: "Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]") -> "list[TSExport]":
+        """Get a recursive list of all exports in the directory and its subdirectories."""
+        return list(chain.from_iterable(f.exports for f in self.files))
+
+    @property
+    def imports(self) -> list[TImport]:
+        """Get a recursive list of all imports in the directory and its subdirectories."""
+        return list(chain.from_iterable(f.imports for f in self.files))
+
     def get_symbol(self, name: str) -> TSymbol | None:
         """Get a symbol by name in the directory and its subdirectories."""
         return next((s for s in self.symbols if s.name == name), None)
@@ -175,6 +195,14 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         if ignore_case:
             return next((f for name, f in self.items.items() if name.lower() == filename.lower() and isinstance(f, File)), None)
         return self.items.get(filename, None)
+
+    def get_export(self: "Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
+        """Get an export by name in the directory and its subdirectories (supports only typescript)."""
+        return next((s for s in self.exports if s.name == name), None)
+
+    def get_import(self, name: str) -> TImport | None:
+        """Get an import by name in the directory and its subdirectories."""
+        return next((s for s in self.imports if s.name == name), None)
 
     def add_subdirectory(self, subdirectory: Self) -> None:
         """Add a subdirectory to the directory."""

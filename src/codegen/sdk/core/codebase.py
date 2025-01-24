@@ -42,6 +42,7 @@ from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.file import File, SourceFile
 from codegen.sdk.core.function import Function
 from codegen.sdk.core.import_resolution import Import
+from codegen.sdk.core.export import Export
 from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
@@ -66,6 +67,8 @@ from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
 from codegen.sdk.typescript.file import TSFile
 from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.import_resolution import TSImport
+from codegen.sdk.typescript.statements.import_statement import TSImportStatement
+from codegen.sdk.typescript.export import TSExport
 from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
@@ -90,6 +93,7 @@ TInterface = TypeVar("TInterface", bound="Interface")
 TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
 TParameter = TypeVar("TParameter", bound="Parameter")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
+TExport = TypeVar("TExport", bound="Export")
 
 
 @apidoc
@@ -261,6 +265,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+
+    @property
+    def exports(self: 'Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]') -> list[TSExport]:
+        """Returns a list of all Export nodes in the codebase.
+
+        Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
+        including exports from both internal modules and external packages. This is a TypeScript-only codebase property.
+
+        Args:
+            None
+
+        Returns:
+            list[TSExport]: A list of Export nodes representing all exports in the codebase.
+            TExport can only be a  TSExport for TypeScript codebases.
+        
+        """
+
+        if self.language == ProgrammingLanguage.PYTHON:
+            raise NotImplementedError("Exports are not supported for Python codebases since Python does not have an export mechanism.")
+
+        return self.G.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:
@@ -1143,6 +1168,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
+
+
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
 PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
 TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
+
+
