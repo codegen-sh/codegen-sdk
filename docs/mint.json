@@ -114,7 +114,14 @@
 		},
 		{
 			"group": "CLI",
-			"pages": ["cli/about", "cli/init", "cli/create", "cli/run", "cli/expert"]
+			"pages": [
+				"cli/about",
+				"cli/init",
+				"cli/notebook",
+				"cli/create",
+				"cli/run",
+				"cli/expert"
+			]
 		},
 		{
 			"group": "Changelog",
