@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ FastStr, and modify all return statements to wrap the returned value in the Fast
     uid="a357f5c4-2ff0-4fb2-a5c6-be051428604a",
 )
 @canonical
-class PivotReturnTypes(Codemod3, Skill):
+class PivotReturnTypes(Codemod, Skill):
     """This codemod allows us to take all functions that return str and safely convert it to a custom FastStr type.
     It does so by wrapping the return statement value in the CustomStr constructor and update the return type annotation.
 

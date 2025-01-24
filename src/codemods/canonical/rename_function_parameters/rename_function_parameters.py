@@ -1,20 +1,20 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
     canonical=True,
     prompt="""Generate a Python codemod that iterates through all files in a codebase, identifies function parameters containing the substring 'obj', and renames
-them to 'new_obj'. The codemod should be structured as a class that inherits from Codemod3 and Skill, with an execute method that performs the
+them to 'new_obj'. The codemod should be structured as a class that inherits from Codemod and Skill, with an execute method that performs the
 renaming operation.""",
     uid="1576b2fd-8a00-44e4-9659-eb0f585e015a",
 )
 @canonical
-class RenameFunctionParameters(Codemod3, Skill):
+class RenameFunctionParameters(Codemod, Skill):
     """This takes all functions that renames any parameter that contains 'obj' and replaces with 'new_obj'"""
 
     language = ProgrammingLanguage.PYTHON
