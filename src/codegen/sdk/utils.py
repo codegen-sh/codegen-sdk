@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 import re
 import shutil
@@ -7,7 +5,6 @@ from collections import Counter
 from collections.abc import Iterable
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, TypeVar
 from xml.dom.minidom import parseString
 
 import dicttoxml
@@ -18,8 +15,6 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.extensions.utils import find_all_descendants, find_first_descendant, get_all_identifiers
 from codegen.sdk.typescript.enums import TSFunctionTypeNames
 
-if TYPE_CHECKING:
-    from codegen.sdk.core.interfaces.editable import Editable
 """
 Utility functions for traversing the tree sitter structure.
 Do not include language specific traversals, or string manipulations here.
@@ -195,9 +190,6 @@ def shadow_files(files: str | list[str]):
                 shutil.copy(shadow_file_name, file_name)
                 # Delete the shadow file
                 os.remove(shadow_file_name)
-
-
-E = TypeVar("E", bound="Editable")
 
 
 def calculate_base_path(full_path, relative_path):
