@@ -233,8 +233,28 @@ class CodebaseGraph:
         self._process_diff_files(by_sync_type)
 
     @stopwatch
+    def reset_codebase(self) -> None:
+        files = {}
+        for sync in self.all_syncs:
+            if sync.change_type == ChangeType.Removed:
+                files[sync.path] = sync.old_content
+            elif sync.change_type == ChangeType.Modified:
+                files[sync.path] = sync.old_content
+            elif sync.change_type == ChangeType.Renamed:
+                files[sync.rename_from] = sync.old_content
+                files[sync.rename_to] = None
+            elif sync.change_type == ChangeType.Added:
+                files[sync.path] = None
+        for filepath, content in files.items():
+            if content is None:
+                filepath.unlink()
+            else:
+                filepath.write_text(content)
+
+    @stopwatch
     def undo_applied_diffs(self) -> None:
         self.transaction_manager.clear_transactions()
+        self.reset_codebase()
         self.check_changes()
         self.pending_syncs.clear()  # Discard pending changes
         if len(self.all_syncs) > 0:

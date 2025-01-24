@@ -720,7 +720,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         - .ipynb files (Jupyter notebooks, where you are likely developing)
         """
         logger.info("Resetting codebase ...")
-        self._op.discard_changes()  # Discard any changes made to the raw file state
+        # self._op.discard_changes()  # Discard any changes made to the raw file state
         self._num_ai_requests = 0
         self.reset_logs()
         self.G.undo_applied_diffs()

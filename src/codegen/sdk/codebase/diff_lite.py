@@ -42,6 +42,7 @@ class DiffLite(NamedTuple):
     path: Path
     rename_from: str | None = None
     rename_to: str | None = None
+    old_content: str | None = None
 
     @classmethod
     def from_watch_change(cls, change: Change, path: PathLike) -> Self:
@@ -52,11 +53,15 @@ class DiffLite(NamedTuple):
 
     @classmethod
     def from_git_diff(cls, git_diff: Diff):
+        old = None
+        if git_diff.a_blob:
+            old = git_diff.a_blob.data_stream.read()
         return cls(
             change_type=ChangeType.from_git_change_type(git_diff.change_type),
             path=Path(git_diff.a_path),
             rename_from=git_diff.rename_from,
             rename_to=git_diff.rename_to,
+            old_content=old,
         )
 
     @classmethod
