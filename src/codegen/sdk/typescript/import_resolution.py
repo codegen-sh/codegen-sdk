@@ -19,7 +19,7 @@ from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.sdk.utils import find_all_descendants, find_first_ancestor, find_first_descendant
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile

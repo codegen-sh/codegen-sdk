@@ -16,10 +16,8 @@ from git import Commit as GitCommit
 from rustworkx import PyDiGraph, WeightedEdgeList
 
 from codegen.git.repo_operator.repo_operator import RepoOperator
-from codegen.git.utils.stopwatch_utils import stopwatch, stopwatch_with_sentry
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
-from codegen.sdk.codebase.control_flow import StopCodemodException
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 from codegen.sdk.codebase.flagging.flags import Flags
 from codegen.sdk.codebase.transaction_manager import TransactionManager
@@ -35,6 +33,8 @@ from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
+from codegen.shared.exceptions.control_flow import StopCodemodException
+from codegen.shared.performance.stopwatch_utils import stopwatch, stopwatch_with_sentry
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses

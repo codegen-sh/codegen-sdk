@@ -1,14 +1,10 @@
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.statements.comment import Comment, lowest_indentation
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
-
-if TYPE_CHECKING:
-    pass
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 
 @py_apidoc

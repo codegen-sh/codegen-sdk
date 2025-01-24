@@ -10,7 +10,7 @@ from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.symbol import TSSymbol
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement

@@ -12,14 +12,14 @@ import networkx as nx
 import plotly
 """.strip()
 CODEGEN_IMPORTS = """
-from app.codemod.compilation.models.context import CodemodContext
-from app.codemod.compilation.models.github_named_user_context import GithubNamedUserContext
-from app.codemod.compilation.models.pr_part_context import PRPartContext
-from app.codemod.compilation.models.pull_request_context import PullRequestContext
+from codegen.git.models.codemod_context import CodemodContext
+from codegen.git.models.github_named_user_context import GithubNamedUserContext
+from codegen.git.models.pr_part_context import PRPartContext
+from codegen.git.models.pull_request_context import PullRequestContext
 """
 # TODO: these should also be made public (i.e. included in the docs site)
 GS_PRIVATE_IMPORTS = """
-from codegen.sdk.codebase.control_flow import StopCodemodException
+from codegen.shared.exceptions.control_flow import StopCodemodException
 """.strip()
 
 IMPORT_STRING_TEMPLATE = """

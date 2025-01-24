@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ append a closing parenthesis to complete the transformation.""",
     uid="d1ece8d3-7da9-4696-9288-4087737e2952",
 )
 @canonical
-class BangBangToBoolean(Codemod3, Skill):
+class BangBangToBoolean(Codemod, Skill):
     """This codemod converts !!(expression) to Boolean(expression)"""
 
     language = ProgrammingLanguage.TYPESCRIPT

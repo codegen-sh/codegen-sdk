@@ -3,7 +3,6 @@ import textwrap
 import inflection
 from typing_extensions import deprecated
 
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python import PyClass
@@ -11,6 +10,7 @@ from codegen.sdk.python.function import PyFunction
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.skill_implementation import SkillImplementation
 from codegen.sdk.skills.core.utils import get_all_evaluation_skills
+from codemods.codemod import Codemod
 
 
 def remove_leading_tab_or_spaces(text: str) -> str:
@@ -108,7 +108,7 @@ def format_all_skills(skill_classes: list[Skill]) -> str:
 
     # Step 2: Format each skill into an .mdx compatible string
     for skill in sorted_skills:
-        if issubclass(skill, Codemod3):
+        if issubclass(skill, Codemod):
             continue
         sk_inst = skill
         formatted_skills.append(sk_inst.generate_snippet(skill_doc=True))

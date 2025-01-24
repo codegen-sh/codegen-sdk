@@ -14,7 +14,7 @@ from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.placeholder.placeholder_stub import StubPlaceholder
 from codegen.sdk.enums import ImportType, NodeType
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:

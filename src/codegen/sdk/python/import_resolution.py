@@ -14,7 +14,7 @@ from codegen.sdk.core.interfaces.exportable import Exportable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import ImportType, NodeType
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.file import PyFile

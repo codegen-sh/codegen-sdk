@@ -30,7 +30,7 @@ from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollec
 from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.utils import cached_property
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:

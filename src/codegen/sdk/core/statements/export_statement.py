@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Self, TypeVar
+from typing import Generic, Self, TypeVar
 
 from tree_sitter import Node as TSNode
 
@@ -16,11 +16,7 @@ from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.export import TSExport
 from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.utils import find_first_ancestor
-from codegen.sdk.writer_decorators import apidoc, noapidoc
-
-if TYPE_CHECKING:
-    pass
-
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 TExport = TypeVar("TExport", bound="Export")
 

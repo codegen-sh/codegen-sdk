@@ -9,7 +9,36 @@ iconType: "solid"
 
 It provides a scriptable interface to a powerful, multi-lingual language server built on top of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
-<iframe src="https://chadcode.sh/embedded/123" className="w-full h-96"></iframe>
+export const intoSnippet = `# grabs codebase content
+
+file = codebase.files[0] # or .get_file("test.py")
+function = codebase.functions[0] # or .get_symbol("my_func")
+
+# print logs
+
+print(f'# of files: {len(codebase.files)}')
+print(f'# of functions: {len(codebase.functions)}')
+
+# make edits
+
+file.edit('🌈' + file.content) # edit contents
+function.rename('new_name') # rename
+function.set_docstring('new docstring') # set docstring
+
+# ... etc.
+
+`
+
+<iframe
+  width="100%"
+  height="300px"
+  scrolling="no"
+  src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
+    intoSnippet
+  )}`}
+  className="rounded-md "
+
+> </iframe>
 
 ## Installation
 
@@ -18,6 +47,11 @@ pip install codegen
 ```
 
 ## Get Started
+
+import {
+  COMMUNITY_SLACK_URL,
+  CODEGEN_SDK_GITHUB_URL,
+} from "/snippets/links.mdx";
 
 <CardGroup cols={2}>
   <Card
@@ -30,18 +64,10 @@ pip install codegen
   <Card title="Tutorials" icon="diagram-project" href="/tutorials/at-a-glance">
     Learn how to use Codegen for common code transformation tasks.
   </Card>
-  <Card
-    title="View on GitHub"
-    icon="github"
-    href="https://github.com/codegen-sh/codegen-sdk"
-  >
+  <Card title="View on GitHub" icon="github" href={CODEGEN_SDK_GITHUB_URL}>
     Star us on GitHub and contribute to the project.
   </Card>
-  <Card
-    title="Join our Slack"
-    icon="slack"
-    href="https://join.slack.com/t/codegen-community/shared_invite/..."
-  >
+  <Card title="Join our Slack" icon="slack" href={COMMUNITY_SLACK_URL}>
     Get help and connect with the Codegen community.
   </Card>
 </CardGroup>

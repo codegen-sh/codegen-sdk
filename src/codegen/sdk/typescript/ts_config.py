@@ -8,7 +8,7 @@ import pyjson5
 
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.file import File
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.config_parser import TSConfigParser

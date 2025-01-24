@@ -8,7 +8,7 @@ import re
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar, Unpack, overload
+from typing import Generic, Literal, TypeVar, Unpack, overload
 
 import plotly.graph_objects as go
 import rich.repr
@@ -20,19 +20,19 @@ from rich.console import Console
 from typing_extensions import deprecated
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
-from codegen.git.utils.stopwatch_utils import stopwatch
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
 from codegen.sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
-from codegen.sdk.codebase.control_flow import MaxAIRequestsError
 from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import FlagKwargs
+from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.span import Span
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
@@ -71,11 +71,10 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.exceptions.control_flow import MaxAIRequestsError
+from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
-
-if TYPE_CHECKING:
-    from app.codemod.types import Group
 
 logger = logging.getLogger(__name__)
 MAX_LINES = 10000  # Maximum number of lines of text allowed to be logged
@@ -101,7 +100,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     It provides a high-level interface to interact with the codebase graph, and provides methods to access and manipulate files, directories, symbols, and other entities in the codebase.
     """
 
-    _op: RepoOperator
+    _op: RepoOperator | RemoteRepoOperator
     viz: VisualizationManager
     repo_path: Path
     console: Console
@@ -226,6 +225,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if extensions is None:
             # Return all source files
             files = self.G.get_nodes(NodeType.FILE)
+        elif isinstance(extensions, str) and extensions != "*":
+            raise ValueError("extensions must be a list of extensions or '*'")
         else:
             files = []
             # Get all files with the specified extensions
@@ -890,7 +891,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.flags.set_find_mode(find_mode)
 
     @noapidoc
-    def set_active_group(self, group: "Group") -> None:
+    def set_active_group(self, group: Group) -> None:
         """Will only fix these flags."""
         # TODO - flesh this out more with Group datatype and GroupBy
         self.G.flags.set_active_group(group)
@@ -1084,6 +1085,61 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.session_options = self.G.session_options.model_copy(update=kwargs)
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
+
+    @classmethod
+    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True) -> "Codebase":
+        """Fetches a codebase from GitHub and returns a Codebase instance.
+
+        Args:
+            repo_name (str): The name of the repository in format "owner/repo"
+            tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
+            commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
+            shallow (bool): Whether to do a shallow clone. Defaults to True
+        Returns:
+            Codebase: A Codebase instance initialized with the cloned repository
+        """
+        logger.info(f"Fetching codebase for {repo_name}")
+
+        # Parse repo name
+        if "/" not in repo_name:
+            raise ValueError("repo_name must be in format 'owner/repo'")
+        owner, repo = repo_name.split("/")
+
+        # Setup temp directory
+        if tmp_dir is None:
+            tmp_dir = "/tmp/codegen"
+        os.makedirs(tmp_dir, exist_ok=True)
+        logger.info(f"Using directory: {tmp_dir}")
+
+        # Setup repo path and URL
+        repo_path = os.path.join(tmp_dir, repo)
+        repo_url = f"https://github.com/{repo_name}.git"
+        logger.info(f"Will clone {repo_url} to {repo_path}")
+
+        try:
+            # Use LocalRepoOperator to fetch the repository
+            logger.info("Cloning repository...")
+            if commit is None:
+                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url)
+            else:
+                # Ensure the operator can handle remote operations
+                repo_operator = LocalRepoOperator.create_from_commit(
+                    repo_path=repo_path,
+                    default_branch="main",  # We'll get the actual default branch after clone
+                    commit=commit,
+                    url=repo_url,
+                )
+            logger.info("Clone completed successfully")
+
+            # Initialize and return codebase with proper context
+            logger.info("Initializing Codebase...")
+            project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
+            codebase = Codebase(projects=[project], config=DefaultConfig)
+            logger.info("Codebase initialization complete")
+            return codebase
+        except Exception as e:
+            logger.error(f"Failed to initialize codebase: {e}")
+            raise
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py

@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ codebase. Ensure that the new component is imported if it is not already present
     uid="ab5879e3-e3ea-4231-b928-b756473f290d",
 )
 @canonical
-class ChangeJSXElementName(Codemod3, Skill):
+class ChangeJSXElementName(Codemod, Skill):
     """This codemod updates specific JSX elements inside of React components
 
     In particular, this:

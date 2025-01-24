@@ -11,7 +11,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

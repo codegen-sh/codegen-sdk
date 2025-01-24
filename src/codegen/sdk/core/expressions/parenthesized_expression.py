@@ -10,7 +10,7 @@ from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.core.interfaces.wrapper_expression import IWrapper
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.typescript.statements.if_block_statement import TSIfBlockStatement
-from codegen.sdk.writer_decorators import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

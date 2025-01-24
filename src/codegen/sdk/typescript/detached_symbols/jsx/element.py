@@ -17,7 +17,7 @@ from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
 from codegen.sdk.typescript.detached_symbols.jsx.prop import JSXProp
 from codegen.sdk.utils import find_all_descendants
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

@@ -25,7 +25,7 @@ from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollec
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import find_line_start_and_end_nodes
 from codegen.sdk.output.ast import AST
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.has_block import HasBlock

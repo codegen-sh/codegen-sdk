@@ -22,7 +22,7 @@ from codegen.sdk.enums import ImportType, NodeType
 from codegen.sdk.typescript.import_resolution import TSImport
 from codegen.sdk.typescript.statements.comment import TSComment, TSCommentType
 from codegen.sdk.typescript.symbol_groups.comment_group import TSCommentGroup
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.file import SourceFile

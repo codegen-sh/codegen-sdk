@@ -8,7 +8,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.catch_statement import CatchStatement
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.statements.block_statement import PyBlockStatement
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

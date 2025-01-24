@@ -5,7 +5,7 @@ import subprocess
 from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config
-from codegen.git.utils.stopwatch_utils import subprocess_with_stopwatch
+from codegen.shared.performance.stopwatch_utils import subprocess_with_stopwatch
 
 logger = logging.getLogger(__name__)
 

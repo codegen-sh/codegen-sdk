@@ -12,7 +12,7 @@ from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.output.ast import AST
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

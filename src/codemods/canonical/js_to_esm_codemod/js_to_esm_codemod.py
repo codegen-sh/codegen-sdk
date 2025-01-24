@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ directory structure.""",
     uid="f93122d3-f469-4740-a8bf-f53016de41b2",
 )
 @canonical
-class JsToEsmCodemod(Codemod3, Skill):
+class JsToEsmCodemod(Codemod, Skill):
     """This codemod will convert all JS files that have .router in their name to be proper ESM modules"""
 
     language = ProgrammingLanguage.TYPESCRIPT

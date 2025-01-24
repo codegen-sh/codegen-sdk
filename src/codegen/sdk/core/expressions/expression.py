@@ -6,7 +6,7 @@ from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.enums import NodeType
 from codegen.sdk.extensions.autocommit import reader
-from codegen.sdk.writer_decorators import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

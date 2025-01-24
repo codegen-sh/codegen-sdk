@@ -12,7 +12,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
 from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnTypePlaceholder
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

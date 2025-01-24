@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -15,7 +15,7 @@ symbol into its own new file within that directory. Ensure to add a back edge to
     uid="b5bbec91-5bfe-4b4b-b62e-0a1ec94089b5",
 )
 @canonical
-class SplitLargeFiles(Codemod3, Skill):
+class SplitLargeFiles(Codemod, Skill):
     """This codemod splits all large files."""
 
     language = ProgrammingLanguage.TYPESCRIPT

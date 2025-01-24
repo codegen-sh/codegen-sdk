@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ with its dependencies to 'enums.py' and add a back edge import to the original f
     uid="47e9399c-b8d5-4f39-a5cf-fd40c51620b0",
 )
 @canonical
-class MoveEnumsCodemod(Codemod3, Skill):
+class MoveEnumsCodemod(Codemod, Skill):
     """Moves all enums to a file called enums.py in current directory if it doesn't already exist"""
 
     language = ProgrammingLanguage.PYTHON

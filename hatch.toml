@@ -71,9 +71,7 @@ macos-max-compat = false
 
 [build]
 packages = [
-    "src/codegen/sdk",
-    "src/codegen/gscli",
-    "src/graph_visualization",
+    "src/codegen",
 ]
 
 [metadata.hooks.vcs]
@@ -83,7 +81,7 @@ source_archive = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash
 
 [build.targets.wheel.hooks.custom]
 enable-by-default = false
-path = "src/graph_sitter_build/build.py"
+path = "src/codegen/gsbuild/build.py"
 require-runtime-dependencies = true
 [envs.default]
 installer = "uv"

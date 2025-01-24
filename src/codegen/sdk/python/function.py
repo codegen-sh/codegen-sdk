@@ -23,7 +23,7 @@ from codegen.sdk.python.expressions.type import PyType
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
 from codegen.sdk.python.symbol import PySymbol
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 logger = logging.getLogger(__name__)
 

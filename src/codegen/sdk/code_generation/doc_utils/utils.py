@@ -1,94 +1,39 @@
+import logging
 import re
-from copy import deepcopy
+import textwrap
 
-from codegen.sdk.code_generation.enums import DocumentationDecorators
+from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.function import Function
 from codegen.sdk.core.symbol import Symbol
-from codegen.sdk.enums import NodeType, ProgrammingLanguage
-from codegen.sdk.python.class_definition import PyClass
-from codegen.sdk.python.function import PyFunction
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.python.statements.attribute import PyAttribute
+
+logger = logging.getLogger(__name__)
 
 
-def get_api_classes_by_decorator(
-    codebase: Codebase,
-    language: ProgrammingLanguage = ProgrammingLanguage.PYTHON,
-    docs: bool = True,
-) -> dict[str, PyClass]:
-    """Returns all classes in a directory that have a specific decorator."""
-    classes = {}
-    language_specific_decorator = get_decorator_for_language(language).value
-    general_decorator = DocumentationDecorators.GENERAL_API.value
-    # get language specific classes
-    for cls in codebase.classes:
-        class_decorators = [decorator.name for decorator in cls.decorators]
-        if language_specific_decorator in class_decorators:
-            classes[cls.name] = cls
-    for cls in codebase.classes:
-        class_decorators = [decorator.name for decorator in cls.decorators]
-        if general_decorator in class_decorators and cls.name not in classes.keys():
-            classes[cls.name] = cls
-    return classes
+def sanitize_docstring_for_markdown(docstring: str | None) -> str:
+    """Sanitize the docstring for MDX"""
+    if docstring is None:
+        return ""
+    docstring_lines = docstring.splitlines()
+    if len(docstring_lines) > 1:
+        docstring_lines[1:] = [textwrap.dedent(line) for line in docstring_lines[1:]]
+    docstring = "\n".join(docstring_lines)
+    if docstring.startswith('"""'):
+        docstring = docstring[3:]
+    if docstring.endswith('"""'):
+        docstring = docstring[:-3]
+    return docstring
 
 
-def get_all_classes_to_document(codebase: Codebase) -> dict[str, PyClass]:
-    """Returns all classes in a directory that have a specific decorator."""
-    python_classes = get_api_classes_by_decorator(codebase=codebase, language=ProgrammingLanguage.PYTHON)
-    typescript_classes = get_api_classes_by_decorator(codebase=codebase, language=ProgrammingLanguage.TYPESCRIPT)
-    classes = {**typescript_classes, **python_classes}  # Python values will overwrite TypeScript values in case of collision
-    return classes
-
-
-def get_nearest_parent_docstring(method: PyFunction, cls: PyClass) -> str:
-    """Returns the PyFunction of the first parent who has a docstring for it"""
-    for parent in cls.superclasses():
-        if not isinstance(parent, Symbol):
-            continue
-        for _method in parent.methods():
-            if _method.name == method.name:
-                if hasattr(_method, "docstring") and hasattr(_method.docstring, "text") and _method.docstring.text != "":
-                    return _method.docstring.source
-    return ""
-
-
-def get_language_specific_classes(codebase: Codebase, language: ProgrammingLanguage) -> dict[str, PyClass]:
-    classes = {}
-    for cls in codebase.classes:
-        if cls.get_attribute("language"):
-            if cls.get_attribute("language").assignment.value.source.split(".")[1] == language.value:
-                classes[cls.name] = cls
-    return classes
-
-
-def get_codemod_classes(codebase: Codebase, language: ProgrammingLanguage) -> dict[str, PyClass]:
-    classes = {}
-    target_decorator = DocumentationDecorators.CODEMOD.value
-    for cls in codebase.classes:
-        if target_decorator in [decorator.name for decorator in cls.decorators]:
-            if cls.get_attribute("language"):
-                if cls.get_attribute("language").assignment.value.source.split(".")[1] == language.value:
-                    classes[cls.name] = cls
-    return classes
-
-
-def is_property(method: PyFunction) -> bool:
-    """Returns True if the method is a property (denoted by @property decorator)"""
-    return method.is_property
-
-
-def get_parent(cls: PyClass) -> str | None:
-    parents = [parent for parent in cls.parent_class_names if parent.source in cls.name]
-    if len(parents) > 1:
-        raise ValueError(f"More than one parent found for {cls.name}")
-    if len(parents) == 0:
-        return
-    return parents[0].source
-
-
-def sanitize_mdx_mintlify_desscription(content: str) -> str:
+def sanitize_mdx_mintlify_description(content: str) -> str:
     """Mintlify description field needs to have string escaped, which content doesn't need.
     the must be parsing the description differently or something
     """
+    content = sanitize_docstring_for_markdown(content)
     # make sure all `< />` components are properly escaped with a `` inline-block
     # if the string already has the single-quote then this is a no-op
     content = re.sub(r"(?<!`)(<[^>]+>)(?!`)", r"`\1`", content)
@@ -99,116 +44,292 @@ def sanitize_mdx_mintlify_desscription(content: str) -> str:
     return re.sub(r'(")', r"\\\1", content)
 
 
-def filter_undocumented_methods_list(doc_methods: list[Function]) -> list[Function]:
-    """Returns a list of methods for a given class that should be documented."""
-    filtered_doc_methods = [m for m in doc_methods if not m.name.startswith("_")]
-    filtered_doc_methods = [m for m in filtered_doc_methods if not any("noapidoc" in d.name for d in m.decorators)]
-    return filtered_doc_methods
+def sanitize_html_for_mdx(html_string: str) -> str:
+    """Sanitize HTML string for MDX by escaping double quotes in attribute values.
+
+    Args:
+        html_string (str): The input HTML string to sanitize
+
+    Returns:
+        str: The sanitized HTML string with escaped quotes
+    """
+    # Replace double quotes with &quot; but only in HTML attributes
+    return re.sub(r'"', "&quot;", html_string)
 
 
-def get_codegen_sdk_class_docstring(cls: PyClass, codebase: Codebase) -> str:
-    """Get the documentation for a single GraphSitter class and its methods."""
-    # =====[ Parent classes ]=====
-    parent_classes = cls.parent_class_names
-    parent_class_names = [parent.source for parent in parent_classes if parent.source not in ("Generic", "ABC", "Expression")]
-    superclasses = ", ".join([name for name in parent_class_names])
-    if len(superclasses) > 0:
-        superclasses = f"({superclasses})"
-
-    # =====[ Name + docstring ]=====
-    source = f"class {cls.name}{superclasses}:"
-    if cls.docstring is not None:
-        source += set_indent(string=f'\n"""{cls.docstring.text}"""', indent=1)
-    source += "\n"
-
-    # =====[ Attributes ]=====
-    if cls.is_subclass_of("Enum"):
-        for attribute in cls.attributes:
-            source += set_indent(f"\n{attribute.source}", 1)
-    else:
-        for attribute in cls.attributes(private=False, max_depth=None):
-            # Only document attributes which have docstrings
-            if docstring := attribute.docstring(cls):
-                source += set_indent(f"\n{attribute.attribute_docstring}", 1)
-                source += set_indent(string=f'\n"""{docstring}"""', indent=2)
-                source += set_indent("\n...\n", 2)
-
-    # =====[ Get inherited method ]=====
-    def get_inherited_method(superclasses, method):
-        """Returns True if the method is inherited"""
-        for s in superclasses:
-            for m in s.methods:
-                if m.name == method.name:
-                    if m.docstring == method.docstring or method.docstring is None:
-                        return m
+def get_type_str(parent, curr_depth=0, max_depth=5):
+    """Returns the type node for an attribute."""
+    if curr_depth >= max_depth:
         return None
-
-    # =====[ Get superclasses ]=====
-    superclasses = cls.superclasses
-    superclasses = list({s.name: s for s in superclasses}.values())
-    superclasses = [x for x in superclasses if x.node_type != NodeType.EXTERNAL]
-
-    # TODO use new filter_methods_list function here
-    # =====[ Get methods to be documented ]=====
-    doc_methods = cls.methods
-    doc_methods = [m for m in doc_methods if not m.name.startswith("_")]
-    doc_methods = [m for m in doc_methods if not any("noapidoc" in d.name for d in m.decorators)]
-    doc_methods = [m for m in doc_methods if get_inherited_method(superclasses, m) is None]
-
-    # =====[ Methods ]=====
-    for method in doc_methods:
-        if "property" in [decorator.name for decorator in method.decorators]:
-            source += set_indent(f"\n@property\n{method.function_signature}", 1)
-        else:
-            source += set_indent(f"\n{method.function_signature}", 1)
-        if method.docstring is not None:
-            source += set_indent(string=f'\n"""{method.docstring.text}"""', indent=2)
-        source += set_indent("\n...\n", 2)
-
-    # =====[ Format markdown ]=====
-    return f"""### {cls.name}\n\n{format_python_codeblock(source)}"""
+    if isinstance(parent, Type):
+        return parent
+    for child in parent.children:
+        if attr_type := get_type_str(child, curr_depth=curr_depth + 1):
+            return attr_type
+    return None
 
 
-def remove_first_indent(text):
-    lines = text.split("\n")
-    first_line = lines[0]
-    rest = "\n".join(lines[1:])
-    set_indent(rest, 1)
-    return first_line + "\n" + rest
+def is_language_base_class(cls_obj: Class):
+    """Returns true if `cls_obj` is a direct parent of a language specific class.
+
+    For example, `Symbol` which is a direct parent of `PySymbol` and `TsSymbol` is a language base class
+    and `Editable` is not.
+
+    Args:
+        cls_obj (Class): the class object to check
+
+    Returns:
+        bool: if `cls_obj` is a language base class
+    """
+    sub_classes = cls_obj.subclasses(max_depth=1)
+    base_name = cls_obj.name.lower()
+    return any(sub_class.name.lower() in [f"py{base_name}", f"ts{base_name}"] for sub_class in sub_classes)
 
 
-def format_python_codeblock(source: str) -> str:
-    """A python codeblock in markdown format."""
-    # USE 4 backticks instead of 3 so backticks inside the codeblock are handled properly
-    cb = f"````python\n{source}\n````"
-    return cb
+def get_section(symbol: Symbol, parent_class: Class | None = None):
+    if parent_class:
+        doc_section = parent_class.filepath.split("/")[1]
+    else:
+        doc_section = symbol.filepath.split("/")[1]
+    return doc_section
 
 
-def set_indent(string: str, indent: int) -> str:
-    """Sets the indentation of a string."""
-    tab = "\t"
-    return "\n".join([f"{tab * indent}{line}" for line in string.split("\n")])
+def get_langauge(symbol: Class | Function | PyAttribute) -> str:
+    """Gets the language of which the symbol is an abstract representation.
+
+    Args:
+        symbol (Class | Function | PyAttribute): the symbol to get the langauge of
+    Returns:
+        str: the language of the symbol
+    """
+    if ProgrammingLanguage.PYTHON.value.lower() in symbol.filepath:
+        return ProgrammingLanguage.PYTHON.value
+    elif ProgrammingLanguage.TYPESCRIPT.value.lower() in symbol.filepath:
+        return ProgrammingLanguage.TYPESCRIPT.value
+    elif isinstance(symbol, Class) and is_language_base_class(symbol):
+        return "NONE"
+    elif isinstance(symbol.parent_class, Class) and is_language_base_class(symbol.parent_class):
+        return "NONE"
+    else:
+        return "ALL"
 
 
-def sort_docstrings(docstrings: dict[str, str], preferred_order: list[str]) -> list[str]:
-    """Sorts docstrings to a preferred order, putting un-referenced ones last."""
-    docstrings = deepcopy(docstrings)
-    # ======[ Sort docstrings ]=====
-    # Puts un-referenced docstrings last
-    sorted_docstrings = []
-    for class_name in preferred_order:
-        if class_name in docstrings:
-            sorted_docstrings.append(docstrings[class_name])
-            del docstrings[class_name]
-    for class_name in docstrings:
-        sorted_docstrings.append(docstrings[class_name])
-    return sorted_docstrings
+def get_type(method: Function):
+    """Return the type of method.
+
+    Args:
+        method (Function): the method to check the type of.
+
+    Returns:
+        str: `property` if the method is a property, `method` otherwise.
+    """
+    if method.is_property:
+        return "property"
+    else:
+        return "method"
 
 
-def get_decorator_for_language(
-    language: ProgrammingLanguage = ProgrammingLanguage.PYTHON,
-) -> DocumentationDecorators:
-    if language == ProgrammingLanguage.PYTHON:
-        return DocumentationDecorators.PYTHON
-    elif language == ProgrammingLanguage.TYPESCRIPT:
-        return DocumentationDecorators.TYPESCRIPT
+def is_settter(m: Function):
+    """Checks if `m` is a setter method
+    Args:
+        m (Function): the function (method) to check
+    Returns:
+        bool: `True` if `m` is a setter method, `False` otherwise
+    """
+    return any([dec.name == f"{m.name}.setter" for dec in m.decorators])
+
+
+def create_path(symbol: Class | Function | PyAttribute, parent_class: Class | None = None) -> str:
+    """Creates a route path for `symbol` that will be used in the frontend
+
+    Args:
+        symbol (Class | Function | PyAttribute): the object for which a path should be created
+        parent_class (Class | None): optional parent class of the method
+    Returns:
+        str: route path of `symbol`
+    """
+    name = symbol.name
+    language = get_langauge(symbol)
+
+    if language == ProgrammingLanguage.PYTHON.value:
+        doc_section = ProgrammingLanguage.PYTHON.value.lower()
+    elif language == ProgrammingLanguage.TYPESCRIPT.value:
+        doc_section = ProgrammingLanguage.TYPESCRIPT.value.lower()
+    else:
+        doc_section = "core"
+
+    if isinstance(symbol, Class):
+        return f"api-reference/{doc_section}/{name}"
+
+    if parent_class:
+        parent_name = parent_class.name
+    else:
+        parent_name = symbol.parent_class.name
+
+    if isinstance(symbol, Function) and is_settter(symbol):
+        return f"api-reference/{doc_section}/{parent_name}/set_{name}"
+
+    return f"api-reference/{doc_section}/{parent_name}/{name}"
+
+
+def has_documentation(c: Class):
+    """If the class c is meant to be documented.
+
+    Args:
+        c (Class): the class to check
+    Returns:
+        bool: `True` if the class is meant to be documented, `False` otherwise
+    """
+    return any([dec.name == "ts_apidoc" or dec.name == "py_apidoc" or dec.name == "apidoc" for dec in c.decorators])
+
+
+def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict):
+    """Find the symbol in the codebase.
+
+    Args:
+        codebase (Codebase): the codebase to search in
+        symbol_name (str): the name of the symbol to resolve
+        resolved_types (list[Type]): the resolved types of the symbol
+        parent_class (Class): the parent class of the symbol
+        types_cache (dict): the cache to store the results in
+    Returns:
+        str: the route path of the symbol
+    """
+    if symbol_name in ["list", "tuple", "int", "str", "dict", "set", "None", "bool", "optional", "Union"]:
+        return symbol_name
+    if symbol_name.lower() == "self":
+        return f"<{create_path(parent_class)}>"
+    if symbol_name in types_cache:
+        return types_cache[symbol_name]
+    # if symbol_name in [resolved_type.value for resolved_type in resolved_types]:
+    #     return symbol_name
+
+    try:
+        trgt_symbol = None
+        cls_obj = codebase.get_class(symbol_name, optional=True)
+        if cls_obj:
+            trgt_symbol = cls_obj
+
+        if not trgt_symbol:
+            if symbol := parent_symbol.file.get_symbol(symbol_name):
+                for resolved_type in symbol.resolved_types:
+                    if isinstance(resolved_type, FunctionCall) and len(resolved_type.args) >= 2:
+                        bound_arg = resolved_type.args[1]
+                        bound_name = bound_arg.value
+                        if cls_obj := codebase.get_class(bound_name, optional=True):
+                            trgt_symbol = cls_obj
+                            break
+
+            elif symbol := codebase.get_symbol(symbol_name, optional=True):
+                if len(symbol.resolved_types) == 1:
+                    trgt_symbol = symbol.resolved_types[0]
+
+        if trgt_symbol and has_documentation(trgt_symbol):
+            trgt_path = f"<{create_path(trgt_symbol)}>"
+            types_cache[symbol_name] = trgt_path
+            return trgt_path
+    except Exception as e:
+        logger.warning(f"Unable to resolve {symbol_name}. Received error: {e}.")
+
+    return symbol_name
+
+
+def replace_multiple_types(codebase: Codebase, input_str: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict) -> str:
+    """Replace multiple types in a string.
+
+    Args:
+        codebase (Codebase): the codebase to search in
+        input_str (str): the string to replace the types in
+        parent_class (Class): the parent class of the symbol
+        types_cache (dict): the cache to store the results in
+    Returns:
+        str: the string with the types replaced
+    """
+    # Remove outer quotes if present
+    input_str = input_str.replace('"', "")
+
+    def process_parts(content):
+        # Handle nested brackets recursively
+        stack = []
+        current = ""
+        parts = []
+        separators = []
+        in_quotes = False
+        quote_char = None
+
+        i = 0
+        while i < len(content):
+            char = content[i]
+
+            # Handle quotes
+            if char in "\"'":
+                if not in_quotes:
+                    in_quotes = True
+                    quote_char = char
+                elif char == quote_char:
+                    in_quotes = False
+                current += char
+            # Only process special characters if we're not in quotes
+            elif not in_quotes:
+                if char == "[":
+                    stack.append("[")
+                    current += char
+                elif char == "]":
+                    if stack:
+                        stack.pop()
+                    current += char
+                elif (char in ",|") and not stack:  # Only split when not inside brackets
+                    if current.strip():
+                        parts.append(current.strip())
+                        separators.append(char)
+                    current = ""
+                else:
+                    current += char
+            else:
+                current += char
+            i += 1
+
+        if current.strip():
+            parts.append(current.strip())
+
+        # Process each part
+        processed_parts = []
+        for part in parts:
+            # Check if the part is quoted
+            if part.startswith('"') and part.endswith('"'):
+                processed_parts.append(part)  # Keep quoted parts as-is
+                continue
+
+            # Check if the part itself contains brackets
+            if "[" in part:
+                base_type = part[: part.index("[")]
+                bracket_content = part[part.index("[") :].strip("[]")
+                processed_bracket = process_parts(bracket_content)
+                replacement = find_symbol(codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+                processed_part = replacement + "[" + processed_bracket + "]"
+            else:
+                replacement = find_symbol(codebase=codebase, symbol_name=part, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+                processed_part = replacement
+            processed_parts.append(processed_part)
+
+        # Reconstruct with original separators
+        result = processed_parts[0]
+        for i in range(len(separators)):
+            result += f"{separators[i]} {processed_parts[i + 1]}"
+
+        return result
+
+    # Check if the input contains any separators
+    if any(sep in input_str for sep in ",|"):
+        return process_parts(input_str)
+    # Handle bracketed input
+    elif "[" in input_str:
+        base_type = input_str[: input_str.index("[")]
+        bracket_content = input_str[input_str.index("[") :].strip("[]")
+        processed_content = process_parts(bracket_content)
+        replacement = find_symbol(codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+        return replacement + "[" + processed_content + "]"
+    # Handle simple input
+    else:
+        replacement = find_symbol(codebase=codebase, symbol_name=input_str, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+        return replacement

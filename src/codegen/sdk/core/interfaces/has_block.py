@@ -13,7 +13,7 @@ from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.statements.comment import Comment
 from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 from codegen.sdk.extensions.sort import sort_editables
-from codegen.sdk.writer_decorators import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 TDecorator = TypeVar("TDecorator", bound="Decorator")

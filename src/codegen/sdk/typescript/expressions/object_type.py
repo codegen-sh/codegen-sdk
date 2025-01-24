@@ -9,7 +9,7 @@ from codegen.sdk.core.expressions.value import Value
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.symbol_groups.dict import TSDict, TSPair
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

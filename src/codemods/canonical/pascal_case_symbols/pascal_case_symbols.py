@@ -1,4 +1,3 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.interface import Interface
@@ -7,6 +6,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -18,7 +18,7 @@ should rename the symbol and update all references accordingly.""",
     uid="bbb9e26a-7911-4b94-a4eb-207b9d32d18f",
 )
 @canonical
-class PascalCaseSymbols(Codemod3, Skill):
+class PascalCaseSymbols(Codemod, Skill):
     """This (Typescript) codemod converts all Classes, Interfaces and Types to be in PascalCase using simple logic.
 
     Note the use of the `isinstance(symbol, (Class | Interface | Type))` syntax to check if the symbol is a Class, Interface, or Type.

@@ -13,7 +13,7 @@ from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock

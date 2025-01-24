@@ -1,4 +1,3 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.enums import ProgrammingLanguage
@@ -6,6 +5,7 @@ from codegen.sdk.python.class_definition import PyClass
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -17,7 +17,7 @@ if the function is a class without a constructor, or if the function is part of 
     uid="1a4b9e66-1df5-4ad1-adbb-034976add8e0",
 )
 @canonical
-class UseNamedKwargs(Codemod3, Skill):
+class UseNamedKwargs(Codemod, Skill):
     """Converts all functions to use named kwargs if there are more than >= 2 args being used.
 
     In general you can use FunctionCall.convert_args_to_kwargs() once you have filtered properly

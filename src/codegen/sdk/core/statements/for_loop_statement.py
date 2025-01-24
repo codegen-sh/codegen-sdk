@@ -11,7 +11,7 @@ from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
-from codegen.sdk.writer_decorators import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ definitions, add necessary imports, and modify function call sites accordingly."
     uid="4a3569c2-cf58-4bdc-822b-7a5747f476ab",
 )
 @canonical
-class SwapClassAttributeUsages(Codemod3, Skill):
+class SwapClassAttributeUsages(Codemod, Skill):
     """This codemod takes two classes (class A and class B) and transfers one class's attributes to the other.
     It does this by:
     - Renaming any parameters that are passing the class A and replaces it to take in class B instead

@@ -24,7 +24,7 @@ from codegen.sdk.typescript.expressions.type import TSType
 from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.symbol import TSSymbol
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 
 @ts_apidoc

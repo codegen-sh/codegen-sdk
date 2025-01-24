@@ -10,7 +10,7 @@ from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.importable import Importable

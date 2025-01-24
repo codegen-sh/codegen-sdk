@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Generic, Self, TypeVar
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.extensions.utils import cached_property
-from codegen.sdk.writer_decorators import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.has_attribute import HasAttribute

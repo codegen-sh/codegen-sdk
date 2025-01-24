@@ -17,9 +17,9 @@ from codegen.sdk.testing.verified_codemod_utils import CodemodAPI
 
 BASE_TMP_DIR = Path(os.getenv("GITHUB_WORKSPACE", tempfile.gettempdir()))
 BASE_PATH: Path = Path(__file__).parent.parent.parent.parent.parent
-TEST_DIR: Path = BASE_PATH / "tests" / "codemod"
+TEST_DIR: Path = BASE_PATH / "tests" / "integration" / "codemod"
 CODEMOD_PATH: Path = BASE_PATH / "src" / "codemods"
-VERIFIED_CODEMOD_DIR: Path = BASE_PATH / "tests" / "verified_codemods"
+VERIFIED_CODEMOD_DIR: Path = BASE_PATH / "tests" / "integration" / "verified_codemods"
 VERIFIED_CODEMOD_DATA_DIR: Path = VERIFIED_CODEMOD_DIR / "codemod_data"
 VERIFIED_CODEMOD_DIFFS: Path = VERIFIED_CODEMOD_DIR / "verified_codemod_diffs"
 
@@ -29,7 +29,7 @@ try:
 except (FileNotFoundError, json.decoder.JSONDecodeError):
     REPO_ID_TO_URL = {}
 if TYPE_CHECKING:
-    from codegen.sdk.codemod import Codemod3
+    from codemods.codemod import Codemod
 
 
 @unique
@@ -84,7 +84,7 @@ class Repo(BaseModel):
 
 @dataclass
 class CodemodMetadata:
-    codemod: type["Codemod3"]
+    codemod: type["Codemod"]
     category: str
     directory: Path
     company: str | None = None

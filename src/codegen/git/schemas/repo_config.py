@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import base64
 import logging
 
@@ -37,6 +35,6 @@ class RepoConfig(BaseModel):
         return base64.b64encode(self.model_dump_json().encode("utf-8")).decode("utf-8")
 
     @staticmethod
-    def from_encoded_json(encoded_json: str) -> RepoConfig:
+    def from_encoded_json(encoded_json: str) -> "RepoConfig":
         decoded = base64.b64decode(encoded_json).decode("utf-8")
         return RepoConfig.model_validate_json(decoded)

@@ -10,7 +10,7 @@ from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.function import Function

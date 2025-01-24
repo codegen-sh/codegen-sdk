@@ -5,22 +5,19 @@ icon: "people-group"
 iconType: "solid"
 ---
 
+import {
+  COMMUNITY_SLACK_URL,
+  CODEGEN_SDK_GITHUB_URL,
+} from "/snippets/links.mdx";
+
 Join the growing Codegen community! We're excited to have you be part of our journey to make codebase manipulation and transformation more accessible.
 
 <CardGroup cols={2}>
-  <Card
-    title="Join our Slack"
-    icon="slack"
-    href="https://join.slack.com/t/codegen-community/shared_invite/..."
-  >
+  <Card title="Join our Slack" icon="slack" href={COMMUNITY_SLACK_URL}>
     Connect with the community, get help, and share your Codegen projects in our
     active Slack workspace.
   </Card>
-  <Card
-    title="GitHub"
-    icon="github"
-    href="https://github.com/codegen-sh/codegen-sdk"
-  >
+  <Card title="GitHub" icon="github" href={CODEGEN_SDK_GITHUB_URL}>
     Star us on GitHub, report issues, submit PRs, and contribute to the project.
   </Card>
   <Card title="Twitter (X)" icon="twitter" href="https://twitter.com/codegen">
@@ -43,7 +40,7 @@ Join the growing Codegen community! We're excited to have you be part of our jou
 
 ### Slack
 
-Our Slack community is where you can:
+Our [Slack community](https://community.codegen.com) is where you can:
 
 - Get help and support
 - Share your Codegen projects
@@ -52,7 +49,7 @@ Our Slack community is where you can:
 
 ### GitHub
 
-Codegen is open source and we welcome contributions! On GitHub you can:
+Codegen is [open source](https://github.com/codegen-sh/codegen-sdk) and we welcome contributions! On GitHub you can:
 
 - Report issues
 - Submit pull requests
@@ -61,7 +58,7 @@ Codegen is open source and we welcome contributions! On GitHub you can:
 
 ### Twitter (X)
 
-Follow us on Twitter/X to:
+Follow us on [Twitter/X](https://x.com/codegen) to:
 
 - Get the latest updates
 - See community highlights

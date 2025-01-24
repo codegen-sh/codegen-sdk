@@ -5,7 +5,7 @@ from typing_extensions import TypeVar
 
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.writer_decorators import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 Parent = TypeVar("Parent", bound=Editable)
 

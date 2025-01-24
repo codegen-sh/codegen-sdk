@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
@@ -26,10 +25,7 @@ from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.ts_config import TSConfig
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import calculate_base_path, find_all_descendants
-from codegen.sdk.writer_decorators import noapidoc, ts_apidoc
-
-if TYPE_CHECKING:
-    pass
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 
 @ts_apidoc

@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -13,7 +13,7 @@ codemod should check each function to determine if it is a JSX component and not
     uid="302d8f7c-c848-4020-9dea-30e8e622d709",
 )
 @canonical
-class AddInternalToNonExportedComponents(Codemod3, Skill):
+class AddInternalToNonExportedComponents(Codemod, Skill):
     """This codemod renames all React function components that are not exported from their file to be suffixed with 'Internal'.
 
     Example:

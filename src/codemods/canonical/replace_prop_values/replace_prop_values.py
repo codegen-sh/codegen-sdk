@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -13,7 +13,7 @@ with 'text-left' in all JSX elements.""",
     uid="c1914552-556b-4ae0-99f0-33cb7bfb702e",
 )
 @canonical
-class ReplacePropValues(Codemod3, Skill):
+class ReplacePropValues(Codemod, Skill):
     """Replaces any JSX props with text-center to text-left"""
 
     language = ProgrammingLanguage.TYPESCRIPT

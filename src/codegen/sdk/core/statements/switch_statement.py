@@ -10,7 +10,7 @@ from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.sdk.core.statements.switch_case import SwitchCase
 from codegen.sdk.extensions.autocommit import commiter, reader
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

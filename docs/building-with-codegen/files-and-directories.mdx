@@ -50,6 +50,32 @@ dir = file.directory
 exists = codebase.has_directory("path/to/dir")
 ```
 
+## Working with Non-Code Files (README, JSON, etc.)
+
+By default, Codegen focuses on source code files (Python, TypeScript, etc). However, you can access all files in your codebase, including documentation, configuration, and other non-code files like README.md, package.json, or .env:
+
+```python
+# Get all files in the codebase (including README, docs, config files)
+files = codebase.files(extensions="*")
+
+# Print files that are not source code (documentation, config, etc)
+for file in files:
+    if not file.filepath.endswith(('.py', '.ts', '.js')):
+        print(f"📄 Non-code file: {file.filepath}")
+```
+
+You can also filter for specific file types:
+
+```python
+# Get only markdown documentation files
+docs = codebase.files(extensions=[".md", ".mdx"])
+
+# Get configuration files
+config_files = codebase.files(extensions=[".json", ".yaml", ".toml"])
+```
+
+These APIs are similar for [`Directory`](../api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
+
 ## Raw Content and Metadata
 
 ```python
@@ -121,7 +147,7 @@ if main_function:
 Files themselves are [`Editable`](../api-reference/core/Editable.mdx) objects, just like Functions and Classes.
 
 <Tip>
-  Learn more about the [Editable API](/building-with-codegen/editable-api).
+  Learn more about the [Editable API](/building-with-codegen/the-editable-api).
 </Tip>
 
 This means they expose many useful operations, including:

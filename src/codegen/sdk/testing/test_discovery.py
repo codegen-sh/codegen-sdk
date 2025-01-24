@@ -5,20 +5,16 @@ import os
 import textwrap
 from collections.abc import Generator, Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import emoji
 from loguru import logger
 
 from codegen.gscli.generate.runner_imports import get_runner_imports
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.testing.constants import DIFF_FILEPATH
 from codegen.sdk.testing.models import BASE_PATH, CODEMOD_PATH, REPO_ID_TO_URL, TEST_DIR, VERIFIED_CODEMOD_DATA_DIR, VERIFIED_CODEMOD_DIFFS, ClonedRepoTestCase, CodemodMetadata, Repo, Size
 from codegen.sdk.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata, SkillTestConfig, anonymize_id
-
-if TYPE_CHECKING:
-    pass
+from codemods.codemod import Codemod
 
 
 def find_repos(
@@ -65,7 +61,7 @@ def codemods_from_dir(codemod_dir: Path) -> Iterator[CodemodMetadata]:
         import_path = str(relative).removeprefix("src/").replace("/", ".")
         mod = importlib.import_module(import_path)
         for name, value in inspect.getmembers(mod, inspect.isclass):
-            if issubclass(value, Codemod3) and name != "Codemod3":
+            if issubclass(value, Codemod) and name != "Codemod":
                 yield CodemodMetadata(codemod=value, category=codemod_dir.parent.name, directory=codemod_dir)
 
 
@@ -163,7 +159,7 @@ def generate_codemod_test_cases(repo: Repo, codemods: list[CodemodMetadata], cod
         # add the execute method to the codemod
         execute_func = create_function_from_string("execute", codemod_data)
         name = escape_codemod_name(codemod_data.name) + "-" + str(codemod_data.codemod_id)
-        codemod = Codemod3(name=name, execute=execute_func)
+        codemod = Codemod(name=name, execute=execute_func)
 
         codemod_metadata = CodemodMetadata(
             codemod=codemod,

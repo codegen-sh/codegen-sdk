@@ -7,7 +7,7 @@ from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.expressions.named_type import TSNamedType
-from codegen.sdk.writer_decorators import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

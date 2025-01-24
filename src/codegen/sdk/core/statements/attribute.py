@@ -18,7 +18,7 @@ from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.extensions.resolution import ResolutionStack
-from codegen.sdk.writer_decorators import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock

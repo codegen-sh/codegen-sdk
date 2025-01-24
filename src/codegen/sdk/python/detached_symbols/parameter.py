@@ -4,7 +4,7 @@ from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.python.expressions.type import PyType
-from codegen.sdk.writer_decorators import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 
 @py_apidoc

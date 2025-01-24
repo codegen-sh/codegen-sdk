@@ -8,7 +8,7 @@ from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
-from codegen.sdk.writer_decorators import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.interfaces.has_block import PyHasBlock

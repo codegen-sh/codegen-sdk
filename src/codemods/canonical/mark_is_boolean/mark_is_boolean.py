@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ files in a codebase, check each function's parameters, and if a parameter is boo
     uid="e848b784-c703-4f4f-bfa4-e3876b2468d1",
 )
 @canonical
-class MarkIsBoolean(Codemod3, Skill):
+class MarkIsBoolean(Codemod, Skill):
     """This (TypeScript) Codemod illustrates how to rename function parameters that are boolean types but do not start with 'is'.
 
     In a real application, you would probably also check for other valid prefixes, like `should` etc.
