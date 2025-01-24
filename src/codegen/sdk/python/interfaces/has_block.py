@@ -6,7 +6,7 @@ from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.detached_symbols.decorator import PyDecorator
 from codegen.sdk.python.statements.comment import PyComment, PyCommentType
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
-from codegen.utils.decorators.docs import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 
 @py_apidoc

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, TypeVar
 
 from codegen.sdk.core.autocommit import repr_func
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.interfaces.editable import Editable

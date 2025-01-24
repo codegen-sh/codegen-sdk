@@ -12,7 +12,7 @@ from codegen.sdk.core.statements.try_catch_statement import TryCatchStatement
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
 from codegen.sdk.typescript.statements.catch_statement import TSCatchStatement
-from codegen.utils.decorators.docs import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

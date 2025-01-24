@@ -5,11 +5,11 @@ import traceback
 from collections.abc import Callable
 from typing import Any
 
-from codegen.utils.compilation.codeblock_validation import check_for_dangerous_operations
-from codegen.utils.compilation.exception_utils import get_local_frame, get_offset_traceback
-from codegen.utils.compilation.function_compilation import safe_compile_function_string
-from codegen.utils.compilation.function_construction import create_function_str_from_codeblock, get_imports_string
-from codegen.utils.exceptions.control_flow import StopCodemodException
+from codegen.shared.compilation.codeblock_validation import check_for_dangerous_operations
+from codegen.shared.compilation.exception_utils import get_local_frame, get_offset_traceback
+from codegen.shared.compilation.function_compilation import safe_compile_function_string
+from codegen.shared.compilation.function_construction import create_function_str_from_codeblock, get_imports_string
+from codegen.shared.exceptions.control_flow import StopCodemodException
 
 logger = logging.getLogger(__name__)
 

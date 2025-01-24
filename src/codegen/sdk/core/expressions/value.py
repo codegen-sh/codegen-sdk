@@ -7,7 +7,7 @@ from codegen.sdk.core.expressions.expression import Expression
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     pass

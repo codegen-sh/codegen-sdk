@@ -6,7 +6,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.utils.decorators.docs import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     pass

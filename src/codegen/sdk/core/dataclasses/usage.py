@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 from dataclasses_json import dataclass_json
 
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.function_call import FunctionCall

@@ -37,7 +37,7 @@ from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.topological_sort import pseudo_topological_sort
 from codegen.sdk.tree_sitter_parser import get_parser_by_filepath_or_extension, parse_file
 from codegen.sdk.typescript.function import TSFunction
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 logger = logging.getLogger(__name__)

@@ -13,7 +13,7 @@ from codegen.sdk.codebase.transactions import (
     Transaction,
     TransactionPriority,
 )
-from codegen.utils.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
+from codegen.shared.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
 
 if TYPE_CHECKING:
     from codegen.sdk.core.file import File

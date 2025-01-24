@@ -8,7 +8,7 @@ from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.github import GithubType
 from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config
-from codegen.utils.performance.stopwatch_utils import stopwatch
+from codegen.shared.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
 

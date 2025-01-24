@@ -15,7 +15,7 @@ from codegen.sdk.core.symbol_groups.expression_group import ExpressionGroup
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

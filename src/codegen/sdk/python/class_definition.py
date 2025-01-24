@@ -20,7 +20,7 @@ from codegen.sdk.python.expressions.type import PyType
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.symbol import PySymbol
-from codegen.utils.decorators.docs import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 
 @py_apidoc

@@ -1,6 +1,6 @@
 import re
 
-from codegen.utils.exceptions.compilation import DangerousUserCodeException
+from codegen.shared.exceptions.compilation import DangerousUserCodeException
 
 
 def check_for_dangerous_operations(user_code: str) -> None:

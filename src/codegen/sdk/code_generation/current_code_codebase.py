@@ -9,7 +9,7 @@ from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase, CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.utils.decorators.docs import DocumentedObject, apidoc_objects, no_apidoc_objects, py_apidoc_objects, ts_apidoc_objects
+from codegen.shared.decorators.docs import DocumentedObject, apidoc_objects, no_apidoc_objects, py_apidoc_objects, ts_apidoc_objects
 
 logger = logging.getLogger(__name__)
 

@@ -11,7 +11,7 @@ from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.sdk.extensions.autocommit import commiter, reader
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

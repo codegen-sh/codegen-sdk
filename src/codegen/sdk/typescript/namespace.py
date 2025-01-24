@@ -21,7 +21,7 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
-from codegen.utils.decorators.docs import noapidoc, ts_apidoc
+from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock

@@ -8,7 +8,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.switch_statement import SwitchStatement
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.statements.switch_case import TSSwitchCase
-from codegen.utils.decorators.docs import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

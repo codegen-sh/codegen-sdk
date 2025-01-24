@@ -5,7 +5,7 @@ from functools import wraps
 
 import sentry_sdk
 
-from codegen.utils.performance.time_utils import humanize_duration
+from codegen.shared.performance.time_utils import humanize_duration
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement, StatementType
-from codegen.utils.decorators.docs import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock

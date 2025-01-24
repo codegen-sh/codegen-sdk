@@ -3,7 +3,7 @@ import pytest
 from codegen.sdk.codebase.config import SessionOptions
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.utils.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
+from codegen.shared.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
 
 
 def test_check_max_preview_time_exceeded(tmpdir):

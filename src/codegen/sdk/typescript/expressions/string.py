@@ -4,7 +4,7 @@ from tree_sitter import Node as TSNode
 
 from codegen.sdk.core.expressions import Expression, String
 from codegen.sdk.core.node_id_factory import NodeId
-from codegen.utils.decorators.docs import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

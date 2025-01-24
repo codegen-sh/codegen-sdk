@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict, PlainSerializer, PlainValidator, Wit
 from pydantic_core.core_schema import ValidationInfo
 from tree_sitter import Point, Range
 
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 
 def validate_range(value: Any, info: ValidationInfo) -> Range:

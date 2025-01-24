@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from codegen.sdk.core.expressions.union_type import UnionType
-from codegen.utils.decorators.docs import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     pass

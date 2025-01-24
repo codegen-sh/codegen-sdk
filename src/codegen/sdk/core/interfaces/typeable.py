@@ -8,7 +8,7 @@ from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.expressions.type import Type

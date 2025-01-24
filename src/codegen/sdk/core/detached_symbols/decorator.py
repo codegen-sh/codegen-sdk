@@ -11,7 +11,7 @@ from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class

@@ -1,4 +1,4 @@
-from codegen.utils.exceptions.control_flow import StopCodemodException
+from codegen.shared.exceptions.control_flow import StopCodemodException
 
 
 def update_observation_meta(
