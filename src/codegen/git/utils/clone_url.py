@@ -24,7 +24,7 @@ def get_authenticated_clone_url_for_repo_config(
     github_type: GithubType = GithubType.GithubEnterprise,
 ) -> str:
     git_url = get_clone_url_for_repo_config(repo, github_type)
-    token = get_token_for_repo_config(repo_config=repo, github_type=github_type)
+    token = get_token_for_repo_config(github_type=github_type)
     return f"https://x-access-token:{token}@{git_url}"
 
 
