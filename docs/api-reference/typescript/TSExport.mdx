@@ -11,7 +11,7 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L45-L663" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L45-L663" />
 
 ### Inherits from
 [HasValue](/api-reference/core/HasValue), [Export](/api-reference/core/Export), [Editable](/api-reference/core/Editable), [Exportable](/api-reference/core/Exportable), [Usable](/api-reference/core/Usable), [Importable](/api-reference/core/Importable), [Expression](/api-reference/core/Expression), [HasName](/api-reference/core/HasName)
@@ -144,7 +144,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider />
 ### <span className="text-primary">ancestors</span>
 Find all ancestors of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
 
 
 <Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description=""/>
@@ -152,7 +152,7 @@ Find all ancestors of the node of the given type. Does not return itself
 
 ### <span className="text-primary">edit</span>
 Replace the source of this `Editable` with `new_src`.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L626-L654" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L626-L654" />
 
 <ParameterWrapper>
 <Parameter
@@ -187,7 +187,7 @@ Replace the source of this `Editable` with `new_src`.
 
 ### <span className="text-primary">find</span>
 Find and return matching nodes or substrings within an Editable instance.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L476-L493" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L476-L493" />
 
 <ParameterWrapper>
 <Parameter
@@ -210,7 +210,7 @@ Find and return matching nodes or substrings within an Editable instance.
 
 ### <span className="text-primary">find_string_literals</span>
 Returns a list of string literals within this node's source that match any of the given
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L388-L402" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L388-L402" />
 
 <ParameterWrapper>
 <Parameter
@@ -233,7 +233,7 @@ Returns a list of string literals within this node's source that match any of th
 
 ### <span className="text-primary">flag</span>
 Adds a visual flag comment to the end of this Editable's source text.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
 
 
 <Return return_type={ <><span className="text-gray-200">CodeFlag[</span> <a href="/api-reference/typescript/TSExport" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSExport</a> <span className="text-gray-200">]</span></> } description=""/>
@@ -241,7 +241,7 @@ Adds a visual flag comment to the end of this Editable's source text.
 
 ### <span className="text-primary">get_import_string</span>
 Returns the import string for this export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L602-L633" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L602-L633" />
 
 <ParameterWrapper>
 <Parameter
@@ -276,7 +276,7 @@ Returns the import string for this export.
 
 ### <span className="text-primary">get_name</span>
 Returns the name node of the object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/has_name.py#L52-L62" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_name.py#L52-L62" />
 
 
 <Return return_type={ <><a href="/api-reference/core/Name" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Name</a> <span className="text-gray-200">|</span> <a href="/api-reference/core/ChainedAttribute" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ChainedAttribute</a> <span className="text-gray-200">| None</span></> } description="The name node of the object. Can be a Name node for simple names, a ChainedAttribute for names with namespaces (e.g., a.b), or None if the object has no name."/>
@@ -284,7 +284,7 @@ Returns the name node of the object.
 
 ### <span className="text-primary">get_variable_usages</span>
 Returns Editables for all TreeSitter nodes corresponding to instances of variable usage
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L896-L912" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L896-L912" />
 
 <ParameterWrapper>
 <Parameter
@@ -307,7 +307,7 @@ Returns Editables for all TreeSitter nodes corresponding to instances of variabl
 
 ### <span className="text-primary">insert_after</span>
 Inserts code after this node.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L597-L623" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L597-L623" />
 
 <ParameterWrapper>
 <Parameter
@@ -348,7 +348,7 @@ Inserts code after this node.
 
 ### <span className="text-primary">insert_before</span>
 Inserts text before this node's source with optional indentation and newline handling.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L564-L594" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L564-L594" />
 
 <ParameterWrapper>
 <Parameter
@@ -389,7 +389,7 @@ Inserts text before this node's source with optional indentation and newline han
 
 ### <span className="text-primary">is_aliased</span>
 Determines if the Export object is aliased.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/export.py#L76-L90" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/export.py#L76-L90" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if the exported symbol has a different name than the name it is exported as, False otherwise."/>
@@ -397,7 +397,7 @@ Determines if the Export object is aliased.
 
 ### <span className="text-primary">is_default_export</span>
 Determines if an export is the default export for a file.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L233-L256" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L233-L256" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if this is a default export, False otherwise."/>
@@ -405,7 +405,7 @@ Determines if an export is the default export for a file.
 
 ### <span className="text-primary">is_default_symbol_export</span>
 Returns True if this is exporting a default symbol, as opposed to a default object export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L259-L281" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L259-L281" />
 
 <ParameterWrapper>
 <Parameter
@@ -422,7 +422,7 @@ Returns True if this is exporting a default symbol, as opposed to a default obje
 
 ### <span className="text-primary">is_module_export</span>
 Determines if the export is exporting a module rather than a symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L324-L332" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L324-L332" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if the export represents a module export, False otherwise."/>
@@ -430,7 +430,7 @@ Determines if the export is exporting a module rather than a symbol.
 
 ### <span className="text-primary">is_named_export</span>
 Determines whether this export is a named export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L221-L230" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L221-L230" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if this is a named export, False if it is a default export."/>
@@ -438,7 +438,7 @@ Determines whether this export is a named export.
 
 ### <span className="text-primary">is_reexport</span>
 Returns whether the export is re-exporting an import or export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L297-L310" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L297-L310" />
 
 <ParameterWrapper>
 <Parameter
@@ -455,7 +455,7 @@ Returns whether the export is re-exporting an import or export.
 
 ### <span className="text-primary">is_type_export</span>
 Determines if this export is exclusively exporting a type.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L284-L294" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L284-L294" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if this is a type-only export, False otherwise."/>
@@ -463,7 +463,7 @@ Determines if this export is exclusively exporting a type.
 
 ### <span className="text-primary">is_wildcard_export</span>
 Determines if the export is a wildcard export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L313-L321" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L313-L321" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if the export is a wildcard export (e.g. 'export * from &quot;./module&quot;'), False otherwise."/>
@@ -471,7 +471,7 @@ Determines if the export is a wildcard export.
 
 ### <span className="text-primary">is_wrapped_in</span>
 Check if this node is contained another node of the given class
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L1068-L1070" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1068-L1070" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description=""/>
@@ -479,7 +479,7 @@ Check if this node is contained another node of the given class
 
 ### <span className="text-primary">make_non_default</span>
 Converts the export to a named export.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L398-L475" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L398-L475" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
@@ -487,7 +487,7 @@ Converts the export to a named export.
 
 ### <span className="text-primary">parent_of_type</span>
 Find the first ancestor of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
 
 
 <Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">| None</span></> } description=""/>
@@ -495,7 +495,7 @@ Find the first ancestor of the node of the given type. Does not return itself
 
 ### <span className="text-primary">reduce_condition</span>
 Reduces an editable to the following condition
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L1024-L1029" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1024-L1029" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
@@ -503,7 +503,7 @@ Reduces an editable to the following condition
 
 ### <span className="text-primary">reexport_symbol</span>
 Returns the import object that is re-exporting this symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L636-L663" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L636-L663" />
 
 
 <Return return_type={ <><a href="/api-reference/typescript/TSImport" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSImport</a> <span className="text-gray-200">| None</span></> } description="The import object being re-exported, or None if this is not a re-export or no import was found."/>
@@ -511,7 +511,7 @@ Returns the import object that is re-exporting this symbol.
 
 ### <span className="text-primary">remove</span>
 Deletes this Node and its related extended nodes (e.g. decorators, comments).
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L676-L691" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L676-L691" />
 
 <ParameterWrapper>
 <Parameter
@@ -540,7 +540,7 @@ Deletes this Node and its related extended nodes (e.g. decorators, comments).
 
 ### <span className="text-primary">replace</span>
 Search and replace occurrences of text within this node's source and its extended nodes.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L421-L445" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L421-L445" />
 
 <ParameterWrapper>
 <Parameter
@@ -581,7 +581,7 @@ Search and replace occurrences of text within this node's source and its extende
 
 ### <span className="text-primary">search</span>
 Returns a list of all regex match of `regex_pattern`, similar to python's re.search().
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/editable.py#L509-L525" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L509-L525" />
 
 <ParameterWrapper>
 <Parameter
@@ -610,7 +610,7 @@ Returns a list of all regex match of `regex_pattern`, similar to python's re.sea
 
 ### <span className="text-primary">set_name</span>
 Sets the name of a code element.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/has_name.py#L65-L77" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_name.py#L65-L77" />
 
 <ParameterWrapper>
 <Parameter
@@ -627,7 +627,7 @@ Sets the name of a code element.
 
 ### <span className="text-primary">set_value</span>
 Sets the value of the node's value Expression.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/has_value.py#L23-L35" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_value.py#L23-L35" />
 
 <ParameterWrapper>
 <Parameter
@@ -644,7 +644,7 @@ Sets the value of the node's value Expression.
 
 ### <span className="text-primary">symbol_usages</span>
 Returns a list of symbols that use or import the exportable object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/usable.py#L26-L41" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/usable.py#L26-L41" />
 
 <ParameterWrapper>
 <Parameter
@@ -661,7 +661,7 @@ Returns a list of symbols that use or import the exportable object.
 
 ### <span className="text-primary">to_import_string</span>
 Converts this export into its equivalent import string representation.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/typescript/export.py#L563-L599" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/typescript/export.py#L563-L599" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="The import string representation of this export. Examples: - For `export { foo } from './bar'` -> `import { foo } from './bar'` - For `export * from './bar'` -> `import * as _namespace from './bar'` - For `export { default as foo } from './bar'` -> `import foo from './bar'`"/>
@@ -669,7 +669,7 @@ Converts this export into its equivalent import string representation.
 
 ### <span className="text-primary">usages</span>
 Returns a list of usages of the exportable object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/mintlify-doc-fix/src/codegen/sdk/core/interfaces/usable.py#L45-L74" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/usable.py#L45-L74" />
 
 <ParameterWrapper>
 <Parameter
