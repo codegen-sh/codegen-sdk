@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -15,7 +15,7 @@ original comments after conversion.""",
     uid="846a3894-b534-4de2-9810-94bc691a5687",
 )
 @canonical
-class ConvertCommentsToJSDocStyle(Codemod3, Skill):
+class ConvertCommentsToJSDocStyle(Codemod, Skill):
     """This codemod converts the comments on any exported function or class to JSDoc style if they aren't already in JSDoc style.
 
     A JSDoc style comment is one that uses /** */ instead of //

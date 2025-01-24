@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ relevant functions.""",
     uid="345deafc-ac72-4537-8d13-ff27ac6e67f1",
 )
 @canonical
-class WrapWithStatement(Codemod3, Skill):
+class WrapWithStatement(Codemod, Skill):
     """Wraps code blocks (that meet certain criteria) with a with statement.
 
     Before:

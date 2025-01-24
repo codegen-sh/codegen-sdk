@@ -1,4 +1,3 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.import_resolution import Import
@@ -7,6 +6,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -17,7 +17,7 @@ import. Handle cases where the resolved import is either an external module or a
     uid="0648c80e-a569-4aa5-b241-38a2dd320e9a",
 )
 @canonical
-class RemoveIndirectImports(Codemod3, Skill):
+class RemoveIndirectImports(Codemod, Skill):
     """This codemod removes all indirect imports from a codebase (i.e. an import that points to another import),
     replacing them instead with direct imports
     """
