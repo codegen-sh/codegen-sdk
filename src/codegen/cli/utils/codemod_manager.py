@@ -100,7 +100,7 @@ class CodemodManager:
             ".ruff_cache",
             ".coverage",
             "htmlcov",
-            ".codegen-sh",
+            ".codegen",
         }
 
         all_functions = []
