@@ -1,10 +1,12 @@
 import subprocess
 import sys
+from pathlib import Path
 
 import rich
 import rich_click as click
+import toml
 
-from codegen.cli.auth.decorators import requires_auth
+from codegen.cli.auth.constants import CODEGEN_DIR
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.commands.init.render import get_success_message
 from codegen.cli.git.url import get_git_organization_and_repo
@@ -15,8 +17,8 @@ from codegen.cli.workspace.initialize_workspace import initialize_codegen
 @click.command(name="init")
 @click.option("--repo-name", type=str, help="The name of the repository")
 @click.option("--organization-name", type=str, help="The name of the organization")
-@requires_auth
-def init_command(session: CodegenSession, repo_name: str | None = None, organization_name: str | None = None):
+@click.option("--fetch-docs", is_flag=True, help="Fetch docs and examples (requires auth)")
+def init_command(repo_name: str | None = None, organization_name: str | None = None, fetch_docs: bool = False):
     """Initialize or update the Codegen folder."""
     # Print a message if not in a git repo
     try:
@@ -30,27 +32,36 @@ def init_command(session: CodegenSession, repo_name: str | None = None, organiza
         rich.print(format_command("codegen init"))
         sys.exit(1)
 
-    codegen_dir = session.codegen_dir
+    # Only create session if we need to fetch docs
+    session = CodegenSession() if fetch_docs else None
+    codegen_dir = Path.cwd() / CODEGEN_DIR if not session else session.codegen_dir
     is_update = codegen_dir.exists()
 
-    if organization_name is not None:
-        session.config.organization_name = organization_name
-    if repo_name is not None:
-        session.config.repo_name = repo_name
-    if not session.config.organization_name or not session.config.repo_name:
-        cwd_org, cwd_repo = get_git_organization_and_repo(session.git_repo)
-        session.config.organization_name = session.config.organization_name or cwd_org
-        session.config.repo_name = session.config.repo_name or cwd_repo
-    session.write_config()
+    # Only update config if we have a session
+    if session:
+        if organization_name is not None:
+            session.config.organization_name = organization_name
+        if repo_name is not None:
+            session.config.repo_name = repo_name
+        if not session.config.organization_name or not session.config.repo_name:
+            cwd_org, cwd_repo = get_git_organization_and_repo(session.git_repo)
+            session.config.organization_name = session.config.organization_name or cwd_org
+            session.config.repo_name = session.config.repo_name or cwd_repo
+        session.write_config()
 
     action = "Updating" if is_update else "Initializing"
     rich.print("")  # Add a newline before the spinner
-    codegen_dir, docs_dir, examples_dir = initialize_codegen(action=action)
+    codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs)
 
     # Print success message
     rich.print(f"✅ {action} complete")
-    rich.print(f"   [dim]Organization:[/dim] {session.config.organization_name}")
-    rich.print(f"   [dim]Repository:[/dim]  {session.config.repo_name}")
+
+    # Show repo info from config.toml
+    config_path = codegen_dir / "config.toml"
+    if config_path.exists():
+        config = toml.load(config_path)
+        rich.print(f"   [dim]Organization:[/dim] {config.get('organization_name', 'unknown')}")
+        rich.print(f"   [dim]Repository:[/dim]  {config.get('repo_name', 'unknown')}")
     rich.print("")
     rich.print(get_success_message(codegen_dir, docs_dir, examples_dir))
 
