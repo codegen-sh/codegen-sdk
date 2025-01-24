@@ -1,9 +1,5 @@
 # Codegen Docs
 
-This unites docs from:
-- codegen-sdk (this repo)
-- codegen-cli
-
 ## Development
 
 From within the `docs/` subdirectory:
