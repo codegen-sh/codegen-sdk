@@ -29,7 +29,7 @@ try:
 except (FileNotFoundError, json.decoder.JSONDecodeError):
     REPO_ID_TO_URL = {}
 if TYPE_CHECKING:
-    from codemods.canonical.codemod import Codemod
+    from codemods.codemod import Codemod
 
 
 @unique

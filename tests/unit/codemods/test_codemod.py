@@ -1,5 +1,5 @@
 from codegen.sdk.core.codebase import Codebase
-from codemods.canonical.codemod import Codemod
+from codemods.codemod import Codemod
 
 
 def test_codemod_execute():
