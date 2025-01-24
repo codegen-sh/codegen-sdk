@@ -29,7 +29,7 @@ try:
 except (FileNotFoundError, json.decoder.JSONDecodeError):
     REPO_ID_TO_URL = {}
 if TYPE_CHECKING:
-    from codegen.sdk.codemod import Codemod3
+    from codemods.canonical.codemod import Codemod
 
 
 @unique
@@ -78,7 +78,7 @@ class Repo(BaseModel):
 
 @dataclass
 class CodemodMetadata:
-    codemod: type["Codemod3"]
+    codemod: type["Codemod"]
     category: str
     directory: Path
     company: str | None = None

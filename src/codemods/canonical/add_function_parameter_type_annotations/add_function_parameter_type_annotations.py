@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ transformation.""",
     uid="d62a3590-14ef-4759-853c-39c5cf755ce5",
 )
 @canonical
-class AddFunctionParameterTypeAnnotations(Codemod3, Skill):
+class AddFunctionParameterTypeAnnotations(Codemod, Skill):
     """Adds type annotation for function parameters that takes in a 'db' parameter, which is a `SessionLocal` from `app.db`.
     It also adds the necessary import if not already present.
 

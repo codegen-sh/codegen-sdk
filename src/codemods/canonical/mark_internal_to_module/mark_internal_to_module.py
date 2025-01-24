@@ -1,10 +1,10 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -15,7 +15,7 @@ it belongs to the `app` directory and uses a method to find import usages.""",
     uid="cb5c6f1d-0a00-46e3-ac0d-c540ab665041",
 )
 @canonical
-class MarkInternalToModule(Codemod3, Skill):
+class MarkInternalToModule(Codemod, Skill):
     """This codemod looks at all functions in the `app` directory and marks them as internal if they are not being imported anywhere"""
 
     language = ProgrammingLanguage.PYTHON

@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -16,7 +16,7 @@ each step.""",
     uid="8fa00be7-adad-473d-8436-fc5f70e6ac6d",
 )
 @canonical
-class SwapCallSiteImports(Codemod3, Skill):
+class SwapCallSiteImports(Codemod, Skill):
     """This codemod replaces all imports of a legacy function with it's new replacement.
 
     This involves:
