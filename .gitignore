@@ -63,5 +63,5 @@ uv-*.tar.gz
 graph-sitter-types/out/**
 graph-sitter-types/typings/**
 coverage.json
-tests/verified_codemods/codemod_data/repo_commits.json
+tests/integration/verified_codemods/codemod_data/repo_commits.json
 
