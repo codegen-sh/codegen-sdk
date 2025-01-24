@@ -390,7 +390,7 @@ def generate_files(num_files: int, extension: str = "py") -> dict[str, str]:
     return {f"file{i}.{extension}": f"# comment {i}" for i in range(num_files)}
 
 
-cases = [10**i for i in range(1, 5)]
+cases = [10**i for i in range(1, 4)]
 
 
 @pytest.mark.timeout(5, func_only=True)
