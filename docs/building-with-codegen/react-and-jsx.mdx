@@ -9,10 +9,11 @@ GraphSitter exposes several React and JSX-specific APIs for working with modern 
 
 Key APIs include:
 
-- [Function.is_jsx](../api-reference/core/Function#is_jsx) - Check if a function contains JSX elements
-  - [Symbol.jsx_elements](../api-reference/core/Symbol#jsx_elements) - Get all JSX elements in a symbol
-- [JSXElement](../api-reference/core/JSXElement) - Manipulate JSX elements
-- [JSXProp](../api-reference/core/JSXProp) - Manipulate JSX props
+- [Function.is_jsx](/api-reference/typescript/TSFunction#is-jsx) - Check if a function contains JSX elements
+- [Class.jsx_elements](/api-reference/typescript/TSClass#jsx-elements) - Get all JSX elements in a class
+- [Function.jsx_elements](/api-reference/typescript/TSFunction#jsx-elements) - Get all JSX elements in a function
+- [JSXElement](/api-reference/typescript/JSXElement) - Manipulate JSX elements
+- [JSXProp](/api-reference/typescript/JSXProp) - Manipulate JSX props
 
 <Tip>
   See [React Modernization](/tutorials/react-modernization) for tutorials and
@@ -35,9 +36,9 @@ is_component = class_def.is_jsx  # True for React class components
 
 ## Working with JSX Elements
 
-Given a React component, you can access its JSX elements using the [jsx_elements](../api-reference/core/Function#jsx-elements) property.
+Given a React component, you can access its JSX elements using the [jsx_elements](/api-reference/typescript/TSFunction#jsx-elements) property.
 
-You can manipulate these elements by using the [JSXElement](../api-reference/core/JSXElement) and [JSXProp](../api-reference/core/JSXProp) APIs.
+You can manipulate these elements by using the [JSXElement](/api-reference/typescript/JSXElement) and [JSXProp](/api-reference/typescript/JSXProp) APIs.
 
 ```python
 # Get all JSX elements in a component
