@@ -24,12 +24,15 @@ logger = logging.getLogger(__name__)
 class RemoteRepoOperator(RepoOperator):
     """A wrapper around GitPython to make it easier to interact with a cloned lowside repo."""
 
+    # __init__ attributes
     repo_config: RepoConfig
     base_dir: str
+    github_type: GithubType
+
+    # lazy attributes
     _remote_git_repo: GitRepoClient | None = None
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
-    bot_commit: bool = True
 
     # TODO: allow setting the access scope level of the lowside repo (currently it's always WRITE)
     def __init__(
@@ -38,9 +41,10 @@ class RemoteRepoOperator(RepoOperator):
         base_dir: str = "/tmp",
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
-        bot_commit: bool = True,
+        github_type: GithubType = GithubType.GithubEnterprise,
     ) -> None:
-        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
+        super().__init__(repo_config=repo_config, base_dir=base_dir)
+        self.github_type = github_type
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################
@@ -50,8 +54,7 @@ class RemoteRepoOperator(RepoOperator):
     @property
     def remote_git_repo(self) -> GitRepoClient:
         if not self._remote_git_repo:
-            # NOTE: local repo operator by default points at lowside (i.e. origin remote is lowside remote)
-            self._remote_git_repo = GitRepoClient(self.repo_config, github_type=GithubType.GithubEnterprise, access_scope=GithubScope.WRITE)
+            self._remote_git_repo = GitRepoClient(self.repo_config, github_type=self.github_type, access_scope=GithubScope.WRITE)
         return self._remote_git_repo
 
     @property
@@ -69,27 +72,31 @@ class RemoteRepoOperator(RepoOperator):
     ####################################################################################################################
     # SET UP
     ####################################################################################################################
+
     @override
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""
-        pull_repo(repo=self.repo_config, path=self.base_dir)
+        pull_repo(repo=self.repo_config, path=self.base_dir, github_type=self.github_type)
 
-    def clone_or_pull_repo(self) -> None:
+    def clone_repo(self, shallow: bool = True) -> None:
+        clone_repo(repo=self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
+
+    def clone_or_pull_repo(self, shallow: bool = True) -> None:
         """If repo exists, pulls changes. otherwise, clones the repo."""
         # TODO(CG-7804): if repo is not valid we should delete it and re-clone. maybe we can create a pull_repo util + use the existing clone_repo util
         if self.repo_exists():
             self.clean_repo()
-        clone_or_pull_repo(self.repo_config, path=self.base_dir, shallow=True)
+        clone_or_pull_repo(self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
 
     def setup_repo_dir(self, setup_option: SetupOption = SetupOption.PULL_OR_CLONE, shallow: bool = True) -> None:
         os.makedirs(self.base_dir, exist_ok=True)
         os.chdir(self.base_dir)
         if setup_option is SetupOption.CLONE:
             # if repo exists delete, then clone, else clone
-            clone_repo(repo=self.repo_config, path=self.base_dir, shallow=shallow)
+            clone_repo(shallow=shallow)
         elif setup_option is SetupOption.PULL_OR_CLONE:
             # if repo exists, pull changes, else clone
-            self.clone_or_pull_repo()
+            self.clone_or_pull_repo(shallow=shallow)
         elif setup_option is SetupOption.SKIP:
             if not self.repo_exists():
                 logger.warning(f"Valid git repo does not exist at {self.repo_path}. Cannot skip setup with SetupOption.SKIP.")
