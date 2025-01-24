@@ -54,7 +54,7 @@ class RemoteRepoOperator(RepoOperator):
     @property
     def remote_git_repo(self) -> GitRepoClient:
         if not self._remote_git_repo:
-            self._remote_git_repo = GitRepoClient(self.repo_config, access_scope=GithubScope.WRITE)
+            self._remote_git_repo = GitRepoClient(self.repo_config, github_type=self.github_type, access_scope=GithubScope.WRITE)
         return self._remote_git_repo
 
     @property
