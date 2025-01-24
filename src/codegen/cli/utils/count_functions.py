@@ -5,7 +5,7 @@ from codegen.cli.utils.count_functions_2 import NumberType
 
 # from app.codemod.compilation.models.context import CodemodContext
 # from app.codemod.compilation.models.pr_options import PROptions
-# from graph_sitter import PyCodebaseType
+# from codegen.sdk import PyCodebaseType
 
 # context: CodemodContext
 
