@@ -1,13 +1,10 @@
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import MessageType
+from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.utils.decorators.docs import noapidoc
-
-if TYPE_CHECKING:
-    from app.codemod.types import Group
 
 
 @dataclass
@@ -69,7 +66,7 @@ class Flags:
         self._find_mode = find_mode
 
     @noapidoc
-    def set_active_group(self, group: "Group") -> None:
+    def set_active_group(self, group: Group) -> None:
         """Will only fix these flags."""
         # TODO - flesh this out more with Group datatype and GroupBy
         self._active_group = group.flags

@@ -7,7 +7,7 @@ def convert_to_cli(input: str, language: str, name: str) -> str:
 # from app.codemod.compilation.models.context import CodemodContext
 #from app.codemod.compilation.models.pr_options import PROptions
 
-from graph_sitter import {codebase_type}
+from codegen.sdk import {codebase_type}
 
 context: Any
 
