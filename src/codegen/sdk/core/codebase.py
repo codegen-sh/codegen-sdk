@@ -8,7 +8,7 @@ import re
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar, Unpack, overload
+from typing import Generic, Literal, TypeVar, Unpack, overload
 
 import plotly.graph_objects as go
 import rich.repr
@@ -31,6 +31,7 @@ from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectCo
 from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import FlagKwargs
+from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.span import Span
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
@@ -73,9 +74,6 @@ from codegen.utils.decorators.docs import apidoc, noapidoc
 from codegen.utils.exceptions.control_flow import MaxAIRequestsError
 from codegen.utils.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
-
-if TYPE_CHECKING:
-    from app.codemod.types import Group
 
 logger = logging.getLogger(__name__)
 MAX_LINES = 10000  # Maximum number of lines of text allowed to be logged
@@ -890,7 +888,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.flags.set_find_mode(find_mode)
 
     @noapidoc
-    def set_active_group(self, group: "Group") -> None:
+    def set_active_group(self, group: Group) -> None:
         """Will only fix these flags."""
         # TODO - flesh this out more with Group datatype and GroupBy
         self.G.flags.set_active_group(group)
