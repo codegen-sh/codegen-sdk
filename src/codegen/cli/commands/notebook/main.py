@@ -30,7 +30,7 @@ def create_notebook(jupyter_dir: Path) -> Path:
                     "execution_count": None,
                     "metadata": {},
                     "outputs": [],
-                    "source": ["from codegen import Codebase\n", "\n", "# Initialize codebase\n", "codebase = Codebase.from_directory('.')\n"],
+                    "source": ["from codegen import Codebase\n", "\n", "# Initialize codebase\n", "codebase = Codebase('../../')\n"],
                 }
             ],
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}},
@@ -44,9 +44,10 @@ def create_notebook(jupyter_dir: Path) -> Path:
 
 
 @click.command(name="notebook")
+@click.option("--background", is_flag=True, help="Run Jupyter Lab in the background")
 @requires_auth
 @requires_init
-def notebook_command(session: CodegenSession):
+def notebook_command(session: CodegenSession, background: bool = False):
     """Open a Jupyter notebook with the current codebase loaded."""
     with create_spinner("Setting up Jupyter environment...") as status:
         venv = VenvManager()
@@ -67,4 +68,8 @@ def notebook_command(session: CodegenSession):
         env = {**os.environ, "VIRTUAL_ENV": str(venv.venv_dir), "PATH": f"{venv.venv_dir}/bin:{os.environ['PATH']}"}
 
         # Start Jupyter Lab
-        subprocess.Popen(["jupyter", "lab", str(notebook_path)], env=env, start_new_session=True)
+        if background:
+            subprocess.Popen(["jupyter", "lab", str(notebook_path)], env=env, start_new_session=True)
+        else:
+            # Run in foreground
+            subprocess.run(["jupyter", "lab", str(notebook_path)], env=env, check=True)

@@ -15,6 +15,20 @@ from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.workspace.docs_workspace import populate_api_docs
 from codegen.cli.workspace.examples_workspace import populate_examples
 
+DEFAULT_CODE = """
+from codegen import Codebase
+
+# Initialize codebase
+codebase = Codebase('../../')
+
+# Print out stats
+print("🔍 Codebase Analysis")
+print("=" * 50)
+print(f"📚 Total Files: {len(codebase.files)}")
+print(f"⚡ Total Functions: {len(codebase.functions)}")
+print(f"🔄 Total Imports: {len(codebase.imports)}")
+"""
+
 
 def create_notebook(jupyter_dir: Path) -> Path:
     """Create a new Jupyter notebook if it doesn't exist."""
@@ -27,7 +41,7 @@ def create_notebook(jupyter_dir: Path) -> Path:
                     "execution_count": None,
                     "metadata": {},
                     "outputs": [],
-                    "source": ["from codegen import Codebase\n", "\n", "# Initialize codebase\n", "codebase = Codebase('../../')\n"],
+                    "source": [DEFAULT_CODE],
                 }
             ],
             "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}},

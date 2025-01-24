@@ -1,6 +1,7 @@
 ---
 title: "notebook"
 sidebarTitle: "notebook"
+description: "Open a Jupyter notebook with the current codebase loaded"
 ---
 
 The `notebook` command launches a Jupyter Lab instance with a pre-configured notebook for exploring your codebase.
@@ -8,8 +9,16 @@ The `notebook` command launches a Jupyter Lab instance with a pre-configured not
 ## Usage
 
 ```bash
-codegen notebook
+codegen notebook [--background]
 ```
+
+### Options
+
+- `--background`: Run Jupyter Lab in the background (default: false)
+
+By default, Jupyter Lab runs in the foreground, making it easy to stop with Ctrl+C. Use `--background` if you want to run it in the background.
+
+## What it Does
 
 This will:
 
@@ -47,12 +56,14 @@ After running `codegen notebook`, your repository will have this structure:
 ## Examples
 
 ```bash
-# Initialize a new repository and launch notebook
-codegen init
+# Run Jupyter in the foreground (default)
 codegen notebook
 
-# Launch notebook in an existing codegen project
-codegen notebook
+# Run Jupyter in the background
+codegen notebook --background
+
+# Initialize a new repository and launch notebook
+codegen init && codegen notebook
 ```
 
 <Tip>
