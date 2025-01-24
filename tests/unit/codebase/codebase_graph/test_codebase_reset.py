@@ -382,3 +382,25 @@ def test_codebase_reset_complex_changes(codebase: Codebase, assert_expected):
 
     codebase.reset()
     assert_expected(codebase)
+
+
+def generate_files(num_files: int, extension: str = "py") -> dict[str, str]:
+    return {f"file{i}.{extension}": f"# comment {i}" for i in range(num_files)}
+
+
+cases = [10**i for i in range(1, 7)]
+
+txt_cases = [(generate_files(i, "txt"), generate_files(i, "txt")) for i in cases]
+py_cases = [(generate_files(i, "py"), generate_files(i, "py")) for i in cases]
+
+
+@pytest.mark.timeout(5, func_only=True)
+@pytest.mark.parametrize(
+    "original, expected", txt_cases + py_cases, indirect=["original", "expected"], ids=[f"{i}-files" for i in cases] + [f"{i}-txt-files" for i in cases] + [f"{i}-py-files" for i in cases]
+)
+def test_codebase_reset_stress_test(codebase: Codebase, assert_expected, original):
+    for file in original:
+        codebase.get_file(file).edit(f"# comment2 {file.filepath}")
+    codebase.commit()
+    codebase.reset()
+    assert_expected(codebase)
