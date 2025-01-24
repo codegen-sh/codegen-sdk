@@ -30,6 +30,7 @@ from codegen.sdk.core.external.language_engine import LanguageEngine, get_langua
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
+from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
@@ -234,23 +235,27 @@ class CodebaseGraph:
 
     @stopwatch
     def reset_codebase(self) -> None:
-        files = {}
-        # Start at the oldest sync and work backwards
-        for sync in reversed(self.pending_syncs + self.all_syncs):
+        files_to_write = []
+        files_to_remove = []
+        modified_files = set()
+        for sync in self.pending_syncs + self.all_syncs:
+            if sync.path in modified_files:
+                continue
             if sync.change_type == ChangeType.Removed:
-                files[sync.path] = sync.old_content
+                files_to_write.append((sync.path, sync.old_content))
+                modified_files.add(sync.path)
             elif sync.change_type == ChangeType.Modified:
-                files[sync.path] = sync.old_content
+                files_to_write.append((sync.path, sync.old_content))
+                modified_files.add(sync.path)
             elif sync.change_type == ChangeType.Renamed:
-                files[sync.rename_from] = sync.old_content
-                files[sync.rename_to] = None
+                files_to_write.append((sync.rename_from, sync.old_content))
+                files_to_remove.append(sync.rename_to)
+                modified_files.add(sync.rename_from)
+                modified_files.add(sync.rename_to)
             elif sync.change_type == ChangeType.Added:
-                files[sync.path] = None
-        for filepath, content in files.items():
-            if content is None:
-                filepath.unlink()
-            else:
-                filepath.write_text(content)
+                files_to_remove.append(sync.path)
+                modified_files.add(sync.path)
+        write_changes(files_to_remove, files_to_write)
 
     @stopwatch
     def undo_applied_diffs(self) -> None:

@@ -42,7 +42,7 @@ class DiffLite(NamedTuple):
     path: Path
     rename_from: str | None = None
     rename_to: str | None = None
-    old_content: str | None = None
+    old_content: bytes | None = None
 
     @classmethod
     def from_watch_change(cls, change: Change, path: PathLike) -> Self:

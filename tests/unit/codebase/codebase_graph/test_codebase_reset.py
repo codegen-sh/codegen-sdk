@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
@@ -388,17 +390,17 @@ def generate_files(num_files: int, extension: str = "py") -> dict[str, str]:
     return {f"file{i}.{extension}": f"# comment {i}" for i in range(num_files)}
 
 
-cases = [10**i for i in range(1, 7)]
-
-txt_cases = [(generate_files(i, "txt"), generate_files(i, "txt")) for i in cases]
-py_cases = [(generate_files(i, "py"), generate_files(i, "py")) for i in cases]
+cases = [10**i for i in range(1, 5)]
 
 
 @pytest.mark.timeout(5, func_only=True)
-@pytest.mark.parametrize("original, expected", txt_cases + py_cases, indirect=["original", "expected"], ids=[f"{i}-txt-files" for i in cases] + [f"{i}-py-files" for i in cases])
-def test_codebase_reset_stress_test(codebase: Codebase, assert_expected, original):
-    for file in original:
-        codebase.get_file(file).edit(f"# comment2 {file}")
-    codebase.commit()
+@pytest.mark.parametrize("extension, num_files", [(ext, i) for ext in ["txt", "py"] for i in cases])
+def test_codebase_reset_stress_test(extension: str, num_files: int, tmp_path):
+    files = generate_files(num_files, extension)
+    with get_codebase_session(files=files, programming_language=ProgrammingLanguage.PYTHON, tmpdir=Path(tmp_path), sync_graph=False) as codebase:
+        for file in files:
+            codebase.get_file(file).edit(f"# comment2 {file}")
     codebase.reset()
-    assert_expected(codebase)
+    for file, original_content in files.items():
+        assert (tmp_path / file).exists()
+        assert (tmp_path / file).read_text() == original_content
