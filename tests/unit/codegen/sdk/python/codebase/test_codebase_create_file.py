@@ -5,7 +5,7 @@ import pytest
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.file import File
-from tests.unit.python.utils.test_file_contents import file1_content, file2_content
+from tests.unit.codegen.sdk.python.utils.test_file_contents import file1_content, file2_content
 
 
 @pytest.fixture(scope="function")

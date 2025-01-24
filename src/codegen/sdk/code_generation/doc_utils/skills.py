@@ -10,7 +10,7 @@ from codegen.sdk.python.function import PyFunction
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.skill_implementation import SkillImplementation
 from codegen.sdk.skills.core.utils import get_all_evaluation_skills
-from codemods.canonical.codemod import Codemod
+from codemods.codemod import Codemod
 
 
 def remove_leading_tab_or_spaces(text: str) -> str:

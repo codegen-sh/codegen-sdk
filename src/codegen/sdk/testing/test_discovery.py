@@ -14,7 +14,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.testing.constants import DIFF_FILEPATH
 from codegen.sdk.testing.models import BASE_PATH, CODEMOD_PATH, REPO_ID_TO_URL, TEST_DIR, VERIFIED_CODEMOD_DATA_DIR, VERIFIED_CODEMOD_DIFFS, ClonedRepoTestCase, CodemodMetadata, Repo, Size
 from codegen.sdk.testing.verified_codemod_utils import CodemodAPI, RepoCodemodMetadata, SkillTestConfig, anonymize_id
-from codemods.canonical.codemod import Codemod
+from codemods.codemod import Codemod
 
 
 def find_repos(

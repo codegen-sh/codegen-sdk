@@ -1,7 +1,7 @@
 import re
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from tests.unit.python.utils.test_file_contents import file1_content, file2_content
+from tests.unit.codegen.sdk.python.utils.test_file_contents import file1_content, file2_content
 
 
 def test_function_parameter_edit(tmpdir) -> None:

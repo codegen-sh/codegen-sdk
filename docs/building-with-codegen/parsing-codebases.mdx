@@ -34,20 +34,20 @@ codebase = Codebase("./")
 
 ## Remote Repositories
 
-To fetch and parse a repository directly from GitHub, use the `fetch_codebase` function.
+To fetch and parse a repository directly from GitHub, use the `from_repo` function.
 
 ```python
 import codegen
 
 # Fetch and parse a repository (defaults to /tmp/codegen/{repo_name})
-codebase = codegen.fetch_codebase('fastapi/fastapi')
+codebase = codegen.from_repo('fastapi/fastapi')
 
 # Customize temp directory, clone depth, or specific commit
-codebase = codegen.fetch_codebase(
+codebase = codegen.from_repo(
     'fastapi/fastapi',
     tmp_dir='/custom/temp/dir',  # Optional: custom temp directory
+    commit='786a8ada7ed0c7f9d8b04d49f24596865e4b7901',
     shallow=False,  # Optional: full clone instead of shallow
-    commit_hash='fe513719ea98abade167d8a89e92f600d9d8f0e5'  # Optional: specific commit
 )
 ```
 
