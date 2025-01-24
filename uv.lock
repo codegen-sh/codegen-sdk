@@ -358,7 +358,7 @@ wheels = [
 
 [[package]]
 name = "codegen-sdk"
-version = "0.1.dev27+ge997909.d20250123"
+version = "0.1.dev28+g22b095b.d20250124"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },

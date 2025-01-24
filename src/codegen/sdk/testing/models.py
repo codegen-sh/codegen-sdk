@@ -60,7 +60,7 @@ class Repo(BaseModel):
     def from_json(cls, json_str: str) -> "Repo":
         return cls.model_validate(json.loads(json_str))
 
-    def to_op(self, name: str, token: str | None) -> LocalRepoOperator:
+    def to_op(self, name: str, token: str | None) -> LocalRepoOperator | tuple[None, str | None]:
         base_path = BASE_TMP_DIR / ("extra_repos" if self.extra_repo else "oss_repos") / name
         base_path.mkdir(exist_ok=True, parents=True)
         url = self.url
@@ -71,11 +71,12 @@ class Repo(BaseModel):
             # if REPO_ID_TO_URL is not set, we probably don't need auth. this is assuming that for
             # OSS repos, we don't need to pull any private repos.
             if not REPO_ID_TO_URL:
-                return
+                return (None, "Could not create repo operator - skipping test")
 
             if not which("gh"):
-                raise RuntimeError("GitHub CLI (gh) is not installed. Please install it first.")
+                return (None, "GitHub CLI (gh) is not installed. Please install it first. Skipping test.")
             if '[credential "https://github.codegen.app"]' not in (Path.home() / ".gitconfig").read_text():
+                print("Setting up auth using the github cli")
                 os.system("gh auth login -h github.codegen.app")
                 os.system("gh auth setup-git -h github.codegen.app")
         return LocalRepoOperator.create_from_commit(str(base_path), self.default_branch, self.commit, url)

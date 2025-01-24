@@ -141,8 +141,10 @@ def token(request):
 def op(repo: Repo, token: str | None) -> YieldFixture[LocalRepoOperator]:
     with filelock.FileLock(BASE_TMP_DIR / "locks" / repo.name):
         op = repo.to_op(repo.name, token)
-        if op is None:
-            pytest.skip("Could not create repo operator - skipping test")
+        if isinstance(op, tuple):
+            # This means we got (None, error_message)
+            _, msg = op
+            pytest.skip(msg or "Could not create repo operator")
         yield op
 
 
