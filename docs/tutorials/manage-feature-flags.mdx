@@ -68,7 +68,7 @@ for usage in flag_var.usages():
 
 ## Deleting unused feature flags
 
-Detecting unused feature flag is a specific use case of [deleting dead code](/codebase-sdk/guides/deleting-dead-code), isolated to a specific search space.
+Detecting unused feature flag is a specific use case of [deleting dead code](/tutorials/deleting-dead-code), isolated to a specific search space.
 ```python Delete unused flag
 print = codebase.log
 
@@ -112,6 +112,6 @@ Once rolled out feature flags are removed, new dead code paths may have been cre
 2. **Fix Tests**: Check for additional ways feature flags are used in the codebase (e.g. string arguments in test patches).
 
 
-### Related Skills
-- [reduce if statements](/codebase-sdk/examples/skills#reduce-if-statement-condition-python)
-- [unwrap with statements](/codebase-sdk/examples/skills#unwrap-with-statement-python)
+### Related Examples
+- [reduce if statements](/building-with-codegen/reducing-conditions)
+- [unwrap with statements](/building-with-codegen/statements-and-code-blocks#wrapping-and-unwrapping-statements)

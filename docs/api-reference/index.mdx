@@ -22,11 +22,11 @@ Welcome to the Codegen API reference. This documentation covers the core classes
     and call sites.
   </Card>
   <Card
-    title="CallGraph"
+    title="Symbol"
     icon="diagram-project"
-    href="/api-reference/core/CallGraph"
+    href="/api-reference/core/Symbol"
   >
-    Navigate function calls and dependencies throughout your codebase.
+    Represents a symbol in your codebase, includes functions, classes, and more.
   </Card>
 </CardGroup>
 
@@ -45,24 +45,23 @@ Welcome to the Codegen API reference. This documentation covers the core classes
 
 ### Code Analysis
 
-- [Finding Functions](/api-reference/core/Codebase#find_function)
-- [Analyzing Dependencies](/api-reference/core/CallGraph#get_dependencies)
-- [Working with ASTs](/api-reference/core/File#get_ast)
-- [Type Information](/api-reference/core/Function#get_type)
+- [Finding Functions](/api-reference/core/Codebase#get-function)
+- [Analyzing Dependencies](/api-reference/core/Symbol#dependencies)
+- [Analyzing Usages](/api-reference/core/Symbol#usages)
 
 ### Code Transformation
 
 - [Editing Files](/api-reference/core/File#edit)
-- [Managing Imports](/api-reference/core/File#add_import)
-- [Renaming Symbols](/api-reference/core/Codebase#rename)
-- [Moving Code](/api-reference/core/File#move)
+- [Managing Imports](/api-reference/core/SourceFile#add-import-from-import-string)
+- [Renaming Symbols](/api-reference/core/Symbol#set-name)
+- [Managing Return Types](/api-reference/core/Function#set-return-type)
+- [Moving Code](/api-reference/core/Symbol#move-to-file)
 
 ### React & TypeScript
 
-- [Component Analysis](/api-reference/typescript/ReactComponent)
-- [Type Definitions](/api-reference/typescript/TypeDefinition)
-- [JSX Manipulation](/api-reference/typescript/JSXElement)
-- [Props & State](/api-reference/typescript/Props)
+- [JSX Components](/api-reference/typescript/JSXElement)
+- [Props & State](/api-reference/typescript/JSXProp)
+- [Type Aliases](/api-reference/typescript/TSTypeAlias)
 
 <Note>
   Each class and function includes detailed examples and common use cases. Use

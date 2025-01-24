@@ -8,8 +8,8 @@ iconType: "solid"
 This guide demonstrates how to determine docs coverage and create documentation for your codebase.
 
 This primarily leverages two APIs:
-- [`codebase.ai(...)`](/api-reference/Codebase#ai) for generating docstrings
-- [`function.set_docstring(...)`](/codebase-sdk/core/HasBlock#set-docstring) for modifying them
+- [`codebase.ai(...)`](/api-reference/core/Codebase#ai) for generating docstrings
+- [`function.set_docstring(...)`](/api-reference/core/HasBlock#set-docstring) for modifying them
 
 ## Determining Documentation Coverage
 
@@ -137,7 +137,7 @@ Which provides the following output:
 
 For non-trivial codebases, it can be challenging to achieve full documentation coverage.
 
-The most efficient way to edit informative docstrings is to use [codebase.ai](/codebase-sdk/core/HasBlock#set-docstring) to generate docstrings, then use the [set_docstring](/codebase-sdk/core/HasBlock#set-docstring) method to update the docstring.
+The most efficient way to edit informative docstrings is to use [codebase.ai](/api-reference/core/Codebase#ai) to generate docstrings, then use the [set_docstring](/api-reference/core/HasBlock#set-docstring) method to update the docstring.
 
 <Tip>Learn more about using AI in our [guides](/building-with-codegen/calling-out-to-llms).</Tip>
 
@@ -210,49 +210,4 @@ for function in codebase.functions:
 
     # Set the new docstring
     function.set_docstring(docstring)
-```
-
-## Migrating to Google-Style Docstrings
-
-You can use [`docstring.to_google_docstring`](/api-reference/Docstring#to-google-docstring) to convert existing docstrings to Google style format. This is particularly useful when standardizing documentation across a codebase:
-
-```python python
-# Convert all docstrings to Google style
-for function in codebase.functions:
-    # Check if function has a docstring using walrus operator
-    if docstring := function.docstring:
-        # Convert to Google style using the docstring API
-        google_style_docstring = docstring.to_google_docstring(function)
-        # Update the function's docstring
-        function.set_docstring(google_style_docstring)
-```
-
-This will convert docstrings from various formats (e.g., reST, NumPy) to Google style, preserving all parameter descriptions, return types, and other documentation elements.
-
-For example, this reST style docstring:
-```python
-"""
-Process the input data.
-
-:param data: The input data to process
-:type data: pd.DataFrame
-:param inplace: Whether to modify in place
-:type inplace: bool
-:returns: The processed data
-:rtype: pd.DataFrame
-"""
-```
-
-Will be converted to:
-```python
-"""
-Process the input data.
-
-Args:
-    data (pd.DataFrame): The input data to process
-    inplace (bool): Whether to modify in place
-
-Returns:
-    pd.DataFrame: The processed data
-"""
 ```
