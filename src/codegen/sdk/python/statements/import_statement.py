@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from tree_sitter import Node as TSNode
 
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
@@ -10,10 +8,7 @@ from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.import_resolution import PyImport
-from codegen.utils.decorators.docs import py_apidoc
-
-if TYPE_CHECKING:
-    pass
+from codegen.shared.decorators.docs import py_apidoc
 
 
 @py_apidoc

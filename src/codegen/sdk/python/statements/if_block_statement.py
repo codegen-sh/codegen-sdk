@@ -9,7 +9,7 @@ from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.if_block_statement import IfBlockStatement
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock

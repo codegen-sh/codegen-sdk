@@ -6,7 +6,7 @@ from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.sdk.extensions.autocommit import reader
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 Parent = TypeVar("Parent")
 

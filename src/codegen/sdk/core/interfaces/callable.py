@@ -7,7 +7,7 @@ from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.interfaces.usable import Usable
 from codegen.sdk.core.placeholder.placeholder import Placeholder
 from codegen.sdk.core.symbol_group import SymbolGroup
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class

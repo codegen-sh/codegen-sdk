@@ -1,10 +1,7 @@
 import logging
 
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
-from codegen.sdk.code_generation.doc_utils.utils import (
-    get_api_classes_by_decorator,
-    get_codegen_sdk_class_docstring,
-)
+from codegen.sdk.code_generation.prompts.utils import get_api_classes_by_decorator, get_codegen_sdk_class_docstring
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 

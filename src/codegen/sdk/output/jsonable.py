@@ -9,7 +9,7 @@ from codegen.sdk.output.inspect import is_noapidoc, only_default_args
 from codegen.sdk.output.placeholder import Placeholder
 from codegen.sdk.output.utils import safe_getattr
 from codegen.sdk.types import JSON
-from codegen.utils.decorators.docs import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 BLACKLIST = ["json", "G", "viz", "autocommit_cache", "ts_node", "symbol_usages", "usages"]
 

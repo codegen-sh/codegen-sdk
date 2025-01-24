@@ -8,7 +8,7 @@ from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.output.utils import stylize_error
 from codegen.sdk.testing.models import BASE_PATH
 from codegen.sdk.tree_sitter_parser import print_errors
-from tests.utils.codebase_comparison_utils import gather_modified_files
+from tests.shared.codebase_comparison_utils import gather_modified_files
 
 DIFF_ROOT = BASE_PATH / ".diffs"
 T = TypeVar("T")

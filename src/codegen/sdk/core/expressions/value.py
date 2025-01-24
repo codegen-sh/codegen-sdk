@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.expression import Expression
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.utils.decorators.docs import apidoc, noapidoc
-
-if TYPE_CHECKING:
-    pass
-
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

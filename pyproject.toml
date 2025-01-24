@@ -1,5 +1,5 @@
 [project]
-name = "codegen-sdk"
+name = "codegen"
 dynamic = ["version", "urls"]
 description = "Add your description here"
 readme = "README.md"
@@ -63,6 +63,9 @@ dependencies = [
     "PyGithub==2.5.0",
     "GitPython==3.1.44",
     "psutil>=5.8.0",
+    "fastapi[standard]<1.0.0,>=0.115.2",
+    "starlette<1.0.0,>=0.16.0",
+    "tqdm>=4.67.1",
 ]
 license = {file = "LICENSE"}
 classifiers = [

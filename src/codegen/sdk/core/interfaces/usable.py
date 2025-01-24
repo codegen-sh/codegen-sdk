@@ -8,7 +8,7 @@ from codegen.sdk.core.dataclasses.usage import Usage, UsageType
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.enums import EdgeType
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.export import Export

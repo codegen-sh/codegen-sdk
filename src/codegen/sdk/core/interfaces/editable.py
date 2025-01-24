@@ -30,7 +30,7 @@ from codegen.sdk.output.constants import ANGULAR_STYLE, MAX_STRING_LENGTH
 from codegen.sdk.output.jsonable import JSONable
 from codegen.sdk.output.utils import style_editable
 from codegen.sdk.utils import descendant_for_byte_range, find_all_descendants, find_first_ancestor, find_index, truncate_line
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

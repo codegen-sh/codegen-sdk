@@ -62,13 +62,6 @@ uv-*.tar.gz
 .venv
 graph-sitter-types/out/**
 graph-sitter-types/typings/**
-codegen-sdk/out/**
-codegen-sdk/typings/**
 coverage.json
 tests/verified_codemods/codemod_data/repo_commits.json
 
-# =====[ Docs ]=====
-# These are auto-generated
-docs/api-reference/core/*
-docs/api-reference/python/*
-docs/api-reference/typescript/*

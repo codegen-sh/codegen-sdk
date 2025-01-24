@@ -5,7 +5,7 @@ from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.extensions.autocommit import reader
-from codegen.utils.decorators.docs import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

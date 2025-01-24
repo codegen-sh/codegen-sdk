@@ -5,11 +5,11 @@ from typing import TypeVar
 import pytest
 from pytest_snapshot.plugin import Snapshot
 
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.testing.models import BASE_PATH
-from tests.utils.codebase_comparison_utils import compare_codebase_diff
-from tests.utils.recursion import set_recursion_limit
+from codemods.canonical.codemod import Codemod
+from tests.shared.codebase_comparison_utils import compare_codebase_diff
+from tests.shared.recursion import set_recursion_limit
 
 logger = logging.getLogger(__name__)
 DIFF_ROOT = BASE_PATH / ".diffs"
@@ -18,7 +18,7 @@ T = TypeVar("T")
 
 @pytest.mark.timeout(120, func_only=True)
 def test_verified_codemods(
-    verified_codemod: Codemod3,
+    verified_codemod: Codemod,
     codebase: Codebase,
     expected: Path,
     tmp_path: Path,

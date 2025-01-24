@@ -13,7 +13,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.for_loop_statement import ForLoopStatement
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.python.statements.block_statement import PyBlockStatement
-from codegen.utils.decorators.docs import noapidoc, py_apidoc
+from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

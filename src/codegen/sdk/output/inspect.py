@@ -2,7 +2,7 @@ import inspect
 from collections.abc import Callable
 from inspect import Parameter
 
-from codegen.utils.decorators.docs import DocumentedObject, no_apidoc_signatures
+from codegen.shared.decorators.docs import DocumentedObject, no_apidoc_signatures
 
 
 def only_default_args(method: Callable) -> bool:

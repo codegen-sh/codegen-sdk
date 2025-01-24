@@ -5,7 +5,7 @@ from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.extensions.autocommit import reader
-from codegen.utils.decorators.docs import noapidoc
+from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.external_module import ExternalModule

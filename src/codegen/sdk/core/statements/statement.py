@@ -15,7 +15,7 @@ from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollec
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.output.constants import ANGULAR_STYLE
 from codegen.sdk.utils import find_all_descendants
-from codegen.utils.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph

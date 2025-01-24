@@ -1,10 +1,10 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.expressions.generic_type import GenericType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -15,7 +15,7 @@ codemod handles edge cases, such as nested Array types, appropriately.""",
     uid="97184a15-5992-405b-be7b-30122556fe8b",
 )
 @canonical
-class ConvertArrayTypeToSquareBracket(Codemod3, Skill):
+class ConvertArrayTypeToSquareBracket(Codemod, Skill):
     """This codemod converts types of the form `Array<T>` to `T[]`, while avoiding edge cases like nested Array types"""
 
     language = ProgrammingLanguage.TYPESCRIPT

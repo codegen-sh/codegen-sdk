@@ -1,5 +1,24 @@
+/* Override font variables */
+:root {
+	--font-jetbrains-mono: Menlo, Monaco, "Courier New", monospace !important;
+	/* --font-jetbrains-mono: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important; */
+}
+
+pre[class*="language-"],
+code[class*="language-"],
+pre,
+code,
+kbd,
+samp {
+	font-family: Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
+	--font-jetbrains-mono: Consolas, Monaco, "Andale Mono", "Ubuntu Mono",
+		monospace !important;
+	font-weight: 500 !important;
+}
+
 pre[class*="language-"] {
-	font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+	font-family: Menlo, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
+	font-weight: 500 !important;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
@@ -52,7 +71,7 @@ pre[class*="language-"] {
 
 .language-python .language-bash {
 	background-color: #15141b !important;
-	font-family: Menlo, Monaco, Consolas, "Courier New", monospace !important;
+	font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important;
 	font-weight: 600 !important;
 	font-size: 16px !important;
 }

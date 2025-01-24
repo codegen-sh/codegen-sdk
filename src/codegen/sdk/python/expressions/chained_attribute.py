@@ -3,7 +3,7 @@ from typing import Generic, TypeVar
 from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.interfaces.editable import Editable
-from codegen.utils.decorators.docs import py_apidoc
+from codegen.shared.decorators.docs import py_apidoc
 
 Parent = TypeVar("Parent", bound="Editable")
 

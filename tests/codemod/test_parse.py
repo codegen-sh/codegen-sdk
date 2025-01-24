@@ -10,7 +10,7 @@ from codegen.sdk.codebase.config import CodebaseConfig, DefaultFlags, ProjectCon
 from codegen.sdk.codebase.validation import PostInitValidationStatus, post_init_validation
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.testing.models import Repo
-from tests.utils.recursion import set_recursion_limit
+from tests.shared.recursion import set_recursion_limit
 
 BYTES_IN_GIGABYTE = 1024**3
 MAX_ALLOWED_GIGABYTES = 31

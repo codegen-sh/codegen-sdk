@@ -1,9 +1,9 @@
-from codegen.sdk.codemod import Codemod3
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.skills.core.skill import Skill
 from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -13,7 +13,7 @@ a return type annotation, set the return type to 'None'. Ensure the implementati
     uid="fcac16ed-a915-472a-9dfe-1562452d9ab3",
 )
 @canonical
-class ReturnNoneTypeAnnotation(Codemod3, Skill):
+class ReturnNoneTypeAnnotation(Codemod, Skill):
     """This codemod sets the return type of functions that do not have any return statements"""
 
     language = ProgrammingLanguage.PYTHON

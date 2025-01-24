@@ -1,12 +1,10 @@
-from typing import TYPE_CHECKING, TypeVar
+from typing import TypeVar
 
 from tree_sitter import Node as TSNode
 
 from codegen.sdk.typescript.expressions.named_type import TSNamedType
-from codegen.utils.decorators.docs import ts_apidoc
+from codegen.shared.decorators.docs import ts_apidoc
 
-if TYPE_CHECKING:
-    pass
 Parent = TypeVar("Parent")
 
 

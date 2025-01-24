@@ -1,6 +1,6 @@
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.expressions.expression import Expression
-from codegen.utils.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc
 
 
 @apidoc
