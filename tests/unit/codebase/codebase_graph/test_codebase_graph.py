@@ -2,9 +2,9 @@
 
 import itertools
 
-from graph_sitter.codebase.codebase_graph import CodebaseGraph
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import EdgeType
+from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import EdgeType
 
 
 def test_codebase_with_wrapper(tmpdir) -> None:

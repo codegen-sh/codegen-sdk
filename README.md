@@ -1,4 +1,4 @@
-# Graph sitter
+# Codegen
 
 [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
 

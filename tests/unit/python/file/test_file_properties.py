@@ -1,6 +1,6 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import SymbolType
-from graph_sitter.python import PyAssignment, PyClass, PyFile, PyFunction, PyImport
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import SymbolType
+from codegen.sdk.python import PyAssignment, PyClass, PyFile, PyFunction, PyImport
 
 default_content = """
 from some_file import x, y, z

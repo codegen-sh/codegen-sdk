@@ -9,14 +9,14 @@ import pytest
 from _pytest.python import Metafunc
 from pyinstrument import Profiler
 
-from codegen_git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen_git.repo_operator.repo_operator import RepoOperator
-from graph_sitter.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.testing.constants import DIFF_FILEPATH
-from graph_sitter.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
-from graph_sitter.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.repo_operator.repo_operator import RepoOperator
+from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
+from codegen.sdk.codemod import Codemod3
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.testing.constants import DIFF_FILEPATH
+from codegen.sdk.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
+from codegen.sdk.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
 from tests.utils.recursion import set_recursion_limit
 
 logger = logging.getLogger(__name__)

@@ -1,6 +1,6 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
 def test_file_add_symbol_import_from_string_adds_after_future(tmpdir) -> None:

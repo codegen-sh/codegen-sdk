@@ -1,10 +1,10 @@
 import pytest
 
-from graph_sitter.codebase.config import SessionOptions
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.codebase.transaction_manager import MaxPreviewTimeExceeded, MaxTransactionsExceeded
-from graph_sitter.core.codebase import MaxAIRequestsError
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.config import SessionOptions
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.codebase.transaction_manager import MaxPreviewTimeExceeded, MaxTransactionsExceeded
+from codegen.sdk.core.codebase import MaxAIRequestsError
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_max_transactions_exceeded_reached_set_threshold(tmpdir):
