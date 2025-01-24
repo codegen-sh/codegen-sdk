@@ -67,9 +67,14 @@ class Repo(BaseModel):
         if token:
             url = url.replace("://", f"://{token}@")
         elif self.repo_id is not None:
-            print("Setting up auth using the github cli")
+            # TODO: this is a very messy hack to check whether we should prompt the user for auth
+            # if REPO_ID_TO_URL is not set, we probably don't need auth. this is assuming that for
+            # OSS repos, we don't need to pull any private repos.
+            if not REPO_ID_TO_URL:
+                return
+
             if not which("gh"):
-                os.system("brew install gh")
+                raise RuntimeError("GitHub CLI (gh) is not installed. Please install it first.")
             if '[credential "https://github.codegen.app"]' not in (Path.home() / ".gitconfig").read_text():
                 os.system("gh auth login -h github.codegen.app")
                 os.system("gh auth setup-git -h github.codegen.app")
