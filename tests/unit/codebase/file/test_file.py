@@ -70,6 +70,17 @@ def test_codebase_edit_mdx(tmpdir) -> None:
         assert file.content == "NEW TEXT"
 
 
+@pytest.mark.skip("MDX replacing is broken")
+def test_codebase_replace_mdx(tmpdir) -> None:
+    """Editing MDx seems broken currently - it will just prepend to the file"""
+    with get_codebase_session(tmpdir=tmpdir, files={"file1.mdx": "# Header"}) as codebase:
+        file = codebase.get_file("file1.mdx")
+        file.replace("# Header", "NEW TEXT")
+        codebase.commit()
+        file = codebase.get_file("file1.mdx")
+        assert file.content == "NEW TEXT"
+
+
 @pytest.mark.skipif(sys.platform == "darwin", reason="macOS is case-insensitive")
 def test_file_extensions_ignore_case(tmpdir) -> None:
     with get_codebase_session(tmpdir=tmpdir, files={"file1.py": "print(123)", "file2.py": "print(456)", "file3.bin": b"\x89PNG", "file4": "Hello world!"}) as codebase:
