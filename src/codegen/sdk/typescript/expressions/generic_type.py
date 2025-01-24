@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Self, TypeVar
+from typing import Self, TypeVar
 
 from tree_sitter import Node as TSNode
 
@@ -7,8 +7,6 @@ from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.core.symbol_groups.dict import Dict
 from codegen.shared.decorators.docs import ts_apidoc
 
-if TYPE_CHECKING:
-    pass
 Parent = TypeVar("Parent")
 
 

@@ -1,16 +1,12 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, TypeVar
 
 from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.shared.decorators.docs import py_apidoc
-
-if TYPE_CHECKING:
-    pass
-
 
 Parent = TypeVar("Parent", bound="PyCodeBlock")
 
