@@ -65,6 +65,7 @@ dependencies = [
     "psutil>=5.8.0",
     "fastapi[standard]<1.0.0,>=0.115.2",
     "starlette<1.0.0,>=0.16.0",
+    "tqdm>=4.67.1",
 ]
 license = {file = "LICENSE"}
 classifiers = [

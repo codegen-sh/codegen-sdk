@@ -10,13 +10,10 @@ from termcolor import colored
 
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
-from codegen.sdk.code_generation.doc_utils.canonicals import get_canonical_codemod_class_mdx, get_canonical_codemod_classes
+from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
+from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
 from codegen.sdk.code_generation.doc_utils.skills import format_all_skills
-from codegen.sdk.code_generation.doc_utils.utils import get_all_classes_to_document
-from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_for_codebase_page, render_mdx_page_for_class
-from codegen.sdk.code_generation.prompts.api_docs import get_codegen_sdk_codebase
-from codegen.sdk.core.codebase import PyCodebaseType
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_page_for_class
 from codegen.sdk.python import PyClass
 from codegen.sdk.skills.core.utils import get_all_skills, get_guide_skills_dict
 
@@ -110,18 +107,17 @@ def generate_docs(docs_dir: str) -> None:
 
     This will generate docs using the codebase locally, including any unstaged changes
     """
-    codebase = get_codegen_sdk_codebase()
-    generate_codegen_sdk_docs(docs_dir, codebase)
+    generate_codegen_sdk_docs(docs_dir)
     # generate_canonical_codemod_docs(docs_dir, codebase)
-    generate_skills_docs(docs_dir)
-    generate_guides(docs_dir)
+    # generate_skills_docs(docs_dir)
+    # generate_guides(docs_dir)
 
 
 def generate_guides(docs_dir: str):
     """Updates code snippets in the guides with the latest skill implementations"""
     guide_skills = get_guide_skills_dict()
     for guide_relative_path in guide_skills:
-        guide_file_path = os.path.join(docs_dir, "codebase-sdk", str(guide_relative_path) + ".mdx")
+        guide_file_path = os.path.join(docs_dir, "api-reference", str(guide_relative_path) + ".mdx")
 
         with open(guide_file_path) as f:
             file_content = f.read()
@@ -143,23 +139,20 @@ def get_snippet_pattern(target_name: str) -> str:
     return pattern
 
 
-def generate_codegen_sdk_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
+def generate_codegen_sdk_docs(docs_dir: str) -> None:
     """Generate the docs for the codegen_sdk API and update the mint.json"""
     print(colored("Generating codegen_sdk docs", "green"))
 
     # Generate docs page for codebase api and write to the file system
-    mdx_page = render_mdx_for_codebase_page(codebase)
-    os.makedirs(os.path.join(docs_dir, "codebase-sdk"), exist_ok=True)
-    file_path = os.path.join(docs_dir, "codebase-sdk", "codebase.mdx")
-    with open(file_path, "w") as f:
-        f.write(mdx_page)
+    codebase = get_codegen_sdk_codebase()
+    gs_docs = generate_docs_json(codebase, "HEAD")
 
     # Prepare the directories for the new docs
     # Delete existing documentation directories if they exist
     # So we remove generated docs for any classes which no longer exist
-    python_docs_dir = os.path.join(docs_dir, "codebase-sdk", "python")
-    typescript_docs_dir = os.path.join(docs_dir, "codebase-sdk", "typescript")
-    core_dir = os.path.join(docs_dir, "codebase-sdk", "core")
+    python_docs_dir = os.path.join(docs_dir, "api-reference", "python")
+    typescript_docs_dir = os.path.join(docs_dir, "api-reference", "typescript")
+    core_dir = os.path.join(docs_dir, "api-reference", "core")
 
     for dir_path in [python_docs_dir, typescript_docs_dir, core_dir]:
         if os.path.exists(dir_path):
@@ -170,7 +163,6 @@ def generate_codegen_sdk_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
     os.makedirs(core_dir, exist_ok=True)
 
     # Generate the docs pages for core, python, and typescript classes
-    classes = get_all_classes_to_document(codebase)
 
     # Write the generated docs to the file system, splitting between core, python, and typescript
     # keep track of where we put each one so we can update the mint.json
@@ -178,19 +170,20 @@ def generate_codegen_sdk_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
     typescript_set = set()
     core_set = set()
     # TODO replace this with new `get_mdx_for_class` function
-    for class_name, class_obj in classes.items():
+    for class_doc in gs_docs.classes:
+        class_name = class_doc.title
         lower_class_name = class_name.lower()
         if lower_class_name.startswith("py"):
             file_path = os.path.join(python_docs_dir, f"{class_name}.mdx")
-            python_set.add(f"codebase-sdk/python/{class_name}")
+            python_set.add(f"api-reference/python/{class_name}")
         elif lower_class_name.startswith(("ts", "jsx")):
             file_path = os.path.join(typescript_docs_dir, f"{class_name}.mdx")
-            typescript_set.add(f"codebase-sdk/typescript/{class_name}")
+            typescript_set.add(f"api-reference/typescript/{class_name}")
         else:
             file_path = os.path.join(core_dir, f"{class_name}.mdx")
-            core_set.add(f"codebase-sdk/core/{class_name}")
+            core_set.add(f"api-reference/core/{class_name}")
 
-        mdx_page = render_mdx_page_for_class(cls=class_obj, codebase=codebase)
+        mdx_page = render_mdx_page_for_class(cls_doc=class_doc)
         with open(file_path, "w") as f:
             f.write(mdx_page)
     print(colored("Finished writing new .mdx files", "green"))
@@ -201,7 +194,7 @@ def generate_codegen_sdk_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
         mint_data = json.load(mint_file)
 
     # Find the "Codebase SDK" group where we want to add the pages
-    codebase_sdk_group = next(group for group in mint_data["navigation"] if group["group"] == "GraphSitter Reference")
+    codebase_sdk_group = next(group for group in mint_data["navigation"] if group["group"] == "API Reference")
 
     # Update the pages for each language group
     for group in codebase_sdk_group["pages"]:
@@ -243,26 +236,3 @@ def filter_class(cls: PyClass):
             if decorator.name == "skill_impl" and "external=True" in decorator.source:
                 return True
     return False
-
-
-def generate_canonical_codemod_docs(docs_dir: str, codebase: PyCodebaseType) -> None:
-    """Generates docs for all canonical codemods"""
-    print(colored("Generating canonical codemod docs", "green"))
-
-    print(colored("> Grabbing canonicals", "green"))
-    classes = get_canonical_codemod_classes(codebase, language=ProgrammingLanguage.PYTHON)
-
-    # =====[ Write the canonical docs to the file system ]=====
-    examples_dir = os.path.join(docs_dir, "codebase-sdk", "examples")
-    print(colored(f"> Generating docs in {examples_dir}", "green"))
-    docstrings = {k: get_canonical_codemod_class_mdx(v) for k, v in classes.items()}
-    for k, v in docstrings.items():
-        file_path = os.path.join(examples_dir, f"{k}.mdx")
-        with open(file_path, "w") as f:
-            f.write(v)
-
-    print(colored("> Writing to disk", "green"))
-
-
-if __name__ == "__main__":
-    generate_skills_docs("docs")

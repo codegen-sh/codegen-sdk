@@ -157,7 +157,6 @@
 						"api-reference/core/ExpressionStatement",
 						"api-reference/core/ExternalModule",
 						"api-reference/core/File",
-						"api-reference/core/FlagKwargs",
 						"api-reference/core/ForLoopStatement",
 						"api-reference/core/Function",
 						"api-reference/core/FunctionCall",

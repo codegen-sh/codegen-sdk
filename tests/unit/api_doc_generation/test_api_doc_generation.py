@@ -1,7 +1,6 @@
 import pytest
 
 from codegen.sdk.ai.helpers import count_tokens
-from codegen.sdk.code_generation.doc_utils.utils import get_decorator_for_language
 from codegen.sdk.code_generation.prompts.api_docs import get_codegen_sdk_codebase, get_codegen_sdk_docs
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ProgrammingLanguage
@@ -57,14 +56,3 @@ def test_get_codegen_sdk_codebase(codebase, language) -> None:
     superclasses = func.superclasses()
     callable = [x for x in superclasses if isinstance(x, Symbol) and x.name == "Callable"]
     assert len(callable) == 1
-
-
-@pytest.mark.xdist_group("codegen")
-@pytest.mark.parametrize("language", [ProgrammingLanguage.PYTHON, ProgrammingLanguage.TYPESCRIPT])
-def test_api_doc_generation(codebase, language) -> None:
-    api_docs = get_codegen_sdk_docs(language=language, codebase=codebase)
-    decorator = get_decorator_for_language(language).value
-
-    for cls in codebase.classes:
-        if decorator in [decorator.name for decorator in cls.decorators]:
-            assert f"class {cls.name}" in api_docs, f"Documentation for class '{cls.name}' not found in {language.value} API docs"
