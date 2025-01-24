@@ -75,14 +75,14 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - v1-verified-codemod-repos-{{ checksum "tests/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
+            - v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
       - run:
           command: |
             uv run --frozen gs codemod clone-repos --verified-codemod-repos --token ${CODEGEN_BOT_GHE_TOKEN}
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
-          key: v1-verified-codemod-repos-{{ checksum "tests/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
+          key: v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
   build-wheels:
     parameters:
       base_packages:
@@ -237,7 +237,7 @@ jobs:
     - fetch-verified-codemods
     - cache-verified-codemod-repos
     - run_ats:
-        default_tests: "tests/codemod/test_verified_codemods.py"
+        default_tests: "tests/integration/codemod/test_verified_codemods.py"
         codecov_flags: "smart-tests-codemod"
         collect_args: --cli-api-key ${PROD_CLI_API_KEY} --token ${CODEGEN_BOT_GHE_TOKEN}
         ats_collect_args: --cli-api-key=${PROD_CLI_API_KEY},--token=${CODEGEN_BOT_GHE_TOKEN},
@@ -264,7 +264,7 @@ jobs:
     - clone-repos:
         extra_repos: false
     - run_ats:
-        default_tests: "tests/codemod/test_codemods.py"
+        default_tests: "tests/integration/codemod/test_codemods.py"
         codecov_flags: "smart-tests-codemod-oss"
         collect_args: --size=<<parameters.size>> --sync-graph=<<parameters.sync_graph>> --token ${CODEGEN_BOT_GHE_TOKEN}
         ats_collect_args: --size=<<parameters.size>>,--sync-graph=<<parameters.sync_graph>>,--token=${CODEGEN_BOT_GHE_TOKEN},
@@ -297,7 +297,7 @@ jobs:
           if [ "<<parameters.extra_repos>>" = "true" ]; then
             EXTRA_REPOS_ARG="--extra-repos=true"
           fi
-          PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/codemod/test_parse.py"
+          PYTEST_ARGS="${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} -o junit_suite_name=\"${CIRCLE_JOB}\" tests/integration/codemod/test_parse.py"
           echo "Running tests with args: $PYTEST_ARGS"
           TESTS_TO_RUN=$(PYTEST_ARGS=${PYTEST_ARGS} ./.circleci/collect.sh)
           echo $TESTS_TO_RUN | circleci tests run --command "ulimit -s unlimited; xargs uv run --frozen pytest -n auto ${PYTEST_ARGS}"
