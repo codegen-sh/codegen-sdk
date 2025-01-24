@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.function import TSFunction
-from graph_sitter.typescript.namespace import TSNamespace
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.function import TSFunction
+from codegen.sdk.typescript.namespace import TSNamespace
 
 
 def test_namespace_math_operations(tmpdir) -> None:

@@ -1,7 +1,10 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.enums import ProgrammingLanguage
+import pytest
+
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
+@pytest.mark.skip("No Autocommit")
 def test_autocommit_move_rename(tmpdir) -> None:
     file1_name = "file1.ts"
     # language=typescript

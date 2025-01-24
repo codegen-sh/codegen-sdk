@@ -2,8 +2,8 @@ import sys
 
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.file import File, SourceFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.file import File, SourceFile
 
 
 def test_file(tmpdir) -> None:
@@ -57,6 +57,28 @@ def test_codebase_files(tmpdir) -> None:
 
         assert len(codebase.files(extensions=[".bin"])) == 1
         assert {f for f in codebase.files(extensions=[".bin"])} == {file3}
+
+
+@pytest.mark.skip("MDX editing is broken")
+def test_codebase_edit_mdx(tmpdir) -> None:
+    """Editing MDx seems broken currently - it will just prepend to the file"""
+    with get_codebase_session(tmpdir=tmpdir, files={"file1.mdx": "# Header", "file2.tsx": "console.log('hello, world!')"}) as codebase:
+        file = codebase.get_file("file1.mdx")
+        file.edit("NEW TEXT")
+        codebase.commit()
+        file = codebase.get_file("file1.mdx")
+        assert file.content == "NEW TEXT"
+
+
+@pytest.mark.skip("MDX replacing is broken")
+def test_codebase_replace_mdx(tmpdir) -> None:
+    """Editing MDx seems broken currently - it will just prepend to the file"""
+    with get_codebase_session(tmpdir=tmpdir, files={"file1.mdx": "# Header"}) as codebase:
+        file = codebase.get_file("file1.mdx")
+        file.replace("# Header", "NEW TEXT")
+        codebase.commit()
+        file = codebase.get_file("file1.mdx")
+        assert file.content == "NEW TEXT"
 
 
 @pytest.mark.skipif(sys.platform == "darwin", reason="macOS is case-insensitive")

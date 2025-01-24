@@ -1,5 +1,5 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_graph_session
-from graph_sitter.enums import ProgrammingLanguage
+from codegen.sdk.codebase.factory.get_session import get_codebase_graph_session
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 def test_functions_dependencies_async_function_finds_deps(tmpdir) -> None:

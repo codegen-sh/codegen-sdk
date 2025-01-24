@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ typing.Set, and typing.Tuple with list, dict, set, and tuple respectively.""",
     uid="b2cd98af-d3c5-4e45-b396-e7abf06df924",
 )
 @canonical
-class BuiltInTypeAnnotation(Codemod3, Skill):
+class BuiltInTypeAnnotation(Codemod, Skill):
     """Replaces type annotations using typing module with builtin types.
 
     Examples:

@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ Ensure that the modifications are made only when the arguments are not already i
     uid="de868e09-796c-421b-9efd-151f94f08aef",
 )
 @canonical
-class InsertArgumentsToDecorator(Codemod3, Skill):
+class InsertArgumentsToDecorator(Codemod, Skill):
     """This codemod inserts the cloud and region arguments to every app.function decorator.
     it decides whether to insert the arguments based on whether they are already present in the decorator.
     if they are not present, it inserts them.

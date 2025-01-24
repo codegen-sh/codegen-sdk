@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ definitions, add necessary imports, and modify function call sites accordingly."
     uid="4a3569c2-cf58-4bdc-822b-7a5747f476ab",
 )
 @canonical
-class SwapClassAttributeUsages(Codemod3, Skill):
+class SwapClassAttributeUsages(Codemod, Skill):
     """This codemod takes two classes (class A and class B) and transfers one class's attributes to the other.
     It does this by:
     - Renaming any parameters that are passing the class A and replaces it to take in class B instead
@@ -44,14 +44,14 @@ class SwapClassAttributeUsages(Codemod3, Skill):
                 # Add import of `CacheConfig` to function definition file
                 function.file.add_symbol_import(class_b_symb)
 
-                # Check if the function body is using `bill_pay_vendor`
+                # Check if the function body is using `cache_config`
                 if len(function.code_block.get_variable_usages(class_a_param.name)) > 0:
                     # Add "wrapper" inside the function
-                    # This creates the `business_vendor` variable internally
+                    # This creates the `cache_config` variable internally
                     proxy_var_declaration = f"""{class_a_param.name} = cache_config.settings  # added by Codegen"""
                     function.prepend_statements(proxy_var_declaration)
 
-                # Update all callsites of original function to take in `payee` instead of `bill_pay_vendor`
+                # Update all callsites of original function to take in `cache_config` instead of `graph_rag_config`
                 fcalls = function.call_sites
                 for fcall in fcalls:
                     arg = fcall.get_arg_by_parameter_name(class_a_param.name)

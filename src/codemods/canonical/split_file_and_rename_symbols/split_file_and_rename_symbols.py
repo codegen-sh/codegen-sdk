@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import CodebaseType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ original file's path from 'types.py' to 'schemas.py'.""",
     uid="816415d9-27e8-4228-b284-1b18b3072f0d",
 )
 @canonical
-class SplitFileAndRenameSymbols(Codemod3, Skill):
+class SplitFileAndRenameSymbols(Codemod, Skill):
     """Split file and rename moved symbols
 
     This codemod first moves several symbols to new files and then renames them.

@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ within the function.""",
     uid="79c10c00-bbce-4bdb-8c39-d91586307a2b",
 )
 @canonical
-class RenameLocalVariables(Codemod3, Skill):
+class RenameLocalVariables(Codemod, Skill):
     """This codemod renames all local variables in functions that contain 'position' to 'pos'
 
     Example:
@@ -42,7 +42,7 @@ class RenameLocalVariables(Codemod3, Skill):
         for file in codebase.files:
             for function in file.functions:
                 # Check if any local variable names contain "position"
-                business_vendor_usages = function.code_block.get_variable_usages("position", fuzzy_match=True)
-                if len(business_vendor_usages) > 0:
+                position_usages = function.code_block.get_variable_usages("position", fuzzy_match=True)
+                if len(position_usages) > 0:
                     # Rename
                     function.rename_local_variable("position", "pos", fuzzy_match=True)

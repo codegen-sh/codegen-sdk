@@ -34,13 +34,17 @@ source .venv/bin/activate
 uv sync --dev
 ```
 
+> [!TIP]
+> - If sync fails with `missing field 'version'`, you may need to delete lockfile and rerun `rm uv.lock && uv sync --dev`.
+> - If sync fails with failed compilation, you may need to install clang and rerun `uv sync --dev`.
+
 ### Running Tests
 
 ```bash
-# Unit tests
+# Unit tests (tests atomic functionality)
 uv run pytest tests/unit -n auto
 
-# Codemod tests
+# Codemod tests (tests larger programs)
 uv run pytest tests/codemod/test_codemods.py -n auto
 ```
 

@@ -1,9 +1,9 @@
 import pytest
 
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.statements.statement import StatementType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.file import TSFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.statements.statement import StatementType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.file import TSFile
 
 
 def test_reduce_condition_to_true_elif(tmpdir):

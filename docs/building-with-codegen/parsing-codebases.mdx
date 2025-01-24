@@ -7,9 +7,9 @@ iconType: "solid"
 
 The primary entrypoint to programs leveraging Codegen is the [Codebase](../api-reference/core/Codebase) class.
 
+## Local Codebases
+
 Construct a Codebase by passing in a path to a local `git` repository.
-
-
 
 ```python
 from codegen import Codebase
@@ -20,13 +20,46 @@ codebase = Codebase("path/to/repository")
 # Parse from current directory
 codebase = Codebase("./")
 ```
-<Note>This will automatically infer the programming language of the codebase and parse all files in the codebase.</Note>
 
-<Tip>The initial parse may take a few minutes for large codebases. This pre-computation enables constant-time operations afterward. [Learn more here.](/introduction/how-it-works)</Tip>
+<Note>
+  This will automatically infer the programming language of the codebase and
+  parse all files in the codebase.
+</Note>
+
+<Tip>
+  The initial parse may take a few minutes for large codebases. This
+  pre-computation enables constant-time operations afterward. [Learn more
+  here.](/introduction/how-it-works)
+</Tip>
+
+## Remote Repositories
+
+To fetch and parse a repository directly from GitHub, use the `fetch_codebase` function.
+
+```python
+import codegen
+
+# Fetch and parse a repository (defaults to /tmp/codegen/{repo_name})
+codebase = codegen.fetch_codebase('fastapi/fastapi')
+
+# Customize temp directory, clone depth, or specific commit
+codebase = codegen.fetch_codebase(
+    'fastapi/fastapi',
+    tmp_dir='/custom/temp/dir',  # Optional: custom temp directory
+    shallow=False,  # Optional: full clone instead of shallow
+    commit_hash='fe513719ea98abade167d8a89e92f600d9d8f0e5'  # Optional: specific commit
+)
+```
+
+<Note>
+  Remote repositories are cloned to the `/tmp/codegen/{repo_name}` directory by
+  default. The clone is shallow by default for better performance.
+</Note>
 
 ## Supported Languages
 
 Codegen currently supports:
+
 - [Python](/api-reference/python)
 - [TypeScript/JavaScript](/api-reference/javascript)
 - [React/JSX](/building-with-codegen/react-and-jsx)

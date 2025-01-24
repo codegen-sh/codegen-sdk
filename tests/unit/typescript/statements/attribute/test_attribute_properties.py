@@ -1,9 +1,9 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.detached_symbols.function_call import FunctionCall
-from graph_sitter.core.expressions.number import Number
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.statements.assignment_statement import TSAssignmentStatement
-from graph_sitter.typescript.statements.attribute import TSAttribute
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+from codegen.sdk.core.expressions.number import Number
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
+from codegen.sdk.typescript.statements.attribute import TSAttribute
 
 
 def test_attribute(tmpdir) -> None:

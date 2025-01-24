@@ -3,11 +3,11 @@ import subprocess
 from pathlib import Path
 from typing import TypeVar
 
-from graph_sitter.codebase.diff_lite import DiffLite
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.output.utils import stylize_error
-from graph_sitter.testing.models import BASE_PATH
-from graph_sitter.tree_sitter_parser import print_errors
+from codegen.sdk.codebase.diff_lite import DiffLite
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.output.utils import stylize_error
+from codegen.sdk.testing.models import BASE_PATH
+from codegen.sdk.tree_sitter_parser import print_errors
 from tests.utils.codebase_comparison_utils import gather_modified_files
 
 DIFF_ROOT = BASE_PATH / ".diffs"

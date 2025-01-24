@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.skills.core.skill import Skill
+from codegen.sdk.skills.core.utils import skill, skill_impl
+from codegen.sdk.writer_decorators import canonical
+from codemods.canonical.codemod import Codemod
 
 
 @skill(
@@ -14,7 +14,7 @@ the class, and remove the original attributes. Ensure the decorators are importe
     uid="b200fb43-dad4-4241-a0b2-75a6fbf5aca6",
 )
 @canonical
-class ConvertAttributeToDecorator(Codemod3, Skill):
+class ConvertAttributeToDecorator(Codemod, Skill):
     """This converts any class attributes that initializes a set of Session objects to a decorator.
 
     For example, before:

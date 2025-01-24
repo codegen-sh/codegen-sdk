@@ -1,2 +1,2 @@
 def test_cli():
-    import gscli  # noqa: F401
+    import codegen.gscli  # noqa: F401

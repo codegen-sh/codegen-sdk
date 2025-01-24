@@ -32,7 +32,6 @@ jobs:
       - name: Build release distributions
         run: |
           uv build --wheel
-          uv build --package codegen-git --wheel
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
       - name: Upload distributions

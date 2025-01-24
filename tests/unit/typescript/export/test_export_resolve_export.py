@@ -1,7 +1,7 @@
-from graph_sitter.codebase.factory.get_session import get_codebase_session
-from graph_sitter.core.dataclasses.usage import UsageType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.typescript.file import TSFile
+from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.dataclasses.usage import UsageType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.file import TSFile
 
 
 def test_resolve_export_with_declared_symbols(tmpdir) -> None:
