@@ -33,16 +33,12 @@ function.set_docstring('new docstring') # set docstring
   width="100%"
   height="300px"
   scrolling="no"
-  src={`https://www.chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
+  src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
     intoSnippet
   )}`}
-  className="rounded-md"
-  style={{
-    borderRadius: "0.5rem",
-    borderColor: "rgb(var(--primary-light))",
-    borderWidth: "1px",
-  }}
-></iframe>
+  className="rounded-md "
+
+> </iframe>
 
 ## Installation
 
@@ -51,6 +47,11 @@ pip install codegen
 ```
 
 ## Get Started
+
+import {
+  COMMUNITY_SLACK_URL,
+  CODEGEN_SDK_GITHUB_URL,
+} from "/snippets/links.mdx";
 
 <CardGroup cols={2}>
   <Card
@@ -63,18 +64,10 @@ pip install codegen
   <Card title="Tutorials" icon="diagram-project" href="/tutorials/at-a-glance">
     Learn how to use Codegen for common code transformation tasks.
   </Card>
-  <Card
-    title="View on GitHub"
-    icon="github"
-    href="https://github.com/codegen-sh/codegen-sdk"
-  >
+  <Card title="View on GitHub" icon="github" href={CODEGEN_SDK_GITHUB_URL}>
     Star us on GitHub and contribute to the project.
   </Card>
-  <Card
-    title="Join our Slack"
-    icon="slack"
-    href="https://join.slack.com/t/codegen-community/shared_invite/..."
-  >
+  <Card title="Join our Slack" icon="slack" href={COMMUNITY_SLACK_URL}>
     Get help and connect with the Codegen community.
   </Card>
 </CardGroup>

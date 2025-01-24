@@ -11,15 +11,14 @@ This guide explains the key behaviors and how to use them effectively.
 
 ## Core Behaviors
 
-- [`HasName`](../api-reference/interfaces/HasName): For elements with names (functions, classes, variables)
-- [`HasValue`](../api-reference/interfaces/HasValue): For elements with values (variables, parameters)
-- [`HasBlock`](../api-reference/interfaces/HasBlock): For elements containing code blocks (functions, classes)
-- [`HasAttribute`](../api-reference/interfaces/HasAttribute): For elements that can have attributes accessed
-- [`Editable`](../api-reference/interfaces/Editable): For elements that can be safely modified ([learn more](/building-with-codegen/the-editable-api))
+- [`HasName`](/api-reference/core/HasName): For elements with names (functions, classes, variables)
+- [`HasValue`](/api-reference/core/HasValue): For elements with values (variables, parameters)
+- [`HasBlock`](/api-reference/core/HasBlock): For elements containing code blocks (functions, classes)
+- [`Editable`](/api-reference/core/Editable): For elements that can be safely modified ([learn more](/building-with-codegen/the-editable-api))
 
 ## Working with Names
 
-The [`HasName`](../api-reference/interfaces/HasName) behavior provides APIs for working with named elements:
+The [`HasName`](/api-reference/core/HasName) behavior provides APIs for working with named elements:
 
 ```python
 # Access the name
@@ -36,7 +35,7 @@ name_node = function.get_name()
 
 ## Working with Values
 
-The [`HasValue`](../api-reference/interfaces/HasValue) behavior provides APIs for elements that have values:
+The [`HasValue`](/api-reference/core/HasValue) behavior provides APIs for elements that have values:
 
 ```python
 # Access the value
@@ -53,7 +52,7 @@ if variable.value is not None:
 
 ## Working with Code Blocks
 
-The [`HasBlock`](../api-reference/interfaces/HasBlock) behavior provides APIs for elements containing code:
+The [`HasBlock`](/api-reference/core/HasBlock) behavior provides APIs for elements containing code:
 
 ```python
 # Access the code block
@@ -77,19 +76,19 @@ for fcall in function.function_calls:
 
 ## Working with Attributes
 
-The [`HasAttribute`](../api-reference/interfaces/HasAttribute) behavior provides APIs for attribute access:
+The [get_attribute](/api-reference/core/Class#get-attribute) method provides APIs for attribute access:
 
 ```python
-# Resolve attributes
-attr = obj.resolve_attribute("property_name")
-if attr:
-    print(f"Found attribute: {attr.name}")
-
 # Common patterns
-class_attr = class_def.resolve_attribute("class_var")
+class_attr = class_def.get_attribute("attribute_name")
 if class_attr:
     print(f"Class variable value: {class_attr.value.source}")
 ```
+
+<Info>
+  Learn more about [working with Attributes
+  here](/building-with-codegen/class-api#class-attributes).
+</Info>
 
 ## Behavior Combinations
 
@@ -111,10 +110,3 @@ function.add_decorator("@timer")
 function.edit("def process_input():\n    pass")
 ```
 
-## Best Practices
-
-1. **Use Behavior APIs**: Prefer using behavior methods over direct manipulation
-2. **Check for None**: Some behavior properties may return None (e.g., value, docstring)
-3. **Update References**: Use methods like `rename()` that handle reference updates
-4. **Combine Behaviors**: Take advantage of behavior combinations for complex operations
-5. **Preserve Context**: Let the behaviors handle formatting and context preservation

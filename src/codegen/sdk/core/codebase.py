@@ -20,6 +20,7 @@ from rich.console import Console
 from typing_extensions import deprecated
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
+from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
@@ -103,7 +104,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     It provides a high-level interface to interact with the codebase graph, and provides methods to access and manipulate files, directories, symbols, and other entities in the codebase.
     """
 
-    _op: RepoOperator
+    _op: RepoOperator | RemoteRepoOperator
     viz: VisualizationManager
     repo_path: Path
     console: Console
