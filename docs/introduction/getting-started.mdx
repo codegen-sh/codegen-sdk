@@ -5,48 +5,55 @@ icon: "bolt"
 iconType: "solid"
 ---
 
-Follow our step-by-step tutorial to get up and running with Codegen in a jupyter notebook.
+Follow our step-by-step tutorial to get up and running with Codegen.
 
 ## Installation
 
-We recommend using [`uv`](https://github.com/astral-sh/uv) with Python 3.13 for the best experience.
+We recommend using [`pipx`](https://pypa.github.io/pipx/) to install Codegen globally. `pipx` is a tool to help you install and run Python applications in isolated environments. This isolation ensures that Codegen's dependencies won't conflict with your other Python projects.
 
-First, install `uv` if you haven't already:
+First, install `pipx` if you haven't already:
 
 ```bash
-brew install uv
+brew install pipx
+pipx ensurepath  # Ensure pipx binaries are on your PATH
 ```
 
-`cd` into the directory you want to parse:
+Then install Codegen globally:
 
 ```bash
+pipx install codegen
+```
+
+<Note>
+  This makes the `codegen` command available globally in your terminal, while
+  keeping its dependencies isolated.
+</Note>
+
+## Quick Start with Jupyter
+
+The fastest way to explore a codebase is using Jupyter. Codegen provides a built-in command to set this up:
+
+```bash
+# Navigate to your repository
 cd path/to/git/repository
+
+# Initialize codegen and launch Jupyter
+codegen init
+codegen notebook
 ```
 
-Create and activate a Python 3.13 virtual environment:
+This will:
 
-```bash
-uv venv --python 3.13.0 && source .venv/bin/activate
-```
+1. Create a `.codegen/` directory with:
+   - `.venv/` - A dedicated virtual environment for this project
+   - `jupyter/` - Jupyter notebooks for exploring your code
+   - `config.toml` - Project configuration
+2. Launch Jupyter Lab with a pre-configured notebook
 
-Install [Codegen from PyPI](https://pypi.org/project/codegen/) using `uv`:
-
-```bash
-uv pip install codegen
-```
-
-Install and run Jupyter (optional):
-
-<Tip>Jupyter notebooks are great for exploration and debugging.</Tip>
-
-```bash
-uv pip install jupyterlab && jupyter lab
-```
-
-<Info>
-  You can also use the CLI if you prefer to work in a terminal. [Learn more
-  here](/cli/about).
-</Info>
+<Tip>
+  The notebook comes pre-configured to load your codebase, so you can start
+  exploring right away!
+</Tip>
 
 ## Initializing a Codebase
 
