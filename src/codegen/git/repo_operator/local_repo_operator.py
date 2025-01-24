@@ -1,6 +1,6 @@
 import os
 from functools import cached_property
-from typing import Self, override, Optional
+from typing import Self, override
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Remote
@@ -109,19 +109,19 @@ class LocalRepoOperator(RepoOperator):
             except Exception:
                 # If any git operations fail, fallback to fresh clone
                 pass
-            
+
             # If we get here, repo exists but is not up to date or valid
             # Remove the existing directory to do a fresh clone
             import shutil
             shutil.rmtree(repo_path)
-        
+
         # Do a fresh clone with depth=1 to get latest commit
         GitCLI.clone_from(url=url, to_path=repo_path, depth=1)
-        
+
         # Initialize with the cloned repo
         git_cli = GitCLI(repo_path)
         default_branch = git_cli.active_branch.name
-        
+
         return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
 
     ####################################################################################################################
