@@ -38,7 +38,7 @@ class GithubClient:
         return gh_wrapper
 
     def _create_client_for_repo(self, repo_config: RepoConfig) -> Github:
-        token = get_token_for_repo_config(github_type=self.type)
+        token = get_token_for_repo_config(repo_config=repo_config, github_type=self.type)
         return Github(token, base_url=self.base_url)
 
     def _get_client_for_scope(self, github_scope: GithubScope) -> Github:
