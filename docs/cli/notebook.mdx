@@ -1,0 +1,61 @@
+---
+title: "notebook"
+sidebarTitle: "notebook"
+---
+
+The `notebook` command launches a Jupyter Lab instance with a pre-configured notebook for exploring your codebase.
+
+## Usage
+
+```bash
+codegen notebook
+```
+
+This will:
+
+1. Create a Python virtual environment in `.codegen/.venv` if it doesn't exist
+2. Install required packages (codegen and jupyterlab)
+3. Create a starter notebook in `.codegen/jupyter/tmp.ipynb`
+4. Launch Jupyter Lab with the notebook open
+
+The notebook comes pre-configured with:
+
+```python
+from codegen import Codebase
+
+# Initialize codebase
+codebase = Codebase('../../')
+```
+
+<Note>
+  The notebook is created in `.codegen/jupyter/`, so the relative path `../../`
+  points to your repository root.
+</Note>
+
+## Directory Structure
+
+After running `codegen notebook`, your repository will have this structure:
+
+```
+.codegen/
+├── .venv/          # Virtual environment for this project
+├── jupyter/        # Jupyter notebooks
+│   └── tmp.ipynb   # Pre-configured notebook
+└── config.toml     # Project configuration
+```
+
+## Examples
+
+```bash
+# Initialize a new repository and launch notebook
+codegen init
+codegen notebook
+
+# Launch notebook in an existing codegen project
+codegen notebook
+```
+
+<Tip>
+  The notebook command will automatically initialize codegen if needed, so you
+  can run it directly in a new repository.
+</Tip>
