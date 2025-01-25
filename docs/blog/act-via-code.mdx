@@ -5,85 +5,88 @@ iconType: "solid"
 description: "The path to advanced code manipulation agents"
 ---
 
-The future of AI-powered software development isn't just about understanding code—it's about manipulating it effectively. As AI models become increasingly sophisticated in comprehending codebases, we're discovering that the real bottleneck isn't their "intelligence," but rather their ability to make precise, reliable changes to code. This is where the concept of "acting via code" becomes crucial.
+<Frame caption="Voyager (Jim Fan)">
+  <img src="/images/nether-portal.png" />
+</Frame>
 
-## The Current Landscape
 
-Today's AI coding assistants typically operate through:
+# Act via Code
 
-- Generating complete code snippets
-- Suggesting text-based changes
-- Producing diffs for review
+Two and a half years since the launch of the GPT-3 API, code assistants have emerged as the most powerful and practically useful applications of LLMs. The rapid adoption of AI-powered IDEs and prototype builders isn't surprising — code is structured, deterministic, and rich with patterns, making it an ideal domain for machine learning. As model capabilities continue to scale, we're seeing compounding improvements in code understanding and generation.
 
-While these approaches work for simple tasks, they break down when dealing with complex, multi-file changes or large-scale refactors. The fundamental issue? They're trying to manipulate code as text, rather than as the structured data it really is.
+Yet there's a striking gap between what AI agents can understand and what they can actually do. While they can reason about complex architectural changes, debug intricate issues, and propose sophisticated refactors, they often can't execute these ideas. The ceiling isn't intelligence or context—it's the ability to manipulate code at scale. Large-scale modifications remain unreliable or impossible, not because agents don't understand what to do, but because they lack the right interfaces to do it.
 
-## Why Acting via Code Matters
+The bottleneck isn't intelligence — it's tooling. By giving AI models the ability to write and execute code that modifies code, we're about to unlock an entire class of tasks that agents already understand but can't yet perform. Code execution environments represent the most expressive tool we could offer an agent—enabling composition, abstraction, and systematic manipulation of complex systems. When paired with ever-improving language models, this will unlock another step function improvement in AI capabilities.
 
-Acting via code means providing AI agents with programmatic interfaces to manipulate codebases. Instead of generating text patches, agents can express transformations through code itself. This approach offers several key advantages:
+## Beating Minecraft with Code Execution
 
-1. **Precision and Reliability**
+In mid-2023, a research project called [Voyager](https://voyager.minedojo.org) made waves: it effectively solved Minecraft, performing several multiples better than the prior SOTA on many important dimensions. This was a massive breakthrough — previous reinforcement learning systems had struggled for years with even basic Minecraft tasks.
 
-   - Changes are expressed through well-defined operations
-   - Dependencies and references are handled automatically
-   - Transformations are composable and reusable
+While the AI community was focused on scaling intelligence, Voyager demonstrated something more fundamental: the right tools can unlock entirely new tiers of capability. The same GPT-4 model that struggled with Minecraft using traditional frameworks achieved remarkable results when allowed to write and execute code. This wasn't about raw intelligence—it was about giving the agent a more expressive way to act.
 
-2. **Scale and Consistency**
+<Frame>
+   <img src="/images/voyager-performance.png" />
+</Frame>
 
-   - Changes can be applied across massive codebases
-   - Transformations remain consistent across files
-   - Complex refactors become tractable
+The breakthrough came from a simple yet powerful insight: let the AI write code. Instead of limiting the agent to primitive "tools," Voyager allowed GPT-4 to write and execute [JS programs](https://github.com/MineDojo/Voyager/tree/main/skill_library/trial2/skill/code) that controlled Minecraft actions through a clean API:
 
-3. **Verifiability and Safety**
-   - Changes are expressed in a reviewable format
-   - Transformations can be tested before application
-   - Operations can be rolled back if needed
+```javascript
+async function chopSpruceLogs(bot) {
+  const spruceLogCount = bot.inventory.count(mcData.itemsByName.spruce_log.id);
+  const logsToMine = 3 - spruceLogCount;
+  if (logsToMine > 0) {
+    bot.chat("Chopping down spruce logs...");
+    await mineBlock(bot, "spruce_log", logsToMine);
+    bot.chat("Chopped down 3 spruce logs.");
+  } else {
+    bot.chat("Already have 3 spruce logs in inventory.");
+  }
+}
+```
 
-## Building Blocks for AI Agents
+This approach transformed the agent's capabilities. Rather than being constrained to atomic actions like `equipItem(...)`, it could create higher-level operations like [`craftShieldWithFurnace()`](https://github.com/MineDojo/Voyager/blob/main/skill_library/trial2/skill/code/craftShieldWithFurnace.js) through composing JS APIs. The system also implemented a memory mechanism, storing successful programs for reuse in similar situations—effectively building its own library of proven solutions it could later refer to and adapt to similar circumstances.
 
-For AI agents to effectively manipulate code, they need:
+<Frame>
+   <img src="/images/voyager-retrieval.png" />
+</Frame>
 
-1. **A Natural Mental Model**
+As the Voyager authors noted: 
 
-   - Operations that match how developers think about code changes
-   - High-level abstractions for common patterns
-   - Clear semantics for transformations
+<Tip>*"We opt to use code as the action space instead of low-level motor commands because programs can naturally represent temporally extended and compositional actions, which are essential for many long-horizon tasks in Minecraft."*</Tip>
 
-2. **Composable Primitives**
+## Code is an Ideal Action Space
 
-   - Basic operations that can be combined
-   - Tools for building higher-level abstractions
-   - Ways to express complex transformations
+The implications of code as an action space extend far beyond gaming. Code provides a uniquely powerful interface between AI and real-world systems. When an agent writes code, it gains several critical advantages over traditional atomic tools.
 
-3. **Rich Static Analysis**
-   - Understanding of dependencies and references
-   - Analysis of control flow and types
-   - Knowledge of cross-file relationships
+First, code enforces correctness through syntax and type systems. Second, it enables effective retrieval and composition—AI models excel at understanding, adapting, and combining existing code patterns. Third, code execution provides immediate, objective feedback through errors and outputs. Finally, and perhaps most importantly, code is inherently composable—any tool can be wrapped in a function and used as a building block for more complex operations.
 
-## The Path Forward
+Programs are also a natural medium of interaction between humans and agents. Code explicitly encodes reasoning in a human-readable format, making the agent's actions transparent and reviewable. There's no magic—just deterministic program execution that can be debugged, modified, and improved. In this paradigm, the agent becomes a sophisticated program search mechanism, exploring the space of possible solutions while maintaining the reliability of traditional software.
 
-As we move toward more advanced AI coding agents, the ability to act via code becomes increasingly critical. Future AI systems will need to:
+## For Software Engineering
 
-1. **Build Their Own Tools**
+This brings us to software engineering, where we see a massive gap between AI's theoretical capabilities and practical achievements. Many code modification tasks are fundamentally programmatic—dependency analysis, refactors, control flow analysis—yet we lack the tools to express them properly.
 
-   - Create custom abstractions for common patterns
-   - Develop specialized transformation utilities
-   - Maintain their own libraries of operations
+Consider how a developer thinks about refactoring: it's rarely about direct text manipulation. Instead, we think in terms of high-level operations: "move this function," "rename this variable everywhere," "split this module." These operations can be encoded into a powerful Python API:
 
-2. **Reason About Changes**
+```python
+# simple access to high-level code constructs
+for component in codebase.jsx_components:
+    # access detailed code structure and relations
+    if len(component.usages) == 0:
+        # powerful edit APIs that handle edge cases
+        component.rename(component.name + 'Page')
+```
 
-   - Understand the impact of transformations
-   - Plan complex refactoring operations
-   - Verify the correctness of changes
+This isn't just another code manipulation library—it's a scriptable language server that builds on proven foundations like LSP and codemods, but designed specifically for programmatic analysis and refactoring.
 
-3. **Learn From Experience**
-   - Improve transformation strategies over time
-   - Develop better abstractions through use
-   - Share knowledge across different contexts
+## What does this look like?
 
-## Conclusion
+At Codegen, we've built exactly this system. Our approach centers on four key principles:
 
-The path to advanced AI coding agents isn't just about better language models—it's about giving those models the right tools to manipulate code effectively. By enabling AI to "act via code," we create a foundation for more sophisticated, reliable, and scalable code transformation capabilities.
+The foundation must be Python, enabling easy composition with existing tools and workflows. Operations must be in-memory for performance, handling large-scale changes efficiently. The system must be open source, allowing developers and AI researchers to extend and enhance it. And perhaps most importantly, it must be thoroughly documented—not just for humans, but for the next generation of AI agents that will build upon it.
 
-Just as self-driving cars need sophisticated controls to navigate the physical world, AI coding agents need powerful, precise interfaces to manipulate codebases. This programmatic approach creates a shared language that both humans and AI can use to express, verify, and apply code changes reliably at scale.
+## What does this enable?
 
-The future of AI-powered development lies not in generating better patches or diffs, but in enabling AI to work with code the way developers do: through code itself.
+We've already used this approach to merge hundreds of thousands of lines of code in enterprise codebases. Our tools have automated complex tasks like feature flag deletion, test suite reorganization, import cycle elimination, and dead code removal. But more importantly, we've proven that code-as-action-space isn't just theoretical—it's a practical approach to scaling software engineering.
+
+This is just the beginning. With Codegen, we're providing the foundation for the next generation of code manipulation tools—built for both human developers and AI agents. We believe this approach will fundamentally change how we think about and implement large-scale code changes, making previously impossible tasks not just possible, but routine.
