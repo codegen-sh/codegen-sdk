@@ -6,7 +6,6 @@
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
-Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ```python
 from codegen import Codebase
@@ -23,6 +22,8 @@ for function in codebase.functions:
         function.move_to_file('deprecated.py')
 ```
 
+Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
+
 ## Installation
 **This library requires Python 3.12 – 3.13.**
 ```
@@ -33,6 +34,7 @@ uv pip install codegen
 
 - [Docs](https://docs.codegen.com)
 - [Get Started](https://docs.codegen.com/introduction/getting-started)
+- [Contributing](CONTRIBUTING.md)
 
 
 ## Why Codegen?
