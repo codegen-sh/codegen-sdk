@@ -222,3 +222,7 @@ def fetch_verified_codemods(cli_api_key: str):
     with repo_commits_file.open("w") as f:
         f.write(json.dumps(repos_to_commits, indent=4))
         f.flush()
+
+
+if __name__ == "__main__":
+    codemod()
