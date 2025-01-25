@@ -76,12 +76,16 @@ pre[class*="language-"] {
 	font-size: 16px !important;
 }
 
-.dark .bg-codeblock {
-	background-color: #18181b !important;
+.dark\:bg-codeblock:is(.dark *) {
+	background-color: #15141b !important;
+}
+
+.dark\:ring-gray-800\/50:is(.dark *) {
+	--tw-ring-color: #15141b !important;
 }
 
 .codeblock-dark {
-	background-color: #18181b !important;
+	background-color: #15141b !important;
 	color: #edecee !important;
 	font-size: 20px !important;
 }
