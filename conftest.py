@@ -89,6 +89,16 @@ def is_git_lfs_pointer(file_path: Path) -> bool:
         return False
 
 
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        if "NodeJS or npm is not installed" in str(report.longrepr):
+            pytest.skip("Test requires NodeJS and npm to be installed")
+
+
 @pytest.fixture(autouse=True)
 def skip_lfs_tests(request):
     """Skip tests that depend on git LFS files if they haven't been pulled"""
