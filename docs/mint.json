@@ -46,6 +46,10 @@
 		{
 			"name": "Changelog",
 			"url": "/changelog"
+		},
+		{
+			"name": "Blog",
+			"url": "/blog"
 		}
 	],
 	"navigation": [
@@ -126,6 +130,10 @@
 		{
 			"group": "Changelog",
 			"pages": ["changelog/changelog"]
+		},
+		{
+			"group": "Blog",
+			"pages": ["blog/posts", "blog/act-via-code"]
 		},
 		{
 			"group": "API Reference",
