@@ -57,7 +57,7 @@ This will:
 
 ## Initializing a Codebase
 
-Instantiating a [`Codebase`](/api-reference/core/Codebase) will automatically parse a codebase and make it available for manipulation.
+Instantiating a [Codebase](/api-reference/core/Codebase) will automatically parse a codebase and make it available for manipulation.
 
 ```python
 from codegen import Codebase
@@ -83,10 +83,10 @@ Let's explore the codebase we just initialized.
 
 Here are some common patterns for code navigation in Codegen:
 
-- Iterate over all [`Functions`](/api-reference/core/Function) with [`Codebase.functions`](/api-reference/core/Codebase#functions)
-- View class inheritance with [`Class.superclasses`](/api-reference/core/Class#superclasses)
-- View function call-sites with [`Function.call_sites`](/api-reference/core/Function#call-sites)
-- View function usages with [`Function.usages`](/api-reference/core/Function#usages)
+- Iterate over all [Functions](/api-reference/core/Function) with [Codebase.functions](/api-reference/core/Codebase#functions)
+- View class inheritance with [Class.superclasses](/api-reference/core/Class#superclasses)
+- View function call-sites with [Function.call_sites](/api-reference/core/Function#call-sites)
+- View function usages with [Function.usages](/api-reference/core/Function#usages)
 
 ```python
 # Print overall stats
@@ -175,8 +175,8 @@ codebase.commit()
 
 <Warning>
   In order to commit changes to your filesystem, you must call
-  [`Codebase.commit()`](/api-reference/core/Codebase#commit). Learn more about
-  [Commit and Reset](/building-with-codegen/commit-and-reset).
+  [codebase.commit()](/api-reference/core/Codebase#commit). Learn more about
+  [commit() and reset()](/building-with-codegen/commit-and-reset).
 </Warning>
 
 ### Finding Specific Content
