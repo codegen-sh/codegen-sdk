@@ -1,10 +1,10 @@
-# Contributing to Graph Sitter
+# Contributing to Codegen
 
-Thank you for your interest in contributing to Graph Sitter! This document outlines the process and guidelines for contributing.
+Thank you for your interest in contributing to Codegen! This document outlines the process and guidelines for contributing.
 
 ## Contributor License Agreement
 
-By contributing to Graph Sitter, you agree that:
+By contributing to Codegen, you agree that:
 
 1. Your contributions will be licensed under the project's license.
 2. You have the right to license your contribution under the project's license.
