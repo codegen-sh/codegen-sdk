@@ -1,6 +1,7 @@
 # Codegen
 
 [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
+[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com)
 [![Twitter Follow](https://img.shields.io/twitter/follow/codegen)](https://twitter.com/codegen)
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
