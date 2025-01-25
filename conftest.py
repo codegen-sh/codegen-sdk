@@ -1,7 +1,7 @@
 import logging
 import os
 
-from codegen.sdk.testing.models import Size
+from tests.shared.codemod.models import Size
 
 
 def find_dirs_to_ignore(start_dir, prefix):

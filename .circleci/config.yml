@@ -61,7 +61,7 @@ commands:
             if [ "<<parameters.extra_repos>>" = "true" ]; then
               EXTRA_REPOS_ARG="--extra-repos"
             fi
-            uv run --frozen gs codemod clone-repos ${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
+            uv run --frozen python -m tests.shared.codemod.commands clone-repos ${EXTRA_REPOS_ARG} --token ${CODEGEN_BOT_GHE_TOKEN} --clean-cache
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
@@ -70,7 +70,7 @@ commands:
     steps:
       - run:
           command: |
-            uv run --frozen gs codemod fetch-verified-codemods --cli-api-key ${PROD_CLI_API_KEY}
+            uv run --frozen python -m tests.shared.codemod.commands fetch-verified-codemods --cli-api-key ${PROD_CLI_API_KEY}
   cache-verified-codemod-repos:
     steps:
       - restore_cache:
@@ -78,7 +78,7 @@ commands:
             - v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
       - run:
           command: |
-            uv run --frozen gs codemod clone-repos --verified-codemod-repos --token ${CODEGEN_BOT_GHE_TOKEN}
+            uv run --frozen python -m tests.shared.codemod.commands clone-repos --verified-codemod-repos --token ${CODEGEN_BOT_GHE_TOKEN}
       - save_cache:
           paths:
             - $GITHUB_WORKSPACE
