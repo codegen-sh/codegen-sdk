@@ -9,19 +9,18 @@ Follow our step-by-step tutorial to get up and running with Codegen.
 
 ## Installation
 
-We recommend using [`pipx`](https://pypa.github.io/pipx/) to install Codegen globally. `pipx` is a tool to help you install and run Python applications in isolated environments. This isolation ensures that Codegen's dependencies won't conflict with your other Python projects.
+We recommend using [uv](https://github.com/astral-sh/uv) to install Codegen's CLI globally.
 
-First, install `pipx` if you haven't already:
+First, install `uv` if you haven't already:
 
 ```bash
-brew install pipx
-pipx ensurepath  # Ensure pipx binaries are on your PATH
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Then install Codegen globally:
+Then install Codegen:
 
 ```bash
-pipx install codegen
+uv tool install codegen
 ```
 
 <Note>
@@ -31,7 +30,8 @@ pipx install codegen
 
 ## Quick Start with Jupyter
 
-The fastest way to explore a codebase is using Jupyter. Codegen provides a built-in command to set this up:
+The [codgen notebook](/cli/notebook) command creates a virtual environment and opens a jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
+
 
 ```bash
 # Navigate to your repository
