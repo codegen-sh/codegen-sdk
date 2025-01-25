@@ -1,6 +1,5 @@
 from typing import Any
 
-from loguru import logger
 from tqdm import tqdm
 
 from codegen.sdk.code_generation.doc_utils.parse_docstring import parse_docstring
@@ -8,6 +7,7 @@ from codegen.sdk.code_generation.doc_utils.schemas import ClassDoc, GSDocs, Meth
 from codegen.sdk.code_generation.doc_utils.utils import create_path, get_langauge, get_type, get_type_str, has_documentation, is_settter, replace_multiple_types
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
 
 ATTRIBUTES_TO_IGNORE = ["G", "node_id", "angular"]
 
@@ -52,30 +52,33 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             return
 
         if not method.docstring:
-            logger.info(f"Method {cls.name}.{method.name} does not have a docstring")
-            return
+            raise ValueError(f"Method {cls.name}.{method.name} does not have a docstring")
 
         method_path = create_path(method, cls)
         parameters = []
 
         parsed = parse_docstring(method.docstring.source)
         if parsed is None:
-            raise ValueError(f"Method {cls.name}.{method.name} does not have a docstring")
+            raise ValueError(f"Method {cls.name}.{method.name} docstring does not exist or has incorrect format.")
 
         # Update parameter types
         for param, parsed_param in zip(method.parameters[1:], parsed["arguments"]):
             if param.name == parsed_param.name:
+                if isinstance(param.type, TypePlaceholder):
+                    resolved_types = []
+                else:
+                    resolved_types = param.type.resolved_types
+
                 parsed_param.type = replace_multiple_types(
-                    codebase=codebase, input_str=parsed_param.type, resolved_types=param.type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
+                    codebase=codebase, input_str=parsed_param.type, resolved_types=resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
                 )
                 if param.default:
                     parsed_param.default = param.default
 
                 parameters.append(parsed_param)
         # Update return type
-        from codegen.sdk.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
 
-        if not isinstance(method.return_type, PyReturnTypePlaceholder):
+        if not isinstance(method.return_type, TypePlaceholder):
             return_type = replace_multiple_types(
                 codebase=codebase, input_str=method.return_type.source, resolved_types=method.return_type.resolved_types, parent_class=cls, parent_symbol=method, types_cache=types_cache
             )
@@ -111,7 +114,11 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             description = attr.docstring(cls)
             attr_return_type = []
             if r_type := get_type_str(attr):
-                r_type_source = replace_multiple_types(codebase=codebase, input_str=r_type.source, resolved_types=r_type.resolved_types, parent_class=cls, parent_symbol=attr, types_cache=types_cache)
+                if isinstance(r_type, TypePlaceholder):
+                    resolved_types = []
+                else:
+                    resolved_types = r_type.resolved_types
+                r_type_source = replace_multiple_types(codebase=codebase, input_str=r_type.source, resolved_types=resolved_types, parent_class=cls, parent_symbol=attr, types_cache=types_cache)
                 attr_return_type.append(r_type_source)
 
             attr_cache[original_attr_path] = {"description": description, "attr_return_type": attr_return_type}
@@ -138,37 +145,27 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
     documented_classes = [cls for cls in codebase.classes if has_documentation(cls)]
 
     for cls in tqdm(documented_classes):
-        try:
-            cls_doc = process_class_doc(cls)
-            codegen_sdk_docs.classes.append(cls_doc)
-            seen_methods = set()
+        cls_doc = process_class_doc(cls)
+        codegen_sdk_docs.classes.append(cls_doc)
+        seen_methods = set()
 
-            # Process methods
-            for method in cls.methods(max_depth=None, private=False, magic=False):
-                try:
-                    method_doc = process_method(method, cls, cls_doc, seen_methods)
-                    if not method_doc:
-                        continue
-                    seen_methods.add(method_doc.name)
-                    cls_doc.methods.append(method_doc)
-                except Exception as e:
-                    logger.info(f"Failed to parse method: {method} - {e}")
+        # Process methods
+        for method in cls.methods(max_depth=None, private=False, magic=False):
+            method_doc = process_method(method, cls, cls_doc, seen_methods)
+            if not method_doc:
+                continue
+            seen_methods.add(method_doc.name)
+            cls_doc.methods.append(method_doc)
 
-            # Process attributes
-            for attr in cls.attributes(max_depth=None, private=False):
-                if attr.name in ATTRIBUTES_TO_IGNORE:
-                    continue
-                try:
-                    attr_doc = process_attribute(attr, cls, cls_doc, seen_methods)
-                    if not attr_doc:
-                        continue
-                    seen_methods.add(attr_doc.name)
-                    cls_doc.attributes.append(attr_doc)
-                except Exception as e:
-                    logger.info(f"Failed to parse attribute: {attr} - {e}")
+        # Process attributes
+        for attr in cls.attributes(max_depth=None, private=False):
+            if attr.name in ATTRIBUTES_TO_IGNORE:
+                continue
 
-        except Exception as e:
-            logger.error(f"Error processing class {cls.name}: {e}")
-            continue
+            attr_doc = process_attribute(attr, cls, cls_doc, seen_methods)
+            if not attr_doc:
+                continue
+            seen_methods.add(attr_doc.name)
+            cls_doc.attributes.append(attr_doc)
 
     return codegen_sdk_docs

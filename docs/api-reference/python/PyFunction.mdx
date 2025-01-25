@@ -11,7 +11,7 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/function.py#L32-L259" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/function.py#L32-L259" />
 
 ### Inherits from
 [PyHasBlock](/api-reference/python/PyHasBlock), [PySymbol](/api-reference/python/PySymbol), [Function](/api-reference/core/Function), [HasBlock](/api-reference/core/HasBlock), [Symbol](/api-reference/core/Symbol), [Callable](/api-reference/core/Callable), [Expression](/api-reference/core/Expression), [Usable](/api-reference/core/Usable), [Editable](/api-reference/core/Editable), [Importable](/api-reference/core/Importable), [HasName](/api-reference/core/HasName)
@@ -24,7 +24,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">call_sites</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span className="text-gray-200">]</span></> } description="Returns all call sites (invocations) of this callable in the codebase." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span>]</span></> } description="Returns all call sites (invocations) of this callable in the codebase." />
 
 ### <span className="text-primary">code_block</span>
 <HorizontalDivider light={true} />
@@ -32,19 +32,19 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">comment</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span className="text-gray-200">| None</span></> } description="Retrieves the comment group associated with a Python symbol." />
+<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span>| None</span></> } description="Retrieves the comment group associated with a Python symbol." />
 
 ### <span className="text-primary">decorators</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/python/PyDecorator" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyDecorator</a> <span className="text-gray-200">]</span></> } description="Returns a list of decorators associated with this symbol." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/python/PyDecorator" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyDecorator</a> <span>]</span></> } description="Returns a list of decorators associated with this symbol." />
 
 ### <span className="text-primary">dependencies</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[Union[</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span className="text-gray-200">,</span> <a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span className="text-gray-200">]]</span></> } description="Returns a list of symbols that this symbol depends on." />
+<Attribute type={ <><span>list[Union[</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span>,</span> <a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>]]</span></> } description="Returns a list of symbols that this symbol depends on." />
 
 ### <span className="text-primary">docstring</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span className="text-gray-200">| None</span></> } description="Gets the function's docstring." />
+<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span>| None</span></> } description="Gets the function's docstring." />
 
 ### <span className="text-primary">extended</span>
 <HorizontalDivider light={true} />
@@ -52,7 +52,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">extended_nodes</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="Returns a list of Editable nodes associated with this symbol, including extended symbols." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="Returns a list of Editable nodes associated with this symbol, including extended symbols." />
 
 ### <span className="text-primary">extended_source</span>
 <HorizontalDivider light={true} />
@@ -77,7 +77,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">function_calls</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span className="text-gray-200">]</span></> } description="Gets all function calls within the function and its parameters." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span>]</span></> } description="Gets all function calls within the function and its parameters." />
 
 ### <span className="text-primary">function_signature</span>
 <HorizontalDivider light={true} />
@@ -89,7 +89,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">inline_comment</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span className="text-gray-200">| None</span></> } description="Returns the inline comment group associated with this symbol." />
+<Attribute type={ <><a href="/api-reference/python/PyCommentGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentGroup</a> <span>| None</span></> } description="Returns the inline comment group associated with this symbol." />
 
 ### <span className="text-primary">is_async</span>
 <HorizontalDivider light={true} />
@@ -141,7 +141,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">nested_functions</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span className="text-gray-200">]</span></> } description="Returns a list of nested functions defined within this function's code block." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span>]</span></> } description="Returns a list of nested functions defined within this function's code block." />
 
 ### <span className="text-primary">node_type</span>
 <HorizontalDivider light={true} />
@@ -150,7 +150,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">parameters</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/SymbolGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>SymbolGroup</a> <span className="text-gray-200">[</span> <a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span className="text-gray-200">,</span> <a href="/api-reference/python/PyFunction" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyFunction</a> <span className="text-gray-200">] | list[</span> <a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span className="text-gray-200">]</span></> } description="Retrieves all parameters of a callable symbol." />
+<Attribute type={ <><a href="/api-reference/core/SymbolGroup" style={ {fontWeight: "inherit", fontSize: "inherit"} }>SymbolGroup</a> <span>[</span> <a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span>,</span> <a href="/api-reference/python/PyFunction" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyFunction</a> <span>] | list[</span> <a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span>]</span></> } description="Retrieves all parameters of a callable symbol." />
 
 ### <span className="text-primary">parent</span>
 <HorizontalDivider light={true} />
@@ -159,27 +159,27 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">parent_class</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Class" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Class</a> <span className="text-gray-200">| None</span></> } description="Find the class this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Class" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Class</a> <span>| None</span></> } description="Find the class this node is contained in" />
 
 ### <span className="text-primary">parent_function</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span className="text-gray-200">| None</span></> } description="Find the function this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span>| None</span></> } description="Find the function this node is contained in" />
 
 ### <span className="text-primary">parent_statement</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Statement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Statement</a> <span className="text-gray-200">| None</span></> } description="Find the statement this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Statement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Statement</a> <span>| None</span></> } description="Find the statement this node is contained in" />
 
 ### <span className="text-primary">resolved_value</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span className="text-gray-200">| list[</span> <a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span className="text-gray-200">]</span></> } description="Returns the resolved type of an Expression." />
+<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>| list[</span> <a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>]</span></> } description="Returns the resolved type of an Expression." />
 
 ### <span className="text-primary">return_statements</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/ReturnStatement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ReturnStatement</a> <span className="text-gray-200">]</span></> } description="Returns a list of all return statements within this function's body." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/ReturnStatement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ReturnStatement</a> <span>]</span></> } description="Returns a list of all return statements within this function's body." />
 
 ### <span className="text-primary">return_type</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Type" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Type</a> <span className="text-gray-200">| Placeholder[</span> <a href="/api-reference/core/ExternalModule" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ExternalModule</a> <span className="text-gray-200">]</span></> } description="
+<Attribute type={ <><a href="/api-reference/core/Type" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Type</a> <span>|</span> <a href="/api-reference/core/Placeholder" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Placeholder</a> <span>[</span> <a href="/api-reference/core/ExternalModule" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ExternalModule</a> <span>]</span></> } description="
 " />
 
 ### <span className="text-primary">source</span>
@@ -198,19 +198,19 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">type_parameters</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">TypeParameters[</span> <a href="/api-reference/core/Type" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Type</a> <span className="text-gray-200">,</span> <a href="/api-reference/typescript/TSTypeAlias" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSTypeAlias</a> <span className="text-gray-200">] | None</span></> } description="
+<Attribute type={ <><span>TypeParameters[</span> <a href="/api-reference/core/Type" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Type</a> <span>,</span> <a href="/api-reference/typescript/TSTypeAlias" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSTypeAlias</a> <span>] | None</span></> } description="
 " />
 
 ### <span className="text-primary">variable_usages</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="Returns Editables for all TreeSitter node instances of variable usages within this node's" />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="Returns Editables for all TreeSitter node instances of variable usages within this node's" />
 
 
 ## Methods
 <HorizontalDivider />
 ### <span className="text-primary">add_comment</span>
 Adds a new comment to the symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/symbol.py#L133-L162" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/symbol.py#L133-L162" />
 
 <ParameterWrapper>
 <Parameter
@@ -245,7 +245,7 @@ Adds a new comment to the symbol.
 
 ### <span className="text-primary">add_decorator</span>
 Adds a decorator to a function or method.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_block.py#L91-L113" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/has_block.py#L91-L113" />
 
 <ParameterWrapper>
 <Parameter
@@ -266,9 +266,26 @@ Adds a decorator to a function or method.
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description="True if the decorator was added, False if skipped."/>
 
 
+### <span className="text-primary">add_keyword</span>
+Insert a keyword in the appropriate place before this symbol if it doesn't already exist.
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/symbol.py#L385-L409" />
+
+<ParameterWrapper>
+<Parameter
+    name="keyword"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> }
+    description="The keyword to be inserted. Must be a valid keyword in the language context."
+    defaultValue=""
+/>
+</ParameterWrapper>
+
+
+<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
+
+
 ### <span className="text-primary">add_statements</span>
 Adds statements to the end of a function body.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/function.py#L322-L334" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/function.py#L325-L337" />
 
 <ParameterWrapper>
 <Parameter
@@ -285,15 +302,15 @@ Adds statements to the end of a function body.
 
 ### <span className="text-primary">ancestors</span>
 Find all ancestors of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description=""/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description=""/>
 
 
 ### <span className="text-primary">asyncify</span>
 Modifies the function to be asynchronous.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/function.py#L245-L260" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/function.py#L245-L260" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
@@ -301,7 +318,7 @@ Modifies the function to be asynchronous.
 
 ### <span className="text-primary">edit</span>
 Replace the source of this node with new_src.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/symbol.py#L121-L136" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/symbol.py#L121-L136" />
 
 <ParameterWrapper>
 <Parameter
@@ -336,7 +353,7 @@ Replace the source of this node with new_src.
 
 ### <span className="text-primary">find</span>
 Find and return matching nodes or substrings within an Editable instance.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L476-L493" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L476-L493" />
 
 <ParameterWrapper>
 <Parameter
@@ -354,12 +371,12 @@ Find and return matching nodes or substrings within an Editable instance.
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable instances that match the search criteria."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable instances that match the search criteria."/>
 
 
 ### <span className="text-primary">find_string_literals</span>
 Returns a list of string literals within this node's source that match any of the given
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L388-L402" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L388-L402" />
 
 <ParameterWrapper>
 <Parameter
@@ -377,20 +394,20 @@ Returns a list of string literals within this node's source that match any of th
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable objects representing the matching string literals."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable objects representing the matching string literals."/>
 
 
 ### <span className="text-primary">flag</span>
 Adds a visual flag comment to the end of this Editable's source text.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
 
 
-<Return return_type={ <><span className="text-gray-200">CodeFlag[</span> <a href="/api-reference/python/PyFunction" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyFunction</a> <span className="text-gray-200">]</span></> } description=""/>
+<Return return_type={ <><span>CodeFlag[</span> <a href="/api-reference/python/PyFunction" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyFunction</a> <span>]</span></> } description=""/>
 
 
 ### <span className="text-primary">get_import_string</span>
 Generates an import string for a Python symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/symbol.py#L39-L69" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/symbol.py#L39-L69" />
 
 <ParameterWrapper>
 <Parameter
@@ -425,15 +442,15 @@ Generates an import string for a Python symbol.
 
 ### <span className="text-primary">get_name</span>
 Returns the name node of the object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_name.py#L52-L62" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/has_name.py#L52-L62" />
 
 
-<Return return_type={ <><a href="/api-reference/core/Name" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Name</a> <span className="text-gray-200">|</span> <a href="/api-reference/core/ChainedAttribute" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ChainedAttribute</a> <span className="text-gray-200">| None</span></> } description="The name node of the object. Can be a Name node for simple names, a ChainedAttribute for names with namespaces (e.g., a.b), or None if the object has no name."/>
+<Return return_type={ <><a href="/api-reference/core/Name" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Name</a> <span>|</span> <a href="/api-reference/core/ChainedAttribute" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ChainedAttribute</a> <span>| None</span></> } description="The name node of the object. Can be a Name node for simple names, a ChainedAttribute for names with namespaces (e.g., a.b), or None if the object has no name."/>
 
 
 ### <span className="text-primary">get_parameter</span>
 Gets a specific parameter from the callable's parameters list by name.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/callable.py#L87-L96" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/callable.py#L87-L96" />
 
 <ParameterWrapper>
 <Parameter
@@ -445,12 +462,12 @@ Gets a specific parameter from the callable's parameters list by name.
 </ParameterWrapper>
 
 
-<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span className="text-gray-200">| None</span></> } description="The parameter with the specified name, or None if no parameter with that name exists or if there are no parameters."/>
+<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span>| None</span></> } description="The parameter with the specified name, or None if no parameter with that name exists or if there are no parameters."/>
 
 
 ### <span className="text-primary">get_parameter_by_index</span>
 Returns the parameter at the given index.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/callable.py#L99-L111" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/callable.py#L99-L111" />
 
 <ParameterWrapper>
 <Parameter
@@ -462,12 +479,12 @@ Returns the parameter at the given index.
 </ParameterWrapper>
 
 
-<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span className="text-gray-200">| None</span></> } description="The parameter at the specified index, or None if the parameter list is empty or the index does not exist."/>
+<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span>| None</span></> } description="The parameter at the specified index, or None if the parameter list is empty or the index does not exist."/>
 
 
 ### <span className="text-primary">get_parameter_by_type</span>
 Retrieves a parameter from the callable by its type.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/callable.py#L114-L127" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/callable.py#L114-L127" />
 
 <ParameterWrapper>
 <Parameter
@@ -479,12 +496,12 @@ Retrieves a parameter from the callable by its type.
 </ParameterWrapper>
 
 
-<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span className="text-gray-200">| None</span></> } description="The parameter with the specified type, or None if no parameter is found or if the callable has no parameters."/>
+<Return return_type={ <><a href="/api-reference/core/Parameter" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Parameter</a> <span>| None</span></> } description="The parameter with the specified type, or None if no parameter is found or if the callable has no parameters."/>
 
 
 ### <span className="text-primary">get_variable_usages</span>
 Returns Editables for all TreeSitter nodes corresponding to instances of variable usage
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L896-L912" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L896-L912" />
 
 <ParameterWrapper>
 <Parameter
@@ -502,12 +519,12 @@ Returns Editables for all TreeSitter nodes corresponding to instances of variabl
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="List of Editable objects representing variable usage nodes matching the given name."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="List of Editable objects representing variable usage nodes matching the given name."/>
 
 
 ### <span className="text-primary">insert_after</span>
 Inserts code after this node.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L597-L623" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L597-L623" />
 
 <ParameterWrapper>
 <Parameter
@@ -548,7 +565,7 @@ Inserts code after this node.
 
 ### <span className="text-primary">insert_before</span>
 Inserts text before the current symbol node in the Abstract Syntax Tree.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/symbol.py#L240-L264" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/symbol.py#L240-L264" />
 
 <ParameterWrapper>
 <Parameter
@@ -593,9 +610,32 @@ Inserts text before the current symbol node in the Abstract Syntax Tree.
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
 
 
+### <span className="text-primary">insert_statements</span>
+Inserts lines of code into the function body at the specified index.
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/function.py#L284-L307" />
+
+<ParameterWrapper>
+<Parameter
+    name="lines"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> }
+    description="The code lines to insert into the function body."
+    defaultValue=""
+/>
+<Parameter
+    name="index"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">int, optional</code> }
+    description="The position in the function body where the lines should be inserted. Defaults to 0."
+    defaultValue="0"
+/>
+</ParameterWrapper>
+
+
+<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
+
+
 ### <span className="text-primary">is_wrapped_in</span>
 Check if this node is contained another node of the given class
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1068-L1070" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L1068-L1070" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description=""/>
@@ -603,7 +643,7 @@ Check if this node is contained another node of the given class
 
 ### <span className="text-primary">move_to_file</span>
 Moves the given symbol to a new file and updates its imports and references.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/symbol.py#L266-L285" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/symbol.py#L266-L285" />
 
 <ParameterWrapper>
 <Parameter
@@ -632,15 +672,15 @@ Moves the given symbol to a new file and updates its imports and references.
 
 ### <span className="text-primary">parent_of_type</span>
 Find the first ancestor of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
 
 
-<Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">| None</span></> } description=""/>
+<Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>| None</span></> } description=""/>
 
 
 ### <span className="text-primary">prepend_statements</span>
 Prepends statements to the start of the function body.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/function.py#L216-L229" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/function.py#L216-L229" />
 
 <ParameterWrapper>
 <Parameter
@@ -657,7 +697,7 @@ Prepends statements to the start of the function body.
 
 ### <span className="text-primary">reduce_condition</span>
 Reduces an editable to the following condition
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1024-L1029" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L1024-L1029" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
@@ -665,7 +705,7 @@ Reduces an editable to the following condition
 
 ### <span className="text-primary">remove</span>
 Deletes this Node and its related extended nodes (e.g. decorators, comments).
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L676-L691" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L676-L691" />
 
 <ParameterWrapper>
 <Parameter
@@ -692,9 +732,32 @@ Deletes this Node and its related extended nodes (e.g. decorators, comments).
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
 
 
+### <span className="text-primary">rename</span>
+Renames a symbol and updates all its references in the codebase.
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/usable.py#L77-L90" />
+
+<ParameterWrapper>
+<Parameter
+    name="new_name"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> }
+    description="The new name for the symbol."
+    defaultValue=""
+/>
+<Parameter
+    name="priority"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">int</code> }
+    description="Priority of the edit operation. Defaults to 0."
+    defaultValue="0"
+/>
+</ParameterWrapper>
+
+
+<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">tuple[NodeId, NodeId]</code> } description="A tuple containing the file node ID and the new node ID of the renamed symbol."/>
+
+
 ### <span className="text-primary">rename_local_variable</span>
 Renames a local variable and all its usages within a function body.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/function.py#L263-L281" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/function.py#L263-L281" />
 
 <ParameterWrapper>
 <Parameter
@@ -723,7 +786,7 @@ Renames a local variable and all its usages within a function body.
 
 ### <span className="text-primary">replace</span>
 Search and replace occurrences of text within this node's source and its extended nodes.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L421-L445" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L421-L445" />
 
 <ParameterWrapper>
 <Parameter
@@ -764,7 +827,7 @@ Search and replace occurrences of text within this node's source and its extende
 
 ### <span className="text-primary">search</span>
 Returns a list of all regex match of `regex_pattern`, similar to python's re.search().
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L509-L525" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/editable.py#L509-L525" />
 
 <ParameterWrapper>
 <Parameter
@@ -788,12 +851,12 @@ Returns a list of all regex match of `regex_pattern`, similar to python's re.sea
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable objects corresponding to the matches found."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable objects corresponding to the matches found."/>
 
 
 ### <span className="text-primary">set_comment</span>
 Sets a comment for the Python symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/symbol.py#L100-L130" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/symbol.py#L100-L130" />
 
 <ParameterWrapper>
 <Parameter
@@ -816,7 +879,7 @@ Sets a comment for the Python symbol.
 />
 <Parameter
     name="comment_type"
-    type={ <><a href="/api-reference/python/PyCommentType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentType</a> <span className="text-gray-200">, optional</span></> }
+    type={ <><a href="/api-reference/python/PyCommentType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>PyCommentType</a> <span>, optional</span></> }
     description="Type of comment to add (e.g., single line,"
     defaultValue="PyCommentType.SINGLE_LINE"
 />
@@ -828,7 +891,7 @@ Sets a comment for the Python symbol.
 
 ### <span className="text-primary">set_docstring</span>
 Sets or updates a docstring for a Python function or class.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/interfaces/has_block.py#L64-L91" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/interfaces/has_block.py#L64-L91" />
 
 <ParameterWrapper>
 <Parameter
@@ -863,7 +926,7 @@ Sets or updates a docstring for a Python function or class.
 
 ### <span className="text-primary">set_inline_comment</span>
 Sets an inline comment to the symbol.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/symbol.py#L165-L193" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/symbol.py#L165-L193" />
 
 <ParameterWrapper>
 <Parameter
@@ -892,7 +955,7 @@ Sets an inline comment to the symbol.
 
 ### <span className="text-primary">set_name</span>
 Sets the name of a code element.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_name.py#L65-L77" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/has_name.py#L65-L77" />
 
 <ParameterWrapper>
 <Parameter
@@ -909,7 +972,7 @@ Sets the name of a code element.
 
 ### <span className="text-primary">set_return_type</span>
 Sets or modifies the return type annotation of a function.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/python/function.py#L233-L259" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/python/function.py#L233-L259" />
 
 <ParameterWrapper>
 <Parameter
@@ -926,36 +989,36 @@ Sets or modifies the return type annotation of a function.
 
 ### <span className="text-primary">symbol_usages</span>
 Returns a list of symbols that use or import the exportable object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/usable.py#L26-L41" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/usable.py#L27-L42" />
 
 <ParameterWrapper>
 <Parameter
     name="usage_types"
-    type={ <><a href="/api-reference/core/UsageType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>UsageType</a> <span className="text-gray-200">| None</span></> }
+    type={ <><a href="/api-reference/core/UsageType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>UsageType</a> <span>| None</span></> }
     description="The types of usages to search for. Defaults to any."
     defaultValue="None"
 />
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span className="text-gray-200">|</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span className="text-gray-200">|</span> <a href="/api-reference/core/Export" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Export</a> <span className="text-gray-200">]</span></> } description="A list of symbols that use or import the exportable object."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>|</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span>|</span> <a href="/api-reference/core/Export" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Export</a> <span>]</span></> } description="A list of symbols that use or import the exportable object."/>
 
 
 ### <span className="text-primary">usages</span>
 Returns a list of usages of the exportable object.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/usable.py#L45-L74" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/adding-return-types/src/codegen/sdk/core/interfaces/usable.py#L46-L75" />
 
 <ParameterWrapper>
 <Parameter
     name="usage_types"
-    type={ <><a href="/api-reference/core/UsageType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>UsageType</a> <span className="text-gray-200">| None</span></> }
+    type={ <><a href="/api-reference/core/UsageType" style={ {fontWeight: "inherit", fontSize: "inherit"} }>UsageType</a> <span>| None</span></> }
     description="Specifies which types of usages to include in the results. Default is any usages."
     defaultValue="None"
 />
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Usage" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Usage</a> <span className="text-gray-200">]</span></> } description="A sorted list of Usage objects representing where this exportable is used, ordered by source location in reverse."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Usage" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Usage</a> <span>]</span></> } description="A sorted list of Usage objects representing where this exportable is used, ordered by source location in reverse."/>
 
 
 
