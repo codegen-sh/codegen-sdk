@@ -2,13 +2,13 @@ import inspect
 from collections.abc import Callable
 
 import inflection
-from shared.skills.utils import skill_name_to_skill_implementations, skills
 
 from codegen.sdk.core.codebase import CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from tests.shared.skills.skill import Skill
 from tests.shared.skills.skill_implementation import SkillImplementation
 from tests.shared.skills.skill_test import SkillTestCase
+from tests.shared.skills.utils import skill_name_to_skill_implementations, skills
 
 ExecuteFuncType = Callable[[CodebaseType], None]
 
