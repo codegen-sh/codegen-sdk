@@ -35,8 +35,8 @@ def generate_cases(extra_repos: bool = False):
 
 def _generate_diffs(extra_repos: bool = False):
     """Generate diffs for codemod tests"""
-    os.system(f"pytest codegen_tests/graph_sitter/codemod/test_codemods.py::test_codemods_cloned_repos  --size small --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
-    os.system(f"pytest codegen_tests/graph_sitter/codemod/test_codemods.py::test_codemods_cloned_repos  --size large --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
+    os.system(f"pytest tests/integration/codemod/test_codemods.py::test_codemods_cloned_repos  --size small --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
+    os.system(f"pytest tests/integration/codemod/test_codemods.py::test_codemods_cloned_repos  --size large --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
 
 
 @codemod.command()
