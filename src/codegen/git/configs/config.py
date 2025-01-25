@@ -6,7 +6,7 @@ class Config:
         self.ENV = os.environ.get("ENV", "sandbox")
         self.GITHUB_ENTERPRISE_URL = self._get_env_var("GITHUB_ENTERPRISE_URL")
         self.LOWSIDE_TOKEN = self._get_env_var("LOWSIDE_TOKEN")
-        self.HIGHSIDE_TOKEN = self._get_env_var("HIGHISDE_TOKEN")
+        self.HIGHSIDE_TOKEN = self._get_env_var("HIGHSIDE_TOKEN")
 
     def _get_env_var(self, var_name, required: bool = False) -> str | None:
         value = os.environ.get(var_name)
