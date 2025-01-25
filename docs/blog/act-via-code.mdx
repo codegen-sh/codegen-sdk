@@ -58,9 +58,17 @@ As the Voyager authors noted:
 
 The implications of code as an action space extend far beyond gaming. Code provides a uniquely powerful interface between AI and real-world systems. When an agent writes code, it gains several critical advantages over traditional atomic tools.
 
-First, code enforces correctness through syntax and type systems. Second, it enables effective retrieval and composition—AI models excel at understanding, adapting, and combining existing code patterns. Third, code execution provides immediate, objective feedback through errors and outputs. Finally, and perhaps most importantly, code is inherently composable—any tool can be wrapped in a function and used as a building block for more complex operations.
+### Code is Composable
+Code is the ultimate composable medium. Agents can build their own tools by combining simpler operations, wrapping any function as a building block for more complex behaviors. This aligns well with what is perhaps LLMs' premier capability: understanding and interpolating between examples to create new solutions.
 
-Programs are also a natural medium of interaction between humans and agents. Code explicitly encodes reasoning in a human-readable format, making the agent's actions transparent and reviewable. There's no magic—just deterministic program execution that can be debugged, modified, and improved. In this paradigm, the agent becomes a sophisticated program search mechanism, exploring the space of possible solutions while maintaining the reliability of traditional software.
+### Code Constrains the Action Space
+APIs can enforce guardrails that keep agents on track. By designing interfaces that make invalid operations impossible to express, we can prevent entire classes of errors before they happen. The type system becomes a powerful tool for shaping agent behavior.
+
+### Code Provides Objective Feedback
+Code execution gives immediate, unambiguous feedback. When something goes wrong, you get stack traces and error messages—not just a confidence score. This concrete error signal is invaluable for agents learning to navigate complex systems.
+
+### Code is a Natural Medium for Collaboration
+Programs are a shared language between humans and agents. Code explicitly encodes reasoning in a reviewable format, making agent actions transparent and debuggable. There's no magic—just deterministic execution that can be understood, modified, and improved by both humans and AI.
 
 ## For Software Engineering
 
