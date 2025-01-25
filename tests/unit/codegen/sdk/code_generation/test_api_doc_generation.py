@@ -48,8 +48,7 @@ def test_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> N
 
 
 @pytest.mark.xdist_group("codegen")
-@pytest.mark.parametrize("language", [ProgrammingLanguage.PYTHON, ProgrammingLanguage.TYPESCRIPT])
-def test_mdx_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> None:
+def test_mdx_api_doc_generation_sanity(codebase) -> None:
     codebase = get_codegen_sdk_codebase()
     docs_json = generate_docs_json(codebase, "HEAD")
 
