@@ -13,7 +13,7 @@ skill_name_to_skill_implementations: dict[str, list[SkillImplementation]] = {}
 skills: list[Skill] = []
 SkillDecoratorType = Callable[[ExecuteFuncType], SkillImplementation]
 REPO_ROOT_PATH: Path = Path(__file__).parent.parent.parent.parent
-SKILLS_PATH: Path = REPO_ROOT_PATH / "tests" / "integration" / "skills" / "implementations"
+SKILLS_PATH: Path = REPO_ROOT_PATH / "tests" / "unit" / "skills" / "implementations"
 CODEMODS_PATH: Path = REPO_ROOT_PATH / "src" / "codemods" / "canonical"
 
 
@@ -27,7 +27,7 @@ def import_skills_from(path: Path, module_prefix: str):
 
 
 def import_all_skills():
-    import_skills_from(SKILLS_PATH, "tests.integration.skills.implementations")
+    import_skills_from(SKILLS_PATH, "tests.unit.skills.implementations")
     import_skills_from(CODEMODS_PATH, "codemods.canonical")
 
 
