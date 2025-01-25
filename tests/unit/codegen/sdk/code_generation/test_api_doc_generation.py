@@ -1,6 +1,7 @@
 import pytest
 
 from codegen.sdk.ai.helpers import count_tokens
+from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
 from codegen.sdk.code_generation.prompts.api_docs import get_codegen_sdk_codebase, get_codegen_sdk_docs
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ProgrammingLanguage
@@ -44,6 +45,15 @@ def test_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> N
     assert f"{lang}Class" in docs
     assert f"{other_lang}Function" not in docs
     # assert "InviteFactoryCreateParams" in docs # Canonicals aren't in docs
+
+
+@pytest.mark.xdist_group("codegen")
+@pytest.mark.parametrize("language", [ProgrammingLanguage.PYTHON, ProgrammingLanguage.TYPESCRIPT])
+def test_mdx_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> None:
+    codebase = get_codegen_sdk_codebase()
+    docs_json = generate_docs_json(codebase, "HEAD")
+
+    assert len(docs_json.classes) > 0
 
 
 @pytest.mark.xdist_group("codegen")
