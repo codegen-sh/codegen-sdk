@@ -34,7 +34,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv run pre-commit install-hooks
 FROM base-image AS extra-repos
 ARG CODEGEN_BOT_GHE_TOKEN=""
-RUN uv run gs codemod clone-repos --clean-cache --extra-repos --token ${CODEGEN_BOT_GHE_TOKEN}
+RUN uv run python -m tests.shared.codemod.commands clone-repos --clean-cache --extra-repos --token ${CODEGEN_BOT_GHE_TOKEN}
 FROM base-image AS oss-repos
 ARG CODEGEN_BOT_GHE_TOKEN=""
-RUN uv run gs codemod clone-repos --clean-cache --token ${CODEGEN_BOT_GHE_TOKEN}
+RUN uv run python -m tests.shared.codemod.commands clone-repos --clean-cache --token ${CODEGEN_BOT_GHE_TOKEN}
