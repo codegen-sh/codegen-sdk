@@ -6,7 +6,7 @@ from pytest_snapshot.plugin import Snapshot
 
 from codegen.sdk.core.codebase import Codebase
 from codemods.codemod import Codemod
-from tests.shared.codebase_comparison_utils import compare_codebase_diff
+from tests.shared.codemod.codebase_comparison_utils import compare_codebase_diff
 from tests.shared.codemod.models import BASE_PATH
 
 DIFF_ROOT = BASE_PATH / ".diffs"
