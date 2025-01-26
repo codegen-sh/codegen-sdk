@@ -6,15 +6,17 @@ description: "The path to advanced code manipulation agents"
 ---
 
 <Frame caption="Voyager (2023) solved agentic tasks with code execution">
-  <img src="/images/nether-portal.png" />
+  <img src="/images/mine-amethyst.png" />
 </Frame>
 
 
-Two and a half years since the launch of the GPT-3 API, code assistants have emerged as potentially the premier use case of LLMs. The rapid adoption of AI-powered IDEs and prototype builders isn't surprising — code is structured, deterministic, and rich with patterns, making it an ideal domain for machine learning. Developers actively working with tools like Cursor (myself included) have an exhiliarating yet ominous sense can tell that the field of software engineering is about to go through rapid change.
+Two and a half years since the launch of the GPT-3 API, code assistants have emerged as potentially the premier use case of LLMs. The rapid adoption of AI-powered IDEs and prototype builders isn't surprising — code is structured, deterministic, and rich with patterns, making it an ideal domain for machine learning. Developers actively working with tools like Cursor (myself included) have an exhiliarating yet uncertain sense that the field of software engineering is approaching an inflection point.
 
-Yet there's a striking gap between understanding and action for today's code assistants. When provided proper context, frontier LLMs can analyze massive enterprise codebases and propose practical paths towards sophisticated, large-scale improvements — eliminating tech debt, untangling dependencies, improving modularity. But ask them to actually implement these changes across millions of lines of code, and they hit a wall. 
+Yet there's a striking gap between understanding and action for today's code assistants. When provided proper context, frontier LLMs can analyze massive enterprise codebases and propose practical paths towards sophisticated, large-scale improvements. But implementing changes that impact more than a small set of files with modern AI assistants is fundamentally infeasible. As a result, our collaboration with AI assistants, as of early 2025, is dominated by tasks where humans are directly in the iteration loop and the modifications themselves span a dozen files. This has proven to be a workable paradigm for two sets of tasks: collaboration in IDEs (Windsurf, Cursor) and 0-1 chat assistants for 0-1 app creation (v0, lovable.dev, bolt.new).
 
-The bottleneck isn't intelligence — it's tooling. By giving AI models the ability to write and execute code that modifies code, we're about to unlock an entire class of tasks that agents already understand but can't yet perform. Code execution environments represent the most expressive tool we could offer an agent—enabling composition, abstraction, and systematic manipulation of complex systems. When paired with ever-improving language models, this will unlock another step function improvement in AI capabilities.
+There are certain things, however, which deal with codebase structure, that are fundamentally programmatic, and these are out of reach for today's assistants despite the fact that they understand what's going on. Eliminating tech debt, largr-scale migrations, managing code modularity and dependency analysis, enforcing type coverage, etc. These tasks that well below the high watermark of AI understanding, yet they remain out of reach for today's AI systems because the mechanism necessary to perform them is not baked into your IDE. 
+
+The bottleneck isn't intelligence — it's tooling. The solution requires letting AI systems programmatically interact with codebases and software systems through code execution environments. Code execution environments represent the most expressive tool we could offer an agent—enabling composition, abstraction, and systematic manipulation of complex systems. When paired with ever-improving language models, this will unlock another step function improvement for code assistants, enabling their application in an entirely new set of valuable tasks.
 
 ## Beating Minecraft with Code Execution
 
