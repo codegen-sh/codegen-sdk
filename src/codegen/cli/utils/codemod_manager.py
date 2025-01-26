@@ -1,6 +1,8 @@
 import builtins
 from pathlib import Path
 
+import rich_click as click
+
 from codegen.cli.utils.function_finder import DecoratedFunction, find_codegen_functions
 
 
@@ -24,6 +26,39 @@ class CodemodManager:
     @staticmethod
     def get_valid_name(name: str) -> str:
         return name.lower().replace(" ", "_").replace("-", "_")
+
+    @classmethod
+    def get_codemod(cls, name: str, start_path: Path | None = None) -> DecoratedFunction:
+        """Get and validate a codemod by name.
+
+        Args:
+            name: Name of the codemod to find
+            start_path: Directory to start searching from (default: current directory)
+
+        Returns:
+            The validated DecoratedFunction
+
+        Raises:
+            click.ClickException: If codemod can't be found or loaded
+        """
+        # First try to find the codemod
+        codemod = cls.get(name, start_path)
+        if not codemod:
+            # If not found, check if any codemods exist
+            all_codemods = cls.list(start_path)
+            if not all_codemods:
+                raise click.ClickException("No codemods found. Create one with:\n" + "  codegen create my-codemod")
+            else:
+                available = "\n  ".join(f"- {c.name}" for c in all_codemods)
+                raise click.ClickException(f"Codemod '{name}' not found. Available codemods:\n  {available}")
+
+        # Verify we can import it
+        try:
+            # This will raise ValueError if function can't be imported
+            codemod.validate()
+            return codemod
+        except Exception as e:
+            raise click.ClickException(f"Error loading codemod '{name}': {e!s}")
 
     @classmethod
     def list(cls, start_path: Path | None = None) -> builtins.list[DecoratedFunction]:
