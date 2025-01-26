@@ -7,6 +7,8 @@ iconType: "solid"
 
 The [Export](/api-reference/core/Export) API provides tools for managing exports and module boundaries in TypeScript codebases.
 
+<Note>Exports are a TS-only language feature</Note>
+
 ## Export Statements vs Exports
 
 Similar to imports, Codegen provides two levels of abstraction for working with exports:
@@ -30,18 +32,53 @@ export function process() {}
 You can access these through your file's collections:
 
 ```python
+# Access all exports in the codebase
+for export in codebase.exports:
+    ...
+
 # Access all export statements
 for stmt in file.export_statements:
-    print(f"Statement: {stmt.source}")
-    
-    # Access individual exports in the statement
     for exp in stmt.exports:
-        print(f"  Export: {exp.name}")
+        ...
 ```
 
 <Note>
 ExportStatement inherits from [Statement](/building-with-codegen/statements-and-code-blocks), providing operations like `remove()` and `insert_before()`. This is particularly useful when you want to manipulate the entire export declaration.
 </Note>
+
+## Common Operations
+
+Here are common operations for working with exports:
+
+```python
+# Add new export
+file.add_export("MyComponent")
+
+# Add export with alias
+file.add_export("MyComponent", alias="default")
+
+# Convert to type export
+export = file.get_export("MyType")
+export.make_type_export()
+
+# Remove export
+export.remove()  # Removes export but keeps symbol
+
+# Update export properties
+export.update(
+    name="NewName",
+    is_type=True,
+    is_default=False
+)
+
+# Analyze symbols being exported
+for export in file.exports:
+    if isinstance(export.exported_symbol, ExternalModule):
+        print('Exporting ExternalModule')
+    else:
+        ...
+
+```
 
 ## Export Types
 
@@ -68,9 +105,13 @@ export { foo as default };                   // Default export alias
 export { bar as baz } from './other-file';   // Re-export with alias
 ```
 
-## Working with Exports
+## Identifying Export Types
 
 The Export API provides methods to identify and filter exports:
+- [.is_type_export()](/api-reference/typescript/TSExport#is-type-export)
+- [.is_default_export()](/api-reference/typescript/TSExport#is-default-export)
+- [.is_wildcard_export()](/api-reference/typescript/TSExport#is-wildcard-export)
+
 
 ```python
 # Check export types
@@ -81,14 +122,6 @@ for exp in file.exports:
         print(f"Default export: {exp.name}")
     elif exp.is_wildcard_export():
         print(f"Wildcard export from: {exp.from_file.filepath}")
-
-# Work with re-exports
-for exp in file.exports:
-    if exp.is_reexport():
-        if exp.is_external_export:
-            print(f"External re-export: {exp.name} from {exp.from_file.filepath}")
-        else:
-            print(f"Internal re-export: {exp.name}")
 ```
 
 ## Export Resolution
@@ -106,35 +139,9 @@ for exp in file.exports:
         print(f"Through: {' -> '.join(e.file.filepath for e in exp.export_chain)}")
 ```
 
-## Common Operations
-
-Here are common operations for working with exports:
-
-```python
-# Add new export
-file.add_export("MyComponent")
-
-# Add export with alias
-file.add_export("MyComponent", alias="default")
-
-# Convert to type export
-export = file.get_export("MyType")
-export.make_type_export()
-
-# Remove export
-export.remove()  # Removes export but keeps symbol
-
-# Update export properties
-export.update(
-    name="NewName",
-    is_type=True,
-    is_default=False
-)
-```
-
 ## Managing Re-exports
 
-Common patterns for working with re-exports:
+You can manage re-exports with the [TSExport.is_reexport()](/api-reference/typescript/TSExport#is-reexport) API:
 
 ```python
 # Create public API
