@@ -81,48 +81,25 @@ class CodemodManager:
         if start_path is None:
             start_path = Path.cwd()
 
-        # Directories to skip
-        SKIP_DIRS = {
-            "__pycache__",
-            "node_modules",
-            ".git",
-            ".hg",
-            ".svn",
-            ".tox",
-            ".venv",
-            "venv",
-            "env",
-            "build",
-            "dist",
-            "site-packages",
-            ".pytest_cache",
-            ".mypy_cache",
-            ".ruff_cache",
-            ".coverage",
-            "htmlcov",
-            ".codegen",
-        }
+        # Look only in .codegen/codemods
+        codemods_dir = start_path / ".codegen" / "codemods"
+        if not codemods_dir.exists():
+            return []
 
         all_functions = []
-        if start_path.is_file():
-            # If it's a file, just check that one
-            if start_path.suffix == ".py" and _might_have_decorators(start_path):
-                try:
-                    functions = find_codegen_functions(start_path)
-                    all_functions.extend(functions)
-                except Exception as e:
-                    pass  # Skip files we can't parse
-        else:
-            # Walk the directory tree, skipping irrelevant directories
-            for path in start_path.rglob("*.py"):
-                # Skip if any parent directory is in SKIP_DIRS
-                if any(part in SKIP_DIRS for part in path.parts):
-                    continue
+        seen_paths = set()  # Track unique file paths
 
-                if _might_have_decorators(path):
-                    try:
-                        functions = find_codegen_functions(path)
-                        all_functions.extend(functions)
-                    except Exception as e:
-                        pass  # Skip files we can't parse
+        for path in codemods_dir.rglob("*.py"):
+            # Skip if we've already processed this file
+            if path in seen_paths:
+                continue
+            seen_paths.add(path)
+
+            if _might_have_decorators(path):
+                try:
+                    functions = find_codegen_functions(path)
+                    all_functions.extend(functions)
+                except Exception:
+                    pass  # Skip files we can't parse
+
         return all_functions
