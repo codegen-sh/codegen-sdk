@@ -5,7 +5,6 @@ import rich_click as click
 
 from codegen.cli.api.client import RestAPI
 from codegen.cli.auth.constants import PROMPTS_DIR
-from codegen.cli.auth.decorators import requires_auth
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.codemod.convert import convert_to_cli
 from codegen.cli.errors import ServerError
@@ -30,38 +29,53 @@ def get_prompts_dir() -> Path:
 
 
 def get_target_path(name: str, path: Path) -> Path:
-    """Get the target path for the new function file."""
+    """Get the target path for the new function file.
+
+    Creates a directory structure like:
+    .codegen/codemods/function_name/function_name.py
+    """
     # Convert name to snake case for filename
     name_snake = name.lower().replace("-", "_").replace(" ", "_")
 
+    # If path points to a specific file, use its parent directory
     if path.suffix == ".py":
-        # If path is a file, use it directly
-        return path
+        base_dir = path.parent
     else:
-        # If path is a directory, create name_snake.py in it
-        return path / f"{name_snake}.py"
+        base_dir = path
+
+    # Create path within .codegen/codemods
+    codemods_dir = base_dir / ".codegen" / "codemods"
+    function_dir = codemods_dir / name_snake
+    return function_dir / f"{name_snake}.py"
 
 
 def make_relative(path: Path) -> str:
     """Convert a path to a relative path from cwd, handling non-existent paths."""
-    # If it's just a filename in the current directory, return it directly
-    if str(path.parent) == ".":
-        return f"./{path.name}"
-
     try:
         return f"./{path.relative_to(Path.cwd())}"
     except ValueError:
-        # For paths in subdirectories, try to make the parent relative
-        try:
-            parent_rel = path.parent.relative_to(Path.cwd())
-            return f"./{parent_rel}/{path.name}"
-        except ValueError:
-            # If all else fails, just return the filename
-            return f"./{path.name}"
+        # If all else fails, just return the full path relative to .codegen
+        parts = path.parts
+        if ".codegen" in parts:
+            idx = parts.index(".codegen")
+            return "./" + str(Path(*parts[idx:]))
+        return f"./{path.name}"
+
+
+def get_default_code(name: str) -> str:
+    """Get the default function code without using the API."""
+    return f'''import codegen
+from codegen import Codebase
+
+@codegen.function("{name}")
+def run(codebase: Codebase):
+    """Add a description of what this codemod does."""
+    # Add your code here
+    pass
+'''
 
 
 @click.command(name="create")
-@requires_auth
 @requires_init
 @click.argument("name", type=str)
 @click.argument("path", type=click.Path(path_type=Path), default=Path.cwd())
@@ -82,44 +96,38 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
         pretty_print_error(f"File already exists at {format_path(rel_path)}\n\nTo overwrite the file:\n{format_command(f'codegen create {name} {rel_path} --overwrite')}")
         return
 
-    if description:
-        status_message = "Generating function (using LLM, this will take ~30s)"
-    else:
-        status_message = "Setting up function"
+    rich.print("")  # Add a newline before output
 
-    rich.print("")  # Add a newline before the spinner
-    with create_spinner(status_message) as status:
-        try:
-            # Get code from API
-            response = RestAPI(session.token).create(name=name, query=description if description else None)
+    try:
+        if description:
+            # Use API to generate implementation
+            with create_spinner("Generating function (using LLM, this will take ~30s)") as status:
+                response = RestAPI(session.token).create(name=name, query=description)
+                code = convert_to_cli(response.code, session.config.programming_language or ProgrammingLanguage.PYTHON, name)
 
-            # Convert the code to include the decorator
-            code = convert_to_cli(response.code, session.config.programming_language or ProgrammingLanguage.PYTHON, name)
+                # Write the system prompt if provided
+                if response.context:
+                    prompt_path = get_prompts_dir() / f"{name.lower().replace(' ', '-')}-system-prompt.md"
+                    prompt_path.write_text(response.context)
+        else:
+            # Use default implementation
+            code = get_default_code(name)
 
-            # Create the target directory if needed
-            target_path.parent.mkdir(parents=True, exist_ok=True)
+        # Create the target directory if needed
+        target_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # Write the function code
-            target_path.write_text(code)
+        # Write the function code
+        target_path.write_text(code)
 
-            # Write the system prompt to the prompts directory
-            if response.context:
-                prompt_path = get_prompts_dir() / f"{name.lower().replace(' ', '-')}-system-prompt.md"
-                prompt_path.write_text(response.context)
-
-        except ServerError as e:
-            status.stop()
-            raise click.ClickException(str(e))
-        except ValueError as e:
-            status.stop()
-            raise click.ClickException(str(e))
+    except (ServerError, ValueError) as e:
+        raise click.ClickException(str(e))
 
     # Success message
     rich.print(f"\n✅ {'Overwrote' if overwrite and target_path.exists() else 'Created'} function '{name}'")
     rich.print("")
     rich.print("📁 Files Created:")
     rich.print(f"   [dim]Function:[/dim]  {make_relative(target_path)}")
-    if response.context:
+    if description and response.context:
         rich.print(f"   [dim]Prompt:[/dim]    {make_relative(get_prompts_dir() / f'{name.lower().replace(" ", "-")}-system-prompt.md')}")
 
     # Next steps
