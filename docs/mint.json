@@ -44,12 +44,12 @@
 			"url": "/cli"
 		},
 		{
-			"name": "Changelog",
-			"url": "/changelog"
-		},
-		{
 			"name": "Blog",
 			"url": "/blog"
+		},
+		{
+			"name": "Changelog",
+			"url": "/changelog"
 		}
 	],
 	"navigation": [
