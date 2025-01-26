@@ -2,10 +2,10 @@ from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.detached_symbols.decorator import Decorator
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.skills.core.skill import Skill
-from codegen.sdk.skills.core.utils import skill, skill_impl
 from codegen.sdk.writer_decorators import canonical
 from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(

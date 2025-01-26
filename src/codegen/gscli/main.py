@@ -3,7 +3,6 @@ import logging
 
 import click
 
-from codegen.gscli.codemod.commands import codemod
 from codegen.gscli.generate.commands import generate
 
 
@@ -13,7 +12,6 @@ def cli() -> None:
 
 
 # ============= Import all command groups =============
-cli.add_command(codemod)
 cli.add_command(generate)
 
 

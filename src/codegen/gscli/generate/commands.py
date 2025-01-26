@@ -5,17 +5,13 @@ import re
 import shutil
 
 import click
-import inflection
 from termcolor import colored
 
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
-from codegen.sdk.code_generation.doc_utils.skills import format_all_skills
 from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_page_for_class
-from codegen.sdk.python import PyClass
-from codegen.sdk.skills.core.utils import get_all_skills, get_guide_skills_dict
 
 logger = logging.getLogger(__name__)
 
@@ -113,26 +109,6 @@ def generate_docs(docs_dir: str) -> None:
     # generate_guides(docs_dir)
 
 
-def generate_guides(docs_dir: str):
-    """Updates code snippets in the guides with the latest skill implementations"""
-    guide_skills = get_guide_skills_dict()
-    for guide_relative_path in guide_skills:
-        guide_file_path = os.path.join(docs_dir, "api-reference", str(guide_relative_path) + ".mdx")
-
-        with open(guide_file_path) as f:
-            file_content = f.read()
-
-        for skill in guide_skills[guide_relative_path]:
-            # Perform the regex search and replace
-            target_name = inflection.camelize(skill.name)
-            pattern = get_snippet_pattern(target_name)
-            replacement = f"[//]: # (--{target_name}--)\n[//]: # (--{AUTO_GENERATED_COMMENT}--)\n\n{skill.generate_snippet()}"
-            file_content = re.sub(pattern, replacement, file_content, flags=re.DOTALL)
-
-        with open(guide_file_path, "w") as f:
-            f.write(file_content)
-
-
 def get_snippet_pattern(target_name: str) -> str:
     pattern = rf"\[//\]: # \(--{re.escape(target_name)}--\)\s*(?:\[//\]: # \(--{re.escape(AUTO_GENERATED_COMMENT)}--\)\s*)?"
     pattern += CODE_SNIPPETS_REGEX
@@ -210,29 +186,3 @@ def generate_codegen_sdk_docs(docs_dir: str) -> None:
         json.dump(mint_data, mint_file, indent=2)
 
     print(colored("Updated mint.json with new page sets", "green"))
-
-
-def generate_skills_docs(docs_dir: str) -> None:
-    """Generates docs for all skills"""
-    print(colored("Generating skills docs", "green"))
-    # Interim Modification: We need to refactor all skills
-    skills = [skill for skill in get_all_skills() if not skill.guide]
-    skills_doc = format_all_skills(skills)
-
-    # =====[ Write the skills docs to the file system ]=====
-    core_dir = os.path.join(docs_dir, "codebase-sdk", "examples")
-    file_path = os.path.join(core_dir, "skills.mdx")
-    print(colored(f"> Writing to {file_path}", "green"))
-    open(file_path, "w").write(skills_doc)
-
-
-def document_skill(skill: PyClass):
-    return "skill" in [decorator.name for decorator in skill.decorators]
-
-
-def filter_class(cls: PyClass):
-    for method in cls.methods:
-        for decorator in method.decorators:
-            if decorator.name == "skill_impl" and "external=True" in decorator.source:
-                return True
-    return False

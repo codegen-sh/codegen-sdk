@@ -36,14 +36,16 @@ function.set_docstring('new docstring') # set docstring
   src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
     intoSnippet
   )}`}
-  className="rounded-md "
-
-> </iframe>
+  style={{
+    backgroundColor: "#15141b",
+  }}
+  className="rounded-xl"
+></iframe>
 
 ## Installation
 
 ```bash
-pip install codegen
+uv tool install codegen
 ```
 
 ## Get Started

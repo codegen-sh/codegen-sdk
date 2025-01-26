@@ -7,8 +7,8 @@ iconType: "solid"
 
 Codegen provides two primary abstractions for working with your codebase's file structure:
 
-- [`File`](../api-reference/core/File)
-- [`Directory`](../api-reference/core/Directory)
+- [File](/api-reference/core/File)
+- [Directory](/api-reference/core/Directory)
 
 Both of these expose a rich API for accessing and manipulating their contents.
 
@@ -16,10 +16,10 @@ This guide explains how to effectively use these classes to manage your codebase
 
 ## Accessing Files and Directories
 
-You typically access files from the [`Codebase`](/api-reference/core/Codebase) object with two APIs:
+You typically access files from the [codebase](/api-reference/core/Codebase) object with two APIs:
 
-- [`Codebase.get_file(...)`](../api-reference/core/Codebase#get_file) - Get a file by its path
-- [`Codebase.files`](../api-reference/core/Codebase#files) - Enables iteration over all files in the codebase
+- [codebase.get_file(...)](/api-reference/core/Codebase#get_file) - Get a file by its path
+- [codebase.files](/api-reference/core/Codebase#files) - Enables iteration over all files in the codebase
 
 ```python
 # Get a file from the codebase
@@ -33,7 +33,7 @@ for file in codebase.files:
 exists = codebase.has_file("path/to/file.py")
 ```
 
-These APIs are similar for [`Directory`](../api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
+These APIs are similar for [Directory](/api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
 
 ```python
 # Get a directory
@@ -74,7 +74,7 @@ docs = codebase.files(extensions=[".md", ".mdx"])
 config_files = codebase.files(extensions=[".json", ".yaml", ".toml"])
 ```
 
-These APIs are similar for [`Directory`](../api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
+These APIs are similar for [Directory](/api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
 
 ## Raw Content and Metadata
 
@@ -102,10 +102,10 @@ Files and Directories provide several APIs for accessing and iterating over thei
 
 See, for example:
 
-- `.functions` ([`File`](../api-reference/core/File#functions) / [`Directory`](../api-reference/core/Directory#functions)) - All [`Functions`](../api-reference/core/Function) in the file/directory
-- `.classes` ([`File`](../api-reference/core/File#classes) / [`Directory`](../api-reference/core/Directory#classes)) - All [`Classes`](../api-reference/core/Class) in the file/directory
-- `.imports` ([`File`](../api-reference/core/File#imports) / [`Directory`](../api-reference/core/Directory#imports)) - All [`Imports`](../api-reference/core/Import) in the file/directory
-- [`File.code_block`](../api-reference/core/File#code-block) - The top-level [`CodeBlock`](../api-reference/core/CodeBlock) containing the file's statements
+- `.functions` ([File](/api-reference/core/File#functions) / [Directory](/api-reference/core/Directory#functions)) - All [Functions](../api-reference/core/Function) in the file/directory
+- `.classes` ([File](/api-reference/core/File#classes) / [Directory](/api-reference/core/Directory#classes)) - All [Classes](../api-reference/core/Class) in the file/directory
+- `.imports` ([File](/api-reference/core/File#imports) / [Directory](/api-reference/core/Directory#imports)) - All [Imports](../api-reference/core/Import) in the file/directory
+
 
 ```python
 # Get all functions in a file
@@ -120,10 +120,10 @@ for cls in file.classes:
     print(f"Methods: {[m.name for m in cls.methods]}")
     print(f"Attributes: {[a.name for a in cls.attributes]}")
 
-# Get imports
-for import_stmt in file.import_statements:
-    print(f"Import from: {import_stmt.module}")
-    print(f"Imported symbols: {[s.name for s in import_stmt.symbols]}")
+# Get imports (can also do `file.import_statements`)
+for imp in file.imports:
+    print(f"Import from: {imp.module}")
+    print(f"Imported symbol: {[s.name for s in imp.imported_symbol]}")
 
 # Get specific symbols
 main_function = file.get_function("main")
