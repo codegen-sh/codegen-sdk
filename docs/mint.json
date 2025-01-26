@@ -94,6 +94,7 @@
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
+				"building-with-codegen/dot-codegen",
 				"building-with-codegen/files-and-directories",
 				"building-with-codegen/the-editable-api",
 				"building-with-codegen/symbol-api",
