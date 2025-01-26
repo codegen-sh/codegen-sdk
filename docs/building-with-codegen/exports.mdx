@@ -1,0 +1,180 @@
+---
+title: "The Export API"
+sidebarTitle: "Exports"
+icon: "file-export"
+iconType: "solid"
+---
+
+The [Export](/api-reference/core/Export) API provides tools for managing exports and module boundaries in TypeScript codebases.
+
+## Export Statements vs Exports
+
+Similar to imports, Codegen provides two levels of abstraction for working with exports:
+
+- [ExportStatement](/api-reference/core/ExportStatement) - Represents a complete export statement
+- [Export](/api-reference/core/Export) - Represents individual exported symbols
+
+```typescript
+// One ExportStatement containing multiple Export objects
+export { foo, bar as default, type User };
+// Creates:
+// - Export for 'foo'
+// - Export for 'bar' as default
+// - Export for 'User' as a type
+
+// Direct exports create one ExportStatement per export
+export const value = 42;
+export function process() {}
+```
+
+You can access these through your file's collections:
+
+```python
+# Access all export statements
+for stmt in file.export_statements:
+    print(f"Statement: {stmt.source}")
+    
+    # Access individual exports in the statement
+    for exp in stmt.exports:
+        print(f"  Export: {exp.name}")
+```
+
+<Note>
+ExportStatement inherits from [Statement](/building-with-codegen/statements-and-code-blocks), providing operations like `remove()` and `insert_before()`. This is particularly useful when you want to manipulate the entire export declaration.
+</Note>
+
+## Export Types
+
+Codegen supports several types of exports:
+
+```typescript
+// Direct exports
+export const value = 42;                     // Value export
+export function myFunction() {}              // Function export
+export class MyClass {}                      // Class export
+export type MyType = string;                 // Type export
+export interface MyInterface {}              // Interface export
+export enum MyEnum {}                        // Enum export
+
+// Re-exports
+export { foo, bar } from './other-file';     // Named re-exports
+export type { Type } from './other-file';    // Type re-exports
+export * from './other-file';                // Wildcard re-exports
+export * as utils from './other-file';       // Namespace re-exports
+
+// Aliased exports
+export { foo as foop };                      // Basic alias
+export { foo as default };                   // Default export alias
+export { bar as baz } from './other-file';   // Re-export with alias
+```
+
+## Working with Exports
+
+The Export API provides methods to identify and filter exports:
+
+```python
+# Check export types
+for exp in file.exports:
+    if exp.is_type_export():
+        print(f"Type export: {exp.name}")
+    elif exp.is_default_export():
+        print(f"Default export: {exp.name}")
+    elif exp.is_wildcard_export():
+        print(f"Wildcard export from: {exp.from_file.filepath}")
+
+# Work with re-exports
+for exp in file.exports:
+    if exp.is_reexport():
+        if exp.is_external_export:
+            print(f"External re-export: {exp.name} from {exp.from_file.filepath}")
+        else:
+            print(f"Internal re-export: {exp.name}")
+```
+
+## Export Resolution
+
+You can trace exports to their original symbols:
+
+```python
+for exp in file.exports:
+    if exp.is_reexport():
+        # Get original and current symbols
+        current = exp.exported_symbol
+        original = exp.resolved_symbol
+        
+        print(f"Re-exporting {original.name} from {exp.from_file.filepath}")
+        print(f"Through: {' -> '.join(e.file.filepath for e in exp.export_chain)}")
+```
+
+## Common Operations
+
+Here are common operations for working with exports:
+
+```python
+# Add new export
+file.add_export("MyComponent")
+
+# Add export with alias
+file.add_export("MyComponent", alias="default")
+
+# Convert to type export
+export = file.get_export("MyType")
+export.make_type_export()
+
+# Remove export
+export.remove()  # Removes export but keeps symbol
+
+# Update export properties
+export.update(
+    name="NewName",
+    is_type=True,
+    is_default=False
+)
+```
+
+## Managing Re-exports
+
+Common patterns for working with re-exports:
+
+```python
+# Create public API
+index_file = codebase.get_file("index.ts")
+
+# Re-export from internal files
+for internal_file in codebase.files:
+    if internal_file.name != "index":
+        for symbol in internal_file.symbols:
+            if symbol.is_public:
+                index_file.add_export(
+                    symbol,
+                    from_file=internal_file
+                )
+
+# Convert default to named exports
+for exp in file.exports:
+    if exp.is_default_export():
+        exp.make_named_export()
+
+# Consolidate re-exports
+from collections import defaultdict
+
+file_exports = defaultdict(list)
+for exp in file.exports:
+    if exp.is_reexport():
+        file_exports[exp.from_file].append(exp)
+
+for from_file, exports in file_exports.items():
+    if len(exports) > 1:
+        # Create consolidated re-export
+        names = [exp.name for exp in exports]
+        file.add_export_from_source(
+            f"export {{ {', '.join(names)} }} from '{from_file.filepath}'"
+        )
+        # Remove individual exports
+        for exp in exports:
+            exp.remove()
+```
+
+<Note>
+When managing exports, consider the impact on your module's public API. Not all symbols that can be exported should be exported.
+</Note> 

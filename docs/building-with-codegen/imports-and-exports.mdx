@@ -102,6 +102,117 @@ for exp in file.exports:  # Iterates over all Export symbols
   empty.
 </Note>
 
+## Working with Imports
+
+### Working with External Modules
+
+When working with imports, you often need to distinguish between imports from your project and external packages (like `react` or `lodash`). The [ExternalModule](/api-reference/core/ExternalModule) class helps with this:
+
+```python
+# Check if an import is from an external module
+for imp in file.imports:
+    if isinstance(imp.resolved_symbol, ExternalModule):
+        print(f"External import: {imp.name} from {imp.module}")
+    else:
+        print(f"Local import: {imp.name}")
+
+# Skip processing external imports
+for function in codebase.functions:
+    for call in function.call_sites:
+        if isinstance(call.function_definition, ExternalModule):
+            # Skip external function calls (like React.useState)
+            continue
+        # Process local function calls...
+```
+
+### Common Import Operations
+
+Here are common operations you can perform on imports:
+
+```python
+# Change the module an import comes from
+import_stmt = file.get_import("MyComponent")
+import_stmt.set_module("./new/path")  # Updates import path
+
+# Add/update import alias
+import_stmt.set_alias("MyAlias")  # import X as MyAlias
+
+# Convert between import styles (TypeScript)
+import_stmt.make_type_import()  # Converts to 'import type'
+import_stmt.make_value_import()  # Removes 'type' modifier
+
+# Update multiple properties
+import_stmt.update(
+    module="./new/path",
+    alias="NewAlias",
+    is_type=True
+)
+```
+
+### Bulk Import Management
+
+Here's how to perform operations on multiple imports:
+
+```python
+# Update all imports from a specific module
+old_path = "./old/path"
+new_path = "./new/path"
+
+for imp in file.imports:
+    if imp.module == old_path:
+        imp.set_module(new_path)
+
+# Remove all unused imports
+for imp in file.imports:
+    if not imp.usages and not isinstance(imp.resolved_symbol, ExternalModule):
+        print(f"Removing unused import: {imp.name}")
+        imp.remove()
+
+# Consolidate imports from the same module
+from collections import defaultdict
+
+# Group imports by module
+module_imports = defaultdict(list)
+for imp in file.imports:
+    module_imports[imp.module].append(imp)
+
+# Consolidate each group
+for module, imports in module_imports.items():
+    if len(imports) > 1:
+        # Create new combined import
+        symbols = [imp.name for imp in imports]
+        file.add_import_from_import_string(
+            f"import {{ {', '.join(symbols)} }} from '{module}'"
+        )
+        # Remove old imports
+        for imp in imports:
+            imp.remove()
+```
+
+### Import Resolution
+
+You can trace import chains and resolve symbols:
+
+```python
+# Follow import chain to original symbol
+import_stmt = file.get_import("MyComponent")
+original_symbol = import_stmt.resolved_symbol
+
+if original_symbol:
+    print(f"Imported from: {original_symbol.file.filepath}")
+    print(f"Original name: {original_symbol.name}")
+
+# Check if import is re-exported
+for imp in file.imports:
+    if imp.is_reexported:
+        print(f"Re-exported symbol: {imp.name}")
+        print(f"Through files: {' -> '.join(exp.file.filepath for exp in imp.export_chain)}")
+```
+
+<Note>
+When working with imports, always check if they resolve to external modules before modification. This prevents accidentally modifying imports from third-party packages.
+</Note>
+
 ## Identifying Export Types
 
 Codegen provides several methods to identify and filter different types of exports in your TypeScript code. Here's how to work with various export patterns:

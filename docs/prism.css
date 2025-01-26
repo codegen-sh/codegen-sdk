@@ -99,8 +99,25 @@ pre[class*="language-"] {
 .dark .prose p code {
 	color: #ffca85 !important;
 }
+.dark .prose p code .comment {
+	color: #6d6d6d !important;
+}
 .dark .prose ul code {
 	color: #ffca85 !important;
+}
+.dark .prose ul code .comment {
+	color: #6d6d6d !important;
+}
+
+/* Comments in code blocks should be gray */
+.token.comment {
+	color: #6d6d6d !important;
+}
+pre .token.comment {
+	color: #6d6d6d !important;
+}
+code .token.comment {
+	color: #6d6d6d !important;
 }
 
 /* links are purple */
@@ -149,9 +166,6 @@ pre[class*="language-"] {
 }
 .token.property {
 	color: #ffca85 !important;
-}
-.token.comment {
-	color: #6d6d6d !important;
 }
 .token.class-name {
 	color: #82e2ff !important;
