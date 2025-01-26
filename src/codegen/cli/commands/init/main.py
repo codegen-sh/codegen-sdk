@@ -4,7 +4,6 @@ from pathlib import Path
 
 import rich
 import rich_click as click
-import toml
 
 from codegen.cli.auth.constants import CODEGEN_DIR
 from codegen.cli.auth.session import CodegenSession
@@ -54,15 +53,7 @@ def init_command(repo_name: str | None = None, organization_name: str | None = N
     codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs)
 
     # Print success message
-    rich.print(f"✅ {action} complete")
-
-    # Show repo info from config.toml
-    config_path = codegen_dir / "config.toml"
-    if config_path.exists():
-        config = toml.load(config_path)
-        rich.print(f"   [dim]Organization:[/dim] {config.get('organization_name', 'unknown')}")
-        rich.print(f"   [dim]Repository:[/dim]  {config.get('repo_name', 'unknown')}")
-    rich.print("")
+    rich.print(f"✅ {action} complete\n")
     rich.print(get_success_message(codegen_dir, docs_dir, examples_dir))
 
     # Print next steps

@@ -18,6 +18,60 @@ class DecoratedFunction:
     parameters: list[tuple[str, str | None]] = dataclasses.field(default_factory=list)
     arguments_type_schema: dict | None = None
 
+    def run(self, codebase) -> str | None:
+        """Import and run the actual function from its file.
+
+        Args:
+            codebase: The codebase to run the function on
+
+        Returns:
+            The result of running the function (usually a diff string)
+        """
+        if not self.filepath:
+            raise ValueError("Cannot run function without filepath")
+
+        # Import the module containing the function
+        spec = importlib.util.spec_from_file_location("module", self.filepath)
+        if not spec or not spec.loader:
+            raise ImportError(f"Could not load module from {self.filepath}")
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        # Find the decorated function
+        for item_name in dir(module):
+            item = getattr(module, item_name)
+            if hasattr(item, "__codegen_name__") and item.__codegen_name__ == self.name:
+                # Found our function, run it
+                return item(codebase)
+
+        raise ValueError(f"Could not find function '{self.name}' in {self.filepath}")
+
+    def validate(self) -> None:
+        """Verify that this function can be imported and accessed.
+
+        Raises:
+            ValueError: If the function can't be found or imported
+        """
+        if not self.filepath:
+            raise ValueError("Cannot validate function without filepath")
+
+        # Import the module containing the function
+        spec = importlib.util.spec_from_file_location("module", self.filepath)
+        if not spec or not spec.loader:
+            raise ImportError(f"Could not load module from {self.filepath}")
+
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+
+        # Find the decorated function
+        for item_name in dir(module):
+            item = getattr(module, item_name)
+            if hasattr(item, "__codegen_name__") and item.__codegen_name__ == self.name:
+                return  # Found it!
+
+        raise ValueError(f"Could not find function '{self.name}' in {self.filepath}")
+
 
 class CodegenFunctionVisitor(ast.NodeVisitor):
     def __init__(self):
