@@ -1,5 +1,5 @@
 export const Parameter = ({name, type, description, defaultValue}) => (
-  <div className="py-6 first:pt-3 dark:border-gray-300/[0.06] text-sm font-normal">
+  <div className="py-6 first:pt-3 dark:border-zinc-300/[0.06] text-sm font-normal">
     <div className="flex justify-between items-start font-mono">
       <div className="flex gap-4 items-start">
         <div className="flex gap-1 items-center text-sm text-primary mt-2">
@@ -13,7 +13,7 @@ export const Parameter = ({name, type, description, defaultValue}) => (
       <div className="flex-shrink-0 mt-2">
         {defaultValue ? (
           <div className="flex gap-1 items-center text-sm border border-purple-500 px-2 py-0.5 rounded">
-            <span className="text-gray-500">default:</span>
+            <span className="text-zinc-500">default:</span>
             <span className="text-purple-500">{defaultValue}</span>
           </div>
         ) : (

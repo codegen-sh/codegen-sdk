@@ -40,7 +40,7 @@ Codegen's graph construction happens in two stages:
 
 1. **AST Parsing**: We use [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) as our foundation for parsing code into Abstract Syntax Trees. Tree-sitter provides fast, reliable parsing across multiple languages.
 
-2. **Multi-file Graph Construction**: Custom parsing logic, implemented in [rustworkx](https://github.com/Qiskit/rustworkx) and Python, analyzes these ASTs to construct a more sophisticated graph structure. This graph captures relationships between [symbols](/api-reference/core/Symbol), [files](/api-reference/core/SourceFile), [imports](/api-reference/core/Import), and more.
+2. **Multi-file Graph Construction**: Custom parsing logic, implemented in [rustworkx](https://github.com/Qiskit/rustworkx) and Python, analyzes these ASTs to construct a more sophisticated graph structure. This graph captures relationships between [symbols](/building-with-codegen/symbol-api), [files](/building-with-codegen/files-and-directories), [imports](/building-with-codegen/imports), and more.
 
 ### Performance Through Pre-computation
 

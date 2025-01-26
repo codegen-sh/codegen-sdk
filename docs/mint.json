@@ -44,12 +44,12 @@
 			"url": "/cli"
 		},
 		{
-			"name": "Changelog",
-			"url": "/changelog"
-		},
-		{
 			"name": "Blog",
 			"url": "/blog"
+		},
+		{
+			"name": "Changelog",
+			"url": "/changelog"
 		}
 	],
 	"navigation": [
@@ -98,9 +98,10 @@
 				"building-with-codegen/the-editable-api",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
+				"building-with-codegen/imports",
+				"building-with-codegen/exports",
 				"building-with-codegen/inheritable-behaviors",
 				"building-with-codegen/statements-and-code-blocks",
-				"building-with-codegen/imports-and-exports",
 				"building-with-codegen/dependencies-and-usages",
 				"building-with-codegen/function-calls-and-callsites",
 				"building-with-codegen/variable-assignments",
@@ -133,7 +134,7 @@
 		},
 		{
 			"group": "Blog",
-			"pages": ["blog/posts", "blog/act-via-code", "blog/codemod-frameworks"]
+			"pages": ["blog/posts", "blog/act-via-code"]
 		},
 		{
 			"group": "API Reference",
