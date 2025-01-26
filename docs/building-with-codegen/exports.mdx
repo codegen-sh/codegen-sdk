@@ -51,18 +51,27 @@ ExportStatement inherits from [Statement](/building-with-codegen/statements-and-
 Here are common operations for working with exports:
 
 ```python
-# Add new export
-file.add_export("MyComponent")
+# Add exports from source code
+file.add_export_from_source("export { MyComponent };")
+file.add_export_from_source("export type { MyType } from './types';")
 
-# Add export with alias
-file.add_export("MyComponent", alias="default")
+# Export existing symbols
+component = file.get_function("MyComponent")
+file.add_export(component)  # export { MyComponent }
+file.add_export(component, alias="default")  # export { MyComponent as default }
 
 # Convert to type export
 export = file.get_export("MyType")
 export.make_type_export()
 
-# Remove export
-export.remove()  # Removes export but keeps symbol
+# Remove exports
+export = file.get_export("MyComponent")
+export.remove()  # Removes export but keeps the symbol
+
+# Remove multiple exports
+for export in file.exports:
+    if not export.is_type_export():
+        export.remove()
 
 # Update export properties
 export.update(
@@ -71,14 +80,27 @@ export.update(
     is_default=False
 )
 
+# Export from another file
+other_file = codebase.get_file("./components.ts")
+component = other_file.get_class("Button")
+file.add_export(component, from_file=other_file)  # export { Button } from './components';
+
 # Analyze symbols being exported
 for export in file.exports:
     if isinstance(export.exported_symbol, ExternalModule):
         print('Exporting ExternalModule')
     else:
         ...
-
 ```
+
+<Note>
+When adding exports, you can:
+- Add from source code with `add_export_from_source()`
+- Export existing symbols with `add_export()`
+- Re-export from other files by specifying `from_file`
+
+The export will automatically handle adding any required imports.
+</Note>
 
 ## Export Types
 
