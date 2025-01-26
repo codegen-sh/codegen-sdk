@@ -5,32 +5,32 @@ iconType: "solid"
 description: "The path to advanced code manipulation agents"
 ---
 
-<Frame caption="Voyager (Jim Fan)">
+<Frame caption="Voyager (2023) solved agentic tasks with code execution">
   <img src="/images/nether-portal.png" />
 </Frame>
 
 
-# Act via Code
+Two and a half years since the launch of the GPT-3 API, code assistants have emerged as potentially the premier use case of LLMs. The rapid adoption of AI-powered IDEs and prototype builders isn't surprising — code is structured, deterministic, and rich with patterns, making it an ideal domain for machine learning. Experienced developers working with tools like Cursor (myself included) can tell that the field of software engineering is about to go through rapid change.
 
-Two and a half years since the launch of the GPT-3 API, code assistants have emerged as the most powerful and practically useful applications of LLMs. The rapid adoption of AI-powered IDEs and prototype builders isn't surprising — code is structured, deterministic, and rich with patterns, making it an ideal domain for machine learning. As model capabilities continue to scale, we're seeing compounding improvements in code understanding and generation.
-
-Yet there's a striking gap between what AI agents can understand and what they can actually do. While they can reason about complex architectural changes, debug intricate issues, and propose sophisticated refactors, they often can't execute these ideas. The ceiling isn't intelligence or context—it's the ability to manipulate code at scale. Large-scale modifications remain unreliable or impossible, not because agents don't understand what to do, but because they lack the right interfaces to do it.
+Yet there's a striking gap between understanding and action. Today's AI agents can analyze enterprise codebases and propose sophisticated improvements—eliminating tech debt, untangling dependencies, improving modularity. But ask them to actually implement these changes across millions of lines of code, and they hit a wall. Their ceiling isn't intelligence—it's the ability to safely and reliably execute large-scale modifications on real, enterprise codebases.
 
 The bottleneck isn't intelligence — it's tooling. By giving AI models the ability to write and execute code that modifies code, we're about to unlock an entire class of tasks that agents already understand but can't yet perform. Code execution environments represent the most expressive tool we could offer an agent—enabling composition, abstraction, and systematic manipulation of complex systems. When paired with ever-improving language models, this will unlock another step function improvement in AI capabilities.
 
 ## Beating Minecraft with Code Execution
 
-In mid-2023, a research project called [Voyager](https://voyager.minedojo.org) made waves: it effectively solved Minecraft, performing several multiples better than the prior SOTA on many important dimensions. This was a massive breakthrough — previous reinforcement learning systems had struggled for years with even basic Minecraft tasks.
+In mid-2023, a research project called [Voyager](https://voyager.minedojo.org) made waves: it effectively solved Minecraft, performing several multiples better than the prior SOTA. This was a massive breakthrough as previous reinforcement learning systems had struggled for years with even basic Minecraft tasks.
 
-While the AI community was focused on scaling intelligence, Voyager demonstrated something more fundamental: the right tools can unlock entirely new tiers of capability. The same GPT-4 model that struggled with Minecraft using traditional frameworks achieved remarkable results when allowed to write and execute code. This wasn't about raw intelligence—it was about giving the agent a more expressive way to act.
+While the AI community was focused on scaling intelligence, Voyager demonstrated something more fundamental: the right tools can unlock entirely new tiers of capability. The same GPT-4 model that struggled with Minecraft using standard agentic frameworks (like [ReAct](https://klu.ai/glossary/react-agent-model)) achieved remarkable results when allowed to write and execute code. This wasn't about raw intelligence—it was about giving the agent a more expressive way to act.
 
 <Frame>
    <img src="/images/voyager-performance.png" />
 </Frame>
 
-The breakthrough came from a simple yet powerful insight: let the AI write code. Instead of limiting the agent to primitive "tools," Voyager allowed GPT-4 to write and execute [JS programs](https://github.com/MineDojo/Voyager/tree/main/skill_library/trial2/skill/code) that controlled Minecraft actions through a clean API:
+The breakthrough came from a simple yet powerful insight: let the AI write code. Instead of limiting the agent to primitive "tools," Voyager allowed GPT-4 to write and execute [JS programs](https://github.com/MineDojo/Voyager/tree/main/skill_library/trial2/skill/code) that controlled Minecraft actions through a clean API.
 
 ```javascript
+// Example "action program" from Voyager, 2023
+//   written by gpt-4
 async function chopSpruceLogs(bot) {
   const spruceLogCount = bot.inventory.count(mcData.itemsByName.spruce_log.id);
   const logsToMine = 3 - spruceLogCount;
@@ -44,7 +44,7 @@ async function chopSpruceLogs(bot) {
 }
 ```
 
-This approach transformed the agent's capabilities. Rather than being constrained to atomic actions like `equipItem(...)`, it could create higher-level operations like [`craftShieldWithFurnace()`](https://github.com/MineDojo/Voyager/blob/main/skill_library/trial2/skill/code/craftShieldWithFurnace.js) through composing JS APIs. The system also implemented a memory mechanism, storing successful programs for reuse in similar situations—effectively building its own library of proven solutions it could later refer to and adapt to similar circumstances.
+This approach transformed the agent's capabilities. Rather than being constrained to atomic actions like `equipItem(...)`, it could create higher-level operations like [`craftShieldWithFurnace()`](https://github.com/MineDojo/Voyager/blob/main/skill_library/trial2/skill/code/craftShieldWithFurnace.js) through composing JS APIs. Furthermore, Wang et al. implemented a memory mechanism, in which successful "action programs" could later be recalled, copied, and built upon, effectively enabling the agent to accumulate experience.
 
 <Frame>
    <img src="/images/voyager-retrieval.png" />
@@ -56,23 +56,21 @@ As the Voyager authors noted:
 
 ## Code is an Ideal Action Space
 
-The implications of code as an action space extend far beyond gaming. Code provides a uniquely powerful interface between AI and real-world systems. When an agent writes code, it gains several critical advantages over traditional atomic tools.
+The implications of code as an action space extend far beyond gaming. This architectural insight — letting AI act through code rather than atomic commands — will lead to a step change in the capabilities of AI systems. Nowhere is this more apparent than in software engineering, where agents already understand complex transformations but lack the tools to execute them effectively.
 
-### Code is Composable
-Code is the ultimate composable medium. Agents can build their own tools by combining simpler operations, wrapping any function as a building block for more complex behaviors. This aligns well with what is perhaps LLMs' premier capability: understanding and interpolating between examples to create new solutions.
+When an agent writes code, it gains several critical advantages over traditional atomic tools:
 
-### Code Constrains the Action Space
-APIs can enforce guardrails that keep agents on track. By designing interfaces that make invalid operations impossible to express, we can prevent entire classes of errors before they happen. The type system becomes a powerful tool for shaping agent behavior.
+- **Composability**: Agents can build their own tools by combining simpler operations. This aligns perfectly with LLMs' demonstrated ability to compose and interpolate between examples to create novel solutions.
 
-### Code Provides Objective Feedback
-Code execution gives immediate, unambiguous feedback. When something goes wrong, you get stack traces and error messages—not just a confidence score. This concrete error signal is invaluable for agents learning to navigate complex systems.
+- **Constrained Action Space**: Well-designed APIs act as guardrails, making invalid operations impossible to express. The type system becomes a powerful tool for preventing entire classes of errors before they happen.
 
-### Code is a Natural Medium for Collaboration
-Programs are a shared language between humans and agents. Code explicitly encodes reasoning in a reviewable format, making agent actions transparent and debuggable. There's no magic—just deterministic execution that can be understood, modified, and improved by both humans and AI.
+- **Objective Feedback**: Code execution provides immediate, unambiguous feedback through stack traces and error messages—not just confidence scores. This concrete error signal is invaluable for learning.
+
+- **Natural Collaboration**: Programs are a shared language between humans and agents. Code explicitly encodes reasoning in a reviewable format, making actions transparent, debuggable, and easily re-runnable.
 
 ## For Software Engineering
 
-This brings us to software engineering, where we see a massive gap between AI's theoretical capabilities and practical achievements. Many code modification tasks are fundamentally programmatic—dependency analysis, refactors, control flow analysis—yet we lack the tools to express them properly.
+Software engineering tasks are inherently programmatic and graph-based — dependency analysis, refactors, control flow analysis, etc. Yet today's AI agents interface with code primarily through string manipulation, missing the rich structure that developers and their tools rely on. By giving agents APIs that operate on the codebase's underlying graph structure rather than raw text, we can unlock a new tier of capabilities. Imagine agents that can rapidly traverse dependency trees, analyze control flow, and perform complex refactors while maintaining perfect awareness of the codebase's structure.
 
 Consider how a developer thinks about refactoring: it's rarely about direct text manipulation. Instead, we think in terms of high-level operations: "move this function," "rename this variable everywhere," "split this module." These operations can be encoded into a powerful Python API:
 
@@ -84,17 +82,3 @@ for component in codebase.jsx_components:
         # powerful edit APIs that handle edge cases
         component.rename(component.name + 'Page')
 ```
-
-This isn't just another code manipulation library—it's a scriptable language server that builds on proven foundations like LSP and codemods, but designed specifically for programmatic analysis and refactoring.
-
-## What does this look like?
-
-At Codegen, we've built exactly this system. Our approach centers on four key principles:
-
-The foundation must be Python, enabling easy composition with existing tools and workflows. Operations must be in-memory for performance, handling large-scale changes efficiently. The system must be open source, allowing developers and AI researchers to extend and enhance it. And perhaps most importantly, it must be thoroughly documented—not just for humans, but for the next generation of AI agents that will build upon it.
-
-## What does this enable?
-
-We've already used this approach to merge hundreds of thousands of lines of code in enterprise codebases. Our tools have automated complex tasks like feature flag deletion, test suite reorganization, import cycle elimination, and dead code removal. But more importantly, we've proven that code-as-action-space isn't just theoretical—it's a practical approach to scaling software engineering.
-
-This is just the beginning. With Codegen, we're providing the foundation for the next generation of code manipulation tools—built for both human developers and AI agents. We believe this approach will fundamentally change how we think about and implement large-scale code changes, making previously impossible tasks not just possible, but routine.
