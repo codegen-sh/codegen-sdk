@@ -279,7 +279,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
     @property
     @py_noapidoc
-    def exports(self: 'Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]') -> list[TSExport]:
+    def exports(self: 'TSCodebaseType') -> list[TSExport]:
         """Returns a list of all Export nodes in the codebase.
 
         Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
