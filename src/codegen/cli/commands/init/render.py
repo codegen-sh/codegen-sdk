@@ -6,5 +6,4 @@ def get_success_message(codegen_dir: Path, docs_dir: Path, examples_dir: Path) -
     return """📁 .codegen configuration folder created:
    [dim]config.toml[/dim]  Project configuration
    [dim]codemods/[/dim]    Your codemod implementations
-   [dim]jupyter/[/dim]     Notebooks for codebase exploration
-   [dim]prompts/[/dim]     AI system prompts (gitignored)"""
+   [dim]codegen-system-prompt.txt[/dim]     AI system prompt (gitignored)"""

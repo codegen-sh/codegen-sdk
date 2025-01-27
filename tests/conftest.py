@@ -1,5 +1,8 @@
 import logging
 import os
+from pathlib import Path
+
+import pytest
 
 from tests.shared.codemod.models import Size
 
@@ -74,3 +77,39 @@ def pytest_configure(config):
             filename=f"build/logs/tests_{worker_id}.log",
             level=config.getini("log_file_level"),
         )
+
+
+def is_git_lfs_pointer(file_path: Path) -> bool:
+    """Check if a file is a git LFS pointer file"""
+    try:
+        with open(file_path) as f:
+            first_line = f.readline().strip()
+            return first_line == "version https://git-lfs.github.com/spec/v1"
+    except Exception:
+        return False
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    if report.when == "call" and report.failed:
+        if "NodeJS or npm is not installed" in str(report.longrepr):
+            pytest.skip("Test requires NodeJS and npm to be installed")
+
+
+@pytest.fixture(autouse=True)
+def skip_lfs_tests(request):
+    """Skip tests that depend on git LFS files if they haven't been pulled"""
+    # Get the test module path
+    test_path = Path(request.module.__file__)
+
+    # Only run for integration tests
+    if not str(test_path).startswith(str(Path.cwd() / "tests" / "integration")):
+        return
+
+    # Get the expected diff path from the test's expected fixture
+    expected = request.getfixturevalue("expected")
+    if isinstance(expected, Path) and is_git_lfs_pointer(expected):
+        pytest.skip(f"Test requires git LFS file {expected} which hasn't been pulled")
