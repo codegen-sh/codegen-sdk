@@ -85,7 +85,7 @@ repos:
     rev: "0.5.24"
     hooks:
       - id: uv-sync
-        args: ["--frozen", "--all-packages"]
+        args: ["--frozen", "--all-packages", "--all-extras"]
 
   - repo: https://github.com/zahorniak/pre-commit-circleci.git
     rev: v1.1.0
