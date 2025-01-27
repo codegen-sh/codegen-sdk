@@ -73,7 +73,7 @@ class Repo(BaseModel):
             if '[credential "https://github.codegen.app"]' not in (Path.home() / ".gitconfig").read_text():
                 os.system("gh auth login -h github.codegen.app")
                 os.system("gh auth setup-git -h github.codegen.app")
-        return LocalRepoOperator.create_from_commit(str(base_path), self.default_branch, self.commit, url)
+        return LocalRepoOperator.create_from_commit(str(base_path), self.commit, url)
 
 
 @dataclass

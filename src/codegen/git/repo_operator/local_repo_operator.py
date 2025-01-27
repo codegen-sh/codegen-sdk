@@ -27,7 +27,6 @@ class LocalRepoOperator(RepoOperator):
 
     _repo_path: str
     _repo_name: str
-    _default_branch: str
     _git_cli: GitCLI
     repo_config: BaseRepoConfig
 
@@ -35,12 +34,10 @@ class LocalRepoOperator(RepoOperator):
         self,
         repo_config: BaseRepoConfig,
         repo_path: str,  # full path to the repo
-        default_branch: str,  # default branch of the repo
         bot_commit: bool = True,
     ) -> None:
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
-        self._default_branch = default_branch
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
         super().__init__(repo_config, self.repo_path, bot_commit)
@@ -66,15 +63,15 @@ class LocalRepoOperator(RepoOperator):
         create_files(base_dir=repo_path, files=files)
 
         # Step 2: Init git repo
-        op = cls(repo_path=repo_path, default_branch="main", bot_commit=bot_commit, repo_config=repo_config)
+        op = cls(repo_path=repo_path, bot_commit=bot_commit, repo_config=repo_config)
         if op.stage_and_commit_all_changes("[Codegen] initial commit"):
-            op.checkout_branch(op.default_branch, create_if_missing=True)
+            op.checkout_branch(None, create_if_missing=True)
         return op
 
     @classmethod
-    def create_from_commit(cls, repo_path: str, default_branch: str, commit: str, url: str) -> Self:
+    def create_from_commit(cls, repo_path: str, commit: str, url: str) -> Self:
         """Do a shallow checkout of a particular commit to get a repository from a given remote URL."""
-        op = cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
+        op = cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
         if op.get_active_branch_or_commit() != commit:
             op.discard_changes()
             op.create_remote("origin", url)
@@ -104,8 +101,7 @@ class LocalRepoOperator(RepoOperator):
                     remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
                     # If up to date, use existing repo
                     if local_head.hexsha == remote_head.hexsha:
-                        default_branch = git_cli.active_branch.name
-                        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
+                        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
             except Exception:
                 # If any git operations fail, fallback to fresh clone
                 pass
@@ -121,9 +117,8 @@ class LocalRepoOperator(RepoOperator):
 
         # Initialize with the cloned repo
         git_cli = GitCLI(repo_path)
-        default_branch = git_cli.active_branch.name
 
-        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, default_branch=default_branch, bot_commit=False)
+        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
 
     ####################################################################################################################
     # PROPERTIES
