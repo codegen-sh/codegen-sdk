@@ -60,6 +60,7 @@ from codegen.sdk.python.detached_symbols.parameter import PyParameter
 from codegen.sdk.python.file import PyFile
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
+from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.class_definition import TSClass
@@ -95,6 +96,14 @@ TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
 TParameter = TypeVar("TParameter", bound="Parameter")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 TExport = TypeVar("TExport", bound="Export")
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+PyGlobalVar = TypeVar("PyGlobalVar", bound="Assignment")
+TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
+PyDirectory = Directory[PyFile, PySymbol, PyImportStatement, PyGlobalVar, PyClass, PyFunction, PyImport]
+
+
+
+
 
 
 @apidoc
@@ -1168,13 +1177,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.error(f"Failed to initialize codebase: {e}")
             raise
 
-
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
-TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
-TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
-
-
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
-PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
-TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
+PyCodebaseType = Codebase[PyFile, PyDirectory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
+TSCodebaseType = Codebase[TSFile, TSDirectory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
