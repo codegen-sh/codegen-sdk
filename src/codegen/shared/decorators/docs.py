@@ -70,6 +70,19 @@ def noapidoc(obj: T) -> T:
     return obj
 
 
+py_no_apidoc_objects: list[DocumentedObject] = []
+py_no_apidoc_signatures: set[str] = set()
+
+
+def py_noapidoc(obj: T) -> T:
+    """Decorator for things that are hidden from the Python API documentation for AI-agent prompts."""
+    obj._py_apidoc = False
+    obj._api_doc_lang = "python"
+    if doc_obj := get_documented_object(obj):
+        bisect.insort(py_no_apidoc_objects, doc_obj)
+        py_no_apidoc_signatures.add(doc_obj.signature())
+    return obj
+
 def get_documented_object(obj) -> DocumentedObject | None:
     module = inspect.getmodule(obj)
     module_name = module.__name__ if module else ""

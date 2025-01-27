@@ -3,7 +3,7 @@ from itertools import chain
 from pathlib import Path
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from codegen.shared.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc, py_noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.assignment import Assignment
@@ -144,6 +144,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         return list(chain.from_iterable(f.functions for f in self.files))
 
     @property
+    @py_noapidoc
     def exports(self: "Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]") -> "list[TSExport]":
         """Get a recursive list of all exports in the directory and its subdirectories."""
         return list(chain.from_iterable(f.exports for f in self.files))
@@ -196,6 +197,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
             return next((f for name, f in self.items.items() if name.lower() == filename.lower() and isinstance(f, File)), None)
         return self.items.get(filename, None)
 
+    @py_noapidoc
     def get_export(self: "Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
         """Get an export by name in the directory and its subdirectories (supports only typescript)."""
         return next((s for s in self.exports if s.name == name), None)

@@ -74,7 +74,7 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
-from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
@@ -266,8 +266,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+        
 
     @property
+    @py_noapidoc
     def exports(self: 'Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]') -> list[TSExport]:
         """Returns a list of all Export nodes in the codebase.
 
@@ -1176,5 +1178,3 @@ TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClas
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
 PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
 TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
-
-
