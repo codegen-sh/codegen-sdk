@@ -37,7 +37,7 @@ exists = codebase.has_file("path/to/file.py")
 
 ```
 <Info>
-  [codebase.get_file(`path`)](/api-reference/core/Codebase#get_file) returns a [SourceFile](/api-reference/core/SourceFile) if the path points to a source file and a [File](/api-reference/core/File) otherwise.
+  [codebase.get_file(`path`)](/api-reference/core/Codebase#get_file) returns a [SourceFile](/api-reference/core/SourceFile) if the path points to a source code file and a [File](/api-reference/core/File) otherwise.
 </Info>
 
 
@@ -60,7 +60,7 @@ exists = codebase.has_directory("path/to/dir")
 
 ## Working with Non-Code Files (README, JSON, etc.)
 
-By default, Codegen focuses on source code files (Python, TypeScript, etc). However, you can access all files in your codebase, including documentation, configuration, and other non-code files like README.md, package.json, or .env:
+By default, Codegen focuses on source code files (Python, TypeScript, etc). However, you can access all files in your codebase, including documentation, configuration, and other non-code [files](/api-reference/core/File) like README.md, package.json, or .env:
 
 ```python
 # Get all files in the codebase (including README, docs, config files)
