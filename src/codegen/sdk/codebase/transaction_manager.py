@@ -3,7 +3,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from codegen.sdk.codebase.diff_lite import DiffLite
+from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 from codegen.sdk.codebase.transactions import (
     EditTransaction,
     FileAddTransaction,
@@ -163,16 +163,16 @@ class TransactionManager:
             return set(self.queued_transactions.keys())
         return files.intersection(self.queued_transactions)
 
-    def commit(self, files: set[Path]) -> set[DiffLite]:
+    def commit(self, files: set[Path]) -> list[DiffLite]:
         """Execute transactions in bulk for each file, in reverse order of start_byte.
-        Returns the set of diffs that were committed.
+        Returns the list of diffs that were committed.
         """
         if self._commiting:
             logger.warn("Skipping commit, already committing")
-            return set()
+            return []
         self._commiting = True
         try:
-            diffs: set[DiffLite] = set()
+            diffs: list[DiffLite] = []
             if not self.queued_transactions or len(self.queued_transactions) == 0:
                 return diffs
 
@@ -187,9 +187,16 @@ class TransactionManager:
                     logger.info(f"Committing {len(self.queued_transactions[file])} transactions for {file}")
             for file_path in files:
                 file_transactions = self.queued_transactions.pop(file_path, [])
+                modified = False
                 for transaction in file_transactions:
                     # Add diff IF the file is a source file
-                    diffs.add(transaction.get_diff())
+                    diff = transaction.get_diff()
+                    if diff.change_type == ChangeType.Modified:
+                        if not modified:
+                            modified = True
+                            diffs.append(diff)
+                    else:
+                        diffs.append(diff)
                     transaction.execute()
             return diffs
         finally:

@@ -9,7 +9,7 @@ iconType: "solid"
 
 It provides a scriptable interface to a powerful, multi-lingual language server built on top of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
-export const intoSnippet = `# Codegen builds a complete graph connecting
+export const metaCode = `# Codegen builds a complete graph connecting
 #  functions, classes, imports and their relationships
 from codegen import Codebase
 
@@ -21,13 +21,23 @@ for function in codebase.functions:
         function.remove()
 `
 
+export const code = `def foo():
+  pass
+
+def bar():
+  foo()
+
+def baz():
+  pass
+`
+
 <iframe
   width="100%"
   height="300px"
   scrolling="no"
-  src={`https://codegen.sh/embedded/codemod/?code=${encodeURIComponent(
-    intoSnippet
-  )}`}
+  src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
+    metaCode
+  )}&input=${encodeURIComponent(code)}`}
   style={{
     backgroundColor: "#15141b",
   }}

@@ -11,12 +11,11 @@ The `.codegen` directory contains your project's Codegen configuration, codemods
 
 ```bash
 .codegen/
-├── config.toml         # Project configuration
-├── codemods/          # Your codemod implementations
-├── jupyter/           # Jupyter notebooks for exploration
-├── docs/             # API documentation
-├── examples/         # Example code
-└── prompts/          # AI system prompts
+├── .venv/            # Python virtual environment (gitignored)
+├── config.toml       # Project configuration
+├── codemods/         # Your codemod implementations
+├── jupyter/          # Jupyter notebooks for exploration
+└── codegen-system-prompt.txt  # AI system prompt
 ```
 
 ## Initialization
@@ -30,6 +29,20 @@ codegen init [--fetch-docs] [--repo-name NAME] [--organization-name ORG]
 <Note>
 The `--fetch-docs` flag downloads API documentation and examples specific to your project's programming language.
 </Note>
+
+## Virtual Environment
+
+Codegen maintains its own virtual environment in `.codegen/.venv/` to ensure consistent package versions and isolation from your project's dependencies. This environment is:
+
+- Created using `uv` for fast, reliable package management
+- Initialized with Python 3.13
+- Automatically managed by Codegen commands
+- Used for running codemods and Jupyter notebooks
+- Gitignored to avoid committing environment-specific files
+
+The environment is created during `codegen init` and used by commands like `codegen run` and `codegen notebook`.
+
+<Note>To debug codemods, you will need to set the python virtual environment in your IDE to `.codegen/.venv`</Note>
 
 ### Configuration
 
@@ -49,13 +62,15 @@ Codegen automatically adds appropriate entries to your `.gitignore`:
 
 ```gitignore
 # Codegen
-.codegen/prompts/
+.codegen/.venv/
 .codegen/docs/
-.codegen/examples/
+.codegen/jupyter/
+.codegen/codegen-system-prompt.txt
 ```
 
 <Info>
-While prompts, docs, and examples are ignored, your codemods in `.codegen/codemods/` are tracked in Git.
+- While most directories are ignored, your codemods in `.codegen/codemods/` and `config.toml` are tracked in Git
+- The virtual environment and Jupyter notebooks are gitignored to avoid environment-specific issues
 </Info>
 
 ## Working with Codemods

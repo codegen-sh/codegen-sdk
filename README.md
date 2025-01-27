@@ -1,8 +1,6 @@
 # Codegen
 
-[![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
-[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com)
-[![Twitter Follow](https://img.shields.io/twitter/follow/codegen)](https://twitter.com/codegen)
+![PyPI](https://img.shields.io/pypi/v/codegen?color=blue) [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple)](https://docs.codegen.com) [![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com) [![Follow on X](https://img.shields.io/twitter/follow/codegen)](https://x.com/codegen) 
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
@@ -11,7 +9,7 @@
 from codegen import Codebase
 
 # Codegen builds a complete graph connecting
-#  functions, classes, imports and their relationships
+# functions, classes, imports and their relationships
 codebase = Codebase("./")
 
 # Work with code without dealing with syntax trees or parsing
@@ -21,7 +19,6 @@ for function in codebase.functions:
         # Auto-handles references and imports to maintain correctness
         function.move_to_file('deprecated.py')
 ```
-
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ## Installation and Usage
