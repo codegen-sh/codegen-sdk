@@ -5,14 +5,21 @@ icon: "arrows-rotate"
 iconType: "solid"
 ---
 
-Codegen keeps changes in memory until explicitly written to disk. Two core APIs manage this state:
+Codegen requires you to explicitly commit changes by calling [codebase.commit()](/api-reference/core/Codebase#commit).
 
-- [`Codebase.commit()`](/api-reference/core/Codebase#commit) - Commit changes to disk
-- [`Codebase.reset()`](/api-reference/core/Codebase#reset) - Reset the codebase and filesystem to its initial state
+<Tip>
+  Keeping everything in memory enables fast, large-scale writes. See the [How it
+  Works](/introduction/how-it-works) guide to learn more.
+</Tip>
+
+You can manage your codebase's state with two core APIs:
+
+- [Codebase.commit()](/api-reference/core/Codebase#commit) - Commit changes to disk
+- [Codebase.reset()](/api-reference/core/Codebase#reset) - Reset the `codebase` and filesystem to its initial state
 
 ## Committing Changes
 
-When you make changes to your codebase through Codegen's APIs, they aren't immediately written to disk. You need to explicitly commit them with [`Codebase.commit()`](/api-reference/core/Codebase#commit):
+When you make changes to your codebase through Codegen's APIs, they aren't immediately written to disk. You need to explicitly commit them with [codebase.commit()](/api-reference/core/Codebase#commit):
 
 ```python
 from codegen import Codebase
@@ -31,7 +38,7 @@ This transaction-like behavior helps ensure your changes are atomic and consiste
 
 ## Resetting State
 
-The [`Codebase.reset()`](/api-reference/core/Codebase#reset) method allows you to revert the codebase to its initial state:
+The [codebase.reset()](/api-reference/core/Codebase#reset) method allows you to revert the codebase to its initial state:
 
 ```python
 # Make some changes
@@ -52,6 +59,5 @@ assert codebase.get_file("src/new_file.py", optional=True) is None
 
 <Note>
   `reset()` reverts both the in-memory state and any uncommitted filesystem
-  changes. However, it preserves your codemod implementation in
-  `.codegen/codemods/`.
+  changes. However, it preserves your codemod implementation in `.codegen/`.
 </Note>

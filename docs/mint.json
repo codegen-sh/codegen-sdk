@@ -44,6 +44,10 @@
 			"url": "/cli"
 		},
 		{
+			"name": "Blog",
+			"url": "/blog"
+		},
+		{
 			"name": "Changelog",
 			"url": "/changelog"
 		}
@@ -71,6 +75,7 @@
 				"tutorials/modularity",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
+				"tutorials/training-data",
 				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",
@@ -87,6 +92,8 @@
 			"pages": [
 				"building-with-codegen/at-a-glance",
 				"building-with-codegen/parsing-codebases",
+				"building-with-codegen/reusable-codemods",
+				"building-with-codegen/dot-codegen",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
@@ -94,9 +101,10 @@
 				"building-with-codegen/the-editable-api",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
+				"building-with-codegen/imports",
+				"building-with-codegen/exports",
 				"building-with-codegen/inheritable-behaviors",
 				"building-with-codegen/statements-and-code-blocks",
-				"building-with-codegen/imports-and-exports",
 				"building-with-codegen/dependencies-and-usages",
 				"building-with-codegen/function-calls-and-callsites",
 				"building-with-codegen/variable-assignments",
@@ -126,6 +134,10 @@
 		{
 			"group": "Changelog",
 			"pages": ["changelog/changelog"]
+		},
+		{
+			"group": "Blog",
+			"pages": ["blog/posts", "blog/act-via-code"]
 		},
 		{
 			"group": "API Reference",

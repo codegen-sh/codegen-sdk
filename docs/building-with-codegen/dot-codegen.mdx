@@ -1,0 +1,114 @@
+---
+title: "The .codegen Directory"
+sidebarTitle: ".codegen Directory"
+icon: "folder"
+iconType: "solid"
+---
+
+The `.codegen` directory contains your project's Codegen configuration, codemods, and supporting files. It's automatically created when you run `codegen init`.
+
+## Directory Structure
+
+```bash
+.codegen/
+├── config.toml         # Project configuration
+├── codemods/          # Your codemod implementations
+├── jupyter/           # Jupyter notebooks for exploration
+├── docs/             # API documentation
+├── examples/         # Example code
+└── prompts/          # AI system prompts
+```
+
+## Initialization
+
+The directory is created and managed using the `codegen init` command:
+
+```bash
+codegen init [--fetch-docs] [--repo-name NAME] [--organization-name ORG]
+```
+
+<Note>
+The `--fetch-docs` flag downloads API documentation and examples specific to your project's programming language.
+</Note>
+
+### Configuration
+
+The `config.toml` file stores your project settings:
+
+```toml
+organization_name = "your-org"
+repo_name = "your-repo"
+programming_language = "python"  # or other supported language
+```
+
+This configuration is used by Codegen to provide language-specific features and proper repository context.
+
+## Git Integration
+
+Codegen automatically adds appropriate entries to your `.gitignore`:
+
+```gitignore
+# Codegen
+.codegen/prompts/
+.codegen/docs/
+.codegen/examples/
+```
+
+<Info>
+While prompts, docs, and examples are ignored, your codemods in `.codegen/codemods/` are tracked in Git.
+</Info>
+
+## Working with Codemods
+
+The `codemods/` directory is where your transformation functions live. You can create new codemods using:
+
+```bash
+codegen create my-codemod [--description "what it does"]
+```
+
+This will:
+1. Create a new file in `.codegen/codemods/`
+2. Generate a system prompt in `.codegen/prompts/` (if using `--description`)
+3. Set up the necessary imports and decorators
+
+<Tip>
+Use `codegen list` to see all codemods in your project.
+</Tip>
+
+## Jupyter Integration
+
+The `jupyter/` directory contains notebooks for interactive development:
+
+```python
+from codegen import Codebase
+
+# Initialize codebase
+codebase = Codebase('../../')
+
+# Print stats
+print(f"📚 Total Files: {len(codebase.files)}")
+print(f"⚡ Total Functions: {len(codebase.functions)}")
+```
+
+<Note>
+A default notebook is created during initialization to help you explore your codebase.
+</Note>
+
+## Next Steps
+
+After initializing your `.codegen` directory:
+
+1. Create your first codemod:
+```bash
+codegen create my-codemod -d "describe what you want to do"
+```
+
+2. Run it:
+```bash
+codegen run my-codemod --apply-local
+```
+
+3. Deploy it for team use:
+```bash
+codegen deploy my-codemod
+```

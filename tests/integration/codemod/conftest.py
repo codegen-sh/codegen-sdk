@@ -13,11 +13,11 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.testing.constants import DIFF_FILEPATH
-from codegen.sdk.testing.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
-from codegen.sdk.testing.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
 from codemods.codemod import Codemod
-from tests.shared.recursion import set_recursion_limit
+from tests.shared.codemod.constants import DIFF_FILEPATH
+from tests.shared.codemod.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
+from tests.shared.codemod.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
+from tests.shared.utils.recursion import set_recursion_limit
 
 logger = logging.getLogger(__name__)
 
