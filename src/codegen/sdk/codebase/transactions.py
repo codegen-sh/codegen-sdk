@@ -294,7 +294,7 @@ class FileRemoveTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Removed, self.file_path, old_content=self.file.content)
+        return DiffLite(ChangeType.Removed, self.file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""

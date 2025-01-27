@@ -238,7 +238,6 @@ class CodebaseGraph:
     def _reset_files(self, syncs: list[DiffLite]) -> None:
         files_to_write = []
         files_to_remove = []
-        files_to_rename = []
         modified_files = set()
         for sync in syncs:
             if sync.path in modified_files:
@@ -246,6 +245,7 @@ class CodebaseGraph:
             if sync.change_type == ChangeType.Removed:
                 files_to_write.append((sync.path, sync.old_content))
                 modified_files.add(sync.path)
+                logger.info(f"Removing {sync.path} from disk")
             elif sync.change_type == ChangeType.Modified:
                 files_to_write.append((sync.path, sync.old_content))
                 modified_files.add(sync.path)
@@ -257,7 +257,7 @@ class CodebaseGraph:
             elif sync.change_type == ChangeType.Added:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
-        write_changes(files_to_remove, files_to_write, files_to_rename)
+        write_changes(files_to_remove, files_to_write)
 
     @stopwatch
     def reset_codebase(self) -> None:
