@@ -257,6 +257,7 @@ class CodebaseGraph:
             elif sync.change_type == ChangeType.Added:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
+        logger.info(f"Writing {len(files_to_write)} files to disk and removing {len(files_to_remove)} files")
         write_changes(files_to_remove, files_to_write)
 
     @stopwatch
@@ -289,6 +290,9 @@ class CodebaseGraph:
 
     def save_commit(self, commit: GitCommit) -> None:
         if commit is not None:
+            logger.info(f"Saving commit {commit.hexsha} to graph")
+            self.all_syncs.clear()
+            self.unapplied_diffs.clear()
             self.synced_commit = commit
             if self.config.feature_flags.verify_graph:
                 self.old_graph = self._graph.copy()
