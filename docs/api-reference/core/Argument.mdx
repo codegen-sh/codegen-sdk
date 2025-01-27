@@ -45,7 +45,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">function_calls</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span className="text-gray-200">]</span></> } description="Returns a list of function calls present in the value of this argument." />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span>]</span></> } description="Returns a list of function calls present in the value of this argument." />
 
 ### <span className="text-primary">index</span>
 <HorizontalDivider light={true} />
@@ -71,19 +71,19 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">parent_class</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Class" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Class</a> <span className="text-gray-200">| None</span></> } description="Find the class this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Class" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Class</a> <span>| None</span></> } description="Find the class this node is contained in" />
 
 ### <span className="text-primary">parent_function</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span className="text-gray-200">| None</span></> } description="Find the function this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Function" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Function</a> <span>| None</span></> } description="Find the function this node is contained in" />
 
 ### <span className="text-primary">parent_statement</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Statement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Statement</a> <span className="text-gray-200">| None</span></> } description="Find the statement this node is contained in" />
+<Attribute type={ <><a href="/api-reference/core/Statement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Statement</a> <span>| None</span></> } description="Find the statement this node is contained in" />
 
 ### <span className="text-primary">resolved_value</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span className="text-gray-200">| list[</span> <a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span className="text-gray-200">]</span></> } description="Returns the resolved type of an Expression." />
+<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>| list[</span> <a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>]</span></> } description="Returns the resolved type of an Expression." />
 
 ### <span className="text-primary">source</span>
 <HorizontalDivider light={true} />
@@ -100,11 +100,11 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">value</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span className="text-gray-200">| None</span></> } description="Gets the value node of the object." />
+<Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>| None</span></> } description="Gets the value node of the object." />
 
 ### <span className="text-primary">variable_usages</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="Returns Editables for all TreeSitter node instances of variable usages within this node's" />
+<Attribute type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="Returns Editables for all TreeSitter node instances of variable usages within this node's" />
 
 
 ## Methods
@@ -131,7 +131,7 @@ Find all ancestors of the node of the given type. Does not return itself
 <GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description=""/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description=""/>
 
 
 ### <span className="text-primary">edit</span>
@@ -189,7 +189,7 @@ Find and return matching nodes or substrings within an Editable instance.
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable instances that match the search criteria."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable instances that match the search criteria."/>
 
 
 ### <span className="text-primary">find_string_literals</span>
@@ -212,7 +212,7 @@ Returns a list of string literals within this node's source that match any of th
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable objects representing the matching string literals."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable objects representing the matching string literals."/>
 
 
 ### <span className="text-primary">flag</span>
@@ -220,7 +220,7 @@ Adds a visual flag comment to the end of this Editable's source text.
 <GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
 
 
-<Return return_type={ <><span className="text-gray-200">CodeFlag[</span> <a href="/api-reference/core/Argument" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Argument</a> <span className="text-gray-200">]</span></> } description=""/>
+<Return return_type={ <><span>CodeFlag[</span> <a href="/api-reference/core/Argument" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Argument</a> <span>]</span></> } description=""/>
 
 
 ### <span className="text-primary">get_name</span>
@@ -228,7 +228,7 @@ Returns the name node of the object.
 <GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_name.py#L52-L62" />
 
 
-<Return return_type={ <><a href="/api-reference/core/Name" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Name</a> <span className="text-gray-200">|</span> <a href="/api-reference/core/ChainedAttribute" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ChainedAttribute</a> <span className="text-gray-200">| None</span></> } description="The name node of the object. Can be a Name node for simple names, a ChainedAttribute for names with namespaces (e.g., a.b), or None if the object has no name."/>
+<Return return_type={ <><a href="/api-reference/core/Name" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Name</a> <span>|</span> <a href="/api-reference/core/ChainedAttribute" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ChainedAttribute</a> <span>| None</span></> } description="The name node of the object. Can be a Name node for simple names, a ChainedAttribute for names with namespaces (e.g., a.b), or None if the object has no name."/>
 
 
 ### <span className="text-primary">get_variable_usages</span>
@@ -251,7 +251,7 @@ Returns Editables for all TreeSitter nodes corresponding to instances of variabl
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="List of Editable objects representing variable usage nodes matching the given name."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="List of Editable objects representing variable usage nodes matching the given name."/>
 
 
 ### <span className="text-primary">insert_after</span>
@@ -349,7 +349,7 @@ Find the first ancestor of the node of the given type. Does not return itself
 <GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
 
 
-<Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">| None</span></> } description=""/>
+<Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>| None</span></> } description=""/>
 
 
 ### <span className="text-primary">reduce_condition</span>
@@ -473,7 +473,7 @@ Returns a list of all regex match of `regex_pattern`, similar to python's re.sea
 </ParameterWrapper>
 
 
-<Return return_type={ <><span className="text-gray-200">list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span className="text-gray-200">]</span></> } description="A list of Editable objects corresponding to the matches found."/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description="A list of Editable objects corresponding to the matches found."/>
 
 
 ### <span className="text-primary">set_name</span>

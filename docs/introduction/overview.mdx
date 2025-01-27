@@ -13,8 +13,6 @@ export const metaCode = `# Codegen builds a complete graph connecting
 #  functions, classes, imports and their relationships
 from codegen import Codebase
 
-codebase = Codebase('./')
-
 # Work with code without dealing with syntax trees or parsing
 for function in codebase.functions:
     # Comprehensive static analysis for references, dependencies, etc.

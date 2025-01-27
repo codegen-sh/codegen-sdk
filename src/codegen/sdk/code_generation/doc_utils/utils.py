@@ -7,6 +7,7 @@ from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.function import Function
+from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python.statements.attribute import PyAttribute
@@ -183,6 +184,22 @@ def has_documentation(c: Class):
     return any([dec.name == "ts_apidoc" or dec.name == "py_apidoc" or dec.name == "apidoc" for dec in c.decorators])
 
 
+def safe_get_class(codebase: Codebase, class_name: str) -> Class | None:
+    symbols = codebase.get_symbols(class_name)
+    if not symbols:
+        return None
+
+    if len(symbols) == 1 and isinstance(symbols[0], Class):
+        return symbols[0]
+
+    possible_classes = [s for s in symbols if isinstance(s, Class) and has_documentation(s)]
+    if not possible_classes:
+        return None
+    if len(possible_classes) == 1:
+        return possible_classes[0]
+    raise ValueError(f"Found {len(possible_classes)} classes with name {class_name}")
+
+
 def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict):
     """Find the symbol in the codebase.
 
@@ -201,35 +218,30 @@ def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type]
         return f"<{create_path(parent_class)}>"
     if symbol_name in types_cache:
         return types_cache[symbol_name]
-    # if symbol_name in [resolved_type.value for resolved_type in resolved_types]:
-    #     return symbol_name
 
-    try:
-        trgt_symbol = None
-        cls_obj = codebase.get_class(symbol_name, optional=True)
-        if cls_obj:
-            trgt_symbol = cls_obj
+    trgt_symbol = None
+    cls_obj = safe_get_class(codebase, symbol_name)
+    if cls_obj:
+        trgt_symbol = cls_obj
 
-        if not trgt_symbol:
-            if symbol := parent_symbol.file.get_symbol(symbol_name):
-                for resolved_type in symbol.resolved_types:
-                    if isinstance(resolved_type, FunctionCall) and len(resolved_type.args) >= 2:
-                        bound_arg = resolved_type.args[1]
-                        bound_name = bound_arg.value
-                        if cls_obj := codebase.get_class(bound_name, optional=True):
-                            trgt_symbol = cls_obj
-                            break
+    if not trgt_symbol:
+        if symbol := parent_symbol.file.get_symbol(symbol_name):
+            for resolved_type in symbol.resolved_types:
+                if isinstance(resolved_type, FunctionCall) and len(resolved_type.args) >= 2:
+                    bound_arg = resolved_type.args[1]
+                    bound_name = bound_arg.value
+                    if cls_obj := safe_get_class(codebase, bound_name):
+                        trgt_symbol = cls_obj
+                        break
 
-            elif symbol := codebase.get_symbol(symbol_name, optional=True):
-                if len(symbol.resolved_types) == 1:
-                    trgt_symbol = symbol.resolved_types[0]
+        elif symbol := codebase.get_symbol(symbol_name, optional=True):
+            if len(symbol.resolved_types) == 1:
+                trgt_symbol = symbol.resolved_types[0]
 
-        if trgt_symbol and has_documentation(trgt_symbol):
-            trgt_path = f"<{create_path(trgt_symbol)}>"
-            types_cache[symbol_name] = trgt_path
-            return trgt_path
-    except Exception as e:
-        logger.warning(f"Unable to resolve {symbol_name}. Received error: {e}.")
+    if trgt_symbol and isinstance(trgt_symbol, Callable) and has_documentation(trgt_symbol):
+        trgt_path = f"<{create_path(trgt_symbol)}>"
+        types_cache[symbol_name] = trgt_path
+        return trgt_path
 
     return symbol_name
 

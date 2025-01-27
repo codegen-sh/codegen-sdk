@@ -219,6 +219,15 @@ jobs:
     - run_ats:
         default_tests: "tests/unit"
         collect_args: --timeout 50
+  integration-tests:
+    executor: default_image
+    resource_class: "large"
+    steps:
+      - setup-uv
+      - run:
+          command: |
+            uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto tests/integration/codegen
+      - upload-tests
   doctests:
     executor: default_image
     steps:
@@ -387,11 +396,11 @@ jobs:
     - slack/notify:
         event: fail
         branch_pattern: "develop"
-        channel: "alerts-release"
+        channel: "release"
         template: basic_fail_1
     - slack/notify:
         event: pass
-        channel: "alerts-release"
+        channel: "release"
         template: success_tagged_deploy_1
 workflows:
   develop-checks:
@@ -445,6 +454,7 @@ workflows:
   pr_checks:
     jobs:
       - unit-tests
+      - integration-tests
       - hold-codemod-tests:
           type: approval
           filters:

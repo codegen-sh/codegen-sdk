@@ -197,7 +197,7 @@ def parse_link(type_string: str, href: bool = False) -> str:
         else:
             part = format_builtin_type_string(part)
             if href:
-                result.append(f'<span className="text-gray-200">{part.strip()}</span>')
+                result.append(f"<span>{part.strip()}</span>")
             else:
                 result.append(part.strip())
 

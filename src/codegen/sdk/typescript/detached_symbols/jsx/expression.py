@@ -55,7 +55,7 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
 
     @writer
     @override
-    def unwrap(self, node: Expression | None = None):
+    def unwrap(self, node: Expression | None = None) -> None:
         """Removes the brackets from a JSX expression.
 
 
