@@ -20,7 +20,10 @@ repos:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         exclude: (src/codemods/eval)|(tests/unit/skills/snapshots)|(tests/unit/codegen/sdk/output)|(tests/integration/verified_codemods)|(docs/samples)
-
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
   - repo: https://github.com/MarcoGorelli/cython-lint
     rev: v0.16.6
     hooks:

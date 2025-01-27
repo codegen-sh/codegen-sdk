@@ -13,46 +13,10 @@ from codegen.cli.auth.session import CodegenSession
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.git.url import get_git_organization_and_repo
 from codegen.cli.rich.spinners import create_spinner
+from codegen.cli.utils.notebooks import create_notebook
 from codegen.cli.workspace.docs_workspace import populate_api_docs
 from codegen.cli.workspace.examples_workspace import populate_examples
-
-DEFAULT_CODE = """
-from codegen import Codebase
-
-# Initialize codebase
-codebase = Codebase('../../')
-
-# Print out stats
-print("🔍 Codebase Analysis")
-print("=" * 50)
-print(f"📚 Total Files: {len(codebase.files)}")
-print(f"⚡ Total Functions: {len(codebase.functions)}")
-print(f"🔄 Total Imports: {len(codebase.imports)}")
-"""
-
-
-def create_notebook(jupyter_dir: Path) -> Path:
-    """Create a new Jupyter notebook if it doesn't exist."""
-    notebook_path = jupyter_dir / "tmp.ipynb"
-    if not notebook_path.exists():
-        notebook_content = {
-            "cells": [
-                {
-                    "cell_type": "code",
-                    "execution_count": None,
-                    "metadata": {},
-                    "outputs": [],
-                    "source": [DEFAULT_CODE],
-                }
-            ],
-            "metadata": {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"}},
-            "nbformat": 4,
-            "nbformat_minor": 4,
-        }
-        import json
-
-        notebook_path.write_text(json.dumps(notebook_content, indent=2))
-    return notebook_path
+from codegen.cli.workspace.venv_manager import VenvManager
 
 
 def initialize_codegen(
@@ -92,6 +56,13 @@ def initialize_codegen(
         PROMPTS_FOLDER.mkdir(parents=True, exist_ok=True)
         JUPYTER_DIR.mkdir(parents=True, exist_ok=True)
         CODEMODS_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Initialize virtual environment
+        status_obj.update(f"   {'Creating' if isinstance(status, str) else 'Checking'} virtual environment...")
+        venv = VenvManager()
+        if not venv.is_initialized():
+            venv.create_venv()
+            venv.install_packages("codegen")
 
         # Download system prompt
         try:
@@ -164,7 +135,8 @@ def modify_gitignore(codegen_folder: Path):
         "examples/",
         "prompts/",
         "jupyter/",
-        "codegen-system-prompt.txt",  # Add system prompt to gitignore
+        ".venv/",  # Add venv to gitignore
+        "codegen-system-prompt.txt",
         "",
         "# Python cache files",
         "__pycache__/",

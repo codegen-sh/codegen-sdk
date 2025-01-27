@@ -1,4 +1,5 @@
 import json
+import os
 
 import rich_click as click
 
@@ -6,6 +7,7 @@ from codegen.cli.auth.session import CodegenSession
 from codegen.cli.utils.codemod_manager import CodemodManager
 from codegen.cli.utils.json_schema import validate_json
 from codegen.cli.workspace.decorators import requires_init
+from codegen.cli.workspace.venv_manager import VenvManager
 
 
 @click.command(name="run")
@@ -22,6 +24,15 @@ def run_command(
     arguments: str | None = None,
 ):
     """Run a codegen function by its label."""
+    # Ensure venv is initialized
+    venv = VenvManager()
+    if not venv.is_initialized():
+        raise click.ClickException("Virtual environment not found. Please run 'codegen init' first.")
+
+    # Set up environment with venv
+    os.environ["VIRTUAL_ENV"] = str(venv.venv_dir)
+    os.environ["PATH"] = f"{venv.venv_dir}/bin:{os.environ['PATH']}"
+
     # Get and validate the codemod
     codemod = CodemodManager.get_codemod(label)
 

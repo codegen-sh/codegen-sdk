@@ -12,6 +12,7 @@ from codegen.cli.rich.codeblocks import format_command, format_path
 from codegen.cli.rich.pretty_print import pretty_print_error
 from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.utils.constants import ProgrammingLanguage
+from codegen.cli.utils.default_code import DEFAULT_CODEMOD
 from codegen.cli.workspace.decorators import requires_init
 
 
@@ -62,19 +63,6 @@ def make_relative(path: Path) -> str:
         return f"./{path.name}"
 
 
-def get_default_code(name: str) -> str:
-    """Get the default function code without using the API."""
-    return f'''import codegen
-from codegen import Codebase
-
-@codegen.function("{name}")
-def run(codebase: Codebase):
-    """Add a description of what this codemod does."""
-    # Add your code here
-    pass
-'''
-
-
 @click.command(name="create")
 @requires_init
 @click.argument("name", type=str)
@@ -111,7 +99,7 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
                     prompt_path.write_text(response.context)
         else:
             # Use default implementation
-            code = get_default_code(name)
+            code = DEFAULT_CODEMOD.format(name=name)
 
         # Create the target directory if needed
         target_path.parent.mkdir(parents=True, exist_ok=True)
