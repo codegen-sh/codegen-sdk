@@ -12,9 +12,9 @@ tool = ["uv", "pip"]
 [envs.hatch-build.overrides]
 matrix.tool.installer = { value = "{matrix:tool}" }
 matrix.tool.scripts = [
-    { key = "pip", value = "{env:HATCH_UV} pip {args}", if = [
-        "uv",
-    ] },
+  { key = "pip", value = "{env:HATCH_UV} pip {args}", if = [
+    "uv",
+  ] },
 ]
 
 [version]
@@ -25,19 +25,19 @@ UV_EXTRA_INDEX_URL = "https://aws@codegen-922078275900.d.codeartifact.us-east-1.
 
 [build.targets.wheel.hooks.cython]
 dependencies = [
-    "hatch-cython @ git+https://github.com/codegen-sh/hatch-cython.git",
-    "cython>=3.0.11",
-    "tree-sitter",
-    "networkx",
+  "hatch-cython @ git+https://github.com/codegen-sh/hatch-cython.git",
+  "cython>=3.0.11",
+  "tree-sitter",
+  "networkx",
 ]
 
 [build.targets.wheel.hooks.cython.options]
 src = "codegen/sdk"
 compile_args = [
-    "-O3",
-    { platforms = [
-        "darwin",
-    ], arch = "arm64", arg = "-mcpu=apple-m1" },
+  "-O3",
+  { platforms = [
+    "darwin",
+  ], arch = "arm64", arg = "-mcpu=apple-m1" },
 ]
 cythonize_kwargs = { annotate = true, nthreads = 16, exclude_failures = false, cache = true }
 compiled_sdist = true
@@ -57,27 +57,30 @@ c_string_type = "unicode"
 
 [build.targets.wheel.hooks.cython.options.files]
 exclude = [
-    "**/__init__.py",
-    "**/code_generation",
-    "**/skills",
-    "**/codebase/factory",
-    "**/guides",
-    "**/testing",
-    "**/codebase_graph_utils.py",
+  "**/__init__.py",
+  "**/code_generation",
+  "**/skills",
+  "**/codebase/factory",
+  "**/guides",
+  "**/testing",
+  "**/codebase_graph_utils.py",
 ]
 
 [build.targets.wheel]
 macos-max-compat = false
 
 [build]
-packages = [
-    "src/codegen",
-]
+packages = ["src/codegen"]
 
-[metadata.hooks.vcs]
-Homepage = "https://github.com/codegen-sh/codegen-sdk"
-source_archive = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash}.zip"
-
+[metadata.hooks.vcs.urls]
+Homepage = "https://www.codegen.com/"
+Repository = "https://github.com/codegen-sh/codegen-sdk"
+download = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash}.zip"
+Changelog = "https://docs.codegen.com/changelog/changelog"
+Releasenotes = "https://github.com/codegen-sh/codegen-sdk/releases"
+Issues = "https://github.com/codegen-sh/codegen-sdk/issues"
+Documentation = "https://docs.codegen.sh"
+Playground = "https://www.codegen.sh/"
 
 [build.targets.wheel.hooks.custom]
 enable-by-default = false
