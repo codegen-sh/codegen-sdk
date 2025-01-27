@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import IntEnum, auto
 from os import PathLike
 from pathlib import Path
 from typing import NamedTuple, Self
@@ -7,7 +7,7 @@ from git import Diff
 from watchfiles import Change
 
 
-class ChangeType(Enum):
+class ChangeType(IntEnum):
     Modified = auto()
     Removed = auto()
     Renamed = auto()
