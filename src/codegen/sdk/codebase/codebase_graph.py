@@ -30,6 +30,7 @@ from codegen.sdk.core.external.language_engine import LanguageEngine, get_langua
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
+from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
@@ -107,6 +108,7 @@ class CodebaseGraph:
     flags: Flags
     session_options: SessionOptions = SessionOptions()
     projects: list[ProjectConfig]
+    unapplied_diffs: list[DiffLite]
 
     def __init__(
         self,
@@ -161,6 +163,7 @@ class CodebaseGraph:
             self.synced_commit = None
         self.pending_syncs = []
         self.all_syncs = []
+        self.unapplied_diffs = []
         self.pending_files = set()
         self.flags = Flags()
 
@@ -232,9 +235,40 @@ class CodebaseGraph:
         self.generation += 1
         self._process_diff_files(by_sync_type)
 
+    def _reset_files(self, syncs: list[DiffLite]) -> None:
+        files_to_write = []
+        files_to_remove = []
+        modified_files = set()
+        for sync in syncs:
+            if sync.path in modified_files:
+                continue
+            if sync.change_type == ChangeType.Removed:
+                files_to_write.append((sync.path, sync.old_content))
+                modified_files.add(sync.path)
+                logger.info(f"Removing {sync.path} from disk")
+            elif sync.change_type == ChangeType.Modified:
+                files_to_write.append((sync.path, sync.old_content))
+                modified_files.add(sync.path)
+            elif sync.change_type == ChangeType.Renamed:
+                files_to_write.append((sync.rename_from, sync.old_content))
+                files_to_remove.append(sync.rename_to)
+                modified_files.add(sync.rename_from)
+                modified_files.add(sync.rename_to)
+            elif sync.change_type == ChangeType.Added:
+                files_to_remove.append(sync.path)
+                modified_files.add(sync.path)
+        logger.info(f"Writing {len(files_to_write)} files to disk and removing {len(files_to_remove)} files")
+        write_changes(files_to_remove, files_to_write)
+
+    @stopwatch
+    def reset_codebase(self) -> None:
+        self._reset_files(self.all_syncs + self.pending_syncs + self.unapplied_diffs)
+        self.unapplied_diffs.clear()
+
     @stopwatch
     def undo_applied_diffs(self) -> None:
         self.transaction_manager.clear_transactions()
+        self.reset_codebase()
         self.check_changes()
         self.pending_syncs.clear()  # Discard pending changes
         if len(self.all_syncs) > 0:
@@ -256,6 +290,9 @@ class CodebaseGraph:
 
     def save_commit(self, commit: GitCommit) -> None:
         if commit is not None:
+            logger.info(f"Saving commit {commit.hexsha} to graph")
+            self.all_syncs.clear()
+            self.unapplied_diffs.clear()
             self.synced_commit = commit
             if self.config.feature_flags.verify_graph:
                 self.old_graph = self._graph.copy()
@@ -630,9 +667,11 @@ class CodebaseGraph:
         # Commit transactions for all contexts
         files_to_lock = self.transaction_manager.to_commit(files)
         diffs = self.transaction_manager.commit(files_to_lock)
-        # Filter diffs to only include files that are still in the graph
-        diffs = [diff for diff in diffs if self.get_file(diff.path) is not None]
-        self.pending_syncs.extend(diffs)
+        for diff in diffs:
+            if self.get_file(diff.path) is None:
+                self.unapplied_diffs.append(diff)
+            else:
+                self.pending_syncs.append(diff)
 
         # Write files if requested
         if sync_file:
