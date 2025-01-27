@@ -249,17 +249,14 @@ class CodebaseGraph:
             elif sync.change_type == ChangeType.Modified:
                 files_to_write.append((sync.path, sync.old_content))
                 modified_files.add(sync.path)
-                logger.info(f"Writing {sync.path} to disk with content {sync.old_content}")
             elif sync.change_type == ChangeType.Renamed:
-                files_to_rename.append((sync.rename_to, sync.rename_from))
+                files_to_write.append((sync.rename_from, sync.old_content))
+                files_to_remove.append(sync.rename_to)
                 modified_files.add(sync.rename_from)
                 modified_files.add(sync.rename_to)
             elif sync.change_type == ChangeType.Added:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
-        logger.info(f"Writing {len(files_to_remove)} files to remove")
-        logger.info(f"Writing {len(files_to_write)} files to write")
-        logger.info(f"Writing {len(files_to_rename)} files to rename")
         write_changes(files_to_remove, files_to_write, files_to_rename)
 
     @stopwatch

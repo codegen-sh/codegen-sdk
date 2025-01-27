@@ -269,7 +269,7 @@ class FileRenameTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Renamed, self.file_path, self.file_path, self.new_file_path)
+        return DiffLite(ChangeType.Renamed, self.file_path, self.file_path, self.new_file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""
