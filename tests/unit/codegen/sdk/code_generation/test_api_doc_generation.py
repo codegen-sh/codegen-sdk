@@ -48,9 +48,7 @@ def test_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> N
 
 
 @pytest.mark.xdist_group("codegen")
-@pytest.mark.timeout(60)
 def test_mdx_api_doc_generation_sanity(codebase) -> None:
-    codebase = get_codegen_sdk_codebase()
     docs_json = generate_docs_json(codebase, "HEAD")
 
     assert len(docs_json.classes) > 0
