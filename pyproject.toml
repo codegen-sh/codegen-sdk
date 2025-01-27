@@ -108,6 +108,7 @@ dev-dependencies = [
     "isort>=5.13.2",
     "emoji>=2.14.0",
     "pytest-benchmark[histogram]>=5.1.0",
+    "loguru>=0.7.3",
 ]
 keyring-provider = "subprocess"
 #extra-index-url = ["https://aws@codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/simple/"]
