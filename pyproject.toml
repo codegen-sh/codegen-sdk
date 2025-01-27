@@ -86,7 +86,7 @@ classifiers = [
   "Topic :: Software Development :: Code Generators",
   "Topic :: Software Development :: Libraries",
 ]
-authors = [{ name = "Codegen Team", email = "team+codegenbot@codegen.sh" }]
+authors = [{ name = "Codegen Team", email = "team@codegen.sh" }]
 keywords = [
   "codegen",
   "codebase",

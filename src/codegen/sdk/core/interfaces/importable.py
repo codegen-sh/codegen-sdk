@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, Union
 
 from tree_sitter import Node as TSNode
@@ -19,6 +20,8 @@ if TYPE_CHECKING:
     from codegen.sdk.core.symbol import Symbol
 
 Parent = TypeVar("Parent", bound="Editable")
+
+logger = logging.getLogger(__name__)
 
 
 @apidoc
@@ -90,7 +93,11 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         """
         if incremental:
             self._remove_internal_edges(EdgeType.SYMBOL_USAGE)
-        self._compute_dependencies()
+        try:
+            self._compute_dependencies()
+        except Exception as e:
+            logger.error(f"Error in file {self.file.path} while computing dependencies for symbol {self.name}")
+            raise e
         if incremental:
             return self.descendant_symbols + self.file.get_nodes(sort=False)
         return []
