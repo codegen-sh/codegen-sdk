@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
+from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 
 
@@ -10,16 +11,35 @@ def generate_files(num_files: int, extension: str = "py") -> dict[str, str]:
     return {f"file{i}.{extension}": f"# comment {i}" for i in range(num_files)}
 
 
-cases = [10**i for i in range(1, 4)]
+NUM_FILES = 1000
 
 
-@pytest.mark.timeout(5, func_only=True)
-@pytest.mark.parametrize("extension, num_files", [(ext, i) for ext in ["txt", "py"] for i in cases])
-def test_codebase_reset_stress_test(extension: str, num_files: int, tmp_path):
+def setup_codebase(num_files: int, extension: str, tmp_path: Path):
     files = generate_files(num_files, extension)
     with get_codebase_session(files=files, programming_language=ProgrammingLanguage.PYTHON, tmpdir=Path(tmp_path), sync_graph=False) as codebase:
         for file in files:
             codebase.get_file(file).edit(f"# comment2 {file}")
+    return codebase, files
+
+
+def reset_codebase(codebase: Codebase):
+    codebase.reset()
+
+
+@pytest.mark.benchmark(group="sdk-benchmark", min_time=1, max_time=5, disable_gc=True)
+@pytest.mark.parametrize("extension", ["txt", "py"])
+def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark):
+    def setup():
+        codebase, _ = setup_codebase(NUM_FILES, extension, tmp_path)
+        return ((codebase,), {})
+
+    benchmark.pedantic(reset_codebase, setup=setup)
+
+
+@pytest.mark.timeout(5, func_only=True)
+@pytest.mark.parametrize("extension", ["txt", "py"])
+def test_codebase_reset_correctness(extension: str, tmp_path):
+    codebase, files = setup_codebase(NUM_FILES, extension, tmp_path)
     codebase.reset()
     for file, original_content in files.items():
         assert (tmp_path / file).exists()
