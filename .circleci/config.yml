@@ -219,6 +219,16 @@ jobs:
     - run_ats:
         default_tests: "tests/unit"
         collect_args: --timeout 50
+  integration-tests:
+    parallelism: 3
+    executor: default_image
+    resource_class: "2xlarge"
+    steps:
+      - setup-uv
+      - run:
+          command: |
+            uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto tests/integration/codegen
+      - upload-tests
   doctests:
     executor: default_image
     steps:
