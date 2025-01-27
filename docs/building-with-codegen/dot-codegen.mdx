@@ -62,16 +62,14 @@ Codegen automatically adds appropriate entries to your `.gitignore`:
 
 ```gitignore
 # Codegen
-.codegen/prompts/
-.codegen/docs/
-.codegen/examples/
 .codegen/.venv/
+.codegen/docs/
 .codegen/jupyter/
 .codegen/codegen-system-prompt.txt
 ```
 
 <Info>
-- While most directories are ignored, your codemods in `.codegen/codemods/` are tracked in Git
+- While most directories are ignored, your codemods in `.codegen/codemods/` and `config.toml` are tracked in Git
 - The virtual environment and Jupyter notebooks are gitignored to avoid environment-specific issues
 </Info>
 
