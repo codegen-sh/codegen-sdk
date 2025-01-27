@@ -225,7 +225,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         """Get a subdirectory by its path relative to the directory."""
         return self.items.get(subdirectory_name, None)
 
-    def remove(self):
+    def remove(self) -> None:
         """Remove the directory and all its files and subdirectories."""
         for f in self.files:
             f.remove()

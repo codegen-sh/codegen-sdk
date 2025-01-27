@@ -382,7 +382,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         return False
 
     @writer
-    def add_keyword(self, keyword: str):
+    def add_keyword(self, keyword: str) -> None:
         """Insert a keyword in the appropriate place before this symbol if it doesn't already exist.
 
         This method adds a keyword (e.g., 'public', 'async', 'static') in the syntactically appropriate

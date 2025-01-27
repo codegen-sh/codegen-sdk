@@ -1,10 +1,11 @@
 # Codegen
 
 [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
+[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com)
+[![Twitter Follow](https://img.shields.io/twitter/follow/codegen)](https://twitter.com/codegen)
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
-Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ```python
 from codegen import Codebase
@@ -21,16 +22,43 @@ for function in codebase.functions:
         function.move_to_file('deprecated.py')
 ```
 
-## Installation
+Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
+
+## Installation and Usage
 **This library requires Python 3.12 – 3.13.**
 ```
+# Install inside existing project
 uv pip install codegen
+
+# Install global CLI
+uv tool install codegen
+
+# Create a codemod for a given repo
+cd path/to/repo
+codegen init
+codegen create test-function
+
+# Run said codemod
+codegen run test-function
+
+# Create an isolated venv with codegen => open jupyter
+codegen notebook
+```
+
+## Usage
+
+See [https://docs.codegen.com/introduction/getting-started] for a full tutorial.
+
+```
+from codegen import Codebase
+
 ```
 
 ## Resources
 
 - [Docs](https://docs.codegen.com)
 - [Get Started](https://docs.codegen.com/introduction/getting-started)
+- [Contributing](CONTRIBUTING.md)
 
 
 ## Why Codegen?

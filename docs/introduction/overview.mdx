@@ -9,24 +9,16 @@ iconType: "solid"
 
 It provides a scriptable interface to a powerful, multi-lingual language server built on top of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
-export const intoSnippet = `# grabs codebase content
+export const intoSnippet = `# Codegen builds a complete graph connecting
+#  functions, classes, imports and their relationships
+from codegen import Codebase
 
-file = codebase.files[0] # or .get_file("test.py")
-function = codebase.functions[0] # or .get_symbol("my_func")
-
-# print logs
-
-print(f'# of files: {len(codebase.files)}')
-print(f'# of functions: {len(codebase.functions)}')
-
-# make edits
-
-file.edit('🌈' + file.content) # edit contents
-function.rename('new_name') # rename
-function.set_docstring('new docstring') # set docstring
-
-# ... etc.
-
+# Work with code without dealing with syntax trees or parsing
+for function in codebase.functions:
+    # Comprehensive static analysis for references, dependencies, etc.
+    if not function.usages:
+        # Auto-handles references and imports to maintain correctness
+        function.remove()
 `
 
 <iframe
@@ -36,13 +28,19 @@ function.set_docstring('new docstring') # set docstring
   src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
     intoSnippet
   )}`}
-  className="rounded-md "
-
-> </iframe>
+  style={{
+    backgroundColor: "#15141b",
+  }}
+  className="rounded-xl"
+></iframe>
 
 ## Installation
 
 ```bash
+# Install CLI
+uv tool install codegen
+
+# Install inside existing project
 pip install codegen
 ```
 
@@ -84,7 +82,7 @@ Codegen was engineered backwards from real-world refactors we performed for ente
 
 As AI becomes increasingly sophisticated, we're seeing a fascinating shift: AI agents aren't bottlenecked by their ability to understand code or generate solutions. Instead, they're limited by their ability to efficiently manipulate codebases. The challenge isn't the "brain" - it's the "hands."
 
-We built Codegen with a key insight: future AI agents will need to ["act via code,"](https://voyager.minedojo.org/) building their own sophisticated tools for code manipulation. Rather than generating diffs or making direct text changes, these agents will:
+We built Codegen with a key insight: future AI agents will need to ["act via code,"](/blog/act-via-code) building their own sophisticated tools for code manipulation. Rather than generating diffs or making direct text changes, these agents will:
 
 1. Express transformations as composable programs
 2. Build higher-level tools by combining primitive operations

@@ -7,6 +7,18 @@ iconType: "solid"
 
 Codegen is designed to be used with AI assistants. This document describes how to use Codegen with common AI tools, including Copilot, Cursor, Devin and more.
 
+## System Prompt
+
+Codegen provides a `.txt` file that you can drag-and-drop into any chat assistant. This is roughly 60k tokens and will enable chat assistants like, ChatGPT, Claude 3.5 etc. to build effectively with Codegen.
+
+import {
+  CODEGEN_SYSTEM_PROMPT
+} from "/snippets/links.mdx";
+
+<Card title="Download System Prompt" href={CODEGEN_SYSTEM_PROMPT} icon="download">
+  Download System Prompt
+</Card>
+
 ## Codegen Playground
 
 The [Codegen Playground](https://codegen.sh/playground) includes an integrated chat assistant purpose-built for generating Codegen programs.
@@ -84,39 +96,3 @@ This will ensure that the IDE's native chat model is aware of the APIs and commo
 ## Devin, OpenHands and Semi-autonomous Code Agents
 
 <Warning>Coming soon!</Warning>
-
-## Coming Soon
-
-<CardGroup cols={2}>
-  <Card title="Default System Prompts" icon="download">
-    Pre-built prompts for common transformation scenarios, ready to use with any
-    AI.
-  </Card>
-  <Card title="Upgrade Paths" icon="arrow-up-right-dots">
-    Specialized prompts for specific upgrade paths (React, TypeScript, etc.).
-  </Card>
-</CardGroup>
-
-## Best Practices
-
-1. **Use Generated Prompts**: Let Codegen generate system prompts instead of writing them manually. They include important context about your codebase.
-
-2. **Be Specific**: When creating a codemod, provide detailed descriptions to help the AI understand your goals:
-
-   ```bash
-   codegen create migrate-api --description "Update API calls to use the new v2 endpoints, handling pagination and error responses"
-   ```
-
-3. **Leverage Context**: In Cursor, always @mention your codemod to give the AI full context about your transformation.
-
-4. **Iterative Refinement**: Use AI suggestions as a starting point, then refine based on your specific needs.
-
-<Note>
-  The system prompts are designed to be human-readable. Review them to
-  understand what context is being provided to the AI.
-</Note>
-
-<Tip>
-  You can also use the generated system prompts with other AI tools - just copy
-  the prompt content and paste it into your preferred AI interface.
-</Tip>

@@ -36,6 +36,8 @@ class DecoratedFunction:
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             return func(*args, **kwargs)
 
+        # Set the codegen name on the wrapper function
+        wrapper.__codegen_name__ = self.name
         self.func = wrapper
         return wrapper
 
