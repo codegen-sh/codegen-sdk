@@ -738,7 +738,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.git_cli.head.commit
 
     @stopwatch
-    def reset(self) -> None:
+    def reset(self, git_reset: bool = False) -> None:
         """Resets the codebase by:
         - Discarding any staged/unstaged changes
         - Resetting stop codemod limits: (max seconds, max transactions, max AI requests)
@@ -751,7 +751,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         - .ipynb files (Jupyter notebooks, where you are likely developing)
         """
         logger.info("Resetting codebase ...")
-        self._op.discard_changes()  # Discard any changes made to the raw file state
+        if git_reset:
+            self._op.discard_changes()  # Discard any changes made to the raw file state
         self._num_ai_requests = 0
         self.reset_logs()
         self.G.undo_applied_diffs()
@@ -818,12 +819,14 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.get_diffs(base)
 
     @noapidoc
-    def get_diff(self, base: str | None = None) -> str:
+    def get_diff(self, base: str | None = None, stage_files: bool = False) -> str:
         """Produce a single git diff for all files."""
-        self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
+        if stage_files:
+            self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
         if base is None:
-            return self._op.git_cli.git.diff(patch=True, full_index=True, staged=True)
-        return self._op.git_cli.git.diff(base, full_index=True)
+            diff = self._op.git_cli.git.diff("HEAD", patch=True, full_index=True)
+            return diff
+        return self._op.git_cli.git.diff(base, patch=True, full_index=True)
 
     @noapidoc
     def clean_repo(self):
