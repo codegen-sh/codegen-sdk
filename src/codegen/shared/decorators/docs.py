@@ -83,6 +83,7 @@ def py_noapidoc(obj: T) -> T:
         py_no_apidoc_signatures.add(doc_obj.signature())
     return obj
 
+
 def get_documented_object(obj) -> DocumentedObject | None:
     module = inspect.getmodule(obj)
     module_name = module.__name__ if module else ""
