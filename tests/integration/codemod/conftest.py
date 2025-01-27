@@ -156,8 +156,9 @@ def _codebase(repo: Repo, op: RepoOperator, request) -> YieldFixture[Codebase]:
         projects = [ProjectConfig(repo_operator=op, programming_language=repo.language, subdirectories=repo.subdirectories, base_path=repo.base_path)]
         Codebases[repo.name] = Codebase(projects=projects, config=CodebaseConfig(feature_flags=feature_flags))
     codebase = Codebases[repo.name]
-    codebase.reset()
+    codebase.reset(git_reset=True)
     yield codebase
+    codebase.reset(git_reset=True)
 
 
 @pytest.fixture

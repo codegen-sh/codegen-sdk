@@ -76,7 +76,7 @@ def compare_codebase_diff(
     diff = codebase.get_diff() + "\n"
     if not snapshot._snapshot_update:
         modified = gather_modified_files(codebase)
-        codebase.reset()
+        codebase.reset(git_reset=True)
         logger.info("Converting diff file to expected repository")
         if convert_diff_to_repo(expected_dir, expected_diff, codebase):
             return compare_codebase_with_snapshot(codebase, expected_dir, diff_path, snapshot, modified)
