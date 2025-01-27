@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
+from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.import_resolution import Import, WildcardImport
 from codegen.sdk.core.interfaces.chainable import Chainable
@@ -11,7 +12,7 @@ from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
-from codegen.shared.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
@@ -32,6 +33,8 @@ class ForLoopStatement(BlockStatement[Parent], HasBlock, ABC, Generic[Parent]):
     item: Expression[Self] | None = None
     iterable: Expression[Self]
 
+    @noapidoc
+    @reader
     def resolve_name(self, name: str, start_byte: int | None = None) -> Symbol | Import | WildcardImport | None:
         if self.item and isinstance(self.iterable, Chainable):
             if start_byte is None or start_byte > self.iterable.end_byte:

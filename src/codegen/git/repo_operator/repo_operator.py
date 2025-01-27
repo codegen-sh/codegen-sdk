@@ -86,7 +86,7 @@ class RepoOperator(ABC):
 
     @property
     def default_branch(self) -> str:
-        return self._default_branch
+        return self._default_branch or self.git_cli.active_branch.name
 
     @abstractmethod
     def codeowners_parser(self) -> CodeOwnersParser | None: ...

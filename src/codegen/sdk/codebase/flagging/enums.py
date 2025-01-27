@@ -23,6 +23,14 @@ class MessageType(IntFlag):
 
 @apidoc
 class FlagKwargs(TypedDict, total=False):
+    """Kwargs for the flag_instance method of the Codebase class.
+
+    Attributes:
+        message: The message to be displayed in the diff preview or posted as a comment on the PR.
+        message_type: Where the message will be sent (CODEGEN, GITHUB, SLACK)
+        message_recipient: The recipient of the message.
+    """
+
     message: ReadOnly[str | None]
     message_type: ReadOnly[MessageType]
     message_recipient: ReadOnly[str | None]

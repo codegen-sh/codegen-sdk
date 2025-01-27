@@ -24,7 +24,7 @@ class Unpack(Unwrappable[Parent], HasValue, IWrapper, Generic[Parent]):
         super().__init__(ts_node, file_node_id, G, parent=parent)
         self._value_node = self.children[0]
 
-    def unwrap(self, node: Expression | None = None):
+    def unwrap(self, node: Expression | None = None) -> None:
         """Unwraps a node's content into its parent node.
 
         Unwraps the content of a node by removing its wrapping syntax and merging its content with its parent node.
