@@ -455,6 +455,7 @@ workflows:
   pr_checks:
     jobs:
       - unit-tests
+      - integration-tests
       - hold-codemod-tests:
           type: approval
           filters:
