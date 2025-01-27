@@ -220,9 +220,8 @@ jobs:
         default_tests: "tests/unit"
         collect_args: --timeout 50
   integration-tests:
-    parallelism: 3
     executor: default_image
-    resource_class: "2xlarge"
+    resource_class: "large"
     steps:
       - setup-uv
       - run:
