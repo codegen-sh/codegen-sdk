@@ -5,12 +5,15 @@ icon: "folder-tree"
 iconType: "solid"
 ---
 
-Codegen provides two primary abstractions for working with your codebase's file structure:
+Codegen provides three primary abstractions for working with your codebase's file structure:
 
-- [File](/api-reference/core/File)
-- [Directory](/api-reference/core/Directory)
+- [File](/api-reference/core/File) - Represents a file in the codebase (e.g. README.md, package.json, etc.)
+- [SourceFile](/api-reference/core/SourceFile) - Represents a source code file (e.g. Python, TypeScript, etc.)
+- [Directory](/api-reference/core/Directory) - Represents a directory in the codebase
 
-Both of these expose a rich API for accessing and manipulating their contents.
+<Info>
+  [SourceFile](/api-reference/core/SourceFile) is a subclass of [File](/api-reference/core/File) that provides additional functionality for source code files.
+</Info>
 
 This guide explains how to effectively use these classes to manage your codebase.
 
@@ -31,7 +34,12 @@ for file in codebase.files:
 
 # Check if a file exists
 exists = codebase.has_file("path/to/file.py")
+
 ```
+<Info>
+  [codebase.get_file(`path`)](/api-reference/core/Codebase#get_file) returns a [SourceFile](/api-reference/core/SourceFile) if the path points to a source file and a [File](/api-reference/core/File) otherwise.
+</Info>
+
 
 These APIs are similar for [Directory](/api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
 
@@ -98,13 +106,13 @@ parent = dir.parent # Parent directory
 
 ## Accessing Code
 
-Files and Directories provide several APIs for accessing and iterating over their code.
+[SourceFiles](/api-reference/core/SourceFile) and [Directories](/api-reference/core/Directory) provide several APIs for accessing and iterating over their code.
 
 See, for example:
 
-- `.functions` ([File](/api-reference/core/File#functions) / [Directory](/api-reference/core/Directory#functions)) - All [Functions](../api-reference/core/Function) in the file/directory
-- `.classes` ([File](/api-reference/core/File#classes) / [Directory](/api-reference/core/Directory#classes)) - All [Classes](../api-reference/core/Class) in the file/directory
-- `.imports` ([File](/api-reference/core/File#imports) / [Directory](/api-reference/core/Directory#imports)) - All [Imports](../api-reference/core/Import) in the file/directory
+- `.functions` ([SourceFile](/api-reference/core/SourceFile#functions) / [Directory](/api-reference/core/Directory#functions)) - All [Functions](../api-reference/core/Function) in the file/directory
+- `.classes` ([SourceFile](/api-reference/core/SourceFile#classes) / [Directory](/api-reference/core/Directory#classes)) - All [Classes](../api-reference/core/Class) in the file/directory
+- `.imports` ([SourceFile](/api-reference/core/SourceFile#imports) / [Directory](/api-reference/core/Directory#imports)) - All [Imports](../api-reference/core/Import) in the file/directory
 
 
 ```python
@@ -153,7 +161,7 @@ Files themselves are [`Editable`](../api-reference/core/Editable.mdx) objects, j
 This means they expose many useful operations, including:
 
 - [`File.search`](../api-reference/core/File#search) - Search for all functions named "main"
-- [`File.edit`](../api-reference/core/Editable#edit) - Edit the file
+- [`File.edit`](../api-reference/core/File#edit) - Edit the file
 - [`File.replace`](../api-reference/core/File#replace) - Replace all instances of a string with another string
 - [`File.insert_before`](../api-reference/core/File#insert-before) - Insert text before a specific string
 - [`File.insert_after`](../api-reference/core/File#insert-after) - Insert text after a specific string
