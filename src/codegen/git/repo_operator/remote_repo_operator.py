@@ -42,8 +42,9 @@ class RemoteRepoOperator(RepoOperator):
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
         github_type: GithubType = GithubType.GithubEnterprise,
+        bot_commit: bool = True,
     ) -> None:
-        super().__init__(repo_config=repo_config, base_dir=base_dir)
+        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
         self.github_type = github_type
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
