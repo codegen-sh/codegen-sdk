@@ -354,6 +354,18 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
     @noapidoc
     @reader
     def resolve_name(self, name: str, start_byte: int | None = None) -> Symbol | Import | WildcardImport | None:
+        """Resolves the name of a symbol in the function.
+
+        This method resolves the name of a symbol in the function. If the name is "this", it returns the parent class.
+        Otherwise, it calls the superclass method to resolve the name.
+
+        Args:
+            name (str): The name of the symbol to resolve.
+            start_byte (int | None): The start byte of the symbol to resolve.
+
+        Returns:
+            Symbol | Import | WildcardImport | None: The resolved symbol, import, or wildcard import, or None if not found.
+        """
         if self.is_method:
             if name == "this":
                 return self.parent_class

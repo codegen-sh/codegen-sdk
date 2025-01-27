@@ -7,6 +7,7 @@ from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.dataclasses.usage import Usage, UsageType
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
+from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import EdgeType
 from codegen.shared.decorators.docs import apidoc
 
@@ -73,7 +74,7 @@ class Usable(Importable[Parent], Generic[Parent]):
                     usages_to_return.append(usage)
         return sorted(dict.fromkeys(usages_to_return), key=lambda x: x.match.ts_node.start_byte if x.match else x.usage_symbol.ts_node.start_byte, reverse=True)
 
-    def rename(self, new_name: str, priority: int = 0):
+    def rename(self, new_name: str, priority: int = 0) -> tuple[NodeId, NodeId]:
         """Renames a symbol and updates all its references in the codebase.
 
         Args:

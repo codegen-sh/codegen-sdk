@@ -17,7 +17,7 @@ class Unwrappable(Expression[Parent], Generic[Parent]):
     """
 
     @abstractmethod
-    def unwrap(self, node: Expression | None = None):
+    def unwrap(self, node: Expression | None = None) -> None:
         """Unwrap this expression, removing parenthesis and other syntax elements while maintaining the function of the code.
 
         Args:
