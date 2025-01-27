@@ -75,6 +75,7 @@
 				"tutorials/modularity",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
+				"tutorials/training-data",
 				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",

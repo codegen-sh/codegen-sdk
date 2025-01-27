@@ -2,6 +2,7 @@ import shutil
 from contextlib import nullcontext
 from pathlib import Path
 
+import requests
 import rich
 import toml
 from rich.status import Status
@@ -78,6 +79,7 @@ def initialize_codegen(
     CONFIG_PATH = CODEGEN_FOLDER / "config.toml"
     JUPYTER_DIR = CODEGEN_FOLDER / "jupyter"
     CODEMODS_DIR = CODEGEN_FOLDER / "codemods"
+    SYSTEM_PROMPT_PATH = CODEGEN_FOLDER / "codegen-system-prompt.txt"
 
     # If status is a string, create a new spinner
     context = create_spinner(f"   {status} folders...") if isinstance(status, str) else nullcontext()
@@ -90,6 +92,16 @@ def initialize_codegen(
         PROMPTS_FOLDER.mkdir(parents=True, exist_ok=True)
         JUPYTER_DIR.mkdir(parents=True, exist_ok=True)
         CODEMODS_DIR.mkdir(parents=True, exist_ok=True)
+
+        # Download system prompt
+        try:
+            from codegen.cli.api.endpoints import CODEGEN_SYSTEM_PROMPT_URL
+
+            response = requests.get(CODEGEN_SYSTEM_PROMPT_URL)
+            response.raise_for_status()
+            SYSTEM_PROMPT_PATH.write_text(response.text)
+        except Exception as e:
+            rich.print(f"[yellow]Warning: Could not download system prompt: {e}[/yellow]")
 
         if not repo:
             rich.print("No git repository found. Please run this command in a git repository.")
@@ -152,6 +164,7 @@ def modify_gitignore(codegen_folder: Path):
         "examples/",
         "prompts/",
         "jupyter/",
+        "codegen-system-prompt.txt",  # Add system prompt to gitignore
         "",
         "# Python cache files",
         "__pycache__/",
