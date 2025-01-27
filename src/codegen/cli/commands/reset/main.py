@@ -21,12 +21,12 @@ def reset_command() -> None:
         codegen_changes = {}
         for filepath, status in repo.status().items():
             if filepath.startswith(str(CODEGEN_DIR) + "/"):
-                if status & (pygit2.GIT_STATUS_INDEX_NEW | pygit2.GIT_STATUS_INDEX_MODIFIED):
+                if status & (pygit2.GIT_STATUS_IGNORED | pygit2.GIT_STATUS_CURRENT):
                     with open(os.path.join(repo.workdir, filepath), "rb") as f:
                         codegen_changes[filepath] = f.read()
 
         # Reset everything
-        repo.reset(repo.head.target, pygit2.GIT_CHECKOUT_FORCE)
+        repo.reset(repo.head.target, pygit2.GIT_CHECKOUT_NONE)
 
         # Restore .codegen files
         for filepath, content in codegen_changes.items():
@@ -37,7 +37,7 @@ def reset_command() -> None:
 
         # Remove untracked files except .codegen
         for filepath, status in repo.status().items():
-            if not filepath.startswith(str(CODEGEN_DIR) + "/") and status & pygit2.GIT_STATUS_INDEX_NEW:
+            if not filepath.startswith(str(CODEGEN_DIR) + "/") and status & pygit2.GIT_STATUS_IGNORED:
                 file_path = Path(repo.workdir) / filepath
                 if file_path.is_file():
                     file_path.unlink()
