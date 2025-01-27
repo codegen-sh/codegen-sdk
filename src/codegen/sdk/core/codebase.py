@@ -74,7 +74,7 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
-from codegen.sdk.utils import determine_project_language
+from codegen.sdk.utils import determine_project_language, split_git_path
 from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
@@ -148,11 +148,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         # Initialize project with repo_path if projects is None
         if repo_path is not None:
+            # Split repo_path into (git_root, base_path)
             repo_path = os.path.abspath(repo_path)
+            git_root, base_path = split_git_path(repo_path)
+            # Create repo_config
             repo_config = BaseRepoConfig()
+            # Create main project
             main_project = ProjectConfig(
-                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=repo_path),
+                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=git_root),
                 programming_language=determine_project_language(repo_path),
+                base_path=base_path,
             )
             projects = [main_project]
         else:
