@@ -1,6 +1,6 @@
 # Codegen
 
-![PyPI](https://img.shields.io/pypi/v/codegen?color=blue) [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple)](https://docs.codegen.com) [![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com) [![Follow on X](https://img.shields.io/twitter/follow/codegen)](https://x.com/codegen) 
+![PyPI](https://img.shields.io/pypi/v/codegen?color=blue) [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple)](https://docs.codegen.com) [![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com) [![Follow on X](https://img.shields.io/twitter/follow/codegen)](https://x.com/codegen)
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
