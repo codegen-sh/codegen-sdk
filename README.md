@@ -24,10 +24,34 @@ for function in codebase.functions:
 
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
-## Installation
+## Installation and Usage
 **This library requires Python 3.12 – 3.13.**
 ```
+# Install inside existing project
 uv pip install codegen
+
+# Install global CLI
+uv tool install codegen
+
+# Create a codemod for a given repo
+cd path/to/repo
+codegen init
+codegen create test-function
+
+# Run said codemod
+codegen run test-function
+
+# Create an isolated venv with codegen => open jupyter
+codegen notebook
+```
+
+## Usage
+
+See [https://docs.codegen.com/introduction/getting-started] for a full tutorial.
+
+```
+from codegen import Codebase
+
 ```
 
 ## Resources

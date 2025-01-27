@@ -5,13 +5,13 @@ icon: "shapes"
 iconType: "solid"
 ---
 
-The [`Symbol`](/api-reference/core/Symbol) is the primary way developers interact with code in Codegen. It maps to how developers think about code - as functions, classes, variables, and other named entities.
+The [Symbol](/api-reference/core/Symbol) is the primary way developers interact with code in Codegen. It maps to how developers think about code - as functions, classes, variables, and other named entities.
 
-Both the [`Function`](/api-reference/core/Function) and [`Class`](/api-reference/core/Class) symbols are subclasses of the [`Symbol`](/api-reference/core/Symbol) class.
+Both the [Function](/api-reference/core/Function) and [Class](/api-reference/core/Class) symbols are subclasses of the [Symbol](/api-reference/core/Symbol) class.
 
 ## Accessing Symbols
 
-The [`Codebase`](/api-reference/core/Codebase) class provides getters and iterators for functions, classes and symbols:
+The [Codebase](/api-reference/core/Codebase) class provides getters and iterators for functions, classes and symbols:
 
 ```python
 # Core symbol types
@@ -32,17 +32,17 @@ for symbol in codebase.functions + codebase.classes:
 
 All symbols share common APIs for manipulation:
 
-- The [`Editable`](/api-reference/core/Editable) API
+- The [Editable](/api-reference/core/Editable) API
 - Metadata
-  - [`symbol.name`](/api-reference/core/Symbol#name)
-  - [`symbol.source`](/api-reference/core/Symbol#source)
-  - [`symbol.docstring`](/api-reference/core/Symbol#docstring)
+  - [symbol.name](/api-reference/core/Symbol#name)
+  - [symbol.source](/api-reference/core/Symbol#source)
+  - [symbol.docstring](/api-reference/core/Symbol#docstring)
 - Edit operations
-  - [`symbol.set_docstring`](/api-reference/core/Symbol#add_comment)
-  - [`symbol.move_to_file`](/api-reference/core/Symbol#move-to-file) (see [Moving Symbols](/building-with-codegen/moving-symbols))
+  - [symbol.set_docstring](/api-reference/core/Symbol#add_comment)
+  - [symbol.move_to_file](/api-reference/core/Symbol#move-to-file) (see [Moving Symbols](/building-with-codegen/moving-symbols))
 - Graph relations (See [Usages and Dependencies](/building-with-codegen/dependencies-and-usages))
-  - [`symbol.usages`](/api-reference/core/Symbol#usages)
-  - [`symbol.dependencies`](/api-reference/core/Symbol#dependencies)
+  - [symbol.usages](/api-reference/core/Symbol#usages)
+  - [symbol.dependencies](/api-reference/core/Symbol#dependencies)
 
 ## Name operations
 
