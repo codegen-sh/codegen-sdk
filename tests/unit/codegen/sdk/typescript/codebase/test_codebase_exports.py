@@ -30,11 +30,7 @@ def test_codebase_reexports(tmpdir) -> None:
     export { x } from './file1';
     export { y as z } from './file1';
     """
-    with get_codebase_session(
-        tmpdir=tmpdir,
-        files={"file1.ts": content1, "file2.ts": content2},
-        programming_language=ProgrammingLanguage.TYPESCRIPT
-    ) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, files={"file1.ts": content1, "file2.ts": content2}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
         assert len(codebase.exports) == 4
         export_names = {exp.name for exp in codebase.exports}
         assert export_names == {"x", "y", "z"}

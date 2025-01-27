@@ -10,16 +10,15 @@ if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class
     from codegen.sdk.core.file import File
     from codegen.sdk.core.function import Function
-    from codegen.sdk.core.import_resolution import ImportStatement
+    from codegen.sdk.core.import_resolution import Import, ImportStatement
     from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.typescript.class_definition import TSClass
     from codegen.sdk.typescript.export import TSExport
-    from codegen.sdk.core.import_resolution import Import
     from codegen.sdk.typescript.file import TSFile
     from codegen.sdk.typescript.function import TSFunction
     from codegen.sdk.typescript.import_resolution import TSImport
     from codegen.sdk.typescript.statements.import_statement import TSImportStatement
     from codegen.sdk.typescript.symbol import TSSymbol
-    from codegen.sdk.typescript.class_definition import TSClass
 
 import logging
 
@@ -35,6 +34,7 @@ TFunction = TypeVar("TFunction", bound="Function")
 TImport = TypeVar("TImport", bound="Import")
 
 TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+
 
 @apidoc
 class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
