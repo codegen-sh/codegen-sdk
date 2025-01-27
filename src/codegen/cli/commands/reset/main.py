@@ -1,28 +1,51 @@
-import shutil
+import os
 from pathlib import Path
 
 import click
+import pygit2
+
+from codegen.cli.git.repo import get_git_repo
 
 
-@click.command()
-@click.argument("path", type=click.Path(exists=True), default=".")
-def reset_command(path: str | Path) -> None:
-    """Reset a directory by removing all files and folders except .codegen"""
-    path = Path(path)
+@click.command(name="reset")
+def reset_command() -> None:
+    """Reset git repository while preserving all files in .codegen directory"""
+    repo = get_git_repo()
+    if not repo:
+        click.echo("Not a git repository", err=True)
+        return
 
-    for item in path.iterdir():
-        if item.name == ".codegen":
-            continue
+    try:
+        # Get current state of .codegen files
+        codegen_changes = {}
+        for filepath, status in repo.status().items():
+            if filepath.startswith(".codegen/"):
+                if status & (pygit2.GIT_STATUS_WT_NEW | pygit2.GIT_STATUS_WT_MODIFIED):
+                    with open(os.path.join(repo.workdir, filepath), "rb") as f:
+                        codegen_changes[filepath] = f.read()
 
-        try:
-            if item.is_file():
-                item.unlink()
-            elif item.is_dir():
-                shutil.rmtree(item)
-        except Exception as e:
-            click.echo(f"Error removing {item}: {e}", err=True)
+        # Reset everything
+        repo.reset(repo.head.target, pygit2.GIT_RESET_HARD)
 
-    click.echo(f"Reset complete. All files except .codegen have been removed from {path}")
+        # Restore .codegen files
+        for filepath, content in codegen_changes.items():
+            file_path = Path(repo.workdir) / filepath
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(file_path, "wb") as f:
+                f.write(content)
+
+        # Remove untracked files except .codegen
+        for filepath, status in repo.status().items():
+            if not filepath.startswith(".codegen/") and status & pygit2.GIT_STATUS_WT_NEW:
+                file_path = Path(repo.workdir) / filepath
+                if file_path.is_file():
+                    file_path.unlink()
+                elif file_path.is_dir():
+                    file_path.rmdir()
+
+        click.echo("Reset complete. Repository has been restored to HEAD (preserving .codegen) and untracked files have been removed (except .codegen)")
+    except Exception as e:
+        click.echo(f"Error: {e}", err=True)
 
 
 if __name__ == "__main__":
