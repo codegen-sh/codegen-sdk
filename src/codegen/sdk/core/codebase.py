@@ -39,6 +39,7 @@ from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.directory import Directory
+from codegen.sdk.core.export import Export
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.file import File, SourceFile
 from codegen.sdk.core.function import Function
@@ -59,19 +60,22 @@ from codegen.sdk.python.detached_symbols.parameter import PyParameter
 from codegen.sdk.python.file import PyFile
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
+from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
+from codegen.sdk.typescript.export import TSExport
 from codegen.sdk.typescript.file import TSFile
 from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.import_resolution import TSImport
 from codegen.sdk.typescript.interface import TSInterface
+from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import determine_project_language
-from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
@@ -91,6 +95,11 @@ TInterface = TypeVar("TInterface", bound="Interface")
 TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
 TParameter = TypeVar("TParameter", bound="Parameter")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
+TExport = TypeVar("TExport", bound="Export")
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+PyGlobalVar = TypeVar("PyGlobalVar", bound="Assignment")
+TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
+PyDirectory = Directory[PyFile, PySymbol, PyImportStatement, PyGlobalVar, PyClass, PyFunction, PyImport]
 
 
 @apidoc
@@ -262,6 +271,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+
+    @property
+    @py_noapidoc
+    def exports(self: "TSCodebaseType") -> list[TSExport]:
+        """Returns a list of all Export nodes in the codebase.
+
+        Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
+        including exports from both internal modules and external packages. This is a TypeScript-only codebase property.
+
+        Args:
+            None
+
+        Returns:
+            list[TSExport]: A list of Export nodes representing all exports in the codebase.
+            TExport can only be a  TSExport for TypeScript codebases.
+
+        """
+        if self.language == ProgrammingLanguage.PYTHON:
+            raise NotImplementedError("Exports are not supported for Python codebases since Python does not have an export mechanism.")
+
+        return self.G.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:
@@ -1145,5 +1175,5 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
-PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
-TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
+PyCodebaseType = Codebase[PyFile, PyDirectory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
+TSCodebaseType = Codebase[TSFile, TSDirectory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
