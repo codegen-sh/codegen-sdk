@@ -142,7 +142,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             repo_path = os.path.abspath(repo_path)
             repo_config = BaseRepoConfig()
             main_project = ProjectConfig(
-                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=repo_path, default_branch="main"),
+                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=repo_path),
                 programming_language=determine_project_language(repo_path),
             )
             projects = [main_project]
