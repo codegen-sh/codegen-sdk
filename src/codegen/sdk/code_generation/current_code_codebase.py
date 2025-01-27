@@ -36,7 +36,7 @@ def get_current_code_codebase(config: CodebaseConfig = DefaultConfig, subdirecto
     """Returns a Codebase for the code that is *currently running* (i.e. the Codegen repo)"""
     codegen_repo_path = get_graphsitter_repo_path()
     logger.info(f"Creating codebase from repo at: {codegen_repo_path} with base_path {get_codegen_codebase_base_path()}")
-    op = LocalRepoOperator(repo_path=codegen_repo_path, default_branch="develop", bot_commit=False, repo_config=BaseRepoConfig(respect_gitignore=False))
+    op = LocalRepoOperator(repo_path=codegen_repo_path, bot_commit=False, repo_config=BaseRepoConfig(respect_gitignore=False))
     config = config.model_copy(update={"base_path": get_codegen_codebase_base_path()})
     projects = [ProjectConfig(repo_operator=op, programming_language=ProgrammingLanguage.PYTHON, subdirectories=subdirectories, base_path=get_codegen_codebase_base_path())]
     codebase = Codebase(projects=projects, config=config)
