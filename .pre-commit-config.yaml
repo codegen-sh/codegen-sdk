@@ -86,6 +86,10 @@ repos:
     hooks:
       - id: uv-lock
         entry: bash -c "uv lock --frozen"
+
+      - id: uv-sync
+        args: ["--locked", "--all-packages"]
+
   - repo: https://github.com/zahorniak/pre-commit-circleci.git
     rev: v1.1.0
     hooks:
