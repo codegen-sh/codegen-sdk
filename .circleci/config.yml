@@ -219,6 +219,15 @@ jobs:
     - run_ats:
         default_tests: "tests/unit"
         collect_args: --timeout 50
+  integration-tests:
+    executor: default_image
+    resource_class: "large"
+    steps:
+      - setup-uv
+      - run:
+          command: |
+            uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto tests/integration/codegen
+      - upload-tests
   doctests:
     executor: default_image
     steps:
@@ -445,6 +454,7 @@ workflows:
   pr_checks:
     jobs:
       - unit-tests
+      - integration-tests
       - hold-codemod-tests:
           type: approval
           filters:
