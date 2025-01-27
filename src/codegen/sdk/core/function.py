@@ -281,7 +281,7 @@ class Function(
             match.rename(new_name)
 
     @writer
-    def insert_statements(self, lines: str, index: int = 0):
+    def insert_statements(self, lines: str, index: int = 0) -> None:
         """Inserts lines of code into the function body at the specified index.
 
         Adds the provided lines as statements within the function's body at the given position. If index is 0, the lines will be prepended at the start of the function body.
@@ -289,6 +289,9 @@ class Function(
         Args:
             lines (str): The code lines to insert into the function body.
             index (int, optional): The position in the function body where the lines should be inserted. Defaults to 0.
+
+        Returns:
+            None
 
         Raises:
             ValueError: If the provided index is out of range for the function's statements.

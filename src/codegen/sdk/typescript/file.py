@@ -398,7 +398,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
     ####################################################################################################################
 
     @mover
-    def update_filepath(self, new_filepath: str):
+    def update_filepath(self, new_filepath: str) -> None:
         """Updates the file path of the current file and all associated imports.
 
         Renames the current file to a new file path and updates all imports that reference this file to point to the new location.

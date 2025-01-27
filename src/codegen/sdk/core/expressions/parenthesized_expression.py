@@ -44,7 +44,7 @@ class ParenthesizedExpression(Unwrappable[Parent], HasValue, IWrapper, Generic[P
 
     @writer
     @override
-    def unwrap(self, node: Expression | None = None):
+    def unwrap(self, node: Expression | None = None) -> None:
         """Removes the parentheses from a parenthesized expression node.
 
         Modifies the AST by removing the parentheses from a ParenthesizedExpression node, leaving only the inner expression.

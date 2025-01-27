@@ -839,7 +839,7 @@ class SourceFile(
     def get_import_module_name_for_file(cls, filepath: str, G: CodebaseGraph) -> str: ...
 
     @abstractmethod
-    def remove_unused_exports(self):
+    def remove_unused_exports(self) -> None:
         """Removes unused exports from the file.
 
         Removes all exports that have no usages by any other files in the codebase. This helps reduce unnecessary exports and maintain a cleaner API surface.
@@ -883,7 +883,7 @@ class SourceFile(
         alias: str | None = None,
         import_type: ImportType = ImportType.UNKNOWN,
         is_type_import: bool = False,
-    ):
+    ) -> Import | None:
         """Adds an import to a file for a given symbol.
 
         This method adds an import statement to the file for a specified symbol. If an import for the
@@ -896,7 +896,7 @@ class SourceFile(
             is_type_import (bool): Whether this is a type-only import. Defaults to False.
 
         Returns:
-            Import: The created or existing import for the symbol.
+            Import | None: The existing import for the symbol or None if it was added.
         """
         imports = self.imports
         match = next((x for x in imports if x.imported_symbol == symbol), None)
@@ -954,7 +954,7 @@ class SourceFile(
             self.insert_after("\n" + source)
 
     @writer
-    def add_symbol(self, symbol: Symbol, should_export: bool = True):
+    def add_symbol(self, symbol: Symbol, should_export: bool = True) -> Symbol | None:
         """Adds `symbol` to the file.
 
         Adds the given symbol to the file, optionally exporting it if applicable. If the symbol already exists in the file, returns the existing symbol.
@@ -964,7 +964,7 @@ class SourceFile(
             should_export (bool, optional): Whether to export the symbol. Defaults to True.
 
         Returns:
-            Symbol: The added symbol, or the existing symbol if it already exists in the file.
+            Symbol | None: The existing symbol if it already exists in the file or None if it was added.
 
         Raises:
             ValueError: If the symbol type cannot be added to this file type.
