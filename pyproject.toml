@@ -67,7 +67,6 @@ classifiers = [
 
 [project.scripts]
 codegen = "codegen.cli.cli:main"
-gs = "codegen.gscli.main:main"
 
 [project.optional-dependencies]
 types = [
