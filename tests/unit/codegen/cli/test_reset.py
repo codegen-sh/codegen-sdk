@@ -28,7 +28,13 @@ def committed_state() -> dict[str, str]:
     return {
         "README.md": "Base README",
         "src/hello.py": "def hello():\n    print('Original hello')",
-        ".codegen/codemods/base.py": "def base():\n    pass",
+        ".codegen/codemods/base.py": """
+def base():
+    pass
+
+class MyClass:
+    pass
+""",
     }
 
 
