@@ -1,0 +1,187 @@
+---
+title: "Using Codegen in Your IDE"
+sidebarTitle: "IDE Usage"
+icon: "window"
+iconType: "solid"
+---
+
+Get up and running with Codegen programs in IDEs like VSCode, Cursor and PyCharm.
+
+<Tip>Make sure to [install and initialize](/introduction/installation) Codegen with `codegen init`</Tip>
+
+## Codegen Initialization
+
+`cd` into your project's directory and initialize codegen with [codegen init](/cli/init).
+
+This will create the following directory structure:
+
+```bash
+.codegen/
+├── .venv/            # Python virtual environment (gitignored)
+├── config.toml       # Project configuration
+├── codemods/         # Your codemod implementations
+├── jupyter/          # Jupyter notebooks for exploration
+└── codegen-system-prompt.txt  # AI system prompt
+```
+<Note>This includes a codegen-specific python 3.13 `.venv`. Learn more about the [.codegen folder here](/building-with-codegen/dot-codegen) </Note>
+
+<Tip>
+This includes `codegen-system-prompt.txt`, a text file that will make IDE chat assistants fluent in Codegen. [Learn more here](/introduction/work-with-ai)
+</Tip>
+
+
+### Creating a New Codemod
+
+Generate the boilerplate for a new code manipulation program using [codegen create](/cli/create):
+
+```bash
+codegen create organize-types \
+  -d "Move all TypeScript types to \
+      into a centralized types.ts file"
+```
+
+<Tip>
+    Passing in `-d --description` will get an LLM expert to compose an initial version for you. This requires a Github account registered on [codegen.sh](https://codegen.sh)
+</Tip>
+
+This will:
+1. Create a new codemod in `.codegen/codemods/organize_types/`
+2. Generate a custom `system-prompt.txt` based on your task
+3. Set up the basic structure for your program
+
+<Note>
+The generated codemod includes type hints and docstrings, making it easy to get IDE autocompletion and documentation.
+</Note>
+
+### Running Codemods
+
+Once you've written your codemod, you can run it directly from the terminal:
+
+```bash
+codegen run organize-types
+```
+
+This will apply all changes locally to your filesystem.
+
+<Tip>You can also run the program directly via `.codegen/.venv/bin/python path/to/codemod.py`</Tip>
+
+### Viewing Changes
+
+We recommend viewing changes in your IDE's native diff editor.
+
+### Resetting Changes and Iteration
+
+If any changes are incorrect, run the [codegen reset](/cli/reset) command to eliminate all unstaged changes, excluding the `.codegen` directory
+
+```
+codegen reset
+```
+
+
+## IDE Features
+
+### Debugging
+
+### Autocompletion and Type Hints
+
+Codegen is built with IDE integration in mind:
+- Full type hints for all APIs
+- Detailed docstrings with examples
+- Rich autocompletion support
+
+<Tip>
+Make sure your IDE's Python environment includes the `codegen` package for the best experience.
+</Tip>
+
+### Debugging
+
+You can debug your codemods like any other Python code:
+
+1. Set breakpoints in your codemod implementation
+2. Use the IDE's debug configuration:
+   ```json
+   {
+     "name": "Debug Codemod",
+     "type": "python",
+     "request": "launch",
+     "program": "${workspaceFolder}/.codegen/codemods/organize_types/organize_types.py",
+     "console": "integratedTerminal"
+   }
+   ```
+3. Or run with the Python debugger:
+   ```bash
+   python -m pdb .codegen/codemods/organize_types/organize_types.py
+   ```
+
+
+
+## Cursor-Specific Features
+
+When using Codegen with Cursor:
+
+1. The AI chat window can read your system prompt from `.codegen/codemods/your_codemod/your_codemod-system-prompt.txt`
+2. This helps the AI understand your codemod's purpose and provide better suggestions
+3. You can ask the AI to help you:
+   - Debug issues in your codemod
+   - Suggest improvements to your implementation
+   - Understand how to use specific Codegen APIs
+
+<Note>
+The system prompt is automatically generated when you use `codegen create` with the `-d` flag.
+</Note>
+
+## Best Practices
+
+1. **Use Type Hints**: They improve IDE support and catch errors early
+   ```python
+   def process_function(function: codegen.Function) -> None:
+       # Your code here
+   ```
+
+2. **Leverage IDE Features**: 
+   - Use "Go to Definition" to explore the Codegen API
+   - Use "Find References" to see how APIs are used
+   - Use the debugger for complex transformations
+
+3. **Iterative Development**:
+   ```bash
+   # Create your codemod
+   codegen create my-codemod -d "description"
+   
+   # Make changes and test with a preview
+   codegen run my-codemod --diff-preview 50
+   
+   # Once satisfied, run without preview
+   codegen run my-codemod
+   ```
+
+## Common IDE Issues
+
+1. **Missing Autocompletion**
+   - Ensure `codegen` is installed in your Python environment
+   - Check that your IDE is using the correct Python interpreter
+
+2. **Debugger Not Working**
+   - Verify your launch configuration points to the correct file
+   - Make sure you're running the codemod script directly, not through `codegen run`
+
+3. **System Prompt Not Found**
+   - Check that the prompt file exists in your codemod directory
+   - Ensure you used `-d` when creating the codemod
+
+<CardGroup cols={2}>
+  <Card
+    title="Explore Tutorials"
+    icon="graduation-cap"
+    href="/tutorials/at-a-glance"
+  >
+    See real-world examples of codemods in action.
+  </Card>
+  <Card
+    title="API Reference"
+    icon="book"
+    href="/api-reference"
+  >
+    Browse the complete API documentation with type information.
+  </Card>
+</CardGroup>

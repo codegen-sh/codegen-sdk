@@ -58,6 +58,8 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/guiding-principles",
 				"introduction/how-it-works",
 				"introduction/community",
