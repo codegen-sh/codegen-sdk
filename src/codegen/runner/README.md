@@ -1,5 +1,5 @@
 # Codegen Runner
-A codegen module to run codemods against a Codebase graph with a managed lifecycle.
+A module to run functions with managed state + lifecycle.
 
 ### Dependencies
 - [codegen.sdk](https://github.com/codegen-sh/codegen-sdk/tree/develop/src/codegen/sdk)
