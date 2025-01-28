@@ -36,9 +36,6 @@ for file in codebase.files:
 exists = codebase.has_file("path/to/file.py")
 
 ```
-<Info>
-  [codebase.get_file(`path`)](/api-reference/core/Codebase#get_file) returns a [SourceFile](/api-reference/core/SourceFile) if the path points to a source code file and a [File](/api-reference/core/File) otherwise.
-</Info>
 
 
 These APIs are similar for [Directory](/api-reference/core/Directory), which provides similar methods for accessing files and subdirectories.
@@ -56,6 +53,82 @@ dir = file.directory
 
 # Check if a directory exists
 exists = codebase.has_directory("path/to/dir")
+```
+
+## Differentiating between File and SourceFile
+
+- [File](/api-reference/core/File) - a general purpose class that represents any file in the codebase including non-code files like README.md, .env, .json, image files, etc.
+- [SourceFile](/api-reference/core/SourceFile) - a subclass of [File](/api-reference/core/File) that provides additional functionality for source code files writtent in languages supported by the [codegen-sdk](/introduction/overview) (Python, TypeScript, JavaScript, React).
+
+When getting a file with `codebase.get_file`, files ending in `.py, .js, .ts, .jsx, .tsx` are returned as [SourceFile](/api-reference/core/SourceFile) objects while other files are returned as [File](/api-reference/core/File) objects.
+
+Furthermore, you can use the `isinstance` function to check if a file is a [SourceFile](/api-reference/core/SourceFile):
+
+```python
+py_file = codebase.get_file("path/to/file.py")
+if isinstance(py_file, SourceFile):
+    print(f"File {py_file.filepath} is a source file")
+
+# prints: `File path/to/file.py is a source file`
+
+mdx_file = codebase.get_file("path/to/file.mdx")
+if isinstance(mdx_file, File):
+    print(f"File {mdx_file.filepath} is a non-code file")
+
+# prints: `File path/to/file.mdx is a non-code file`
+```
+
+<Note>
+  Currently, the codebase object can only parse source code files of one language at a time. This means that if you want to work with both Python and TypeScript files, you will need to create two separate codebase objects. 
+</Note>
+
+## Accessing Code
+
+[SourceFiles](/api-reference/core/SourceFile) and [Directories](/api-reference/core/Directory) provide several APIs for accessing and iterating over their code.
+
+See, for example:
+
+- `.functions` ([SourceFile](/api-reference/core/SourceFile#functions) / [Directory](/api-reference/core/Directory#functions)) - All [Functions](../api-reference/core/Function) in the file/directory
+- `.classes` ([SourceFile](/api-reference/core/SourceFile#classes) / [Directory](/api-reference/core/Directory#classes)) - All [Classes](../api-reference/core/Class) in the file/directory
+- `.imports` ([SourceFile](/api-reference/core/SourceFile#imports) / [Directory](/api-reference/core/Directory#imports)) - All [Imports](../api-reference/core/Import) in the file/directory
+- `.get_function(...)` ([SourceFile](/api-reference/core/SourceFile#get-function) / [Directory](/api-reference/core/Directory#get-function)) - Get a specific function by name
+- `.get_class(...)` ([SourceFile](/api-reference/core/SourceFile#get-class) / [Directory](/api-reference/core/Directory#get-class)) - Get a specific class by name
+- `.get_global_var(...)` ([SourceFile](/api-reference/core/SourceFile#get-global-var) / [Directory](/api-reference/core/Directory#get-global-var)) - Get a specific global variable by name
+
+
+```python
+# Get all functions in a file
+for function in file.functions:
+    print(f"Found function: {function.name}")
+    print(f"Parameters: {[p.name for p in function.parameters]}")
+    print(f"Return type: {function.return_type}")
+
+# Get all classes
+for cls in file.classes:
+    print(f"Found class: {cls.name}")
+    print(f"Methods: {[m.name for m in cls.methods]}")
+    print(f"Attributes: {[a.name for a in cls.attributes]}")
+
+# Get imports (can also do `file.import_statements`)
+for imp in file.imports:
+    print(f"Import from: {imp.module}")
+    print(f"Imported symbol: {[s.name for s in imp.imported_symbol]}")
+
+# Get specific symbols
+main_function = file.get_function("main")
+user_class = file.get_class("User")
+config = file.get_global_var("CONFIG")
+
+# Access code blocks
+if main_function:
+    for statement in main_function.code_block.statements:
+        print(f"Statement type: {statement.statement_type}")
+
+# Get local variables in a function
+if main_function:
+    local_vars = main_function.code_block.get_local_var_assignments()
+    for var in local_vars:
+        print(f"Local var: {var.name} = {var.value}")
 ```
 
 ## Working with Non-Code Files (README, JSON, etc.)
@@ -102,52 +175,6 @@ dir = file.directory # Parent directory
 name = dir.name # Base name without extension
 path = dir.path # Full relative path from repository root
 parent = dir.parent # Parent directory
-```
-
-## Accessing Code
-
-[SourceFiles](/api-reference/core/SourceFile) and [Directories](/api-reference/core/Directory) provide several APIs for accessing and iterating over their code.
-
-See, for example:
-
-- `.functions` ([SourceFile](/api-reference/core/SourceFile#functions) / [Directory](/api-reference/core/Directory#functions)) - All [Functions](../api-reference/core/Function) in the file/directory
-- `.classes` ([SourceFile](/api-reference/core/SourceFile#classes) / [Directory](/api-reference/core/Directory#classes)) - All [Classes](../api-reference/core/Class) in the file/directory
-- `.imports` ([SourceFile](/api-reference/core/SourceFile#imports) / [Directory](/api-reference/core/Directory#imports)) - All [Imports](../api-reference/core/Import) in the file/directory
-
-
-```python
-# Get all functions in a file
-for function in file.functions:
-    print(f"Found function: {function.name}")
-    print(f"Parameters: {[p.name for p in function.parameters]}")
-    print(f"Return type: {function.return_type}")
-
-# Get all classes
-for cls in file.classes:
-    print(f"Found class: {cls.name}")
-    print(f"Methods: {[m.name for m in cls.methods]}")
-    print(f"Attributes: {[a.name for a in cls.attributes]}")
-
-# Get imports (can also do `file.import_statements`)
-for imp in file.imports:
-    print(f"Import from: {imp.module}")
-    print(f"Imported symbol: {[s.name for s in imp.imported_symbol]}")
-
-# Get specific symbols
-main_function = file.get_function("main")
-user_class = file.get_class("User")
-config = file.get_global_var("CONFIG")
-
-# Access code blocks
-if main_function:
-    for statement in main_function.code_block.statements:
-        print(f"Statement type: {statement.statement_type}")
-
-# Get local variables in a function
-if main_function:
-    local_vars = main_function.code_block.get_local_var_assignments()
-    for var in local_vars:
-        print(f"Local var: {var.name} = {var.value}")
 ```
 
 ## Editing Files Directly
