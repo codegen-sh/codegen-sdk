@@ -29,15 +29,18 @@ orbs:
 
 
 commands:
+  add-ssh-key:
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:ea8RazQk7imbLawQlYY89xPzYPcFv91Ko8U/SQtUQT8"
   install-lfs:
     steps:
       - run:
           command: |
             apt update && apt install -y git-lfs
             git lfs install
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:ea8RazQk7imbLawQlYY89xPzYPcFv91Ko8U/SQtUQT8"
+      - add-ssh-key
   setup-lfs:
     steps:
       - run:
@@ -45,9 +48,6 @@ commands:
             ./scripts/setup-lfs.sh
   install-uv:
     steps:
-      - add_ssh_keys:
-          fingerprints:
-            - "SHA256:ea8RazQk7imbLawQlYY89xPzYPcFv91Ko8U/SQtUQT8"
       - run:
           command: |
             curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -353,6 +353,7 @@ jobs:
       docker_layer_caching: true
     resource_class: <<parameters.resource_class>>
     steps:
+      - add-ssh-key
       - checkout
       - build-wheels:
           base_packages: << parameters.base_packages >>
@@ -366,6 +367,7 @@ jobs:
       xcode: 15.4.0
     resource_class: macos.m1.medium.gen1
     steps:
+      - add-ssh-key
       - checkout
       - build-wheels
       - persist_to_workspace:
@@ -375,6 +377,7 @@ jobs:
   release-aws:
     executor: default_image
     steps:
+    - add-ssh-key
     - checkout
     - attach_workspace:
         at: .
@@ -390,6 +393,7 @@ jobs:
   release-pypi:
     executor: default_image
     steps:
+    - add-ssh-key
     - checkout
     - attach_workspace:
         at: .
