@@ -32,14 +32,15 @@ class LocalRepoOperator(RepoOperator):
 
     def __init__(
         self,
-        repo_config: BaseRepoConfig,
         repo_path: str,  # full path to the repo
+        repo_config: BaseRepoConfig | None = None,
         bot_commit: bool = True,
     ) -> None:
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
+        repo_config = repo_config or BaseRepoConfig()
         super().__init__(repo_config, self.repo_path, bot_commit)
 
     ####################################################################################################################
