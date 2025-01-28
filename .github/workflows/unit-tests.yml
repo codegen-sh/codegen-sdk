@@ -14,7 +14,7 @@ jobs:
   unit-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-16
-
+    environment: testing
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,6 +35,7 @@ jobs:
   test_codemods:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
+    environment: testing
     strategy:
       matrix:
         sync_graph: [ true, false ]
@@ -75,6 +76,7 @@ jobs:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     if: false
     runs-on: ubuntu-latest-32
+    environment: testing
     concurrency:
       group: ${{ github.workflow }}-${{github.ref}}-${{github.event_name == 'push'&& github.sha}}
       cancel-in-progress: true
@@ -101,6 +103,7 @@ jobs:
   parse-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
+    environment: testing
     if: contains(github.event.pull_request.labels.*.name, 'extra-parse') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
@@ -185,3 +188,20 @@ jobs:
       #     codecovcli create-report -C ${{ github.event.pull_request.head.sha }}
       #     codecovcli do-upload --disable-search --file empty_coverage.xml -C ${{ github.event.pull_request.head.sha }}
       #     codecovcli empty-upload --force -C ${{ github.event.pull_request.head.sha }}
+  integration-tests:
+    runs-on: ubuntu-latest-32
+    environment: testing
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      - name: Run ATS and Tests
+        uses: ./.github/actions/run_ats
+        with:
+          default_tests: "tests/integration/codegen"
+          codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
+          codecov_token: ${{ secrets.CODECOV_TOKEN }}
+          collect_args: "--timeout 50"
+          base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          job_name: ${{ github.job }}
+          codecov_flags: smart-tests-integration-tests
