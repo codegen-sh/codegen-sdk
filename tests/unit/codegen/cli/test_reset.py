@@ -19,6 +19,7 @@ class ResetTestCase:
     expected_staged: set[str]
     expected_modified: set[str]
     expected_untracked: set[str]
+    rename_pairs: list[tuple[str, str]]
 
 
 @pytest.fixture
@@ -112,6 +113,7 @@ def create_test_case(
     expected_staged: set[str] | None = None,
     expected_modified: set[str] | None = None,
     expected_untracked: set[str] | None = None,
+    rename_pairs: list[tuple[str, str]] = [],
 ) -> ResetTestCase:
     """Helper to create test cases with defaults"""
     if expected_content is None:
@@ -130,6 +132,7 @@ def create_test_case(
         expected_staged=expected_staged or set(),
         expected_modified=expected_modified or set(),
         expected_untracked=expected_untracked or set(),
+        rename_pairs=rename_pairs,
     )
 
 
@@ -196,6 +199,48 @@ def create_test_case(
                 expected_staged={".codegen/codemods/base.py"},
             ),
             id="staged_deletions",
+        ),
+        pytest.param(
+            lambda committed_state: create_test_case(
+                name="staged renames",
+                changes={
+                    ".codegen/codemods/base.py": None,  # Delete original
+                    ".codegen/codemods/renamed_base.py": committed_state[".codegen/codemods/base.py"],  # Add with same content
+                },
+                stage=True,
+                committed_state=committed_state,
+                expected_staged={".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py"},
+                rename_pairs=[(".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py")],
+            ),
+            id="staged_renames",
+        ),
+        pytest.param(
+            lambda committed_state: create_test_case(
+                name="unstaged renames",
+                changes={
+                    ".codegen/codemods/base.py": None,  # Delete original
+                    ".codegen/codemods/renamed_base.py": committed_state[".codegen/codemods/base.py"],  # Add with same content
+                },
+                stage=False,
+                committed_state=committed_state,
+                expected_modified={".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py"},
+                rename_pairs=[(".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py")],
+            ),
+            id="unstaged_renames",
+        ),
+        pytest.param(
+            lambda committed_state: create_test_case(
+                name="staged rename with modifications",
+                changes={
+                    ".codegen/codemods/base.py": None,  # Delete original
+                    ".codegen/codemods/renamed_base.py": committed_state[".codegen/codemods/base.py"] + "\n# Modified",  # Add with modified content
+                },
+                stage=True,
+                committed_state=committed_state,
+                expected_staged={".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py"},
+                rename_pairs=[(".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py")],
+            ),
+            id="staged_rename_with_modifications",
         ),
     ],
 )
@@ -278,4 +323,45 @@ def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str
         expected_staged={".codegen/codemods/base.py"},
         expected_modified=set(),
         expected_untracked={".codegen/codemods/untracked.py"},
+    )
+
+
+def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[str, str], runner: CliRunner):
+    """Test reset with a mix of staged and unstaged renames"""
+    # 1. Staged rename
+    staged_changes = {
+        ".codegen/codemods/base.py": None,
+        ".codegen/codemods/staged_rename.py": committed_state[".codegen/codemods/base.py"],
+    }
+    setup_repo_state(committed_repo, staged_changes)
+    subprocess.run(["git", "add", "."], cwd=committed_repo, check=True)
+    subprocess.run(["git", "mv", ".codegen/codemods/base.py", ".codegen/codemods/staged_rename.py"], cwd=committed_repo, check=True)
+
+    # 2. Unstaged rename
+    unstaged_changes = {
+        ".codegen/codemods/staged_rename.py": None,
+        ".codegen/codemods/unstaged_rename.py": committed_state[".codegen/codemods/base.py"],
+    }
+    setup_repo_state(committed_repo, unstaged_changes)
+    # Don't stage these changes
+
+    # Run reset
+    runner.invoke(reset_command)
+
+    # Verify state
+    verify_repo_state(
+        committed_repo,
+        {
+            ".codegen/codemods/base.py": None,
+            ".codegen/codemods/staged_rename.py": committed_state[".codegen/codemods/base.py"],
+            ".codegen/codemods/unstaged_rename.py": committed_state[".codegen/codemods/base.py"],
+        },
+    )
+
+    # Verify git state
+    verify_git_state(
+        committed_repo,
+        expected_staged={".codegen/codemods/base.py", ".codegen/codemods/staged_rename.py"},
+        expected_modified={".codegen/codemods/staged_rename.py"},
+        expected_untracked={".codegen/codemods/unstaged_rename.py"},
     )
