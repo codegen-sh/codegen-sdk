@@ -1,13 +1,8 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Expression, Name
@@ -15,13 +10,8 @@ from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
 from codegen.sdk.core.expressions.subscript_expression import SubscriptExpression
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.has_value import HasValue
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.typeable import Typeable
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.core.symbol_groups.dict import Dict
@@ -33,9 +23,20 @@ from codegen.sdk.utils import find_index
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.expressions.type import Type
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
     from codegen.sdk.core.statements.export_statement import ExportStatement
+    from codegen.sdk.core.statements.statement import Statement
 
 Parent = TypeVar("Parent", bound="AssignmentStatement | ExportStatement")
 

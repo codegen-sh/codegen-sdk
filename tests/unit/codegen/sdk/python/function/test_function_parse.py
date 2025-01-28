@@ -1,7 +1,11 @@
 # TODO: break-up this file into one for each API
 
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.file import SourceFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
 
 
 def test_local_import(tmpdir) -> None:

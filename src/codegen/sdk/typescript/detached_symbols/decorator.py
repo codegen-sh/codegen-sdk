@@ -1,15 +1,22 @@
 from __future__ import annotations
 
-from tree_sitter import Node as TSNode
+from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.detached_symbols.decorator import Decorator
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.shared.decorators.docs import ts_apidoc
 
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.typescript.class_definition import TSClass
+    from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
+    from codegen.sdk.typescript.function import TSFunction
+
 
 @ts_apidoc
-class TSDecorator(Decorator["JSClass", "TSFunction", "TsParameter"]):
+class TSDecorator(Decorator["TSClass", "TSFunction", "TSParameter"]):
     """Abstract representation of a Decorator"""
 
     @reader
@@ -32,7 +39,8 @@ class TSDecorator(Decorator["JSClass", "TSFunction", "TsParameter"]):
                 func = child.child_by_field_name("function")
                 return func
 
-        raise ValueError(f"Could not find decorator name within {self.source}")
+        msg = f"Could not find decorator name within {self.source}"
+        raise ValueError(msg)
 
     @property
     @reader

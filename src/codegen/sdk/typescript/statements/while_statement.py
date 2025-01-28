@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.while_statement import WhileStatement
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 

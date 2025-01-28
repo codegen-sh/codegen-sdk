@@ -7,7 +7,6 @@ from collections import Counter, defaultdict
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from rustworkx import PyDiGraph
 from tabulate import tabulate
 
 from codegen.sdk.enums import NodeType
@@ -16,6 +15,8 @@ from codegen.sdk.utils import truncate_line
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
+    from rustworkx import PyDiGraph
+
     from codegen.sdk.core.codebase import CodebaseType
 
 
@@ -62,9 +63,11 @@ def post_reset_validation(init_nodes, nodes, init_edges, edges, repo_name: str, 
 def post_sync_validation(codebase: CodebaseType) -> bool:
     """Post codebase.sync, checks that the codebase graph is in a valid state (i.e. not corrupted by codebase.sync)"""
     if len(codebase.G.all_syncs) > 0 or len(codebase.G.pending_syncs) > 0 or len(codebase.G.transaction_manager.to_commit()) > 0:
-        raise NotImplementedError("Can only be called on a reset codebase")
+        msg = "Can only be called on a reset codebase"
+        raise NotImplementedError(msg)
     if not codebase.G.config.feature_flags.track_graph:
-        raise NotImplementedError("Can only be called with track_graph=true")
+        msg = "Can only be called with track_graph=true"
+        raise NotImplementedError(msg)
     return len(dict.fromkeys(codebase.G.old_graph.nodes())) == len(dict.fromkeys(codebase.G.nodes)) and len(dict.fromkeys(codebase.G.old_graph.weighted_edge_list())) == len(
         dict.fromkeys(codebase.G.edges)
     )
@@ -75,7 +78,8 @@ def log_or_throw(message, thread_message: str):
     logger.error(message)
     # logger.error(thread_message)
     if hostname != "modal":
-        raise Exception(f"{message}\n{thread_message}")
+        msg = f"{message}\n{thread_message}"
+        raise Exception(msg)
     return
 
 

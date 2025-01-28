@@ -3,18 +3,18 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.core.class_definition import Class
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.function import Function
 

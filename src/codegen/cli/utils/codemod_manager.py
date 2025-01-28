@@ -50,7 +50,8 @@ class CodemodManager:
                 raise click.ClickException("No codemods found. Create one with:\n" + "  codegen create my-codemod")
             else:
                 available = "\n  ".join(f"- {c.name}" for c in all_codemods)
-                raise click.ClickException(f"Codemod '{name}' not found. Available codemods:\n  {available}")
+                msg = f"Codemod '{name}' not found. Available codemods:\n  {available}"
+                raise click.ClickException(msg)
 
         # Verify we can import it
         try:
@@ -58,7 +59,8 @@ class CodemodManager:
             codemod.validate()
             return codemod
         except Exception as e:
-            raise click.ClickException(f"Error loading codemod '{name}': {e!s}")
+            msg = f"Error loading codemod '{name}': {e!s}"
+            raise click.ClickException(msg)
 
     @classmethod
     def list(cls, start_path: Path | None = None) -> builtins.list[DecoratedFunction]:

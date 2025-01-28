@@ -10,4 +10,5 @@ def check_for_dangerous_operations(user_code: str) -> None:
     ]
     pattern = "|".join(dangerous_operation_patterns)
     if re.search(pattern, user_code, re.IGNORECASE):
-        raise DangerousUserCodeException("The codeblock contains potentially dangerous operations that are not allowed.")
+        msg = "The codeblock contains potentially dangerous operations that are not allowed."
+        raise DangerousUserCodeException(msg)

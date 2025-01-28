@@ -1,23 +1,25 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Generic, TypeVar, override
+from typing import TYPE_CHECKING, Generic, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Expression, Value
 from codegen.sdk.core.expressions.name import Name
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
 from codegen.sdk.typescript.detached_symbols.jsx.prop import JSXProp
 from codegen.sdk.utils import find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
 
 Parent = TypeVar("Parent", bound="Editable")
 

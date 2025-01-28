@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
 
 
 def lowest_indentation(text_blocks, skip_lines: int = 0):
@@ -114,13 +114,15 @@ class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
     @commiter
     def _parse_comment(self) -> str:
         """Parse out the comment into its text content."""
-        raise NotImplementedError("This method should be implemented by the subclass")
+        msg = "This method should be implemented by the subclass"
+        raise NotImplementedError(msg)
 
     @noapidoc
     @commiter
     def _unparse_comment(self, new_src: str):
         """Unparses cleaned text content into a comment block."""
-        raise NotImplementedError("This method should be implemented by the subclass")
+        msg = "This method should be implemented by the subclass"
+        raise NotImplementedError(msg)
 
     @commiter
     @noapidoc

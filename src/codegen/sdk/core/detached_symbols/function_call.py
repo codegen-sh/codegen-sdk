@@ -1,24 +1,17 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
-
-from tree_sitter import Node as TSNode
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, remover, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.detached_symbols.argument import Argument
-from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.expressions import Expression, Name, Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.generic_type import GenericType
 from codegen.sdk.core.expressions.unpack import Unpack
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.resolvable import Resolvable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.enums import NodeType, ProgrammingLanguage
 from codegen.sdk.extensions.sort import sort_editables
@@ -28,9 +21,17 @@ from codegen.sdk.utils import find_first_ancestor
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.interfaces.callable import Callable
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.visualizations.enums import VizNode
 
 Parent = TypeVar("Parent", bound="Expression | None")
@@ -56,7 +57,8 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         # =====[ Grab the arg list ]=====
         arg_list_node = node.child_by_field_name("arguments")
         if arg_list_node is None:
-            raise ValueError(f"Failed to parse function call. Child 'argument_list' node does not exist. Source: {self.source}")
+            msg = f"Failed to parse function call. Child 'argument_list' node does not exist. Source: {self.source}"
+            raise ValueError(msg)
         args = [Argument(x, i, self) for i, x in enumerate(arg_list_node.named_children) if x.type != "comment"]
         self._arg_list = Collection(arg_list_node, self.file_node_id, self.G, self, children=args)
 

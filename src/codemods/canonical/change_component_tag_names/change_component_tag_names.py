@@ -39,7 +39,8 @@ class ChangeJSXElementName(Codemod, Skill):
         # Grab the NewName component
         PrivateRoutesContainer = codebase.get_symbol("PrivateRoutesContainer", optional=True)
         if PrivateRoutesContainer is None or not PrivateRoutesContainer.is_jsx:
-            raise ValueError("PrivateRoutesContainer component not found in codebase")
+            msg = "PrivateRoutesContainer component not found in codebase"
+            raise ValueError(msg)
 
         # Iterate over all functions in the codebase
         for file in codebase.files:

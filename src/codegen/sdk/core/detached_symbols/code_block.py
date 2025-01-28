@@ -2,35 +2,37 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from collections import deque
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
 from typing_extensions import deprecated
 
-from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression, Value
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
-from codegen.sdk.core.statements.attribute import Attribute
-from codegen.sdk.core.statements.return_statement import ReturnStatement
 from codegen.sdk.core.statements.statement import Statement, StatementType
-from codegen.sdk.core.statements.symbol_statement import SymbolStatement
-from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import find_line_start_and_end_nodes
-from codegen.sdk.output.ast import AST
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.core.assignment import Assignment
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.has_block import HasBlock
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
+    from codegen.sdk.core.statements.attribute import Attribute
     from codegen.sdk.core.statements.comment import Comment
     from codegen.sdk.core.statements.if_block_statement import IfBlockStatement
+    from codegen.sdk.core.statements.return_statement import ReturnStatement
+    from codegen.sdk.core.statements.symbol_statement import SymbolStatement
+    from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+    from codegen.sdk.output.ast import AST
 
 
 Parent = TypeVar("Parent", bound="HasBlock")

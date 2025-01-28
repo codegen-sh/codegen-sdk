@@ -2,20 +2,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageType
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.expressions import Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.import_resolution import Import
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.type_alias import TypeAlias
 from codegen.sdk.enums import ImportType, NodeType
@@ -25,7 +19,15 @@ from codegen.sdk.typescript.symbol_groups.comment_group import TSCommentGroup
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 
 
 @ts_apidoc
@@ -279,14 +281,16 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                             file.add_import_from_import_string(dep.source)
 
                     else:
-                        raise ValueError(f"Unknown dependency type {type(dep)}")
+                        msg = f"Unknown dependency type {type(dep)}"
+                        raise ValueError(msg)
             except Exception as e:
                 print(f"Failed to move dependencies of {self.name}: {e}")
         else:
             try:
                 for dep in self.dependencies:
                     if isinstance(dep, Assignment):
-                        raise NotImplementedError("Assignment not implemented yet")
+                        msg = "Assignment not implemented yet"
+                        raise NotImplementedError(msg)
 
                     # =====[ Symbols - move over ]=====
                     elif isinstance(dep, Symbol) and dep.is_top_level:

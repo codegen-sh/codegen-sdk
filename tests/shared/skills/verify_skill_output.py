@@ -39,7 +39,8 @@ def reformat_code_string(code: str, language: ProgrammingLanguage) -> str:
         options = get_jsbeautifier_options()
         return jsbeautifier.beautify(code, options)
     else:
-        raise ValueError(f"Unsupported programming language: {language}!")
+        msg = f"Unsupported programming language: {language}!"
+        raise ValueError(msg)
 
 
 def verify_skill_output(codebase: Codebase, skill, test_case, get_diff, snapshot) -> str | None:

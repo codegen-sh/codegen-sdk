@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING, Generic, TypeVar
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.dataclasses.usage import Usage, UsageType
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import EdgeType
 from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.symbol import Symbol
 Parent = TypeVar("Parent", bound="Editable")
 
@@ -61,7 +61,8 @@ class Usable(Importable[Parent], Generic[Parent]):
             This method can be called as both a property or a method. If used as a property, it is equivalent to invoking it without arguments.
         """
         if usage_types == UsageType.DIRECT | UsageType.ALIASED:
-            raise ValueError("Combination of only Aliased and Direct usages makes no sense")
+            msg = "Combination of only Aliased and Direct usages makes no sense"
+            raise ValueError(msg)
 
         assert self.node_id is not None
         usages_to_return = []

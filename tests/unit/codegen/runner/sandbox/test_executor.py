@@ -1,16 +1,19 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import pytest
 
 from codegen.git.models.codemod_context import CodemodContext
 from codegen.runner.models.codemod import GroupingConfig
-from codegen.runner.sandbox.executor import SandboxExecutor
 from codegen.sdk.codebase.config import SessionOptions
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
+
+if TYPE_CHECKING:
+    from codegen.runner.sandbox.executor import SandboxExecutor
 
 
 @pytest.mark.asyncio

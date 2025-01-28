@@ -73,7 +73,8 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
 
     def __delitem__(self, item_name: str) -> None:
         del self.items[item_name]
-        raise KeyError(f"Item {item_name} not found in directory {self.dirpath}")
+        msg = f"Item {item_name} not found in directory {self.dirpath}"
+        raise KeyError(msg)
 
     def __repr__(self) -> str:
         return f"Directory({self.dirpath}, {self.items.keys()})"

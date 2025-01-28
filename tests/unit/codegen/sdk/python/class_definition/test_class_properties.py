@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.python import PyClass
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyClass
 
 
 def test_classes(tmpdir) -> None:

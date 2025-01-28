@@ -144,14 +144,16 @@ class TransactionManager:
         # of the results to the user. This may result in errors that do not get covered.
         if self.max_transactions_exceeded():
             logger.info(f"Max transactions reached: {self.max_transactions}. Stopping codemod.")
-            raise MaxTransactionsExceeded(f"Max transactions reached: {self.max_transactions}", threshold=self.max_transactions)
+            msg = f"Max transactions reached: {self.max_transactions}"
+            raise MaxTransactionsExceeded(msg, threshold=self.max_transactions)
 
     def check_max_preview_time(self):
         # =====[ Max preview time ]=====
         # This is to prevent the preview from taking too long. We want to keep it at like ~5s in the frontend during debugging
         if self.is_time_exceeded():
             logger.info(f"Max preview time exceeded: {self.stopwatch_max_seconds}. Stopping codemod.")
-            raise MaxPreviewTimeExceeded(f"Max preview time exceeded: {self.is_time_exceeded()}", threshold=self.stopwatch_max_seconds)
+            msg = f"Max preview time exceeded: {self.is_time_exceeded()}"
+            raise MaxPreviewTimeExceeded(msg, threshold=self.stopwatch_max_seconds)
 
     ####################################################################################################################
     # Commit
@@ -249,8 +251,8 @@ class TransactionManager:
             # Add to priority queue and rebuild the queue
             return transaction
         except TransactionError as e:
-            logger.error(e)
-            raise TransactionError(
+            logger.exception(e)
+            msg = (
                 f"Potential conflict detected in file {transaction.file_path}!\n"
                 "Attempted to perform code modification:\n"
                 "\n"
@@ -264,6 +266,7 @@ class TransactionManager:
                 "\n"
                 f"[Conflict Detected] Potential Modification Conflict in File {transaction.file_path}!"
             )
+            raise TransactionError(msg)
 
     def get_transactions_at_range(self, file_path: Path, start_byte: int, end_byte: int, transaction_order: TransactionPriority | None = None, *, combined: bool = False) -> list[Transaction]:
         """Returns list of queued transactions that matches the given filtering criteria.

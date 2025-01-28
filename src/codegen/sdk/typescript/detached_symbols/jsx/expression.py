@@ -1,5 +1,5 @@
 from functools import cached_property
-from typing import Self, override
+from typing import TYPE_CHECKING, Self, override
 
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
@@ -9,6 +9,11 @@ from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.function import Function
+    from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement
+    from codegen.sdk.typescript.detached_symbols.jsx.prop import JSXProp
 
 
 @ts_apidoc

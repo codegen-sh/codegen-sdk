@@ -1,14 +1,20 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.codebase import CodebaseType, PyCodebaseType, TSCodebaseType
 from codegen.sdk.core.function import Function
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.dict import Dict
-from codegen.sdk.core.type_alias import TypeAlias
 from codegen.sdk.enums import ProgrammingLanguage
 from tests.shared.skills.decorators import skill, skill_impl
 from tests.shared.skills.skill import Skill
 from tests.shared.skills.skill_test import SkillTestCase, SkillTestCaseTSFile
+
+if TYPE_CHECKING:
+    from collections.abc import MutableMapping
+
+    from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.core.type_alias import TypeAlias
 
 ts_input1 = """
 export type MyMapper<K,V> = {
@@ -227,8 +233,6 @@ class SearchTypeAliasInheritanceSkill(Skill):
         """Given a type alias 'MyMapper', find all inherited or extended implementations of the type object.
         Loops through all codebase symbols and handles each symbol type accordingly.
         """
-        from collections.abc import MutableMapping
-
         mapper_symbol: TypeAlias = codebase.get_symbol("MyMapper")
         mapper_dict: Dict = mapper_symbol.value
 
@@ -272,8 +276,6 @@ class AsyncifyTypeAliasElements(Skill):
     @staticmethod
     @skill_impl([SkillTestCase(files=ts_files_write)], language=ProgrammingLanguage.TYPESCRIPT)
     def typescript_skill_func(codebase: TSCodebaseType):
-        from collections.abc import MutableMapping
-
         FUNC_NAME_TO_CONVERT = "convert"
 
         mapper_symbol: TypeAlias = codebase.get_symbol("MyMapper")

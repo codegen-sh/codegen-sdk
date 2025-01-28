@@ -4,18 +4,18 @@ from abc import ABC
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
 from codegen.sdk.core.autocommit import reader
-from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.import_resolution import Import, WildcardImport
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.statements.block_statement import BlockStatement
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.expressions import Expression
+    from codegen.sdk.core.import_resolution import Import, WildcardImport
+    from codegen.sdk.core.symbol import Symbol
 
 
 Parent = TypeVar("Parent", bound="CodeBlock")
