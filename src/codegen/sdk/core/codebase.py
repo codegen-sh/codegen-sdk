@@ -1119,7 +1119,19 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return []
 
     def set_session_options(self, **kwargs: Unpack[SessionOptions]) -> None:
-        """Sets the Session options for the current codebase."""
+        """Sets the session options for the current codebase.
+
+        This method updates the session options with the provided keyword arguments and
+        configures the transaction manager accordingly. It sets the maximum number of
+        transactions and resets the stopwatch based on the updated session options.
+
+        Args:
+        **kwargs: Keyword arguments representing the session options to update.
+            - max_transactions (int, optional): The maximum number of transactions
+              allowed in a session.
+            - max_seconds (int, optional): The maximum duration in seconds for a session
+              before it times out.
+        """
         self.G.session_options = self.G.session_options.model_copy(update=kwargs)
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
