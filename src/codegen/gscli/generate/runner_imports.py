@@ -14,6 +14,7 @@ import plotly
 CODEGEN_IMPORTS = """
 from codegen.git.models.codemod_context import CodemodContext
 from codegen.git.models.github_named_user_context import GithubNamedUserContext
+from codegen.git.models.pr_options import PROptions
 from codegen.git.models.pr_part_context import PRPartContext
 from codegen.git.models.pull_request_context import PullRequestContext
 """
@@ -34,13 +35,16 @@ IMPORT_STRING_TEMPLATE = """
 {gs_public_imports}
 """.strip()
 
-IMPORT_FILE_TEMPLATE = '''
-# This file is auto-generated, do not modify manually. Edit this in codegen-backend/cli/generate/runner_imports.py.
+IMPORT_FILE_TEMPLATE = (
+    '''
+# This file is auto-generated, do not modify manually. Edit this in src/codegen/gscli/generate/runner_imports.py.
 def get_generated_imports():
     return """
 {import_str}
 """
 '''.strip()
+    + "\n"
+)
 
 
 def get_runner_imports(include_codegen=True, include_private_imports: bool = True) -> str:
