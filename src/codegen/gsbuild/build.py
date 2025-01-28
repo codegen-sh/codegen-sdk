@@ -21,5 +21,4 @@ class SpecialBuildHook(BuildHookInterface):
     def initialize(self, version: str, build_data: dict[str, Any]) -> None:
         file = Path(self.root) / "src" / "codegen" / "sdk" / "__init__.py"
         update_init_file(file)
-
         build_data["artifacts"].append(f"/{file}")

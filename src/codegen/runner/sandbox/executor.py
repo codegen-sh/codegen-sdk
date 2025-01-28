@@ -53,7 +53,7 @@ class SandboxExecutor:
 
         # =====[ Group the code flags ]=====
         logger.info(f"> Grouping CodeFlags by config: {grouping_config}")
-        grouper = get_grouper_by_group_by(grouping_config.group_by, repo_id=self.codebase.op.repo_config.id)
+        grouper = get_grouper_by_group_by(grouping_config.group_by)
         groups = grouper.create_all_groups(flags=code_flags, repo_operator=self.codebase.op)
         logger.info(f"> Created {len(groups)} groups")
         return groups
