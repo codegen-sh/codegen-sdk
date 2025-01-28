@@ -158,72 +158,20 @@ function.set_return_type("List[str]")
 
 ### Type Resolution
 
-Type resolution uses [`TypeAnnotation.resolved_types`](/api-reference/core/TypeAnnotation#resolved-types):
+Type resolution uses [`Type.resolved_value`](/api-reference/core/Type#resolved-value) to get the actual symbols that a type refers to:
 
 ```python
-# Get the actual symbol for a type
-type_annotation = function.return_type
-resolved_symbol = type_annotation.resolved_types  # -> [TypeA, TypeB]
+# Get the actual symbols for a type
+type_annotation = function.return_type  # -> Type
+resolved_types = type_annotation.resolved_value  # Returns an Expression, likely a Symbol or collection of Symbols
 
-# For generic types, resolve parameters
-for param in type_annotation.parameters:
-    resolved_param = param.resolved_types
-```
+# For generic types, resolve each parameter
+if hasattr(type_annotation, "parameters"):
+    for param in type_annotation.parameters:
+        param_types = param.resolved_value # Get symbols for each parameter
 
-## Common Patterns
-
-### Checking Type Presence
-
-Using [`is_typed`](/api-reference/core/TypeAnnotation#is-typed) to check for type annotations:
-
-```python
-def needs_type_annotation(function):
-    # Check if return type exists
-    if not function.return_type or not function.return_type.is_typed:
-        return True
-    
-    # Check if all parameters are typed
-    return any(
-        not param.type or not param.type.is_typed
-        for param in function.parameters
-    )
-```
-
-### Adding Missing Types
-
-```python
-def ensure_return_type(function, default_type="Any"):
-    if not function.return_type or not function.return_type.is_typed:
-        function.set_return_type(default_type)
-```
-
-### Simple Type Inference
-
-Using [`ReturnStatement.value`](/api-reference/core/ReturnStatement#value) to infer types:
-
-```python
-def infer_return_type(function):
-    # Look at return statements
-    return_types = set()
-    for stmt in function.return_statements:
-        if stmt.value and stmt.value.type:
-            return_types.add(stmt.value.type.source)
-    
-    # If consistent type found, use it
-    if len(return_types) == 1:
-        function.set_return_type(return_types.pop())
-```
-
-### Importing Types
-
-Using [`File.add_symbol_import`](/api-reference/core/File#add-symbol-import) to import types:
-
-```python
-def add_type_with_import(target_file, symbol_to_type):
-    # First ensure type is imported
-    target_file.add_symbol_import(symbol_to_type)
-    
-    # Then use in type annotation
-    function = target_file.get_function("my_func")
-    function.set_return_type(symbol_to_type.name)
+# For union types, resolve each option
+if hasattr(type_annotation, "options"):
+    for option in type_annotation.options:
+        option_types = option.resolved_value # Get symbols for each union option
 ```
