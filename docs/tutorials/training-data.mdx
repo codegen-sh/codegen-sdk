@@ -200,36 +200,3 @@ def create_training_example(function_data):
 examples = [create_training_example(f) for f in training_data["functions"]]
 ```
 
-## Best Practices
-
-1. **Filter Small Functions**: Skip trivial functions that won't provide meaningful training data:
-```python
-if len(function.source.split("\n")) < 2:
-    continue
-```
-
-2. **Ensure Sufficient Context**: Only use functions with dependencies or usages:
-```python
-if len(context["dependencies"]) + len(context["usages"]) > 0:
-    training_data["functions"].append(context)
-```
-
-3. **Track Metadata**: Keep statistics about your training data:
-```python
-training_data["metadata"] = {
-    "total_functions": len(codebase.functions),
-    "total_processed": len(training_data["functions"]),
-    "avg_dependencies": average_dependencies,
-    "avg_usages": average_usages
-}
-```
-
-4. **Handle Import Chains**: Follow import chains to find root implementations:
-```python
-def hop_through_imports(imp: Import) -> Symbol | ExternalModule:
-    if isinstance(imp.imported_symbol, Import):
-        return hop_through_imports(imp.imported_symbol)
-    return imp.imported_symbol
-```
-
-By following these guidelines, you can generate high-quality training data for your LLM projects while maintaining code quality and consistency.

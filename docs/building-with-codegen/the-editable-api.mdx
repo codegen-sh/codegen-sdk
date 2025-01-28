@@ -168,10 +168,3 @@ for var in function.code_block.get_local_var_assignments():
         print(f"Warning: {var.name} defined in try block")
 ```
 
-## Best Practices
-
-1. **Use High-Level Operations**: Prefer operations like `rename()` over direct source editing when possible.
-2. **Leverage Search**: Use the built-in search capabilities rather than parsing text manually.
-3. **Work with Extended Sources**: Use `extended_source` when you need to modify decorators or comments together with the code.
-4. **Mind the Context**: Remember that each Editable knows its location and relationships in the code.
-5. **Trust the Formatting**: Let Codegen handle whitespace and syntax details automatically.
