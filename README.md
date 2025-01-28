@@ -1,8 +1,29 @@
-# Codegen
+<br />
 
-[![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-blue)](https://docs.codegen.com)
-[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com)
-[![Twitter Follow](https://img.shields.io/twitter/follow/codegen)](https://twitter.com/codegen)
+<p align="center">
+  <a href="https://docs.codegen.com">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/f4e427e2-c483-4c23-9a7a-43c4256cab18">
+      <img src="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd" height="75" alt="Codegen logo"/>
+    </picture>
+  </a>
+</p>
+
+<h2 align="center">
+  The Pythonic interface to transform your code.
+</h2>
+
+<div align="center">
+
+[![PyPI](https://img.shields.io/pypi/v/codegen?style=flat-square&color=blue)](https://pypi.org/project/codegen/) 
+[![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple?style=flat-square)](https://docs.codegen.com) 
+[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack&style=flat-square)](https://community.codegen.com) 
+[![Follow on X](https://img.shields.io/twitter/follow/codegen?style=social)](https://x.com/codegen)
+
+</div>
+
+<br />
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
@@ -11,7 +32,7 @@
 from codegen import Codebase
 
 # Codegen builds a complete graph connecting
-#  functions, classes, imports and their relationships
+# functions, classes, imports and their relationships
 codebase = Codebase("./")
 
 # Work with code without dealing with syntax trees or parsing
@@ -21,7 +42,6 @@ for function in codebase.functions:
         # Auto-handles references and imports to maintain correctness
         function.move_to_file('deprecated.py')
 ```
-
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ## Installation and Usage

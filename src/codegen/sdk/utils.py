@@ -290,6 +290,40 @@ def determine_project_language(folder_path: str):
     return language_counts.most_common(1)[0][0]
 
 
+def split_git_path(filepath: str) -> tuple[str, str | None]:
+    """Split a filepath into (git_root, base_path) tuple by finding .git directory.
+
+    Args:
+        filepath (str): The full path to split
+
+    Returns:
+        tuple: (git_root_path, relative_path)
+
+    Raises:
+        ValueError: If the path is not in a git repository
+    """
+    # Convert to absolute path and resolve any symlinks
+    path = Path(filepath).resolve()
+
+    # Start from the given path and traverse up until we find .git
+    current = path
+    while current != current.parent:
+        if (current / ".git").exists():
+            # Found the git root
+            git_root = str(current)
+            rel_path = str(path.relative_to(current))
+
+            # Handle the case where filepath is the git root itself
+            if rel_path == ".":
+                rel_path = None
+
+            return (git_root, rel_path)
+        current = current.parent
+
+    # If we get here, we didn't find a .git directory
+    raise ValueError(f"Path '{filepath}' is not in a git repository!")
+
+
 def truncate_line(input: str, max_chars: int) -> str:
     input = str(input)
     if len(input) > max_chars:
