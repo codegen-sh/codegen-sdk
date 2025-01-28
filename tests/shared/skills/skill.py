@@ -1,10 +1,13 @@
 import inspect
 from abc import ABC
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from codegen.sdk.core.codebase import Codebase, CodebaseType, PyCodebaseType, TSCodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
-from tests.shared.skills.skill_implementation import SkillImplementation
+
+if TYPE_CHECKING:
+    from tests.shared.skills.skill_implementation import SkillImplementation
 
 
 class Skill(ABC):

@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.class_definition import Class
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.enums import ProgrammingLanguage
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.class_definition import Class
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 
 
 def test_class_definition_parent_class_names_single(tmpdir) -> None:

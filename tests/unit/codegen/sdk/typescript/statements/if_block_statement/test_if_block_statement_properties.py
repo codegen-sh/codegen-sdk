@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.typescript.file import TSFile
-from codegen.sdk.typescript.statements.if_block_statement import TSIfBlockStatement
+
+if TYPE_CHECKING:
+    from codegen.sdk.typescript.file import TSFile
+    from codegen.sdk.typescript.statements.if_block_statement import TSIfBlockStatement
 
 
 def test_parse_if_else_statement_from_codeblock(tmpdir) -> None:

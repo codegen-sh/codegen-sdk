@@ -2,19 +2,7 @@ default_language_version:
   python: python3.12
 fail_fast: true
 repos:
-  - repo: "local"
-    hooks:
-      - id: disallowed-words-check
-        name: Check for disallowed words
-        entry: scripts/disallowed-words-check.sh
-        language: script
-        files: ''  # Check all files
-      - id: generate-runner-imports
-        name: Generate Runner Imports
-        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
-        language: system
-        pass_filenames: false
-        always_run: true
+
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
     hooks:
@@ -101,3 +89,16 @@ repos:
     rev: v1.1.0
     hooks:
       - id: circleci_validate
+  - repo: "local"
+    hooks:
+      - id: disallowed-words-check
+        name: Check for disallowed words
+        entry: scripts/disallowed-words-check.sh
+        language: script
+        files: ''  # Check all files
+      - id: generate-runner-imports
+        name: Generate Runner Imports
+        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
+        language: system
+        pass_filenames: false
+        always_run: true

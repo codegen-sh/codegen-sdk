@@ -1,10 +1,14 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.core.file import SourceFile
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.writer_decorators import canonical
 from codemods.codemod import Codemod
 from tests.shared.skills.decorators import skill, skill_impl
 from tests.shared.skills.skill import Skill
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
 
 
 @skill(
