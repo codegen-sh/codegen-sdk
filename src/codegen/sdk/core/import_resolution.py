@@ -382,6 +382,54 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
                 For symbol imports, contains only the single imported symbol.
         """
 
+    @property
+    @reader
+    def is_dynamic(self) -> bool:
+        """Determines if this import is dynamically loaded based on its parent symbol.
+
+        A dynamic import is one that appears within control flow or scope-defining statements, such as:
+        - Inside function definitions
+        - Inside class definitions
+        - Inside if/else blocks
+        - Inside try/except blocks
+        - Inside with statements
+
+        Dynamic imports are only loaded when their containing block is executed, unlike
+        top-level imports which are loaded when the module is imported.
+
+        Examples:
+            Dynamic imports:
+            ```python
+            def my_function():
+                import foo  # Dynamic - only imported when function runs
+
+            if condition:
+                from bar import baz  # Dynamic - only imported if condition is True
+
+            with context():
+                import qux  # Dynamic - only imported within context
+            ```
+
+            Static imports:
+            ```python
+            import foo  # Static - imported when module loads
+            from bar import baz  # Static - imported when module loads
+            ```
+
+        Returns:
+            bool: True if the import is dynamic (within a control flow or scope block),
+            False if it's a top-level import.
+        """
+        curr = self.ts_node
+
+        # always traverses upto the module level
+        while curr:
+            if curr.type in self.G.node_classes.dynamic_import_parent_types:
+                return True
+            curr = curr.parent
+
+        return False
+
     ####################################################################################################################
     # MANIPULATIONS
     ####################################################################################################################
