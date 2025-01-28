@@ -1,6 +1,29 @@
-# Codegen
+<br />
 
-![PyPI](https://img.shields.io/pypi/v/codegen?color=blue) [![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple)](https://docs.codegen.com) [![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack)](https://community.codegen.com) [![Follow on X](https://img.shields.io/twitter/follow/codegen)](https://x.com/codegen)
+<p align="center">
+  <a href="https://docs.codegen.com">
+    <picture>
+      <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd">
+      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/f4e427e2-c483-4c23-9a7a-43c4256cab18">
+      <img src="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd" height="75" alt="Codegen logo"/>
+    </picture>
+  </a>
+</p>
+
+<h2 align="center">
+  The Pythonic interface to transform your code.
+</h2>
+
+<div align="center">
+
+[![PyPI](https://img.shields.io/pypi/v/codegen?style=flat-square&color=blue)](https://pypi.org/project/codegen/)
+[![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple?style=flat-square)](https://docs.codegen.com)
+[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack&style=flat-square)](https://community.codegen.com)
+[![Follow on X](https://img.shields.io/twitter/follow/codegen?style=social)](https://x.com/codegen)
+
+</div>
+
+<br />
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
