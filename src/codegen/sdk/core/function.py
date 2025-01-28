@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
+from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
@@ -398,7 +398,7 @@ class Function(
 
     @property
     @noapidoc
-    def descendant_symbols(self) -> list[Importable]:
+    def descendant_symbols(self) -> Sequence[Importable]:
         symbols = [self]
         for param in self.parameters:
             symbols.extend(param.descendant_symbols)

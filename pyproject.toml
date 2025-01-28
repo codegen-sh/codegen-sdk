@@ -152,41 +152,6 @@ members = []
 [tool.cython-lint]
 max-line-length = 200
 
-[tool.ruff]
-line-length = 200
-exclude = ["src/codegen/shared/compilation/function_imports.py", 'docs/**']
-
-lint.select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ"]
-lint.ignore = [
-  "D100",
-  "D101",
-  "D102",
-  "D103",
-  "D104",
-  "D105",
-  "D106",
-  "D107",
-  "D203",
-  "D205",
-  "D213",
-  "D400",
-  "D401",
-  "D402",
-  "D404",
-  "D415",
-  "D417",
-  "E712",   # https://github.com/astral-sh/ruff/issues/4560
-  "F841",
-  "F842",
-  "RUF012",
-  "RUF007",
-]
-lint.exclude = [
-  "*.ipynb",
-] # disable just linting for notebooks (allow for formatting)
-lint.pydocstyle.convention = "google"
-[tool.ruff.lint.isort]
-known-first-party = ["codegen"]
 
 [tool.coverage.run]
 branch = true

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 
 Child = TypeVar("Child", bound="Editable")
-Parent = TypeVar("Parent", bound="Parent")
+Parent = TypeVar("Parent", bound="Editable")
 
 
 @apidoc
