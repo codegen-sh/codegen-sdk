@@ -4,16 +4,9 @@ import logging
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.function import Function
-from codegen.sdk.core.import_resolution import Import, WildcardImport
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.typescript.detached_symbols.decorator import TSDecorator
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
@@ -26,8 +19,16 @@ from codegen.sdk.utils import find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.import_resolution import Import, WildcardImport
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.core.statements.symbol_statement import SymbolStatement
+    from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 _VALID_TYPE_NAMES = {function_type.value for function_type in TSFunctionTypeNames}
 logger = logging.getLogger(__name__)
 

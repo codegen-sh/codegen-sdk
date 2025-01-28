@@ -2,26 +2,27 @@ from __future__ import annotations
 
 import os
 from collections import deque
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Self, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.expressions import Name
-from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.import_resolution import Import, ImportResolution, WildcardImport
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.import_statement import ImportStatement
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.sdk.utils import find_all_descendants, find_first_ancestor, find_first_descendant
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.external_module import ExternalModule
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.import_statement import ImportStatement
+    from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.typescript.file import TSFile
     from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 

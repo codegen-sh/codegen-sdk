@@ -3,27 +3,16 @@ from __future__ import annotations
 import itertools
 import re
 from abc import abstractmethod
-from collections.abc import Callable, Generator, Iterable
 from functools import cached_property
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, Unpack, final, overload
 
-import rich.repr
-from rich.console import Console, ConsoleOptions, RenderResult
 from rich.markup import escape
 from rich.pretty import Pretty
-from tree_sitter import Node as TSNode
-from tree_sitter import Point, Range
 
-from codegen.sdk.codebase.flagging.code_flag import CodeFlag
-from codegen.sdk.codebase.flagging.enums import FlagKwargs
 from codegen.sdk.codebase.span import Span
-from codegen.sdk.codebase.transaction_manager import TransactionManager
 from codegen.sdk.codebase.transactions import EditTransaction, InsertTransaction, RemoveTransaction, TransactionPriority
 from codegen.sdk.core.autocommit import commiter, reader, remover, repr_func, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.placeholder.placeholder import Placeholder
-from codegen.sdk.enums import NodeType
 from codegen.sdk.extensions.utils import get_all_identifiers
 from codegen.sdk.output.ast import AST
 from codegen.sdk.output.constants import ANGULAR_STYLE, MAX_STRING_LENGTH
@@ -33,8 +22,19 @@ from codegen.sdk.utils import descendant_for_byte_range, find_all_descendants, f
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Callable, Generator, Iterable
+
+    import rich.repr
+    from rich.console import Console, ConsoleOptions, RenderResult
+    from tree_sitter import Node as TSNode
+    from tree_sitter import Point, Range
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+    from codegen.sdk.codebase.flagging.enums import FlagKwargs
+    from codegen.sdk.codebase.transaction_manager import TransactionManager
     from codegen.sdk.core.class_definition import Class
+    from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.function_call import FunctionCall
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.expressions import Expression
@@ -44,9 +44,11 @@ if TYPE_CHECKING:
     from codegen.sdk.core.import_resolution import Import, WildcardImport
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.statement import Statement
     from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.core.symbol_group import SymbolGroup
+    from codegen.sdk.enums import NodeType
     from codegen.visualizations.enums import VizNode
 CONTAINER_CHARS = (b"(", b")", b"{", b"}", b"[", b"]", b"<", b">", b"import")
 MAX_REPR_LEN: int = 200

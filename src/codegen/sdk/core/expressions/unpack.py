@@ -1,11 +1,13 @@
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.core.interfaces.wrapper_expression import IWrapper
 from codegen.shared.decorators.docs import apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")
 

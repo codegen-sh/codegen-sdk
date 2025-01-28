@@ -7,7 +7,6 @@ from collections import Counter, defaultdict
 from enum import StrEnum
 from typing import TYPE_CHECKING
 
-from rustworkx import PyDiGraph
 from tabulate import tabulate
 
 from codegen.sdk.enums import NodeType
@@ -16,6 +15,8 @@ from codegen.sdk.utils import truncate_line
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
+    from rustworkx import PyDiGraph
+
     from codegen.sdk.core.codebase import CodebaseType
 
 

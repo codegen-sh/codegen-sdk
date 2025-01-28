@@ -1,15 +1,18 @@
 import json
 import os
 from dataclasses import asdict
+from typing import TYPE_CHECKING
 
 import networkx as nx
 from networkx import DiGraph, Graph
 
-from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.output.utils import DeterministicJSONEncoder
 from codegen.visualizations.enums import GraphJson, GraphType
+
+if TYPE_CHECKING:
+    from codegen.git.repo_operator.repo_operator import RepoOperator
 
 ####################################################################################################################
 # READING GRAPH VISUALIZATION DATA

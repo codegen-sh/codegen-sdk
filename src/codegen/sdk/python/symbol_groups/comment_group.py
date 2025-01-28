@@ -4,7 +4,6 @@ import re
 from typing import TYPE_CHECKING
 
 from docstring_parser import Docstring, DocstringStyle, parse
-from tree_sitter import Node as TSNode
 
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.statements.statement import StatementType
@@ -14,6 +13,8 @@ from codegen.sdk.python.statements.comment import PyComment
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.python.function import PyFunction
     from codegen.sdk.python.symbol import PySymbol
 

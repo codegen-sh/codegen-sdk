@@ -1,24 +1,15 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator, Sequence
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
-from codegen.sdk.core.detached_symbols.decorator import Decorator
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.detached_symbols.parameter import Parameter
-from codegen.sdk.core.import_resolution import Import, WildcardImport
 from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.has_block import HasBlock
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
-from codegen.sdk.core.statements.return_statement import ReturnStatement
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
@@ -26,9 +17,19 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Sequence
+
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.detached_symbols.decorator import Decorator
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.file import File
+    from codegen.sdk.core.import_resolution import Import, WildcardImport
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.statements.return_statement import ReturnStatement
+    from codegen.sdk.core.symbol import Symbol
 
 
 TFunction = TypeVar("TFunction", bound="Function")

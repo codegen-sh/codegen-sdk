@@ -4,20 +4,20 @@ from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.core.autocommit import reader
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
-from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.function import Function
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.interfaces.inherits import Inherits
-from codegen.sdk.core.statements.attribute import Attribute
-from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.expressions.type import Type
+    from codegen.sdk.core.function import Function
+    from codegen.sdk.core.statements.attribute import Attribute
+    from codegen.sdk.core.symbol_groups.parents import Parents
 
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")

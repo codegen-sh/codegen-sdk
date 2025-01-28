@@ -1,12 +1,7 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.autocommit.decorators import writer
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
@@ -15,12 +10,8 @@ from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.import_resolution import Import
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.enums import EdgeType, ImportType, NodeType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.assignment import TSAssignment
@@ -32,13 +23,23 @@ from codegen.sdk.typescript.import_resolution import TSImport
 from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.namespace import TSNamespace
 from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
-from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.resolution_stack import ResolutionStack
+    from codegen.sdk.core.interfaces.exportable import Exportable
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.export_statement import ExportStatement
+    from codegen.sdk.core.symbol_groups.collection import Collection
+    from codegen.sdk.typescript.symbol import TSSymbol
 
 
 @ts_apidoc

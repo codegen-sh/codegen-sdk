@@ -3,20 +3,20 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.expressions import Name
 from codegen.sdk.core.import_resolution import ExternalImportResolver, Import, ImportResolution
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.exportable import Exportable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.import_statement import ImportStatement
     from codegen.sdk.python.file import PyFile
 
 import logging

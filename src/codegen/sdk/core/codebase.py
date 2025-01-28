@@ -8,7 +8,7 @@ import re
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generic, Literal, TypeVar, Unpack, overload
+from typing import TYPE_CHECKING, Generic, Literal, TypeVar, Unpack, overload
 
 import plotly.graph_objects as go
 import rich.repr
@@ -38,7 +38,6 @@ from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.directory import Directory
-from codegen.sdk.core.export import Export
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.file import File, SourceFile
 from codegen.sdk.core.function import Function
@@ -77,6 +76,9 @@ from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.export import Export
 
 logger = logging.getLogger(__name__)
 MAX_LINES = 10000  # Maximum number of lines of text allowed to be logged

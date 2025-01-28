@@ -6,12 +6,12 @@ from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Name
 from codegen.sdk.core.expressions.expression import Expression
-from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.resolvable import Resolvable
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.chainable import Chainable
     from codegen.sdk.core.interfaces.has_name import HasName
 
 

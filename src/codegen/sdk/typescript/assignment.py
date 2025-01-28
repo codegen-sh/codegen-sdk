@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
 
 

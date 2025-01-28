@@ -2,24 +2,24 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Literal, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.placeholder.placeholder_stub import StubPlaceholder
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.parameter import Parameter
+    from codegen.sdk.core.expressions.name import Name
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
 
 
 @apidoc

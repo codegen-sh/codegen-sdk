@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import Counter, defaultdict
-from collections.abc import Generator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from enum import IntEnum, auto, unique
@@ -11,11 +10,8 @@ from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from codeowners import CodeOwners as CodeOwnersParser
-from git import Commit as GitCommit
 from rustworkx import PyDiGraph, WeightedEdgeList
 
-from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
@@ -23,12 +19,9 @@ from codegen.sdk.codebase.flagging.flags import Flags
 from codegen.sdk.codebase.transaction_manager import TransactionManager
 from codegen.sdk.codebase.validation import get_edges, post_reset_validation
 from codegen.sdk.core.autocommit import AutoCommit, commiter
-from codegen.sdk.core.dataclasses.usage import Usage
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
 from codegen.sdk.core.external.language_engine import LanguageEngine, get_language_engine
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
 from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
@@ -38,10 +31,19 @@ from codegen.shared.exceptions.control_flow import StopCodemodException
 from codegen.shared.performance.stopwatch_utils import stopwatch, stopwatch_with_sentry
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Mapping, Sequence
+
+    from codeowners import CodeOwners as CodeOwnersParser
+    from git import Commit as GitCommit
+
+    from codegen.git.repo_operator.repo_operator import RepoOperator
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses
+    from codegen.sdk.core.dataclasses.usage import Usage
     from codegen.sdk.core.expressions import Expression
     from codegen.sdk.core.external_module import ExternalModule
     from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.parser import Parser
 
 import logging

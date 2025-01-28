@@ -1,14 +1,9 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
-import rich.repr
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
 from codegen.sdk.core.autocommit import commiter, reader, remover, writer
@@ -16,12 +11,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.usable import Usable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import EdgeType, ImportType, NodeType
 from codegen.sdk.extensions.utils import cached_property
@@ -30,7 +20,18 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    import rich.repr
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.exportable import Exportable
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.symbol import Symbol
 
 

@@ -1,7 +1,12 @@
 line-length = 200
-exclude = ["src/codegen/shared/compilation/function_imports.py", 'docs/**']
+exclude = [
+  "src/codegen/shared/compilation/function_imports.py",
+  'docs/**',
+  "src/codegen/sdk/__init__.py",
+]
+unsafe-fixes = true
 [lint]
-select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ"]
+select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ", "TC"]
 ignore = [
   "D100",
   "D101",

@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from tree_sitter import Node as TSNode
+from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.detached_symbols.decorator import Decorator
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.shared.decorators.docs import py_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
 
 
 @py_apidoc

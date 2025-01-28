@@ -6,7 +6,6 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.dataclasses.usage import UsageType
 from codegen.sdk.core.expressions.expression import Expression
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import EdgeType
@@ -17,6 +16,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.symbol import Symbol
 
 Parent = TypeVar("Parent", bound="Editable")

@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
 
 
 Parent = TypeVar("Parent", bound="Expression")

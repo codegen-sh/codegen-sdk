@@ -5,7 +5,6 @@ from tree_sitter import Node as TSNode
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import reader
@@ -13,6 +12,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.importable import Importable
 
 

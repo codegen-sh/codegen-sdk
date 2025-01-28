@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.statements.statement import Statement, StatementType
-from codegen.sdk.core.statements.switch_case import SwitchCase
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.expressions import Expression
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.statements.switch_case import SwitchCase
 
 
 Parent = TypeVar("Parent", bound="CodeBlock")

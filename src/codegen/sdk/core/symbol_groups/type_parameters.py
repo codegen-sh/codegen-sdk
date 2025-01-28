@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
+    from codegen.sdk.core.node_id_factory import NodeId
 
 
 TType = TypeVar("TType", bound="Type")
