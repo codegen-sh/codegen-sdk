@@ -1,8 +1,8 @@
 import logging
 
-from codegen.git.schemas.enums import FetchResult
-from codegen.git.utils.branch_sync import BranchSyncResult, fetch_highside_branch, get_highside_origin
+from codegen.git.schemas.github import GithubType
 from codegen.runner.models.codemod import Codemod
+from codegen.runner.utils.branch_sync import get_remote_for_github_type
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 
 logger = logging.getLogger(__name__)
@@ -22,9 +22,12 @@ class SandboxRepo:
         if self.codebase.op.is_branch_checked_out(base_branch):
             return
 
-        res = self._pull_highside_to_lowside(base_branch)
-        if res is BranchSyncResult.SUCCESS:
-            self.codebase.checkout(branch=base_branch, remote=True)
+        # fetch the base branch from highside (do not checkout yet)
+        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        self.codebase.op.fetch_remote(highside_remote.name, refspec=f"{base_branch}:{base_branch}")
+
+        # checkout the base branch (and possibly sync graph)
+        self.codebase.checkout(branch=base_branch)
 
     def set_up_head_branch(self, head_branch: str, force_push_head_branch: bool):
         """Set-up head branch by pushing latest highside branch to lowside and fetching the branch (so that it can be checked out later)."""
@@ -43,22 +46,9 @@ class SandboxRepo:
         if force_push_head_branch:
             return
 
-        res = self._pull_highside_to_lowside(head_branch)
-        if res is BranchSyncResult.SUCCESS:
-            self.codebase.op.fetch_remote("origin", refspec=f"{head_branch}:{head_branch}")
-
-    def _pull_highside_to_lowside(self, branch_name: str):
-        """Grabs the latest highside branch `branch_name` and pushes it to the lowside."""
-        # Step 1: checkout branch that tracks highside remote
-        res = fetch_highside_branch(op=self.codebase.op, branch_name=branch_name)
-        if res == FetchResult.REFSPEC_NOT_FOUND:
-            return BranchSyncResult.BRANCH_NOT_FOUND
-
-        # Step 2: push branch up to lowside
-        logger.info(f"Pushing branch: {branch_name} from highside to lowside w/ force=False ...")
-        lowside_origin = self.codebase.op.git_cli.remote("origin")
-        self.codebase.op.push_changes(remote=lowside_origin, refspec=f"{branch_name}:{branch_name}", force=False)
-        return BranchSyncResult.SUCCESS
+        # fetch the head branch from highside (do not checkout yet)
+        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        self.codebase.op.fetch_remote(highside_remote.name, refspec=f"{head_branch}:{head_branch}")
 
     def reset_branch(self, base_branch: str, head_branch: str) -> None:
         logger.info(f"Checking out base branch {base_branch} ...")
@@ -76,8 +66,8 @@ class SandboxRepo:
             return False
 
         # =====[ Push changes highside ]=====
-        highside_origin = get_highside_origin(self.codebase.op)
-        highside_res = self.codebase.op.push_changes(remote=highside_origin, refspec=f"{head_branch}:{head_branch}", force=force_push)
+        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        highside_res = self.codebase.op.push_changes(remote=highside_remote, refspec=f"{head_branch}:{head_branch}", force=force_push)
         return not any(push_info.flags & push_info.ERROR for push_info in highside_res)
 
     # TODO: move bunch of codebase git operations into this class.
