@@ -196,9 +196,9 @@ class NodeTypescriptEngine(TypescriptEngine):
                 logger.info("Installing typescript analyzer dependencies")
                 subprocess.run(["npm", "install"], cwd=self.analyzer_path, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm install failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm install failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
             # Create a temporary output file with a random name
@@ -220,9 +220,9 @@ class NodeTypescriptEngine(TypescriptEngine):
                         env=node_environ,
                     )
                 except subprocess.CalledProcessError as e:
-                    logger.error(f"ANALYZER FAIL: analyzer failed with exit code {e.returncode}")
-                    logger.error(f"ANALYZER FAIL stdout: {e.stdout}")
-                    logger.error(f"ANALYZER FAIL stderr: {e.stderr}")
+                    logger.exception(f"ANALYZER FAIL: analyzer failed with exit code {e.returncode}")
+                    logger.exception(f"ANALYZER FAIL stdout: {e.stdout}")
+                    logger.exception(f"ANALYZER FAIL stderr: {e.stderr}")
                     raise
 
                 # Load the type data

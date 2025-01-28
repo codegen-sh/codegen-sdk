@@ -34,9 +34,9 @@ class TSDeclassify(ExternalProcess):
                 logger.info(f"Running npm init in {self.working_dir}")
                 subprocess.run(["npm", "init", "-y"], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm init failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm init failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
             # NPM Install
@@ -44,16 +44,16 @@ class TSDeclassify(ExternalProcess):
                 logger.info(f"Running npm install in {self.working_dir}")
                 subprocess.run(["npm", "install", "-D", "@codemod/cli", "react-declassify"], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm install failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm install failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
             # Finalize
             self.is_ready = True
         except Exception as e:
             self._error = e
-            logger.error(f"Error installing ts-declassify: {e}")
+            logger.exception(f"Error installing ts-declassify: {e}")
             raise e
 
     def reparse(self):
@@ -73,9 +73,9 @@ class TSDeclassify(ExternalProcess):
             try:
                 subprocess.run(["npx", "codemod", "--plugin", "react-declassify", source_file], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"DECLASSIFY FAIL: declassify failed with exit code {e.returncode}")
-                logger.error(f"DECLASSIFY FAIL stdout: {e.stdout}")
-                logger.error(f"DECLASSIFY FAIL stderr: {e.stderr}")
+                logger.exception(f"DECLASSIFY FAIL: declassify failed with exit code {e.returncode}")
+                logger.exception(f"DECLASSIFY FAIL stdout: {e.stdout}")
+                logger.exception(f"DECLASSIFY FAIL stderr: {e.stderr}")
                 raise
 
             # Get the declassified source

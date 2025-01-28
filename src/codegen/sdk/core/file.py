@@ -381,10 +381,10 @@ class SourceFile(
         try:
             self.parse(G)
         except RecursionError as e:
-            logger.error(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
+            logger.exception(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
             raise e
         except Exception as e:
-            logger.error(f"Failed to parse file {filepath}: {e}")
+            logger.exception(f"Failed to parse file {filepath}: {e}")
             raise e
 
     @property

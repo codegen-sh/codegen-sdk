@@ -253,7 +253,7 @@ class GitRepoClient:
             new_branch = self.create_branch(new_branch_name, base_branch_name=base_branch_name)
             return new_branch
         except Exception as e:
-            logger.error(f"Unexpected error creating branch: {new_branch_name}\n\t{e}")
+            logger.exception(f"Unexpected error creating branch: {new_branch_name}\n\t{e}")
             return None
 
     def get_branch_safe(self, branch_name: str, attempts: int = 1, wait_seconds: int = 1) -> Branch | None:

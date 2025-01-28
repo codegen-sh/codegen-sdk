@@ -96,7 +96,7 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         try:
             self._compute_dependencies()
         except Exception as e:
-            logger.error(f"Error in file {self.file.path} while computing dependencies for symbol {self.name}")
+            logger.exception(f"Error in file {self.file.path} while computing dependencies for symbol {self.name}")
             raise e
         if incremental:
             return self.descendant_symbols + self.file.get_nodes(sort=False)

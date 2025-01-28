@@ -251,7 +251,7 @@ class TransactionManager:
             # Add to priority queue and rebuild the queue
             return transaction
         except TransactionError as e:
-            logger.error(e)
+            logger.exception(e)
             msg = (
                 f"Potential conflict detected in file {transaction.file_path}!\n"
                 "Attempted to perform code modification:\n"

@@ -318,7 +318,7 @@ class RepoOperator(ABC):
                 logger.warning(f"Branch {branch_name} was not found in remote {remote_name}. Unable to checkout.")
                 return CheckoutResult.NOT_FOUND
             else:
-                logger.error(f"Error with Git operations: {e}")
+                logger.exception(f"Error with Git operations: {e}")
                 raise
 
     def get_diff_files_from_ref(self, ref: str):

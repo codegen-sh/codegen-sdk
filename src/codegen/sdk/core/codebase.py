@@ -1212,7 +1212,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.info("Codebase initialization complete")
             return codebase
         except Exception as e:
-            logger.error(f"Failed to initialize codebase: {e}")
+            logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
 

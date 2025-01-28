@@ -159,7 +159,7 @@ class CodebaseGraph:
         try:
             self.synced_commit = context.repo_operator.head_commit
         except ValueError as e:
-            logger.error("Error getting commit head %s", e)
+            logger.exception("Error getting commit head %s", e)
             self.synced_commit = None
         self.pending_syncs = []
         self.all_syncs = []
