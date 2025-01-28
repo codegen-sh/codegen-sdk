@@ -2,6 +2,23 @@ default_language_version:
   python: python3.12
 fail_fast: true
 repos:
+  - repo: "local"
+    hooks:
+      - id: disallowed-words-check
+        name: Check for disallowed words
+        entry: scripts/disallowed-words-check.sh
+        language: script
+        files: ''  # Check all files
+      - id: generate-runner-imports
+        name: Generate Runner Imports
+        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
+        language: system
+        pass_filenames: false
+        always_run: true
+  - repo: https://github.com/ComPWA/taplo-pre-commit
+    rev: v0.9.3
+    hooks:
+      - id: taplo-format
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.3
     hooks:
@@ -20,10 +37,6 @@ repos:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         exclude: (src/codemods/eval)|(tests/unit/skills/snapshots)|(tests/unit/codegen/sdk/output)|(tests/integration/verified_codemods)|(docs/samples)
-  - repo: https://github.com/ComPWA/taplo-pre-commit
-    rev: v0.9.3
-    hooks:
-      - id: taplo-format
   - repo: https://github.com/MarcoGorelli/cython-lint
     rev: v0.16.6
     hooks:
@@ -73,19 +86,7 @@ repos:
         pass_filenames: false
         always_run: true
         entry: bash -c "uv run --frozen --all-extras --dev deptry src --ignore DEP001"
-  - repo: "local"
-    hooks:
-      - id: disallowed-words-check
-        name: Check for disallowed words
-        entry: scripts/disallowed-words-check.sh
-        language: script
-        files: ''  # Check all files
-      - id: generate-runner-imports
-        name: Generate Runner Imports
-        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
-        language: system
-        pass_filenames: false
-        always_run: true
+
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 39.120.4
