@@ -45,6 +45,9 @@ commands:
             ./scripts/setup-lfs.sh
   install-uv:
     steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:ea8RazQk7imbLawQlYY89xPzYPcFv91Ko8U/SQtUQT8"
       - run:
           command: |
             curl -LsSf https://astral.sh/uv/install.sh | sh
