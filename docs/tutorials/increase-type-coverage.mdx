@@ -17,6 +17,8 @@ Common use cases include:
     Adding type hints can improve developer experience and [significantly speed up](https://github.com/microsoft/Typescript/wiki/Performance#using-type-annotations) programs like the Typescript compiler and `mypy`.
 </Tip>
 
+<Note>See [Type Annotations](/building-with-codegen/type-annotations) for a general overview of the type maninpulation</Note>
+
 ## APIs for monitoring types
 
 Codegen programs typically access type annotations through the following APIs:
@@ -89,7 +91,7 @@ This analysis gives you a breakdown of type coverage across three key areas:
 To add a return type, use `function.set_return_type`. The script below will add a `-> None` return type to all functions that contain no return statements:
 
 <CodeGroup>
-```python python
+```python For Python
 for file in codebase.files:
     # Check if 'app' is in the file's filepath
     if "app" in file.filepath:
@@ -101,7 +103,7 @@ for file in codebase.files:
                 function.set_return_type("None")
 ```
 
-```python typescript
+```python For Typescript
 for file in codebase.files:
     # Check if 'app' is in the file's filepath
     if "app" in file.filepath:
@@ -115,136 +117,6 @@ for file in codebase.files:
 </CodeGroup>
 
 
-## Adding a type to a union type
+## Coming Soon: Advanced Type Inference
 
-Since a union type is a collection, you can call standard methods such as append to add new types to it.
-
-<CodeGroup>
-```python python
-target_file = codebase.get_file("path/to/file.py")
-function = target_file.get_function("function_name")
-# def function_name() -> a | b: ...
-
-# import c from module
-c = codebase.get_file("path/to/module.py").get_symbol("c")
-target_file.add_symbol_import(c)
-
-# Add a new option to the return type
-function.return_type.append("c")
-```
-
-```python typescript
-target_file = codebase.get_file("path/to/file.ts")
-function = target_file.get_function("functionName")
-# function functionName(): a | b: ...
-c = codebase.get_file("path/to/module.ts").get_symbol("c")
-target_file.add_symbol_import(c)
-
-# Add a new option to the return type
-function.return_type.append("c")
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Adding a type to a generic type
-
-You can add parameters to a generic type in a similar fashion
-
-```python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# def function_name() -> tuple[a, b]: ...
-
-# Add a new parameter to the return type
-function.return_type.parameters.append("float")
-```
-
-## Checking if a generic type contains a given type
-
-You can also check if a given type is in the list of parameters
-
-
-```python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# def function_name() -> tuple[a, b]: ...
-
-# Check if "a" is in the function's return_type's parameters
-if "a" in function.return_type.parameters:
-    # type "a" is present in the return type parameters
-    print("type 'a' is present in the return type parameters.")
-```
-## Resolving a type_annotation
-
-You can find the referenced symbol of any type
-
-<CodeGroup>
-```python python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# from xyz import MyContainer, a, b
-# def function_name() -> MyContainer[a, b]: ...
-print(function.return_type.resolved_types)  # Resolves to MyContainer
-for parameter in function.return_type.parameters:
-    print(parameter.resolved_types)  # Resolves to a and b
-```
-
-```python typescript
-function = codebase.get_file("path/to/file.ts").get_function("functionName")
-# import { MyContainer, a, b } './types'
-# function function_name(): MyContainer<a, b> { ... }
-print(function.return_type.resolved_types)  # Resolves to MyContainer
-for parameter in function.return_type.parameters:
-    print(parameter.resolved_types)  # Resolves to a and b
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Resolving a type_annotation of an assignment
-You can also use resolved_type directly on assignments to get the resolved_symbol
-
-```python
-a = codebase.get_file("path/to/file.py").get_global_var("a")
-# a: MyType = ...
-print(a.type)  # Resolves to MyType
-a.type.rename("MyNewType")  # Renames the symbol `MyType` to `MyNewType` throughout the codebase
-```
+<Warning>Codegen is building out an API for direct interface with `tsc` and `mypy` for precise type inference. Interested piloting this API? Let us know!</Warning>
