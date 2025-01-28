@@ -4,7 +4,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
-from codegen.sdk.core.autocommit.constants import REMOVED, AutoCommitState, AutoCommitSymbol, IllegalWriteError, NodeNotFoundError, OutdatedNodeError
+from codegen.sdk.core.autocommit.constants import (
+    REMOVED,
+    AutoCommitState,
+    AutoCommitSymbol,
+    IllegalWriteError,
+    NodeNotFoundError,
+    OutdatedNodeError,
+)
 from codegen.sdk.core.autocommit.utils import is_file, is_on_graph, is_symbol
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import update_dict
@@ -81,7 +88,9 @@ class AutoCommit:
 
     def _commit(self, lock: PendingFiles, additional: str | None = None) -> None:
         if lock:
-            logger.debug("Running autocommit on %s", "all files" if lock.all else lock.files)
+            logger.debug(
+                "Running autocommit on %s", "all files" if lock.all else lock.files
+            )
             files = lock.files if not lock.all else None
             if additional and files:
                 files.add(additional)
@@ -96,12 +105,19 @@ class AutoCommit:
                 return
             self._commit(lock, new_id)
             old_node = self.G.get_node(symbol.file_node_id)
-            new_node = self.G.get_node(new_id if new_id is not None else symbol.file_node_id)
+            new_node = self.G.get_node(
+                new_id if new_id is not None else symbol.file_node_id
+            )
             old_node.__dict__ = new_node.__dict__
             if not lock:
                 self._files[symbol.file_node_id] = new_id
 
-    def _reaquire_node(self, symbol: Union["Symbol", "Import"], new_node_id: NodeId, missing_ok: bool = False):
+    def _reaquire_node(
+        self,
+        symbol: Union["Symbol", "Import"],
+        new_node_id: NodeId,
+        missing_ok: bool = False,
+    ):
         """Re-aquire a symbol."""
         # Prevent double re-aquire
         new_node = self.G.get_node(new_node_id)
@@ -113,7 +129,9 @@ class AutoCommit:
             )
         update_dict(set(), symbol, new_node)
 
-    def _update_symbol(self, symbol: Union["Symbol", "Import"], lock: PendingFiles) -> None:
+    def _update_symbol(
+        self, symbol: Union["Symbol", "Import"], lock: PendingFiles
+    ) -> None:
         """Check for an update to a symbol, and if there is one, copy its dict."""
         node_id = symbol.node_id
         if symbol_update := self._nodes.pop(node_id, None):
@@ -129,7 +147,9 @@ class AutoCommit:
                 self._reaquire_node(symbol, node_id)
                 self._nodes[node_id] = symbol_update
             else:
-                new_id = node_id if (symbol_update.new_id is None) else symbol_update.new_id
+                new_id = (
+                    node_id if (symbol_update.new_id is None) else symbol_update.new_id
+                )
                 self._reaquire_node(symbol, new_id)
                 if symbol_update.new_id == REMOVED:
                     # Incredibly cursed, but keep the update around to make re-acquire succeed
@@ -138,7 +158,9 @@ class AutoCommit:
             # We can't re-acquire a node twice
             self._reaquire_node(symbol, node_id, missing_ok=True)
 
-    def check_update(self, node: AutoCommitSymbol, lock: PendingFiles, must_be_updated: bool = True) -> None:
+    def check_update(
+        self, node: AutoCommitSymbol, lock: PendingFiles, must_be_updated: bool = True
+    ) -> None:
         """Check for an update to a node if possible."""
         assert self.state is not None
         if is_on_graph(node):
@@ -148,20 +170,33 @@ class AutoCommit:
         else:
             if node.is_outdated:
                 if node.parent is not None:
-                    self.check_update(node.parent, lock=lock, must_be_updated=must_be_updated)
+                    self.check_update(
+                        node.parent, lock=lock, must_be_updated=must_be_updated
+                    )
                     if not node.is_outdated:
                         return
                 if must_be_updated:
                     raise OutdatedNodeError(node)
 
-    def set_pending_file(self, file: AutoCommitSymbol, *, update_id: NodeId | None = None, new_id: NodeId | None = None) -> None:
+    def set_pending_file(
+        self,
+        file: AutoCommitSymbol,
+        *,
+        update_id: NodeId | None = None,
+        new_id: NodeId | None = None,
+    ) -> None:
         """Mark a file as pending."""
         if update_id is None:
             update_id = file.filepath
         if new_id is not None or update_id not in self._files:
             self._files[update_id] = new_id
 
-    def set_pending(self, node: AutoCommitSymbol, new_id: NodeId | None = None, new_file: NodeId | None = None) -> None:
+    def set_pending(
+        self,
+        node: AutoCommitSymbol,
+        new_id: NodeId | None = None,
+        new_file: NodeId | None = None,
+    ) -> None:
         """Mark a node as pending.
 
         This also mark the file it's in, the file it's moved to, and it's parent if the node is
@@ -183,14 +218,18 @@ class AutoCommit:
                     symbol_update.new_file = new_file_node
                     symbol_update.generation = node.file._generation
             else:
-                self._nodes[node.node_id] = AutoCommitNode(node, node.file._generation, new_id, new_file_node)
+                self._nodes[node.node_id] = AutoCommitNode(
+                    node, node.file._generation, new_id, new_file_node
+                )
         elif node.parent:
             self.set_pending(node.parent, None, None)
         else:
             logger.warning("Could not find parent node of %r", node)
 
     @contextmanager
-    def write_state(self, node: AutoCommitSymbol, *, commit: bool = True, move: bool = False) -> Iterator[None]:
+    def write_state(
+        self, node: AutoCommitSymbol, *, commit: bool = True, move: bool = False
+    ) -> Iterator[None]:
         """Enter a write state."""
         if self.state not in (AutoCommitState.Write, None):
             # Can't write in a read or commit
@@ -208,19 +247,27 @@ class AutoCommit:
     def enter_state(self, state: AutoCommitState) -> AutoCommitState | None:
         """Begin a new state."""
         old_state = self.state
-        logger.debug("Starting %s, previous: %s", state.name, old_state.name if old_state else None)
+        logger.debug(
+            "Starting %s, previous: %s",
+            state.name,
+            old_state.name if old_state else None,
+        )
         self.state = state
         return old_state
 
     @contextmanager
-    def lock_files(self, files: set[Path], all: bool = False, commit: bool = True) -> Iterator[PendingFiles]:
+    def lock_files(
+        self, files: set[Path], all: bool = False, commit: bool = True
+    ) -> Iterator[PendingFiles]:
         to_unlock = self.try_lock_files(files, all, commit)
         try:
             yield to_unlock
         finally:
             self.unlock_files(to_unlock)
 
-    def try_lock_files(self, files: set[Path], all: bool = False, commit: bool = True) -> PendingFiles:
+    def try_lock_files(
+        self, files: set[Path], all: bool = False, commit: bool = True
+    ) -> PendingFiles:
         if self._lock_all or not commit:
             return PendingFiles(set())
         if all:
