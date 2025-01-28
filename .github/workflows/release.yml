@@ -11,47 +11,46 @@ on:
       - develop
       - legacy/.*
   workflow_dispatch:
+
 permissions:
   contents: read
 
 jobs:
-  build:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest-8, macos-latest]
-        python: [3.12, 3.13 ]
-    runs-on: ${{ matrix.os }}
+        os: [ubuntu-latest-8, macos-latest]
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
       - name: Setup backend
         uses: ./.github/actions/setup-backend
         with:
-          python-version: ${{ matrix.python }}
+          python-version: "3.12"
+
       - name: Get history and tags for SCM versioning to work
         run: |
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - name: Build release distributions
-        run: |
-          uv build --wheel
-          uv build --package codegen-git --wheel
-          uv build --package codegen-utils --wheel
-          cd graph-sitter-types
-          uv build --package graph-sitter-types --wheel --sdist
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.16.5
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
-      - name: Upload distributions
-        uses: actions/upload-artifact@v4
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-${{ matrix.python }}
-          path: dist/
+          name: wheels-${{ matrix.os }}
+          path: ./wheelhouse/*.whl
 
   release:
-    needs: build
+    needs: build_wheels
     runs-on: ubuntu-latest-8
     permissions:
       contents: write
