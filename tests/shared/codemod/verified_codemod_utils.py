@@ -105,10 +105,11 @@ class CodemodAPI:
             )
             if response.status_code != 200:
                 logger.error(f"Error making request: {response.status_code} {response.text}")
-                raise Exception(f"Error making request: {response.status_code} {response.text}")
+                msg = f"Error making request: {response.status_code} {response.text}"
+                raise Exception(msg)
             return response
         except requests.RequestException as e:
-            logger.error(f"Error making request: {e}")
+            logger.exception(f"Error making request: {e}")
             raise e
 
     def get_verified_codemods(self, repo_id: int, codemod_id: int | None = None, base_commit: str | None = None) -> RepoCodemodMetadata:

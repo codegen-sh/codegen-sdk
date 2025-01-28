@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.python import PyFile, PyFunction
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyFile, PyFunction
 
 
 def test_function_callsites(tmpdir) -> None:

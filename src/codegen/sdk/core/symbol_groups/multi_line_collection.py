@@ -77,7 +77,8 @@ class MultiLineCollection(Collection[Child, Parent], Generic[Child, Parent]):
             src_lines = src.split("\n")
             src_lines = [line if line == "" else f"{indent}{line}" for line in src_lines]
         else:
-            raise ValueError(f"Invalid source type: {type(src)}")
+            msg = f"Invalid source type: {type(src)}"
+            raise ValueError(msg)
         src = "\n".join(src_lines)
 
         # Only add the leading delimiter if it's inserted before or after existing elements

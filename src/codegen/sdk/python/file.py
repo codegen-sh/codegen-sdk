@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from typing import TYPE_CHECKING
+
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interface import Interface
@@ -15,8 +16,11 @@ from codegen.sdk.python.import_resolution import PyImport
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.statements.attribute import PyAttribute
 from codegen.sdk.python.statements.import_statement import PyImportStatement
-from codegen.sdk.python.symbol import PySymbol
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.python.symbol import PySymbol
 
 
 @py_apidoc

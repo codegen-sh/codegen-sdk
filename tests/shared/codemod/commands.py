@@ -153,7 +153,8 @@ def report_repos(extra_repos: bool = False, size: str | None = None, language: s
 def clone_repos(clean_cache: bool = False, extra_repos: bool = False, token: str | None = None, verified_codemod_repos: bool = False) -> None:
     """Clone all repositories for codemod testing."""
     if extra_repos and not token:
-        raise ValueError("Token is required for extra repos")
+        msg = "Token is required for extra repos"
+        raise ValueError(msg)
 
     repo_dir = BASE_TMP_DIR / ("extra_repos" if extra_repos or verified_codemod_repos else "oss_repos")
     if clean_cache and repo_dir.exists():

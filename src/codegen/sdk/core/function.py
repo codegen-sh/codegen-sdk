@@ -1,24 +1,15 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
-from codegen.sdk.core.detached_symbols.decorator import Decorator
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.detached_symbols.parameter import Parameter
-from codegen.sdk.core.import_resolution import Import, WildcardImport
 from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.interfaces.chainable import Chainable
 from codegen.sdk.core.interfaces.has_block import HasBlock
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
-from codegen.sdk.core.statements.return_statement import ReturnStatement
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
@@ -26,9 +17,19 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Sequence
+
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.detached_symbols.decorator import Decorator
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.file import File
+    from codegen.sdk.core.import_resolution import Import, WildcardImport
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.statements.return_statement import ReturnStatement
+    from codegen.sdk.core.symbol import Symbol
 
 
 TFunction = TypeVar("TFunction", bound="Function")
@@ -301,7 +302,8 @@ class Function(
 
         statements = self.code_block.statements
         if index >= len(statements):
-            raise ValueError(f"Index {index} out of range for function {self.name}")
+            msg = f"Index {index} out of range for function {self.name}"
+            raise ValueError(msg)
 
         first_statement = self.code_block.statements[index]
         first_statement.insert_before(lines)
@@ -394,11 +396,12 @@ class Function(
         if self.G.language_engine:
             return self.G.language_engine.get_return_type(self)
         else:
-            raise NotImplementedError("Language engine not enabled for this repo or language.")
+            msg = "Language engine not enabled for this repo or language."
+            raise NotImplementedError(msg)
 
     @property
     @noapidoc
-    def descendant_symbols(self) -> list[Importable]:
+    def descendant_symbols(self) -> Sequence[Importable]:
         symbols = [self]
         for param in self.parameters:
             symbols.extend(param.descendant_symbols)

@@ -79,15 +79,18 @@ class Transaction:
         return self.end_byte - self.start_byte
 
     def execute(self):
-        raise NotImplementedError("Transaction.execute() must be implemented by subclasses")
+        msg = "Transaction.execute() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        raise NotImplementedError("Transaction.get_diff() must be implemented by subclasses")
+        msg = "Transaction.get_diff() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def diff_str(self):
         """Human-readable string representation of the change"""
-        raise NotImplementedError("Transaction.diff_str() must be implemented by subclasses")
+        msg = "Transaction.diff_str() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def _to_sort_key(transaction: "Transaction"):
         # Sort by:

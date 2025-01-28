@@ -31,7 +31,8 @@ class GlobalEnv:
         if not env_envvar:
             return DEFAULT_ENV
         if env_envvar not in Environment:
-            raise ValueError(f"Invalid environment: {env_envvar}")
+            msg = f"Invalid environment: {env_envvar}"
+            raise ValueError(msg)
         return Environment(env_envvar)
 
     def _load_dotenv(self) -> None:
@@ -47,7 +48,8 @@ class GlobalEnv:
         if value:
             return value
         if required:
-            raise ValueError(f"Environment variable {var_name} is not set with ENV={self.ENV}!")
+            msg = f"Environment variable {var_name} is not set with ENV={self.ENV}!"
+            raise ValueError(msg)
         return ""
 
 

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, TypeVar
 
 from codegen.sdk.core.autocommit import commiter, reader
@@ -10,6 +9,8 @@ from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
 from codegen.sdk.enums import EdgeType
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from codegen.sdk.core.class_definition import Class
     from codegen.sdk.core.external_module import ExternalModule
     from codegen.sdk.core.interface import Interface

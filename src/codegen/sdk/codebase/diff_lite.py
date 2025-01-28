@@ -32,7 +32,8 @@ class ChangeType(IntEnum):
             return ChangeType.Renamed
         if change_type == "A":
             return ChangeType.Added
-        raise ValueError(f"Invalid change type: {change_type}")
+        msg = f"Invalid change type: {change_type}"
+        raise ValueError(msg)
 
 
 class DiffLite(NamedTuple):

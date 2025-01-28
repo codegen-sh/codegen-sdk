@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.python import PyFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyFile
 
 
 def test_reduce_condition_to_true_elif(tmpdir):

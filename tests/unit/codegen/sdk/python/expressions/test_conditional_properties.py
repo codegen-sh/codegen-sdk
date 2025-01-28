@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.python.file import PyFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.python.file import PyFile
 
 
 def test_parse_simple_conditional_expression(tmpdir: str) -> None:

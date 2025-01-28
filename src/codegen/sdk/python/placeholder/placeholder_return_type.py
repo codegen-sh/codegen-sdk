@@ -1,8 +1,10 @@
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.placeholder.placeholder import Placeholder
 from codegen.shared.decorators.docs import py_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")
 

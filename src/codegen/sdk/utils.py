@@ -26,7 +26,8 @@ class XMLUtils:
     def dict_to_xml(data: dict | list, format: bool = False, **kwargs) -> str:
         result = dicttoxml.dicttoxml(data, return_bytes=False, **kwargs)
         if not isinstance(result, str):
-            raise ValueError("Failed to convert dict to XML")
+            msg = "Failed to convert dict to XML"
+            raise ValueError(msg)
         if format:
             result = parseString(result).toprettyxml()
         return result
@@ -262,7 +263,8 @@ def determine_project_language(folder_path: str):
     """
     folder = Path(folder_path)
     if not folder.exists() or not folder.is_dir():
-        raise ValueError(f"Invalid folder path: {folder_path}")
+        msg = f"Invalid folder path: {folder_path}"
+        raise ValueError(msg)
 
     # Initialize counters for each language
     language_counts = Counter()
@@ -321,7 +323,8 @@ def split_git_path(filepath: str) -> tuple[str, str | None]:
         current = current.parent
 
     # If we get here, we didn't find a .git directory
-    raise ValueError(f"Path '{filepath}' is not in a git repository!")
+    msg = f"Path '{filepath}' is not in a git repository!"
+    raise ValueError(msg)
 
 
 def truncate_line(input: str, max_chars: int) -> str:

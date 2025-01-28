@@ -60,39 +60,48 @@ class AbstractAIHelper(ABC):
 
     @abstractmethod
     def __init__(self) -> None:
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def embeddings_with_backoff(self, **kwargs):
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def get_embeddings(self, content_strs: list[str]) -> list[list[float]]:
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def get_embedding(self, content_str: str) -> list[float]:
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def llm_query_with_retry(self, **kwargs):
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def llm_query_no_retry(self, messages: list = [], model: str = "gpt-4-32k", max_tokens: int | None = None):
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def llm_query_functions_with_retry(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None):
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def llm_query_functions(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None):
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
     @abstractmethod
     def llm_response_to_json(response) -> str:
-        raise NotImplementedError("This is an abstract class")
+        msg = "This is an abstract class"
+        raise NotImplementedError(msg)
 
 
 # TODO: move into utils/ai folder
@@ -107,7 +116,8 @@ class OpenAIHelper(AbstractAIHelper):
         cache: bool | None = True,
     ) -> None:
         if openai_key is None:
-            raise ValueError("The openai_key must be provided")
+            msg = "The openai_key must be provided"
+            raise ValueError(msg)
 
         self.openai_key = openai_key
         self.api_base = api_base
@@ -193,7 +203,8 @@ class AnthropicHelper(AbstractAIHelper):
         cache: bool | None = True,
     ) -> None:
         if anthropic_key is None:
-            raise ValueError("The anthropic_key must be provided")
+            msg = "The anthropic_key must be provided"
+            raise ValueError(msg)
 
         self.anthropic_key = anthropic_key
         self.api_base = api_base
@@ -274,24 +285,28 @@ class AnthropicHelper(AbstractAIHelper):
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def embeddings_with_backoff(self, **kwargs):
-        raise NotImplementedError("Embeddings are not supported for AnthropicHelper")
+        msg = "Embeddings are not supported for AnthropicHelper"
+        raise NotImplementedError(msg)
         # response = self.client.embeddings.create(**kwargs)
         # return response
 
     def get_embeddings(self, content_strs: list[str]) -> list[list[float]]:
-        raise NotImplementedError("Embeddings are not supported for AnthropicHelper")
+        msg = "Embeddings are not supported for AnthropicHelper"
+        raise NotImplementedError(msg)
         # content_strs = [c[:1000] if type(c) in (str, bytes) else " " for c in content_strs]
         # response = self.embeddings_with_backoff(input=content_strs, model=self.embedding_model_name)
         # return [x.embedding for x in response.data]
 
     def get_embedding(self, content_str: str) -> list[float]:
-        raise NotImplementedError("Embeddings are not supported for AnthropicHelper")
+        msg = "Embeddings are not supported for AnthropicHelper"
+        raise NotImplementedError(msg)
         # embeddings = self.get_embeddings([content_str])
         # return embeddings[0]
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def completions_with_backoff(self, **kwargs):
-        raise Exception("Claude's completion api is deprecated. Please use messages_with_backoff instead.")
+        msg = "Claude's completion api is deprecated. Please use messages_with_backoff instead."
+        raise Exception(msg)
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def messages_with_backoff(self, **kwargs):
@@ -386,7 +401,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         self.openai_helper = OpenAIHelper(openai_key, api_base=openai_base, headers=headers, cache=self.cache)
         if self.use_claude:
             if anthropic_key is None:
-                raise ValueError("Anthropic Key must be provided if use_claude is True")
+                msg = "Anthropic Key must be provided if use_claude is True"
+                raise ValueError(msg)
 
             self.anthropic_helper = AnthropicHelper(anthropic_key, api_base=anthropic_base, headers=headers, openai_anthropic_translation=True, cache=self.cache)
 
@@ -398,7 +414,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         elif self.use_claude:
             return self.anthropic_helper.embeddings_with_backoff(**kwargs)
         else:
-            raise Exception("MultiProviderAIHelper: No AI helper is enabled")
+            msg = "MultiProviderAIHelper: No AI helper is enabled"
+            raise Exception(msg)
 
     def get_embeddings(self, content_strs: list[str]) -> list[list[float]]:
         # Prioritize OpenAI First
@@ -407,7 +424,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         elif self.use_claude:
             return self.anthropic_helper.get_embeddings(content_strs)
         else:
-            raise Exception("MultiProviderAIHelper: No AI helper is enabled")
+            msg = "MultiProviderAIHelper: No AI helper is enabled"
+            raise Exception(msg)
 
     def get_embedding(self, content_str: str) -> list[float]:
         # Prioritize OpenAI First
@@ -416,7 +434,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         elif self.use_claude:
             return self.anthropic_helper.get_embedding(content_str)
         else:
-            raise Exception("MultiProviderAIHelper: No AI helper is enabled")
+            msg = "MultiProviderAIHelper: No AI helper is enabled"
+            raise Exception(msg)
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def completions_with_backoff(self, **kwargs):
@@ -424,7 +443,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         if self.use_openai:
             return self.openai_helper.completions_with_backoff(**kwargs)
         else:
-            raise Exception("MultiProviderAIHelper: OpenAI Helper is not enabled")
+            msg = "MultiProviderAIHelper: OpenAI Helper is not enabled"
+            raise Exception(msg)
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def messages_with_backoff(self, **kwargs):
@@ -432,7 +452,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         if self.use_claude:
             return self.anthropic_helper.messages_with_backoff(**kwargs)
         else:
-            raise Exception("MultiProviderAIHelper: Anthropic Helper is not enabled")
+            msg = "MultiProviderAIHelper: Anthropic Helper is not enabled"
+            raise Exception(msg)
 
     @retry(wait=wait_random_exponential(min=70, max=600), stop=stop_after_attempt(10))
     def llm_query_with_retry(self, **kwargs):
@@ -444,7 +465,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         elif self.use_claude and model.startswith("claude"):
             return self.anthropic_helper.llm_query_no_retry(messages=messages, model=model, max_tokens=max_tokens, **kwargs)
         else:
-            raise Exception(f"MultiProviderAIHelper: Unknown Model {model}")
+            msg = f"MultiProviderAIHelper: Unknown Model {model}"
+            raise Exception(msg)
 
     @retry(wait=wait_random_exponential(min=70, max=600), stop=stop_after_attempt(10))
     def llm_query_functions_with_retry(self, **kwargs):
@@ -456,7 +478,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         elif self.use_claude and model.startswith("claude"):
             return self.anthropic_helper.llm_query_functions(model, messages, functions, max_tokens, **kwargs)
         else:
-            raise Exception(f"MultiProviderAIHelper: Unknown Model {model}")
+            msg = f"MultiProviderAIHelper: Unknown Model {model}"
+            raise Exception(msg)
 
     @staticmethod
     def llm_response_to_json(response) -> str:

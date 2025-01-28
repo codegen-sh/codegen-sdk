@@ -3,11 +3,8 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, TypeVar
 
-import rich.repr
 from rich.markup import escape
-from tree_sitter import Node as TSNode
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
 from codegen.sdk.core.detached_symbols.argument import Argument
@@ -15,23 +12,27 @@ from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Name, Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.defined_name import DefinedName
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.usable import Usable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement
-from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 from codegen.sdk.enums import ImportType, NodeType, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.output.constants import ANGULAR_STYLE
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    import rich.repr
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.has_block import HasBlock
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 
 Parent = TypeVar("Parent", bound="HasBlock")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")

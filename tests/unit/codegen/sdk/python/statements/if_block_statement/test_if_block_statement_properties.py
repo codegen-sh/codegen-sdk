@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.python import PyFile
-from codegen.sdk.python.statements.if_block_statement import PyIfBlockStatement
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyFile
+    from codegen.sdk.python.statements.if_block_statement import PyIfBlockStatement
 
 
 def test_parse_conditional_statement_from_codeblock(tmpdir) -> None:

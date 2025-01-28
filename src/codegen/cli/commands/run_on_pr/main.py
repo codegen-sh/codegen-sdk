@@ -13,7 +13,8 @@ def run_on_pr(session: CodegenSession, codemod_name: str, pr_number: int) -> Non
     # Find the codemod
     codemod = CodemodManager.get(codemod_name)
     if not codemod:
-        raise click.ClickException(f"No function found with name '{codemod_name}'")
+        msg = f"No function found with name '{codemod_name}'"
+        raise click.ClickException(msg)
 
     with create_spinner(f"Testing webhook '{codemod_name}' on PR #{pr_number}...") as status:
         try:
@@ -27,7 +28,8 @@ def run_on_pr(session: CodegenSession, codemod_name: str, pr_number: int) -> Non
             rich.print(f"   [dim]View results:[/dim] [blue underline]{response.web_url}[/blue underline]")
         except Exception as e:
             status.stop()
-            raise click.ClickException(f"Failed to test webhook: {e!s}")
+            msg = f"Failed to test webhook: {e!s}"
+            raise click.ClickException(msg)
 
 
 @click.command(name="run-on-pr")

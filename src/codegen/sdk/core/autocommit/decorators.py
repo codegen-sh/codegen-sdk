@@ -23,10 +23,14 @@ def writer(wrapped: Callable[P, T]) -> Callable[P, T]: ...
 
 
 @overload
-def writer(wrapped: None = None, *, commit: bool = ...) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
+def writer(
+    wrapped: None = None, *, commit: bool = ...
+) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
 
 
-def writer(wrapped: Callable[P, T] | None = None, *, commit: bool = True) -> Callable[P, T] | Callable[[Callable[P, T]], Callable[P, T]]:
+def writer(
+    wrapped: Callable[P, T] | None = None, *, commit: bool = True
+) -> Callable[P, T] | Callable[[Callable[P, T]], Callable[P, T]]:
     """Indicates the method is a writer. This will automatically update if the original is out of
     date.
 
@@ -52,7 +56,12 @@ def writer(wrapped: Callable[P, T] | None = None, *, commit: bool = True) -> Cal
 
 
 @wrapt.decorator(enabled=enabled)
-def remover(wrapped: Callable[P, T], instance: Union["Symbol", None] = None, args: P.args = None, kwargs: P.kwargs = None) -> Callable[P, T]:
+def remover(
+    wrapped: Callable[P, T],
+    instance: Union["Symbol", None] = None,
+    args: P.args = None,
+    kwargs: P.kwargs = None,
+) -> Callable[P, T]:
     """Indicates the node will be removed at the end of this method.
 
     Further usage of the node will result in undefined behaviour and a warning.
@@ -68,7 +77,12 @@ def remover(wrapped: Callable[P, T], instance: Union["Symbol", None] = None, arg
 
 
 @wrapt.decorator(enabled=enabled)
-def repr_func(wrapped: Callable[P, T], instance: Union["Editable", None] = None, args: P.args = None, kwargs: P.kwargs = None) -> Callable[P, T]:
+def repr_func(
+    wrapped: Callable[P, T],
+    instance: Union["Editable", None] = None,
+    args: P.args = None,
+    kwargs: P.kwargs = None,
+) -> Callable[P, T]:
     """Indicates the method is use in debugging/logs."""
     if instance is None:
         instance = args[0]
@@ -82,7 +96,12 @@ def repr_func(wrapped: Callable[P, T], instance: Union["Editable", None] = None,
 
 
 @wrapt.decorator(enabled=enabled)
-def mover(wrapped: Callable[P, tuple[NodeId, NodeId]], instance: Union["Symbol", None] = None, args: P.args = None, kwargs: P.kwargs = None) -> Callable[P, None]:
+def mover(
+    wrapped: Callable[P, tuple[NodeId, NodeId]],
+    instance: Union["Symbol", None] = None,
+    args: P.args = None,
+    kwargs: P.kwargs = None,
+) -> Callable[P, None]:
     """Indicates the Node will be moved by the end of this method.
 
     It should also return the node_id of itself and the new file

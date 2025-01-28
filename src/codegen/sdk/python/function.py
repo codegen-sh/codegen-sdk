@@ -2,18 +2,11 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import override
+from typing import TYPE_CHECKING, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.function import Function
-from codegen.sdk.core.import_resolution import Import, WildcardImport
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
@@ -24,6 +17,15 @@ from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
 from codegen.sdk.python.symbol import PySymbol
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.import_resolution import Import, WildcardImport
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.symbol import Symbol
 
 logger = logging.getLogger(__name__)
 

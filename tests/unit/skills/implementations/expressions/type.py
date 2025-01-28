@@ -1,11 +1,15 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.core.codebase import CodebaseType
 from codegen.sdk.core.expressions.union_type import UnionType
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.python.assignment import PyAssignment
-from codegen.sdk.typescript.assignment import TSAssignment
 from tests.shared.skills.decorators import skill, skill_impl
 from tests.shared.skills.skill import Skill
 from tests.shared.skills.skill_test import SkillTestCase, SkillTestCasePyFile, SkillTestCaseTSFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.python.assignment import PyAssignment
+    from codegen.sdk.typescript.assignment import TSAssignment
 
 test_cases_append_py = [
     SkillTestCase(files=[SkillTestCasePyFile(input="a: int | None", output="a: int | None | str")]),

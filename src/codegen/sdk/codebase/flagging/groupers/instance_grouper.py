@@ -23,4 +23,5 @@ class InstanceGrouper(BaseGrouper):
             flag = CodeFlag.from_json(segment)
             return Group(group_by=GroupBy.INSTANCE, segment=segment, flags=[flag])
         except Exception as e:
-            raise ValueError(f"Unable to deserialize segment ({segment}) into CodeFlag. Unable to create group.")
+            msg = f"Unable to deserialize segment ({segment}) into CodeFlag. Unable to create group."
+            raise ValueError(msg)

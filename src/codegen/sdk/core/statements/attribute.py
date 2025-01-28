@@ -2,26 +2,27 @@ from __future__ import annotations
 
 import itertools
 from abc import abstractmethod
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.usable import Usable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.extensions.autocommit import reader
-from codegen.sdk.extensions.resolution import ResolutionStack
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.assignment import Assignment
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.extensions.resolution import ResolutionStack
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock | None")
 TAssignment = TypeVar("TAssignment", bound="Assignment")

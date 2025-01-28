@@ -63,7 +63,8 @@ class CodegenSession:
         if self._identity:
             return self._identity
         if not self.token:
-            raise NoTokenError("No authentication token found")
+            msg = "No authentication token found"
+            raise NoTokenError(msg)
 
         from codegen.cli.api.client import RestAPI
 
@@ -102,7 +103,8 @@ class CodegenSession:
     def git_repo(self) -> Repository:
         git_repo = get_git_repo(Path.cwd())
         if not git_repo:
-            raise ValueError("No git repository found")
+            msg = "No git repository found"
+            raise ValueError(msg)
         return git_repo
 
     @property
@@ -132,9 +134,11 @@ class CodegenSession:
     def assert_authenticated(self) -> None:
         """Raise an AuthError if the session is not fully authenticated"""
         if not self.identity:
-            raise AuthError("No identity found for session")
+            msg = "No identity found for session"
+            raise AuthError(msg)
         if self.identity.status != "active":
-            raise AuthError("Current session is not active. API Token may be invalid or may have expired.")
+            msg = "Current session is not active. API Token may be invalid or may have expired."
+            raise AuthError(msg)
 
     def write_config(self) -> None:
         """Write the config to the codegen-sh/config.toml file"""

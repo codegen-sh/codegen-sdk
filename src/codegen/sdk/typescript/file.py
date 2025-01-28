@@ -1,13 +1,11 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.statements.export_statement import ExportStatement
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import ImportType, NodeType, ProgrammingLanguage, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
@@ -21,11 +19,16 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.namespace import TSNamespace
 from codegen.sdk.typescript.statements.import_statement import TSImportStatement
-from codegen.sdk.typescript.symbol import TSSymbol
-from codegen.sdk.typescript.ts_config import TSConfig
-from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.sdk.utils import calculate_base_path, find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.statements.export_statement import ExportStatement
+    from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.typescript.symbol import TSSymbol
+    from codegen.sdk.typescript.ts_config import TSConfig
+    from codegen.sdk.typescript.type_alias import TSTypeAlias
 
 
 @ts_apidoc

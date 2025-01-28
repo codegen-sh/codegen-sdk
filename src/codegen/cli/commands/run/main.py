@@ -27,7 +27,8 @@ def run_command(
     # Ensure venv is initialized
     venv = VenvManager()
     if not venv.is_initialized():
-        raise click.ClickException("Virtual environment not found. Please run 'codegen init' first.")
+        msg = "Virtual environment not found. Please run 'codegen init' first."
+        raise click.ClickException(msg)
 
     # Set up environment with venv
     os.environ["VIRTUAL_ENV"] = str(venv.venv_dir)
@@ -38,13 +39,15 @@ def run_command(
 
     # Handle arguments if needed
     if codemod.arguments_type_schema and not arguments:
-        raise click.ClickException(f"This function requires the --arguments parameter. Expected schema: {codemod.arguments_type_schema}")
+        msg = f"This function requires the --arguments parameter. Expected schema: {codemod.arguments_type_schema}"
+        raise click.ClickException(msg)
 
     if codemod.arguments_type_schema and arguments:
         arguments_json = json.loads(arguments)
         is_valid = validate_json(codemod.arguments_type_schema, arguments_json)
         if not is_valid:
-            raise click.ClickException(f"Invalid arguments format. Expected schema: {codemod.arguments_type_schema}")
+            msg = f"Invalid arguments format. Expected schema: {codemod.arguments_type_schema}"
+            raise click.ClickException(msg)
 
     # Run the codemod
     if web:

@@ -1,31 +1,33 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
 from typing_extensions import deprecated
 
-from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageType
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.name import Name
-from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.has_value import HasValue
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.typeable import Typeable
 from codegen.sdk.core.interfaces.usable import Usable
-from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.extensions.resolution import UsageKind
 from codegen.sdk.utils import find_first_descendant
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.function import Function
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.symbol_groups.collection import Collection
 
 import logging
 
@@ -125,7 +127,8 @@ class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Pa
         Returns:
             bool: True if the parameter is optional, False otherwise
         """
-        raise NotImplementedError("Subclasses must implement this method")
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
 
     @property
     @abstractmethod
@@ -138,7 +141,8 @@ class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Pa
             bool: True if the parameter is variadic (can accept variable number of arguments),
                 False otherwise.
         """
-        raise NotImplementedError("Subclasses must implement this method")
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
 
     @writer
     def remove(self, delete_formatting: bool = True, priority: int = 0, dedupe: bool = True) -> None:

@@ -7,18 +7,18 @@ from typing import TYPE_CHECKING, Generic, Self, TypeVar
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.function import Function
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.statements.statement import Statement, StatementType
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.expressions import Expression
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
 
 
 TIfBlockStatement = TypeVar("TIfBlockStatement", bound="IfBlockStatement")
@@ -228,7 +228,8 @@ class IfBlockStatement(Statement[TCodeBlock], Generic[TCodeBlock, TIfBlockStatem
                 (like an else block).
         """
         if self.condition is None:
-            raise ValueError("Cannot reduce condition of an IfBlockStatement without a condition.")
+            msg = "Cannot reduce condition of an IfBlockStatement without a condition."
+            raise ValueError(msg)
 
         first_elif = next((x for x in self.elif_statements()), None)
 

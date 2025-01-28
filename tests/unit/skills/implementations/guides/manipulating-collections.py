@@ -238,7 +238,8 @@ class AppendToGlobalVariableList(Skill, ABC):
 
         # Assert the type is List (a GraphSitter type)
         if not isinstance(var.value, List):
-            raise ValueError(f"Expected a list, but found {type(var.value)}")
+            msg = f"Expected a list, but found {type(var.value)}"
+            raise ValueError(msg)
 
         # Append to the list
         var.value.append('"bar"')
@@ -251,7 +252,8 @@ class AppendToGlobalVariableList(Skill, ABC):
 
         # Assert the type is List (a GraphSitter type, equivalent to an array in TypeScript)
         if not isinstance(var.value, List):
-            raise ValueError(f"Expected an array, but found {type(var.value)}")
+            msg = f"Expected an array, but found {type(var.value)}"
+            raise ValueError(msg)
 
         # Append to the list
         var.value.append('"bar"')

@@ -29,7 +29,8 @@ class SplitFileAndRenameSymbols(Codemod, Skill):
         # Get file to split up
         source_file = codebase.get_file("redash/models/types.py", optional=True)
         if source_file is None:
-            raise FileNotFoundError("[1] The file `redash/models/types.py` was not found.")
+            msg = "[1] The file `redash/models/types.py` was not found."
+            raise FileNotFoundError(msg)
 
         # Get file symbols will be moved to
         configuration_file = codebase.create_file("redash/models/configuration.py")

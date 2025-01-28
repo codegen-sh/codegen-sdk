@@ -13,6 +13,7 @@ from codegen.shared.exceptions.api import APINotApplicableForLanguageError
 
 if TYPE_CHECKING:
     from codegen.sdk.python.class_definition import PyClass
+    from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 
 
 @py_apidoc
@@ -80,7 +81,8 @@ class PyAttribute(Attribute["PyCodeBlock", "PyAssignment"], PyAssignmentStatemen
         Raises:
             APINotApplicableForLanguageError: Always raised as Python does not have explicit optional attribute syntax.
         """
-        raise APINotApplicableForLanguageError("Python doesn't have an explicit syntax for optional attributes")
+        msg = "Python doesn't have an explicit syntax for optional attributes"
+        raise APINotApplicableForLanguageError(msg)
 
     @property
     @reader

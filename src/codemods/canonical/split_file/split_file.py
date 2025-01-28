@@ -24,7 +24,8 @@ class SplitFile(Codemod, Skill):
         # Grab large file to split
         file = codebase.get_file("sqlglot/optimizer/scope.py", optional=True)
         if file is None:
-            raise FileNotFoundError("The file `sqlglot/optimizer/scope.py` was not found.")
+            msg = "The file `sqlglot/optimizer/scope.py` was not found."
+            raise FileNotFoundError(msg)
 
         # Create a new file for storing all our 'Enum' classes
         new_file = codebase.create_file("sqlglot/optimizer/enums.py")

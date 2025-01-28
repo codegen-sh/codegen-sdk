@@ -1,14 +1,16 @@
 from collections.abc import Generator
-from typing import Generic, Self, TypeVar, override
+from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import commiter
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc, noapidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
 
 TType = TypeVar("TType", bound="Type")
 Parent = TypeVar("Parent", bound="Editable")

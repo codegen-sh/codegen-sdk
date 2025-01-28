@@ -1,9 +1,11 @@
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.shared.decorators.docs import py_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")
 

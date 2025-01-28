@@ -3,23 +3,23 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk.core.autocommit import reader
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.interfaces.has_value import HasValue
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.attribute import Attribute
-from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.enums import SymbolType
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.attribute import Attribute
+    from codegen.sdk.core.statements.statement import Statement
 
 
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
