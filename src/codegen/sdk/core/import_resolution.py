@@ -81,6 +81,8 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
     import_type: ImportType
     import_statement: ImportStatement
 
+    dynamic_import_parent_types = set()
+
     def __init__(
         self,
         ts_node: TSNode,
@@ -380,6 +382,49 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
             list[Exportable]: A list of exported symbols. For module imports, contains all exports from the module.
                 For symbol imports, contains only the single imported symbol.
         """
+
+    @property
+    def is_dynamic(self) -> bool:
+        """Determines if this import is dynamically loaded based on its parent symbol.
+
+        A dynamic import is one that appears within control flow or scope-defining statements, such as:
+        - Inside function definitions
+        - Inside class definitions
+        - Inside if/else blocks
+        - Inside try/except blocks
+        - Inside with statements
+
+        Dynamic imports are only loaded when their containing block is executed, unlike
+        top-level imports which are loaded when the module is imported.
+
+        Examples:
+            Dynamic imports:
+            ```python
+            def my_function():
+                import foo  # Dynamic - only imported when function runs
+
+            if condition:
+                from bar import baz  # Dynamic - only imported if condition is True
+
+            with context():
+                import qux  # Dynamic - only imported within context
+            ```
+
+            Static imports:
+            ```python
+            import foo  # Static - imported when module loads
+            from bar import baz  # Static - imported when module loads
+            ```
+
+        Returns:
+            bool: True if the import is dynamic (within a control flow or scope block),
+            False if it's a top-level import.
+        """
+        if not (self.ts_node.parent.parent):
+            return False
+
+        is_dynamic = self.ts_node.parent.parent.type in self.dynamic_import_parent_types
+        return is_dynamic
 
     ####################################################################################################################
     # MANIPULATIONS
