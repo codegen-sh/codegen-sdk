@@ -710,8 +710,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             None
         """
-        if not self.G.config.feature_flags.debug:
-            self.log("Warning: using a method that may break codemod execution. This is unnessecary in most cases. You should use this only if you are certian it's nessecary")
         self.G.commit_transactions(sync_graph=sync_graph and self.G.config.feature_flags.sync_enabled)
 
     @noapidoc
