@@ -45,7 +45,11 @@ class OutdatedNodeError(Exception):
         super().__init__(
             f"Using an outdated node {node}.\n"
             + "This can happen if you cache a detached symbol, then update a related symbol or file.\n"
-            + (f"Try acquiring the node from it's parent symbol: {parent}.\n" + "For example if the node was the first parameter of a function, " + f"call {node.name} = {parent.name}.parameters[0]")
+            + (
+                f"Try acquiring the node from it's parent symbol: {parent}.\n"
+                + "For example if the node was the first parameter of a function, "
+                + f"call {node.name} = {parent.name}.parameters[0]"
+            )
             if parent
             else ""
         )

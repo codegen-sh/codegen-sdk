@@ -28,7 +28,8 @@ class RefactorClass(Skill, ABC):
     def skill_func(codebase: CodebaseType):
         my_class = codebase.get_symbol("MyClass", optional=True)
         if my_class is None:
-            raise ValueError("MyClass not found in codebase")
+            msg = "MyClass not found in codebase"
+            raise ValueError(msg)
         my_class.edit(codebase.ai("Refactor the class to be shorter and more readable.", target=my_class))
 
 
@@ -75,7 +76,8 @@ class WriteTest(Skill, ABC):
     def skill_func(codebase: CodebaseType):
         my_function = codebase.get_function("my_function", optional=True)
         if my_function is None:
-            raise ValueError("my_function not found in codebase")
+            msg = "my_function not found in codebase"
+            raise ValueError(msg)
 
         test_function = codebase.ai(f"Write a test for the function {my_function.name} called test_my_function.", target=my_function)
         my_function.insert_after(test_function)

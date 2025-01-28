@@ -101,4 +101,5 @@ class Exportable(Usable[Parent], Generic[Parent]):
         Raises:
             NotImplementedError: If called on the base class.
         """
-        raise NotImplementedError("The subclass must implement `to_import_string`.")
+        msg = "The subclass must implement `to_import_string`."
+        raise NotImplementedError(msg)

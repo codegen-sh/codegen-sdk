@@ -123,7 +123,8 @@ def compare_expected_actual_diffs(codebase: Codebase, actual_diff: str, expected
             # === [Apply Actual Diff to Codebase] ===
             subprocess.run(["git", "apply", str(actual_diff_path.absolute())], cwd=codebase.repo_path)
         else:
-            raise ValueError("failed to convert diff to repo")
+            msg = "failed to convert diff to repo"
+            raise ValueError(msg)
 
         # === [Generate a Diff of Diffs] ===
         analyze_codebase_diff(expected_dir, codebase.repo_path, tmp_dir, extensions, capture_stats=False, single_diff_file=True)

@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.extensions.utils import find_all_descendants
 from codegen.sdk.python.assignment import PyAssignment
 from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
     from codegen.sdk.python.interfaces.has_block import PyHasBlock
 
@@ -55,7 +55,8 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
             ValueError: If the assignment_node type is not one of the supported assignment types.
         """
         if assignment_node.type not in cls.assignment_types:
-            raise ValueError(f"Invalid assignment node type: {assignment_node.type}")
+            msg = f"Invalid assignment node type: {assignment_node.type}"
+            raise ValueError(msg)
 
         from codegen.sdk.python.class_definition import PyClass
 

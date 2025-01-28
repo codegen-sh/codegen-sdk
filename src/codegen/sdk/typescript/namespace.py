@@ -2,16 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter
-from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.core.statements.symbol_statement import SymbolStatement
-from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.class_definition import TSClass
@@ -24,6 +17,13 @@ from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.statement import Statement
+    from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 

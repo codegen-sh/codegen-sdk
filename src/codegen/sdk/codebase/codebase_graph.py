@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import Counter, defaultdict
-from collections.abc import Generator, Mapping, Sequence
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from enum import IntEnum, auto, unique
@@ -11,11 +10,8 @@ from os import PathLike
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from codeowners import CodeOwners as CodeOwnersParser
-from git import Commit as GitCommit
 from rustworkx import PyDiGraph, WeightedEdgeList
 
-from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
@@ -23,12 +19,9 @@ from codegen.sdk.codebase.flagging.flags import Flags
 from codegen.sdk.codebase.transaction_manager import TransactionManager
 from codegen.sdk.codebase.validation import get_edges, post_reset_validation
 from codegen.sdk.core.autocommit import AutoCommit, commiter
-from codegen.sdk.core.dataclasses.usage import Usage
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
 from codegen.sdk.core.external.language_engine import LanguageEngine, get_language_engine
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
 from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
@@ -38,10 +31,19 @@ from codegen.shared.exceptions.control_flow import StopCodemodException
 from codegen.shared.performance.stopwatch_utils import stopwatch, stopwatch_with_sentry
 
 if TYPE_CHECKING:
+    from collections.abc import Generator, Mapping, Sequence
+
+    from codeowners import CodeOwners as CodeOwnersParser
+    from git import Commit as GitCommit
+
+    from codegen.git.repo_operator.repo_operator import RepoOperator
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses
+    from codegen.sdk.core.dataclasses.usage import Usage
     from codegen.sdk.core.expressions import Expression
     from codegen.sdk.core.external_module import ExternalModule
     from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.parser import Parser
 
 import logging
@@ -69,7 +71,8 @@ def get_node_classes(programming_language: ProgrammingLanguage) -> NodeClasses:
 
         return TSNodeClasses
     else:
-        raise ValueError(f"Unsupported programming language: {programming_language}!")
+        msg = f"Unsupported programming language: {programming_language}!"
+        raise ValueError(msg)
 
 
 class CodebaseGraph:
@@ -156,7 +159,7 @@ class CodebaseGraph:
         try:
             self.synced_commit = context.repo_operator.head_commit
         except ValueError as e:
-            logger.error("Error getting commit head %s", e)
+            logger.exception("Error getting commit head %s", e)
             self.synced_commit = None
         self.pending_syncs = []
         self.all_syncs = []
@@ -512,7 +515,8 @@ class CodebaseGraph:
 
     def get_nodes(self, node_type: NodeType | None = None, exclude_type: NodeType | None = None) -> list[Importable]:
         if node_type is not None and exclude_type is not None:
-            raise ValueError("node_type and exclude_type cannot both be specified")
+            msg = "node_type and exclude_type cannot both be specified"
+            raise ValueError(msg)
         if node_type is not None:
             return [self.get_node(node_id) for node_id in self._graph.filter_nodes(lambda node: node.node_type == node_type)]
         if exclude_type is not None:
@@ -543,7 +547,8 @@ class CodebaseGraph:
     def add_node(self, node: Importable) -> int:
         if self.config.feature_flags.debug:
             if self._graph.find_node_by_weight(node.__eq__):
-                raise Exception("Node already exists")
+                msg = "Node already exists"
+                raise Exception(msg)
         if self.config.feature_flags.debug and self._computing and node.node_type != NodeType.EXTERNAL:
             assert False, f"Adding node during compute dependencies: {node!r}"
         return self._graph.add_node(node)
@@ -551,7 +556,8 @@ class CodebaseGraph:
     def add_child(self, parent: NodeId, node: Importable, type: EdgeType, usage: Usage | None = None) -> int:
         if self.config.feature_flags.debug:
             if self._graph.find_node_by_weight(node.__eq__):
-                raise Exception("Node already exists")
+                msg = "Node already exists"
+                raise Exception(msg)
         if self.config.feature_flags.debug and self._computing and node.node_type != NodeType.EXTERNAL:
             assert False, f"Adding node during compute dependencies: {node!r}"
         return self._graph.add_child(parent, node, Edge(type, usage))
@@ -709,9 +715,11 @@ class CodebaseGraph:
 
         # Check errors
         if directory is None:
-            raise ValueError(f"Directory {directory_path} does not exist")
+            msg = f"Directory {directory_path} does not exist"
+            raise ValueError(msg)
         if not force and len(directory.items) > 0:
-            raise ValueError(f"Directory {directory_path} is not empty")
+            msg = f"Directory {directory_path} is not empty"
+            raise ValueError(msg)
 
         # Remove the directory from the tree
         if str(directory_path) in self.directories:

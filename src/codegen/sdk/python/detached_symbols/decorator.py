@@ -1,11 +1,18 @@
 from __future__ import annotations
 
-from tree_sitter import Node as TSNode
+from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.detached_symbols.decorator import Decorator
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.shared.decorators.docs import py_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.python.class_definition import PyClass
+    from codegen.sdk.python.detached_symbols.parameter import PyParameter
+    from codegen.sdk.python.function import PyFunction
 
 
 @py_apidoc
@@ -32,7 +39,8 @@ class PyDecorator(Decorator["PyClass", "PyFunction", "PyParameter"]):
                 func = child.child_by_field_name("function")
                 return func
 
-        raise ValueError(f"Could not find decorator name within {self.source}")
+        msg = f"Could not find decorator name within {self.source}"
+        raise ValueError(msg)
 
     @property
     @reader

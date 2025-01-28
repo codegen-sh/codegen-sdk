@@ -94,7 +94,8 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
         """
         class_body = self.child_by_field_name("body")
         if class_body is None:
-            raise ValueError("Could not find class body")
+            msg = "Could not find class body"
+            raise ValueError(msg)
         # Mimic previous behaviour
         source = source if source.startswith("\n") else "    " + source
         # TODO: use real fix_indentation behaviour

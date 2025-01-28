@@ -33,6 +33,7 @@ class NodeClasses:
     function_call_cls: type[FunctionCall]
     comment_cls: type[Comment]
     bool_conversion: dict[bool, str]
+    dynamic_import_parent_types: set[str]
     symbol_map: dict[str, type[Symbol]] = field(default_factory=dict)
     expression_map: dict[str, type[Expression]] = field(default_factory=dict)
     type_map: dict[str, type[Type] | dict[str, type[Type]]] = field(default_factory=dict)

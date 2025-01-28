@@ -23,7 +23,6 @@ class RunnerFeatureFlags(BaseModel):
     ts_dependency_manager: bool = False
 
     import_resolution_overrides: dict[str, str] = {}
-    syntax_highlight: bool = False
 
     def encoded_json(self):
         return base64.b64encode(self.model_dump_json().encode("utf-8")).decode("utf-8")
@@ -43,12 +42,14 @@ def get_codebase_config() -> CodebaseConfig:
 def get_runner_feature_flags() -> RunnerFeatureFlags:
     encoded_ffs = os.environ.get(FEATURE_FLAGS_BASE64)
     if not encoded_ffs:
-        raise ValueError("FEATURE_FLAGS_BASE64 environment variable not found")
+        msg = "FEATURE_FLAGS_BASE64 environment variable not found"
+        raise ValueError(msg)
     return RunnerFeatureFlags.from_encoded_json(encoded_ffs)
 
 
 def get_repo_config() -> RepoConfig:
     encoded_repo_config = os.environ.get(REPO_CONFIG_BASE64)
     if not encoded_repo_config:
-        raise ValueError("REPO_CONFIG_BASE64 environment variable not found")
+        msg = "REPO_CONFIG_BASE64 environment variable not found"
+        raise ValueError(msg)
     return RepoConfig.from_encoded_json(encoded_repo_config)

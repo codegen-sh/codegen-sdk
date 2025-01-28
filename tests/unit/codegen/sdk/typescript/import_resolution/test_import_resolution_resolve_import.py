@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.dataclasses.usage import UsageType
-from codegen.sdk.core.file import SourceFile
-from codegen.sdk.core.import_resolution import Import, ImportResolution
 from codegen.sdk.enums import ImportType, ProgrammingLanguage
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.import_resolution import Import, ImportResolution
 
 
 def test_dynamic_import_module_export_const(tmpdir) -> None:

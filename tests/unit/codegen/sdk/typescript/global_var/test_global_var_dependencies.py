@@ -1,7 +1,11 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_graph_session
 from codegen.sdk.core.import_resolution import Import
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.typescript.assignment import TSAssignment
+
+if TYPE_CHECKING:
+    from codegen.sdk.typescript.assignment import TSAssignment
 
 
 def test_dependencies_gets_symbols_in_same_file(tmpdir) -> None:

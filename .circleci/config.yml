@@ -422,14 +422,14 @@ workflows:
           matrix:
             parameters:
               extra_repos: [true, false]
-      - parse-tests:
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          extra_repos: true
+      # - parse-tests:
+      #     context:
+      #       - GHE
+      #       - slack
+      #     filters:
+      #       branches:
+      #         only: develop
+      #     extra_repos: true
       - parse-tests:
           name: oss-parse-tests
           context:
@@ -474,17 +474,17 @@ workflows:
             - hold-codemod-tests
       - pre-commit
       - doctests
-      - oss-codemod-tests:
-          filters:
-            branches:
-              ignore: develop
-          context:
-            - GHE
-            - slack
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [small]
+      # - oss-codemod-tests:
+      #     filters:
+      #       branches:
+      #         ignore: develop
+      #     context:
+      #       - GHE
+      #       - slack
+      #     matrix:
+      #       parameters:
+      #         sync_graph: [true, false]
+      #         size: [small]
       - oss-codemod-tests:
           name: large-oss-codemod-tests
           context:

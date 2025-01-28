@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.file import SourceFile
-from codegen.sdk.core.import_resolution import Import, ImportResolution
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.import_resolution import Import, ImportResolution
 
 
 def test_import_properties_basic(tmpdir) -> None:

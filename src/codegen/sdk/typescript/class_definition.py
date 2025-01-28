@@ -1,11 +1,8 @@
 from __future__ import annotations
 
 import os
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.dataclasses.usage import UsageKind
@@ -13,8 +10,6 @@ from codegen.sdk.core.expressions.generic_type import GenericType
 from codegen.sdk.core.expressions.placeholder_type import PlaceholderType
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.symbol_statement import SymbolStatement
 from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
 from codegen.sdk.core.symbol_groups.parents import Parents
@@ -25,6 +20,14 @@ from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.symbol_statement import SymbolStatement
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 
 @ts_apidoc
@@ -141,7 +144,8 @@ class TSClass(Class[TSFunction, TSDecorator, "TSCodeBlock", TSParameter, TSType]
         Returns:
             None
         """
-        raise NotImplementedError("TODO")
+        msg = "TODO"
+        raise NotImplementedError(msg)
 
     @writer
     def add_attribute_from_source(self, source: str) -> None:

@@ -7,11 +7,11 @@ from typing_extensions import deprecated
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.expression import Expression
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.importable import Importable
     from codegen.sdk.core.symbol import Symbol
 

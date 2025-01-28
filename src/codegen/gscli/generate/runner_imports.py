@@ -1,8 +1,12 @@
 from itertools import chain
+from pathlib import Path
 
+import tomlkit
 from termcolor import colored
 
 from codegen.sdk.code_generation.current_code_codebase import get_documented_objects
+from codegen.sdk.utils import split_git_path
+from codegen.shared.decorators.docs import DocumentedObject
 
 EXTERNAL_IMPORTS = """
 import os
@@ -47,10 +51,26 @@ def get_generated_imports():
 )
 
 
+def fix_ruff_imports(objects: list[DocumentedObject]):
+    root, _ = split_git_path(str(Path(__file__)))
+    to_add = []
+    for obj in objects:
+        to_add.append(f"{obj.module}.{obj.name}")
+    generics = tomlkit.array()
+    for val in dict.fromkeys(to_add):
+        generics.add_line(val, indent="  ")
+    generics.add_line(indent="")
+    config = Path(root) / "ruff.toml"
+    toml_config = tomlkit.parse(config.read_text())
+    toml_config["lint"]["pyflakes"]["extend-generics"] = generics
+    config.write_text(tomlkit.dumps(toml_config))
+
+
 def get_runner_imports(include_codegen=True, include_private_imports: bool = True) -> str:
     # get the imports from the apidoc, py_apidoc, and ts_apidoc
     gs_objects = get_documented_objects()
     gs_public_objects = list(chain(gs_objects["apidoc"], gs_objects["py_apidoc"], gs_objects["ts_apidoc"]))
+    fix_ruff_imports(gs_public_objects)
     gs_public_imports = {f"from {obj.module} import {obj.name}" for obj in gs_public_objects}
 
     # construct import string with all imports

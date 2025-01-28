@@ -2,16 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.catch_statement import CatchStatement
-from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
 from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 
 Parent = TypeVar("Parent", bound="TSCodeBlock")

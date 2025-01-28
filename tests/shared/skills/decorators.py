@@ -1,14 +1,17 @@
 import inspect
 from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import inflection
 
 from codegen.sdk.core.codebase import CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
-from tests.shared.skills.skill import Skill
 from tests.shared.skills.skill_implementation import SkillImplementation
 from tests.shared.skills.skill_test import SkillTestCase
 from tests.shared.skills.utils import skill_name_to_skill_implementations, skills
+
+if TYPE_CHECKING:
+    from tests.shared.skills.skill import Skill
 
 ExecuteFuncType = Callable[[CodebaseType], None]
 
@@ -55,10 +58,12 @@ def skill_impl(
                 return func
 
             elif inspect.isfunction(func):
-                raise ValueError("Please structure your skill as a Class.")
+                msg = "Please structure your skill as a Class."
+                raise ValueError(msg)
 
             else:
-                raise ValueError(f"Unsupported function type: {type(func)}")
+                msg = f"Unsupported function type: {type(func)}"
+                raise ValueError(msg)
 
     return decorator
 
@@ -88,12 +93,14 @@ def populate_skill_implementation(skill_imp: "SkillImplementation", sk: "Skill")
     skill_imp.guide_skill = sk.guide
     if skill_imp.prompt is None:
         if sk.prompt is None:
-            raise ValueError(f"Prompt is not set for skill: {sk.__name__} ({skill_imp.language}). Prompt must be set in either skill or skill implementation.")
+            msg = f"Prompt is not set for skill: {sk.__name__} ({skill_imp.language}). Prompt must be set in either skill or skill implementation."
+            raise ValueError(msg)
         else:
             skill_imp.prompt = sk.prompt
     if skill_imp.doc is None:
         if sk.doc is None:
-            raise ValueError(f"Docstring is not set for skill: {sk.__name__} ({skill_imp.language}). Docstring must be set in either skill or skill implementation.")
+            msg = f"Docstring is not set for skill: {sk.__name__} ({skill_imp.language}). Docstring must be set in either skill or skill implementation."
+            raise ValueError(msg)
         else:
             skill_imp.doc = sk.doc
     return skill_imp
@@ -133,7 +140,8 @@ def skill(uid: str, eval_skill: bool = False, prompt: str | None = None, s_id: i
             skill_name_to_skill_implementations[cls.name] = cls.implementations()
             skills.append(cls)
         else:
-            raise ValueError(f"Skill with name {cls.name} ({cls.__name__}) already exists. Please Rename the skill class.")
+            msg = f"Skill with name {cls.name} ({cls.__name__}) already exists. Please Rename the skill class."
+            raise ValueError(msg)
         return cls
 
     return decorator

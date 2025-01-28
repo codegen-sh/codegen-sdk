@@ -105,7 +105,8 @@ def run_cloud(session: CodegenSession, function, apply_local: bool = False, diff
                     rich.print("  1. [red]git reset --hard HEAD[/red]     (⚠️ discards all uncommitted changes)")
                     rich.print("  2. [red]git clean -fd[/red]            (⚠️ removes all untracked files)")
                     rich.print("  3. Run this command again\n")
-                    raise click.ClickException("Failed to apply patch to local filesystem")
+                    msg = "Failed to apply patch to local filesystem"
+                    raise click.ClickException(msg)
 
         except ServerError as e:
             status.stop()

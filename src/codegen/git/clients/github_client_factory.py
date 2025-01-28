@@ -38,7 +38,8 @@ class GithubClientFactory:
         elif github_type == GithubType.Github:
             return GithubClient.from_repo_config(repo_config=repo_config)
         else:
-            raise Exception(f"Unknown GithubType: {github_type}")
+            msg = f"Unknown GithubType: {github_type}"
+            raise Exception(msg)
 
     @classmethod
     def create_from_token(cls, token: str | None = None, github_type: GithubType = GithubType.GithubEnterprise) -> GithubClientType:
@@ -47,4 +48,5 @@ class GithubClientFactory:
         elif github_type == GithubType.Github:
             return GithubClient.from_token(token=token)
         else:
-            raise Exception(f"Unknown GithubType: {github_type}")
+            msg = f"Unknown GithubType: {github_type}"
+            raise Exception(msg)

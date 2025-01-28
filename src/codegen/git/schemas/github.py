@@ -21,7 +21,8 @@ class GithubType(StrEnum):
         elif self == GithubType.GithubEnterprise:
             return "github.codegen.app"
         else:
-            raise ValueError(f"Invalid GithubType: {self}")
+            msg = f"Invalid GithubType: {self}"
+            raise ValueError(msg)
 
     @property
     def base_url(self) -> str:
@@ -32,11 +33,13 @@ class GithubType(StrEnum):
         for github_type in cls:
             if github_type.hostname in url:
                 return github_type
-        raise ValueError(f"Could not find GithubType from url: {url}")
+        msg = f"Could not find GithubType from url: {url}"
+        raise ValueError(msg)
 
     @classmethod
     def from_string(cls, value: str) -> Self:
         try:
             return cls[value]  # This will match the exact name
         except KeyError:
-            raise ValueError(f"'{value}' is not a valid GithubType. Valid values are: {[e.name for e in cls]}")
+            msg = f"'{value}' is not a valid GithubType. Valid values are: {[e.name for e in cls]}"
+            raise ValueError(msg)

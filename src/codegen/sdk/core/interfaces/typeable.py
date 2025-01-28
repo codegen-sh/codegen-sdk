@@ -1,17 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Generator
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.expressions.type import Type
+    from codegen.sdk.core.interfaces.editable import Editable
 
 
 TType = TypeVar("TType", bound="Type")

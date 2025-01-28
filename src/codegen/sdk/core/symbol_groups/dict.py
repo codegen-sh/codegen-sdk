@@ -120,7 +120,8 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
                 elif pair.key is not None:
                     if pair.key.source == str(__key):
                         return pair.value
-        raise KeyError(f"Key {__key} not found in {list(self.keys())} {self._underlying!r}")
+        msg = f"Key {__key} not found in {list(self.keys())} {self._underlying!r}"
+        raise KeyError(msg)
 
     def __setitem__(self, __key, __value: TExpression) -> None:
         new_value = __value.source if isinstance(__value, Editable) else str(__value)
@@ -146,7 +147,8 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
                     if pair.key.source == str(__key):
                         del self._underlying[idx]
                         return
-        raise KeyError(f"Key {__key} not found in {list(self.keys())} {self._underlying!r}")
+        msg = f"Key {__key} not found in {list(self.keys())} {self._underlying!r}"
+        raise KeyError(msg)
 
     def _removed_child_commit(self):
         return self._underlying._removed_child_commit()

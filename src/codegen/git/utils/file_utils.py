@@ -21,12 +21,14 @@ def create_file(file_path: str, content: str | bytes) -> str:
         with open(file_path, "wb") as file:
             file.write(content)
     else:
-        raise ValueError(f"Invalid content type: {type(content)}")
+        msg = f"Invalid content type: {type(content)}"
+        raise ValueError(msg)
 
     # Check if the file was created
     file_path = os.path.join(filepath, filename)
     if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Failed to create file {format(file_path)}")
+        msg = f"Failed to create file {format(file_path)}"
+        raise FileNotFoundError(msg)
     return file_path
 
 

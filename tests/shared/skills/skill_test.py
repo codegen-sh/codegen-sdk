@@ -64,7 +64,8 @@ class SkillTestCase:
             elif relative_path.suffix in TSFile.get_extensions():
                 files.append(SkillTestCaseTSFile(input=input_content, output=output_content, filepath=str(relative_path)))
             else:
-                raise ValueError(f"Unsupported file extension: {relative_path.suffix} for file: {relative_path}")
+                msg = f"Unsupported file extension: {relative_path.suffix} for file: {relative_path}"
+                raise ValueError(msg)
 
         return cls(files=files, filepath=str(filepath))
 

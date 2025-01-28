@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.expressions.binary_expression import BinaryExpression
-from codegen.sdk.python import PyFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyFile
 
 
 def test_all_binary_expression_types(tmpdir):

@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
+
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.typescript.file import TSFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.typescript.file import TSFile
 
 
 def test_reduce_condition_to_true_elif(tmpdir):
