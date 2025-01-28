@@ -58,7 +58,8 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
             ValueError: If the assignment_node.type is not one of the supported assignment types.
         """
         if assignment_node.type not in cls.assignment_types:
-            raise ValueError(f"Invalid assignment node type: {assignment_node.type}")
+            msg = f"Invalid assignment node type: {assignment_node.type}"
+            raise ValueError(msg)
 
         return cls(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
 
@@ -79,7 +80,8 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
         elif self.ts_node.type in ["public_field_definition", "property_signature", "enum_assignment"]:
             return MultiExpression(self.ts_node, self.file_node_id, self.G, self.parent, self._DEPRECATED_parse_attribute_assignments())
         else:
-            raise ValueError(f"Unknown assignment type: {self.ts_node.type}")
+            msg = f"Unknown assignment type: {self.ts_node.type}"
+            raise ValueError(msg)
 
     def _DEPRECATED_parse_attribute_assignments(self) -> list[TSAssignment]:
         left = self.ts_node.child_by_field_name("name")

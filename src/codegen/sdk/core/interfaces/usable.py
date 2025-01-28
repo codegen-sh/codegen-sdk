@@ -61,7 +61,8 @@ class Usable(Importable[Parent], Generic[Parent]):
             This method can be called as both a property or a method. If used as a property, it is equivalent to invoking it without arguments.
         """
         if usage_types == UsageType.DIRECT | UsageType.ALIASED:
-            raise ValueError("Combination of only Aliased and Direct usages makes no sense")
+            msg = "Combination of only Aliased and Direct usages makes no sense"
+            raise ValueError(msg)
 
         assert self.node_id is not None
         usages_to_return = []

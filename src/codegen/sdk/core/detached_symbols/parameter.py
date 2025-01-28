@@ -127,7 +127,8 @@ class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Pa
         Returns:
             bool: True if the parameter is optional, False otherwise
         """
-        raise NotImplementedError("Subclasses must implement this method")
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
 
     @property
     @abstractmethod
@@ -140,7 +141,8 @@ class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Pa
             bool: True if the parameter is variadic (can accept variable number of arguments),
                 False otherwise.
         """
-        raise NotImplementedError("Subclasses must implement this method")
+        msg = "Subclasses must implement this method"
+        raise NotImplementedError(msg)
 
     @writer
     def remove(self, delete_formatting: bool = True, priority: int = 0, dedupe: bool = True) -> None:

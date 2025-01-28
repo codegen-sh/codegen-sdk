@@ -71,7 +71,8 @@ def get_node_classes(programming_language: ProgrammingLanguage) -> NodeClasses:
 
         return TSNodeClasses
     else:
-        raise ValueError(f"Unsupported programming language: {programming_language}!")
+        msg = f"Unsupported programming language: {programming_language}!"
+        raise ValueError(msg)
 
 
 class CodebaseGraph:
@@ -514,7 +515,8 @@ class CodebaseGraph:
 
     def get_nodes(self, node_type: NodeType | None = None, exclude_type: NodeType | None = None) -> list[Importable]:
         if node_type is not None and exclude_type is not None:
-            raise ValueError("node_type and exclude_type cannot both be specified")
+            msg = "node_type and exclude_type cannot both be specified"
+            raise ValueError(msg)
         if node_type is not None:
             return [self.get_node(node_id) for node_id in self._graph.filter_nodes(lambda node: node.node_type == node_type)]
         if exclude_type is not None:
@@ -545,7 +547,8 @@ class CodebaseGraph:
     def add_node(self, node: Importable) -> int:
         if self.config.feature_flags.debug:
             if self._graph.find_node_by_weight(node.__eq__):
-                raise Exception("Node already exists")
+                msg = "Node already exists"
+                raise Exception(msg)
         if self.config.feature_flags.debug and self._computing and node.node_type != NodeType.EXTERNAL:
             assert False, f"Adding node during compute dependencies: {node!r}"
         return self._graph.add_node(node)
@@ -553,7 +556,8 @@ class CodebaseGraph:
     def add_child(self, parent: NodeId, node: Importable, type: EdgeType, usage: Usage | None = None) -> int:
         if self.config.feature_flags.debug:
             if self._graph.find_node_by_weight(node.__eq__):
-                raise Exception("Node already exists")
+                msg = "Node already exists"
+                raise Exception(msg)
         if self.config.feature_flags.debug and self._computing and node.node_type != NodeType.EXTERNAL:
             assert False, f"Adding node during compute dependencies: {node!r}"
         return self._graph.add_child(parent, node, Edge(type, usage))
@@ -711,9 +715,11 @@ class CodebaseGraph:
 
         # Check errors
         if directory is None:
-            raise ValueError(f"Directory {directory_path} does not exist")
+            msg = f"Directory {directory_path} does not exist"
+            raise ValueError(msg)
         if not force and len(directory.items) > 0:
-            raise ValueError(f"Directory {directory_path} is not empty")
+            msg = f"Directory {directory_path} is not empty"
+            raise ValueError(msg)
 
         # Remove the directory from the tree
         if str(directory_path) in self.directories:

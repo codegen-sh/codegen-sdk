@@ -10,4 +10,5 @@ def get_grouper_by_group_by(group_by: GroupBy | None) -> type[BaseGrouper]:
     matched_groupers = [x for x in ALL_GROUPERS if x.type == group_by]
     if len(matched_groupers) > 0:
         return matched_groupers[0]
-    raise ValueError(f"No grouper found for group_by={group_by}. Did you add to ALL_GROUPERS?")
+    msg = f"No grouper found for group_by={group_by}. Did you add to ALL_GROUPERS?"
+    raise ValueError(msg)

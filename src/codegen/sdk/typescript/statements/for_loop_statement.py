@@ -52,7 +52,8 @@ class TSForLoopStatement(ForLoopStatement["TSCodeBlock"], TSBlockStatement["TSCo
             self.item = self.child_by_field_name("left")
             self.iterable = self.child_by_field_name("right")
         else:
-            raise ValueError(f"Invalid for loop type: {ts_node.type}")
+            msg = f"Invalid for loop type: {ts_node.type}"
+            raise ValueError(msg)
 
     @property
     @reader

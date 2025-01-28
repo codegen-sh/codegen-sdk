@@ -13,7 +13,8 @@ class Config:
         if value:
             return value
         if required:
-            raise ValueError(f"Environment variable {var_name} is not set with ENV={self.ENV}!")
+            msg = f"Environment variable {var_name} is not set with ENV={self.ENV}!"
+            raise ValueError(msg)
         return None
 
 

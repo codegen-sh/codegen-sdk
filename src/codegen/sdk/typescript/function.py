@@ -113,7 +113,8 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
     def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: SymbolStatement | ExportStatement) -> TSFunction:
         """Creates a TSFunction object from a function declaration."""
         if ts_node.type not in [function_type.value for function_type in TSFunctionTypeNames]:
-            raise ValueError(f"Node type={ts_node.type} is not a function declaration")
+            msg = f"Node type={ts_node.type} is not a function declaration"
+            raise ValueError(msg)
         file = G.get_node(file_node_id)
         if canonical := file._range_index.get_canonical_for_range(ts_node.range, ts_node.kind_id):
             return canonical
@@ -163,7 +164,8 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
         elif self.function_type == TSFunctionTypeNames.FunctionExpression:
             func_def_src = f"{self.name} = function"
         else:
-            raise NotImplementedError("function type not implemented")
+            msg = "function type not implemented"
+            raise NotImplementedError(msg)
         if self.parameters is not None:
             func_def_src += self.parameters.source
         if self.return_type:
@@ -320,7 +322,8 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
             return
 
         if name is None and self._name_node is None:
-            raise ValueError("The `name` argument must be provided when converting an arrow function that is not assigned to any variable.")
+            msg = "The `name` argument must be provided when converting an arrow function that is not assigned to any variable."
+            raise ValueError(msg)
 
         node = self._named_arrow_function
         # Replace variable declaration with function declaration

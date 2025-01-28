@@ -491,7 +491,8 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
         Raises:
             ValueError: If the subclass does not implement this property.
         """
-        raise ValueError("Subclass must implement `import_specifier`")
+        msg = "Subclass must implement `import_specifier`"
+        raise ValueError(msg)
 
     @reader
     def is_reexport(self) -> bool:

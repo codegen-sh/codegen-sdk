@@ -11,7 +11,8 @@ def get_modal_workspace():
         case Environment.DEVELOP:
             return "codegen-sh-develop"
         case _:
-            raise ValueError(f"Invalid environment: {global_env.ENV}")
+            msg = f"Invalid environment: {global_env.ENV}"
+            raise ValueError(msg)
 
 
 def get_modal_prefix():

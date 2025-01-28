@@ -281,14 +281,16 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                             file.add_import_from_import_string(dep.source)
 
                     else:
-                        raise ValueError(f"Unknown dependency type {type(dep)}")
+                        msg = f"Unknown dependency type {type(dep)}"
+                        raise ValueError(msg)
             except Exception as e:
                 print(f"Failed to move dependencies of {self.name}: {e}")
         else:
             try:
                 for dep in self.dependencies:
                     if isinstance(dep, Assignment):
-                        raise NotImplementedError("Assignment not implemented yet")
+                        msg = "Assignment not implemented yet"
+                        raise NotImplementedError(msg)
 
                     # =====[ Symbols - move over ]=====
                     elif isinstance(dep, Symbol) and dep.is_top_level:

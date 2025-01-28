@@ -115,7 +115,8 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
             ValueError: If the argument is already a named argument.
         """
         if self.is_named:
-            raise ValueError(f"Argument {self.source} already has a keyword argument at file {self.file_node_id}")
+            msg = f"Argument {self.source} already has a keyword argument at file {self.file_node_id}"
+            raise ValueError(msg)
 
         self.insert_before(f"{keyword}=", newline=False)
 

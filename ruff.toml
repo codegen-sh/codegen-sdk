@@ -6,7 +6,7 @@ exclude = [
 ]
 unsafe-fixes = true
 [lint]
-select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ", "TC"]
+select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ", "TC", "EM"]
 ignore = [
   "D100",
   "D101",

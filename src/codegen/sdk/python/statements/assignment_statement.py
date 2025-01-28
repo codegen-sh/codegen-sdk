@@ -55,7 +55,8 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
             ValueError: If the assignment_node type is not one of the supported assignment types.
         """
         if assignment_node.type not in cls.assignment_types:
-            raise ValueError(f"Invalid assignment node type: {assignment_node.type}")
+            msg = f"Invalid assignment node type: {assignment_node.type}"
+            raise ValueError(msg)
 
         from codegen.sdk.python.class_definition import PyClass
 

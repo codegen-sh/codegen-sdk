@@ -46,7 +46,8 @@ class GithubClient:
             return self.read_client
         elif github_scope is GithubScope.WRITE:
             return self._write_client
-        raise ValueError(f"Invalid github scope: {github_scope}")
+        msg = f"Invalid github scope: {github_scope}"
+        raise ValueError(msg)
 
     ####################################################################################################################
     # CHECK RUNS

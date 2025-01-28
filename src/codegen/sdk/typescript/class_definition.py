@@ -144,7 +144,8 @@ class TSClass(Class[TSFunction, TSDecorator, "TSCodeBlock", TSParameter, TSType]
         Returns:
             None
         """
-        raise NotImplementedError("TODO")
+        msg = "TODO"
+        raise NotImplementedError(msg)
 
     @writer
     def add_attribute_from_source(self, source: str) -> None:

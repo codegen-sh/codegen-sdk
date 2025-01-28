@@ -51,7 +51,8 @@ class ExternalModule(
     @noapidoc
     @commiter
     def parse(self, G: CodebaseGraph) -> None:
-        raise NotImplementedError(f"{type(self)} is not part of the graph at the moment")
+        msg = f"{type(self)} is not part of the graph at the moment"
+        raise NotImplementedError(msg)
 
     @classmethod
     def from_import(cls, imp: Import) -> ExternalModule:
@@ -83,7 +84,8 @@ class ExternalModule(
             NotImplementedError: This functionality is not yet supported for external modules.
         """
         # TODO: figure out how to get parameters from this module
-        raise NotImplementedError("Parsing parameters from an external module is not yet supported.")
+        msg = "Parsing parameters from an external module is not yet supported."
+        raise NotImplementedError(msg)
 
     @reader
     def get_import_string(self, alias: str | None = None, module: str | None = None, import_type: ImportType = ImportType.UNKNOWN, is_type_import: bool = False) -> str:

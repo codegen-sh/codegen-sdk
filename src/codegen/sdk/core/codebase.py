@@ -144,13 +144,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     ) -> None:
         # Sanity check inputs
         if repo_path is not None and projects is not None:
-            raise ValueError("Cannot specify both repo_path and projects")
+            msg = "Cannot specify both repo_path and projects"
+            raise ValueError(msg)
 
         if repo_path is None and projects is None:
-            raise ValueError("Must specify either repo_path or projects")
+            msg = "Must specify either repo_path or projects"
+            raise ValueError(msg)
 
         if projects is not None and programming_language is not None:
-            raise ValueError("Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language.")
+            msg = "Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language."
+            raise ValueError(msg)
 
         # If projects is a single ProjectConfig, convert it to a list
         if isinstance(projects, ProjectConfig):
@@ -240,7 +243,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             # Return all source files
             files = self.G.get_nodes(NodeType.FILE)
         elif isinstance(extensions, str) and extensions != "*":
-            raise ValueError("extensions must be a list of extensions or '*'")
+            msg = "extensions must be a list of extensions or '*'"
+            raise ValueError(msg)
         else:
             files = []
             # Get all files with the specified extensions
@@ -294,7 +298,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         """
         if self.language == ProgrammingLanguage.PYTHON:
-            raise NotImplementedError("Exports are not supported for Python codebases since Python does not have an export mechanism.")
+            msg = "Exports are not supported for Python codebases since Python does not have an export mechanism."
+            raise NotImplementedError(msg)
 
         return self.G.get_nodes(NodeType.EXPORT)
 
@@ -414,7 +419,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             file_cls = self.G.node_classes.file_cls
             file = file_cls.from_content(filepath, content, self.G, sync=sync)
             if file is None:
-                raise ValueError(f"Failed to parse file with content {content}. Please make sure the content syntax is valid with respect to the filepath extension.")
+                msg = f"Failed to parse file with content {content}. Please make sure the content syntax is valid with respect to the filepath extension."
+                raise ValueError(msg)
         else:
             # Create file as non-source file
             file = File.from_content(filepath, content, self.G, sync=False)
@@ -497,7 +503,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                     if str(absolute_path).lower() == str(file).lower():
                         return get_file_from_path(file)
         elif not optional:
-            raise ValueError(f"File {filepath} not found in codebase. Use optional=True to return None instead.")
+            msg = f"File {filepath} not found in codebase. Use optional=True to return None instead."
+            raise ValueError(msg)
         return None
 
     def has_directory(self, dir_path: str, ignore_case: bool = False) -> bool:
@@ -531,7 +538,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         dir_path = "" if dir_path == "." else dir_path
         directory = self.G.get_directory(self.G.to_absolute(dir_path), ignore_case=ignore_case)
         if directory is None and not optional:
-            raise ValueError(f"Directory {dir_path} not found in codebase. Use optional=True to return None instead.")
+            msg = f"Directory {dir_path} not found in codebase. Use optional=True to return None instead."
+            raise ValueError(msg)
         return directory
 
     def has_symbol(self, symbol_name: str) -> bool:
@@ -566,10 +574,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         symbols = self.get_symbols(symbol_name)
         if len(symbols) == 0:
             if not optional:
-                raise ValueError(f"Symbol {symbol_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Symbol {symbol_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(symbols) > 1:
-            raise ValueError(f"Symbol {symbol_name} is ambiguous in codebase - more than one instance")
+            msg = f"Symbol {symbol_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return symbols[0]
 
     def get_symbols(self, symbol_name: str) -> list[TSymbol]:
@@ -604,10 +614,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         matches = [c for c in self.classes if c.name == class_name]
         if len(matches) == 0:
             if not optional:
-                raise ValueError(f"Class {class_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Class {class_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(matches) > 1:
-            raise ValueError(f"Class {class_name} is ambiguous in codebase - more than one instance")
+            msg = f"Class {class_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return matches[0]
 
     def get_function(self, function_name: str, optional: bool = False) -> TFunction | None:
@@ -631,10 +643,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         matches = [f for f in self.functions if f.name == function_name]
         if len(matches) == 0:
             if not optional:
-                raise ValueError(f"Function {function_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Function {function_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(matches) > 1:
-            raise ValueError(f"Function {function_name} is ambiguous in codebase - more than one instance")
+            msg = f"Function {function_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return matches[0]
 
     @noapidoc
@@ -1019,7 +1033,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         # Create a singleton AIHelper instance
         if self._ai_helper is None:
             if self.G.config.secrets.openai_key is None:
-                raise ValueError("OpenAI key is not set")
+                msg = "OpenAI key is not set"
+                raise ValueError(msg)
 
             self._ai_helper = MultiProviderAIHelper(openai_key=self.G.config.secrets.openai_key, use_openai=True, use_claude=False)
         return self._ai_helper
@@ -1047,7 +1062,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._num_ai_requests += 1
         if self.G.session_options.max_ai_requests is not None and self._num_ai_requests > self.G.session_options.max_ai_requests:
             logger.info(f"Max AI requests reached: {self.G.session_options.max_ai_requests}. Stopping codemod.")
-            raise MaxAIRequestsError(f"Maximum number of AI requests reached: {self.G.session_options.max_ai_requests}", threshold=self.G.session_options.max_ai_requests)
+            msg = f"Maximum number of AI requests reached: {self.G.session_options.max_ai_requests}"
+            raise MaxAIRequestsError(msg, threshold=self.G.session_options.max_ai_requests)
 
         params = {
             "messages": [{"role": "system", "content": generate_system_prompt(target, context)}, {"role": "user", "content": prompt}],
@@ -1074,17 +1090,23 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                     if "answer" in response_answer:
                         response_answer = response_answer["answer"]
                     else:
-                        raise ValueError("No answer found in tool call. (tool_call.function.arguments does not contain answer)")
+                        msg = "No answer found in tool call. (tool_call.function.arguments does not contain answer)"
+                        raise ValueError(msg)
                 else:
-                    raise ValueError("No tool call found in AI response. (choice.message.tool_calls is empty)")
+                    msg = "No tool call found in AI response. (choice.message.tool_calls is empty)"
+                    raise ValueError(msg)
             elif choice.finish_reason == "length":
-                raise ValueError("AI response too long / ran out of tokens. (choice.finish_reason == length)")
+                msg = "AI response too long / ran out of tokens. (choice.finish_reason == length)"
+                raise ValueError(msg)
             elif choice.finish_reason == "content_filter":
-                raise ValueError("AI response was blocked by OpenAI's content filter. (choice.finish_reason == content_filter)")
+                msg = "AI response was blocked by OpenAI's content filter. (choice.finish_reason == content_filter)"
+                raise ValueError(msg)
             else:
-                raise ValueError(f"Unknown finish reason from AI: {choice.finish_reason}")
+                msg = f"Unknown finish reason from AI: {choice.finish_reason}"
+                raise ValueError(msg)
         else:
-            raise ValueError("No response from AI Provider. (response.choices is empty)")
+            msg = "No response from AI Provider. (response.choices is empty)"
+            raise ValueError(msg)
 
         # Agent sometimes fucks up and does \\\\n for some reason.
         response_answer = codecs.decode(response_answer, "unicode_escape")
@@ -1154,7 +1176,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         # Parse repo name
         if "/" not in repo_name:
-            raise ValueError("repo_name must be in format 'owner/repo'")
+            msg = "repo_name must be in format 'owner/repo'"
+            raise ValueError(msg)
         owner, repo = repo_name.split("/")
 
         # Setup temp directory

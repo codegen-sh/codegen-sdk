@@ -47,7 +47,8 @@ class Interface(Inherits, HasBlock, HasAttribute[TAttribute], Generic[TCodeBlock
     @reader
     def attributes(self) -> list[TAttribute]:
         """List of attributes defined in this Interface."""
-        raise NotImplementedError("Subclass must implement `parse`")
+        msg = "Subclass must implement `parse`"
+        raise NotImplementedError(msg)
 
     @reader
     def get_attribute(self, name: str) -> TAttribute | None:

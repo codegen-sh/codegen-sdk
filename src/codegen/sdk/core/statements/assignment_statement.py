@@ -46,7 +46,8 @@ class AssignmentStatement(Statement[TCodeBlock], HasValue, Generic[TCodeBlock, T
         super().__init__(ts_node, file_node_id, G, parent, pos=pos)
         self.assignments = self._DEPRECATED_parse_assignments().expressions
         if len(self.assignments) == 0:
-            raise ValueError(f"No assignments found: {self.ts_node}\n\n{self.source}")
+            msg = f"No assignments found: {self.ts_node}\n\n{self.source}"
+            raise ValueError(msg)
 
         first_assignment: TAssignment = self.assignments[0]
         self._name_node = self.G.parser.parse_expression(first_assignment.ts_node, self.file_node_id, self.G, parent, default=Name)

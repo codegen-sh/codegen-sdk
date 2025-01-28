@@ -16,7 +16,8 @@ def validate_range(value: Any, info: ValidationInfo) -> Range:
             end_point=Point(**value["end_point"]),
         )
     elif not isinstance(value, Range):
-        raise ValueError("Invalid type for range field. Expected tree_sitter.Range or dict.")
+        msg = "Invalid type for range field. Expected tree_sitter.Range or dict."
+        raise ValueError(msg)
     return value
 
 

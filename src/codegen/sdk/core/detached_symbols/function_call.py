@@ -57,7 +57,8 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         # =====[ Grab the arg list ]=====
         arg_list_node = node.child_by_field_name("arguments")
         if arg_list_node is None:
-            raise ValueError(f"Failed to parse function call. Child 'argument_list' node does not exist. Source: {self.source}")
+            msg = f"Failed to parse function call. Child 'argument_list' node does not exist. Source: {self.source}"
+            raise ValueError(msg)
         args = [Argument(x, i, self) for i, x in enumerate(arg_list_node.named_children) if x.type != "comment"]
         self._arg_list = Collection(arg_list_node, self.file_node_id, self.G, self, children=args)
 

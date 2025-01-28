@@ -44,13 +44,15 @@ class GitRepoClient:
     def _create_client(self, github_scope: GithubScope = GithubScope.READ) -> Repository:
         client = self.gh_client.get_repo_by_full_name(self.repo.full_name, github_scope=github_scope)
         if not client:
-            raise ValueError(f"Repo {self.repo.full_name} not found in {self.github_type.value}!")
+            msg = f"Repo {self.repo.full_name} not found in {self.github_type.value}!"
+            raise ValueError(msg)
         return client
 
     @property
     def _write_client(self) -> Repository:
         if self.__write_client is None:
-            raise ValueError("Cannot perform write operations with read-only client! Try setting github_scope to GithubScope.WRITE.")
+            msg = "Cannot perform write operations with read-only client! Try setting github_scope to GithubScope.WRITE."
+            raise ValueError(msg)
         return self.__write_client
 
     ####################################################################################################################

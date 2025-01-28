@@ -28,12 +28,14 @@ class DecoratedFunction:
             The result of running the function (usually a diff string)
         """
         if not self.filepath:
-            raise ValueError("Cannot run function without filepath")
+            msg = "Cannot run function without filepath"
+            raise ValueError(msg)
 
         # Import the module containing the function
         spec = importlib.util.spec_from_file_location("module", self.filepath)
         if not spec or not spec.loader:
-            raise ImportError(f"Could not load module from {self.filepath}")
+            msg = f"Could not load module from {self.filepath}"
+            raise ImportError(msg)
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -45,7 +47,8 @@ class DecoratedFunction:
                 # Found our function, run it
                 return item(codebase)
 
-        raise ValueError(f"Could not find function '{self.name}' in {self.filepath}")
+        msg = f"Could not find function '{self.name}' in {self.filepath}"
+        raise ValueError(msg)
 
     def validate(self) -> None:
         """Verify that this function can be imported and accessed.
@@ -54,12 +57,14 @@ class DecoratedFunction:
             ValueError: If the function can't be found or imported
         """
         if not self.filepath:
-            raise ValueError("Cannot validate function without filepath")
+            msg = "Cannot validate function without filepath"
+            raise ValueError(msg)
 
         # Import the module containing the function
         spec = importlib.util.spec_from_file_location("module", self.filepath)
         if not spec or not spec.loader:
-            raise ImportError(f"Could not load module from {self.filepath}")
+            msg = f"Could not load module from {self.filepath}"
+            raise ImportError(msg)
 
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
@@ -70,7 +75,8 @@ class DecoratedFunction:
             if hasattr(item, "__codegen_name__") and item.__codegen_name__ == self.name:
                 return  # Found it!
 
-        raise ValueError(f"Could not find function '{self.name}' in {self.filepath}")
+        msg = f"Could not find function '{self.name}' in {self.filepath}"
+        raise ValueError(msg)
 
 
 class CodegenFunctionVisitor(ast.NodeVisitor):

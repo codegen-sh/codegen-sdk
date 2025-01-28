@@ -91,21 +91,26 @@ class RestAPI:
                 try:
                     return output_model.model_validate(response.json())
                 except ValueError as e:
-                    raise ServerError(f"Invalid response format: {e}")
+                    msg = f"Invalid response format: {e}"
+                    raise ServerError(msg)
             elif response.status_code == 401:
-                raise InvalidTokenError("Invalid or expired authentication token")
+                msg = "Invalid or expired authentication token"
+                raise InvalidTokenError(msg)
             elif response.status_code == 500:
-                raise ServerError("The server encountered an error while processing your request")
+                msg = "The server encountered an error while processing your request"
+                raise ServerError(msg)
             else:
                 try:
                     error_json = response.json()
                     error_msg = error_json.get("detail", error_json)
                 except Exception:
                     error_msg = response.text
-                raise ServerError(f"Error ({response.status_code}): {error_msg}")
+                msg = f"Error ({response.status_code}): {error_msg}"
+                raise ServerError(msg)
 
         except requests.RequestException as e:
-            raise ServerError(f"Network error: {e!s}")
+            msg = f"Network error: {e!s}"
+            raise ServerError(msg)
 
     def run(
         self,

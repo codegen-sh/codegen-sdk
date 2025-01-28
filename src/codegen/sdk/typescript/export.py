@@ -64,7 +64,8 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
     ) -> None:
         """Given an `export_statement` tree sitter node, parses all implicit export symbols."""
         if declared_symbol and exported_symbol and declared_symbol.name != exported_symbol.text.decode("utf-8"):
-            raise ValueError("The exported symbol name must match the declared symbol name")
+            msg = "The exported symbol name must match the declared symbol name"
+            raise ValueError(msg)
 
         super().__init__(ts_node, file_node_id, G, parent)
         self._name_node = self._parse_expression(name_node, default=Name)

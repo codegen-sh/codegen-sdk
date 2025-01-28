@@ -302,7 +302,8 @@ class Function(
 
         statements = self.code_block.statements
         if index >= len(statements):
-            raise ValueError(f"Index {index} out of range for function {self.name}")
+            msg = f"Index {index} out of range for function {self.name}"
+            raise ValueError(msg)
 
         first_statement = self.code_block.statements[index]
         first_statement.insert_before(lines)
@@ -395,7 +396,8 @@ class Function(
         if self.G.language_engine:
             return self.G.language_engine.get_return_type(self)
         else:
-            raise NotImplementedError("Language engine not enabled for this repo or language.")
+            msg = "Language engine not enabled for this repo or language."
+            raise NotImplementedError(msg)
 
     @property
     @noapidoc

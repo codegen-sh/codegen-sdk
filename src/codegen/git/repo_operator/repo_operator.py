@@ -239,7 +239,8 @@ class RepoOperator(ABC):
             logger.info(f"Branch {branch_name} does not exist locally. Skipping delete_local_branch.")
             return
         if branch_name is self.default_branch:
-            raise NotImplementedError("Deleting the default branch is not implemented yet.")
+            msg = "Deleting the default branch is not implemented yet."
+            raise NotImplementedError(msg)
 
         if self.is_branch_checked_out(branch_name):
             self.checkout_branch(self.default_branch)

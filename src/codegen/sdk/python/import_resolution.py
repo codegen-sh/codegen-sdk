@@ -202,7 +202,8 @@ class PyImport(Import["PyFile"]):
         if len(import_symbols) == 0:
             wildcard_import = next((node for node in import_statement.children if node.type == "wildcard_import"), None)
             if wildcard_import is None:
-                raise ValueError(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
+                msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
+                raise ValueError(msg)
             return [cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
 
         imports = []
@@ -214,7 +215,8 @@ class PyImport(Import["PyFile"]):
                 alias = import_symbol.child_by_field_name("alias")
                 imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
             else:
-                raise ValueError(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
+                msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
+                raise ValueError(msg)
             imports.append(imp)
         return imports
 

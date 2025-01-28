@@ -15,7 +15,8 @@ class TSDeclassify(ExternalProcess):
 
         # Ensure NodeJS and npm are installed
         if not shutil.which("node") or not shutil.which("npm"):
-            raise RuntimeError("NodeJS or npm is not installed")
+            msg = "NodeJS or npm is not installed"
+            raise RuntimeError(msg)
 
     def _start(self):
         try:
@@ -56,7 +57,8 @@ class TSDeclassify(ExternalProcess):
             raise e
 
     def reparse(self):
-        raise NotImplementedError("TSDeclassify does not support reparse")
+        msg = "TSDeclassify does not support reparse"
+        raise NotImplementedError(msg)
 
     def declassify(self, source: str, filename: str = "file.tsx", error_on_failure: bool = True):
         assert self.ready(), "TSDeclassify is not ready"
@@ -82,7 +84,8 @@ class TSDeclassify(ExternalProcess):
 
             # Raise an error if the declassification failed
             if error_on_failure and "Cannot perform transformation" in declassified_source:
-                raise RuntimeError("Declassification failed!")
+                msg = "Declassification failed!"
+                raise RuntimeError(msg)
         finally:
             # Remove file.tsx if it exists
             if os.path.exists(source_file):

@@ -105,7 +105,8 @@ class CodemodAPI:
             )
             if response.status_code != 200:
                 logger.error(f"Error making request: {response.status_code} {response.text}")
-                raise Exception(f"Error making request: {response.status_code} {response.text}")
+                msg = f"Error making request: {response.status_code} {response.text}"
+                raise Exception(msg)
             return response
         except requests.RequestException as e:
             logger.error(f"Error making request: {e}")

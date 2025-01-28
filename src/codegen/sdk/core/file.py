@@ -149,7 +149,8 @@ class File(Editable[None]):
             ValueError: If the file is binary. Use content_bytes instead for binary files.
         """
         if self._binary:
-            raise ValueError("Cannot read binary file as string. Use content_bytes instead.")
+            msg = "Cannot read binary file as string. Use content_bytes instead."
+            raise ValueError(msg)
 
         return self.content_bytes.decode(encoding="utf-8")
 
@@ -538,7 +539,8 @@ class SourceFile(
         Graph-safe.
         """
         if filepath in G.filepath_idx:
-            raise ValueError(f"File already exists in graph: {filepath}")
+            msg = f"File already exists in graph: {filepath}"
+            raise ValueError(msg)
 
         ts_node = parse_file(filepath, "")
         if ts_node.has_error:
@@ -980,7 +982,8 @@ class SourceFile(
         if existing_symbol is not None:
             return existing_symbol
         if not self.symbol_can_be_added(symbol):
-            raise ValueError(f"Symbol {symbol.name} cannot be added to this file type.")
+            msg = f"Symbol {symbol.name} cannot be added to this file type."
+            raise ValueError(msg)
 
         source = symbol.source
         if isinstance(symbol, TSFunction) and symbol.is_arrow:

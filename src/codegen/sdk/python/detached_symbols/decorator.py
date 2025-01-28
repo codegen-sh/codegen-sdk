@@ -39,7 +39,8 @@ class PyDecorator(Decorator["PyClass", "PyFunction", "PyParameter"]):
                 func = child.child_by_field_name("function")
                 return func
 
-        raise ValueError(f"Could not find decorator name within {self.source}")
+        msg = f"Could not find decorator name within {self.source}"
+        raise ValueError(msg)
 
     @property
     @reader

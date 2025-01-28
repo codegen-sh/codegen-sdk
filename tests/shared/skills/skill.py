@@ -92,7 +92,8 @@ class Skill(ABC):
 
         # ===== [Path from Guides] =====
         if "guides" not in filepath_tuple:
-            raise ValueError(f"Skill {cls.name} is not in a guides directory")
+            msg = f"Skill {cls.name} is not in a guides directory"
+            raise ValueError(msg)
         guides_index = filepath_tuple.index("guides")
         guides_path = Path("/".join(filepath.parts[guides_index:]))
 

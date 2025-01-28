@@ -228,7 +228,8 @@ class IfBlockStatement(Statement[TCodeBlock], Generic[TCodeBlock, TIfBlockStatem
                 (like an else block).
         """
         if self.condition is None:
-            raise ValueError("Cannot reduce condition of an IfBlockStatement without a condition.")
+            msg = "Cannot reduce condition of an IfBlockStatement without a condition."
+            raise ValueError(msg)
 
         first_elif = next((x for x in self.elif_statements()), None)
 

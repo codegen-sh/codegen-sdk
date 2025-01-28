@@ -81,7 +81,8 @@ class PyAttribute(Attribute["PyCodeBlock", "PyAssignment"], PyAssignmentStatemen
         Raises:
             APINotApplicableForLanguageError: Always raised as Python does not have explicit optional attribute syntax.
         """
-        raise APINotApplicableForLanguageError("Python doesn't have an explicit syntax for optional attributes")
+        msg = "Python doesn't have an explicit syntax for optional attributes"
+        raise APINotApplicableForLanguageError(msg)
 
     @property
     @reader

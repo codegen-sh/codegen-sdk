@@ -44,15 +44,20 @@ class TypescriptDependencyManager(DependencyManager):
         logger.info(f"Initializing TypescriptDependencyManager with should_install_dependencies={should_install_dependencies}")
         # Ensure that node, npm, yarn, and pnpm are installed
         if not shutil.which("node"):
-            raise RuntimeError("NodeJS is not installed")
+            msg = "NodeJS is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("corepack"):
-            raise RuntimeError("corepack is not installed")
+            msg = "corepack is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("npm"):
-            raise RuntimeError("npm is not installed")
+            msg = "npm is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("yarn"):
-            raise RuntimeError("yarn is not installed")
+            msg = "yarn is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("pnpm"):
-            raise RuntimeError("pnpm is not installed")
+            msg = "pnpm is not installed"
+            raise RuntimeError(msg)
 
         self.should_install_dependencies = should_install_dependencies
         # Detect the installer type

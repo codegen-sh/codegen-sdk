@@ -114,13 +114,15 @@ class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
     @commiter
     def _parse_comment(self) -> str:
         """Parse out the comment into its text content."""
-        raise NotImplementedError("This method should be implemented by the subclass")
+        msg = "This method should be implemented by the subclass"
+        raise NotImplementedError(msg)
 
     @noapidoc
     @commiter
     def _unparse_comment(self, new_src: str):
         """Unparses cleaned text content into a comment block."""
-        raise NotImplementedError("This method should be implemented by the subclass")
+        msg = "This method should be implemented by the subclass"
+        raise NotImplementedError(msg)
 
     @commiter
     @noapidoc
