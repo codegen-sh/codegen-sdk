@@ -21,6 +21,9 @@ iconType: "solid"
     </Note>
 
   </Accordion>
+    <Accordion title="Is Codegen exact?" icon="scale-balanced">
+    Pretty much! Codegen is roughly on par with `mypy` and `tsc`. There are always edge cases in static analysis that are provably impossible to get (for example doing `eval()` on a string), but all of Codegen's APIs are intended to be exact unless otherwise specified. Please reach out if you find an edge case and we will do our best to patch it.
+  </Accordion>
   <Accordion title="Is Codegen suitable for large codebases?" icon="database">
     Yes! Codegen was developed on multmillion-line Python and Typescript codebases
     and includes optimizations for handling large-scale transformations.

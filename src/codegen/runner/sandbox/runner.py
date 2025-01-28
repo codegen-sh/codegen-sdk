@@ -5,6 +5,7 @@ import sentry_sdk
 from git import Commit as GitCommit
 
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
+from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
 from codegen.runner.models.configs import get_codebase_config
@@ -39,7 +40,7 @@ class SandboxRunner:
     ) -> None:
         self.container_id = container_id
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config, base_dir=repo_config.base_dir)
+        self.op = RemoteRepoOperator(repo_config, base_dir=repo_config.base_dir, github_type=GithubType.Github)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:
@@ -76,13 +77,13 @@ class SandboxRunner:
         self.codebase.checkout(branch=self.codebase.default_branch, create_if_missing=True)
 
     @staticmethod
-    def _set_sentry_tags(epic_id: int, is_customer: bool) -> None:
+    def _set_sentry_tags(epic_id: int, is_admin: bool) -> None:
         """Set the sentry tags for a CodemodRun"""
         sentry_sdk.set_tag("epic_id", epic_id)  # To easily get to the epic in the UI
-        sentry_sdk.set_tag("is_customer", is_customer)  # To filter "prod" level errors, ex if customer hits an error vs an admin
+        sentry_sdk.set_tag("is_admin", is_admin)  # To filter "prod" level errors, ex if customer hits an error vs an admin
 
     async def get_diff(self, request: GetDiffRequest) -> GetDiffResponse:
-        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_customer=request.codemod.is_customer)
+        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_admin=request.codemod.is_admin)
         custom_scope = {"context": request.codemod.codemod_context} if request.codemod.codemod_context else {}
         code_to_exec = create_execute_function_from_codeblock(codeblock=request.codemod.user_code, custom_scope=custom_scope)
         session_options = SessionOptions(max_transactions=request.max_transactions, max_seconds=request.max_seconds)
@@ -92,7 +93,7 @@ class SandboxRunner:
         return GetDiffResponse(result=res)
 
     async def create_branch(self, request: CreateBranchRequest) -> CreateBranchResponse:
-        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_customer=request.codemod.is_customer)
+        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_admin=request.codemod.is_admin)
         custom_scope = {"context": request.codemod.codemod_context} if request.codemod.codemod_context else {}
         code_to_exec = create_execute_function_from_codeblock(codeblock=request.codemod.user_code, custom_scope=custom_scope)
         branch_config = request.branch_config

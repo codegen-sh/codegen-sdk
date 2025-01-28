@@ -819,6 +819,10 @@ class SourceFile(
     @reader
     def resolve_name(self, name: str, start_byte: int | None = None) -> Symbol | Import | WildcardImport | None:
         if resolved := self.valid_symbol_names.get(name):
+            if start_byte is not None and resolved.end_byte > start_byte:
+                for symbol in self.symbols:
+                    if symbol.start_byte <= start_byte and symbol.name == name:
+                        return symbol
             return resolved
 
     @property

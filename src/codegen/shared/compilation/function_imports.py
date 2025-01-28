@@ -1,4 +1,4 @@
-# This file is auto-generated, do not modify manually. Edit this in codegen-backend/cli/generate/runner_imports.py.
+# This file is auto-generated, do not modify manually. Edit this in src/codegen/gscli/generate/runner_imports.py.
 def get_generated_imports():
     return """
 # External imports
@@ -12,10 +12,11 @@ import plotly
 
 from codegen.git.models.codemod_context import CodemodContext
 from codegen.git.models.github_named_user_context import GithubNamedUserContext
+from codegen.git.models.pr_options import PROptions
 from codegen.git.models.pr_part_context import PRPartContext
 from codegen.git.models.pull_request_context import PullRequestContext
 
-from codegen.sdk.codebase.control_flow import StopCodemodException
+from codegen.shared.exceptions.control_flow import StopCodemodException
 
 # GraphSitter imports (public)
 from codegen.sdk.codebase.flagging.enums import FlagKwargs

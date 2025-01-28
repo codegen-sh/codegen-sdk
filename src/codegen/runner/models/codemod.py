@@ -18,7 +18,7 @@ class Codemod(BaseModel):
 
     # Sentry tags
     epic_id: int
-    is_customer: bool = True
+    is_admin: bool = False
 
 
 class GroupingConfig(BaseModel):
