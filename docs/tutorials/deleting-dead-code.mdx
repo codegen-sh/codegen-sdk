@@ -18,7 +18,7 @@ This guide will show you how to safely identify and remove genuinely unused code
 
 ## Overview
 
-To simply identify code without any external usages, you can check for the absence of [`Symbol.usages`](/api-reference/core/Symbol#usages).
+To simply identify code without any external usages, you can check for the absence of [Symbol.usages](/api-reference/core/Symbol#usages).
 
 <Tip>See [Dependencies and Usages](/building-with-codegen/dependencies-and-usages) for more information on how to use these properties.</Tip>
 
@@ -28,6 +28,9 @@ for function in codebase.functions:
     # Remove functions with no usages
     if not function.usages:
         function.remove()
+
+# Commit
+codebase.commit()
 ```
 
 <Warning>
@@ -36,7 +39,7 @@ This will remove all code that is not explicitly referenced elsewhere, including
 
 ## Filtering for Special Cases
 
-To filter out special cases that are not explicitly referenced yet are, nonetheless, worth keeping around, you can use the following:
+To filter out special cases that are not explicitly referenced yet are, nonetheless, worth keeping around, you can use the following pattern:
 
 
 ```python
@@ -63,107 +66,16 @@ for function in codebase.functions:
         print(f"Removing unused function: {function.name}")
         # Remove the function from the file
         function.remove()
+
+# Commit
+codebase.commit()
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Eliminating Dead Imports
-
-To remove unused imports, you can check if the imported symbol has any usages:
-
-<CodeGroup>
-```python python
-for import_stmt in codebase.imports:
-    # Check if the import statement has no usages
-    if not import_stmt.usages:
-        # Print a message indicating the removal of the unused import
-        print(f"Removing unused import: {import_stmt.name}")
-        # Remove the import statement from the file
-        import_stmt.remove()
-```
-
-```python typescript
-for import_stmt in codebase.imports:
-    # Check if the import statement has no usages
-    if not import_stmt.usages:
-        # Print a message indicating the removal of the unused import
-        print(f"Removing unused import: {import_stmt.name}")
-        # Remove the import statement from the file
-        import_stmt.remove()
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Cleaning Up Unused Variables
 
 To remove unused variables, you can check for their usages within their scope:
 
-<CodeGroup>
-```python python
-for func in codebase.functions:
-    # Iterate through local variable assignments in the function
-    for var_assignments in func.code_block.local_var_assignments:
-        # Check if the local variable assignment has no usages
-        if not var_assignments.local_usages:
-            # Remove the local variable assignment
-            var_assignments.remove()
-```
-
 ```python typescript
 for func in codebase.functions:
     # Iterate through local variable assignments in the function
@@ -172,107 +84,17 @@ for func in codebase.functions:
         if not var_assignments.local_usages:
             # Remove the local variable assignment
             var_assignments.remove()
+
+# Commit
+codebase.commit()
 ```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Ignoring False Positives
-
-Every codebase is different, and usually there's a (small) set of things that could look like dead code but aren't.
-
-Simply tell the assistant to avoid certain cases (like files starting with `test_`, or children of a specific class).
-
-## Removing Dead Classes
-
-To remove unused classes, check for the absence of usages:
-
-<CodeGroup>
-```python python
-for cls in codebase.classes:
-    # Check if the class has no usages
-    if not cls.usages:
-        # Print a message indicating the removal of the unused class
-        print(f"Removing unused class: {cls.name}")
-        # Remove the class from the file
-        cls.remove()
-```
-
-```python typescript
-for cls in codebase.classes:
-    # Check if the class has no usages
-    if not cls.usages:
-        # Print a message indicating the removal of the unused class
-        print(f"Removing unused class: {cls.name}")
-        # Remove the class from the file
-        cls.remove()
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## Cleaning Up After Removal
 
 After removing dead code, you may need to clean up any remaining artifacts:
 
-<CodeGroup>
-```python python
+```python
 for file in codebase.files:
     # Check if the file is empty
     if not file.content.strip():
@@ -289,66 +111,3 @@ for file in codebase.files:
     # Replace three or more consecutive newlines with two newlines
     file.edit(re.sub(r"\n{3,}", "\n\n", file.content))
 ```
-
-```python typescript
-for file in codebase.files:
-    # Check if the file is empty
-    if not file.content.strip():
-        # Print a message indicating the removal of the empty file
-        print(f"Removing empty file: {file.filepath}")
-        # Remove the empty file
-        file.remove()
-
-# commit is NECESSARY to remove the files from the codebase
-codebase.commit()
-
-# Remove redundant newlines
-for file in codebase.files:
-    # Replace three or more consecutive newlines with two newlines
-    file.edit(re.sub(r"\n{3,}", "\n\n", file.content))
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Best Practices
-
-1. **Use Caution**: Always double-check before removing code, especially for elements that might be used dynamically or in hard-to-detect ways.
-
-2. **Incremental Removal**: Remove dead code in stages, committing and testing after each stage to ensure you haven't broken anything.
-
-3. **Consider Visibility**: Be extra cautious when removing public APIs or elements that might be used by external code.
-
-4. **Update Documentation**: After removing dead code, update any related documentation or comments to maintain consistency.
-
-5. **Use Version Control**: Always perform these operations in a version-controlled environment, so you can easily revert changes if needed.
-
-By following these guidelines, you can effectively clean up your codebase by removing dead code while maintaining its integrity and functionality.
