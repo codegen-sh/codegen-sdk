@@ -23,7 +23,6 @@ class RunnerFeatureFlags(BaseModel):
     ts_dependency_manager: bool = False
 
     import_resolution_overrides: dict[str, str] = {}
-    syntax_highlight: bool = False
 
     def encoded_json(self):
         return base64.b64encode(self.model_dump_json().encode("utf-8")).decode("utf-8")
