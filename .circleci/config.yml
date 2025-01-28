@@ -229,6 +229,7 @@ jobs:
     executor: default_image
     resource_class: "large"
     steps:
+      - setup_remote_docker
       - setup-uv
       - run:
           command: |
