@@ -26,10 +26,7 @@ def codebase(tmpdir, request) -> Codebase:
 
 @pytest.fixture
 def executor(codebase: Codebase) -> Generator[SandboxExecutor]:
-    with patch("codegen.runner.sandbox.executor.get_runner_feature_flags") as mock_ff:
-        mock_ff.return_value = RunnerFeatureFlags(syntax_highlight=False)
-
-        yield SandboxExecutor(codebase)
+    yield SandboxExecutor(codebase)
 
 
 @pytest.fixture
@@ -40,13 +37,6 @@ def runner(codebase: Codebase, tmpdir):
             mock_op.return_value = codebase.op
 
             yield SandboxRunner(container_id="ta-123", repo_config=codebase.op.repo_config)
-
-
-@pytest.fixture(autouse=True)
-def mock_runner_flags():
-    with patch("codegen.runner.sandbox.executor.get_runner_feature_flags") as mock_ff:
-        mock_ff.return_value = RunnerFeatureFlags(syntax_highlight=False)
-        yield mock_ff
 
 
 @pytest.fixture(autouse=True)

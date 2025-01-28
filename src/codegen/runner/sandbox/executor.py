@@ -6,9 +6,7 @@ from github.PullRequest import PullRequest
 
 from codegen.git.models.pr_options import PROptions
 from codegen.runner.diff.get_raw_diff import get_raw_diff
-from codegen.runner.diff.syntax_highlight import syntax_highlight_modified_files
 from codegen.runner.models.codemod import BranchConfig, Codemod, CodemodRunResult, CreatedBranch, GroupingConfig
-from codegen.runner.models.configs import get_runner_feature_flags
 from codegen.runner.sandbox.repo import SandboxRepo
 from codegen.runner.utils.branch_name import get_head_branch_name
 from codegen.runner.utils.exception_utils import update_observation_meta
@@ -29,12 +27,10 @@ class SandboxExecutor:
 
     codebase: CodebaseType
     remote_repo: SandboxRepo
-    _is_syntax_highlight_enabled: bool
 
     def __init__(self, codebase: CodebaseType):
         self.codebase = codebase
         self.remote_repo = SandboxRepo(self.codebase)
-        self._is_syntax_highlight_enabled = get_runner_feature_flags().syntax_highlight
 
     async def find_flags(self, execute_func: Callable) -> list[CodeFlag]:
         """Runs the execute_func in find_mode to find flags"""
@@ -171,16 +167,6 @@ class SandboxExecutor:
         raw_diff = get_raw_diff(codebase=self.codebase)
         result.observation = raw_diff
         result.base_commit = self.codebase.current_commit.hexsha if self.codebase.current_commit else "HEAD"
-
-        if self._is_syntax_highlight_enabled:
-            logger.info("> Syntax highlighting modified files")
-            try:
-                result.highlighted_diff = syntax_highlight_modified_files(self.codebase, raw_diff, flags)
-            except Exception as e:
-                # TODO: this doesn't work during webhooks. Maybe due to installation dependencies?
-                logger.exception(f"Error! Failed to syntax highlight modified files: {e}")
-        else:
-            logger.info("> Skipping syntax highlighting, because feature flag is not enabled")
 
         # =====[ Finalize CodemodRun state ]=====
         # Include logs etc.
