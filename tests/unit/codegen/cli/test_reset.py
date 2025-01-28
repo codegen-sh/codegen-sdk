@@ -52,7 +52,10 @@ def setup_repo_state(repo_path: Path, state: dict[str, str]):
     for filepath, content in state.items():
         file_path = repo_path / filepath
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_text(content)
+        if content is None:
+            file_path.unlink()
+        else:
+            file_path.write_text(content)
 
 
 def get_git_status(repo_path: Path) -> tuple[set[str], set[str], set[str]]:
@@ -354,12 +357,11 @@ def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[st
     }
     setup_repo_state(committed_repo, staged_changes)
     subprocess.run(["git", "add", "."], cwd=committed_repo, check=True)
-    subprocess.run(["git", "mv", ".codegen/codemods/base.py", ".codegen/codemods/staged_rename.py"], cwd=committed_repo, check=True)
 
     # 2. Unstaged rename
     unstaged_changes = {
-        ".codegen/codemods/staged_rename.py": None,
-        ".codegen/codemods/unstaged_rename.py": committed_state[".codegen/codemods/base.py"],
+        "README.md": None,
+        "README.mdx": committed_state["README.md"],
     }
     setup_repo_state(committed_repo, unstaged_changes)
     # Don't stage these changes
@@ -373,7 +375,8 @@ def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[st
         {
             ".codegen/codemods/base.py": None,
             ".codegen/codemods/staged_rename.py": committed_state[".codegen/codemods/base.py"],
-            ".codegen/codemods/unstaged_rename.py": committed_state[".codegen/codemods/base.py"],
+            "README.md": committed_state["README.md"],
+            "README.mdx": None,
         },
     )
 
@@ -381,6 +384,7 @@ def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[st
     verify_git_state(
         committed_repo,
         expected_staged={".codegen/codemods/base.py", ".codegen/codemods/staged_rename.py"},
-        expected_modified={".codegen/codemods/staged_rename.py"},
-        expected_untracked={".codegen/codemods/unstaged_rename.py"},
+        expected_modified=set(),
+        expected_untracked=set(),
+        rename_pairs=[(".codegen/codemods/base.py", ".codegen/codemods/staged_rename.py")],
     )
