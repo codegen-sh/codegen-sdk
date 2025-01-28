@@ -1,17 +1,10 @@
 from __future__ import annotations
 
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader
 from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.interface import Interface
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.statement import Statement
 from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.expressions.type import TSType
@@ -20,6 +13,15 @@ from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 from codegen.sdk.typescript.statements.attribute import TSAttribute
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.statement import Statement
 
 Parent = TypeVar("Parent", bound="TSHasBlock")
 

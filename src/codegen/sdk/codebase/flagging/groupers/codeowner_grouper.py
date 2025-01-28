@@ -37,4 +37,5 @@ class CodeownerGrouper(BaseGrouper):
 
     @staticmethod
     def create_single_group(flags: list[CodeFlag], segment: str, repo_operator: RemoteRepoOperator | None = None) -> Group:
-        raise NotImplementedError("TODO: implement single group creation")
+        msg = "TODO: implement single group creation"
+        raise NotImplementedError(msg)

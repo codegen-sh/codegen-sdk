@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.function import Function
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.function import Function
 
 
 def test_function_call_insert_argument(tmpdir) -> None:

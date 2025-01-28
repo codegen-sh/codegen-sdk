@@ -3,39 +3,39 @@ from __future__ import annotations
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, overload, override
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
-from codegen.sdk.core.detached_symbols.decorator import Decorator
-from codegen.sdk.core.detached_symbols.parameter import Parameter
-from codegen.sdk.core.expressions import Name
-from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
-from codegen.sdk.core.external_module import ExternalModule
-from codegen.sdk.core.function import Function
 from codegen.sdk.core.import_resolution import Import
-from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.callable import Callable
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.interfaces.inherits import Inherits
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.core.statements.statement import StatementType
-from codegen.sdk.core.statements.symbol_statement import SymbolStatement
 from codegen.sdk.core.symbol import Symbol
-from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
-from codegen.sdk.core.symbol_groups.parents import Parents
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.detached_symbols.decorator import Decorator
+    from codegen.sdk.core.detached_symbols.parameter import Parameter
+    from codegen.sdk.core.expressions import Name
+    from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
     from codegen.sdk.core.expressions.type import Type
+    from codegen.sdk.core.external_module import ExternalModule
+    from codegen.sdk.core.function import Function
+    from codegen.sdk.core.interface import Interface
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.symbol_statement import SymbolStatement
+    from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
+    from codegen.sdk.core.symbol_groups.parents import Parents
 
 import logging
 

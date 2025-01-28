@@ -1,10 +1,13 @@
 import inspect
 from abc import ABC
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from codegen.sdk.core.codebase import Codebase, CodebaseType, PyCodebaseType, TSCodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
-from tests.shared.skills.skill_implementation import SkillImplementation
+
+if TYPE_CHECKING:
+    from tests.shared.skills.skill_implementation import SkillImplementation
 
 
 class Skill(ABC):
@@ -89,7 +92,8 @@ class Skill(ABC):
 
         # ===== [Path from Guides] =====
         if "guides" not in filepath_tuple:
-            raise ValueError(f"Skill {cls.name} is not in a guides directory")
+            msg = f"Skill {cls.name} is not in a guides directory"
+            raise ValueError(msg)
         guides_index = filepath_tuple.index("guides")
         guides_path = Path("/".join(filepath.parts[guides_index:]))
 

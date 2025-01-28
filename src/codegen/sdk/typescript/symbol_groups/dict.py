@@ -94,7 +94,8 @@ class TSDict(Dict, HasAttribute):
                         return pair_match.value
                     else:
                         return pair_match.key
-        raise KeyError(f"Key {__key} not found in {list(self.keys())} {self._underlying!r}")
+        msg = f"Key {__key} not found in {list(self.keys())} {self._underlying!r}"
+        raise KeyError(msg)
 
     def __setitem__(self, __key: str, __value: TExpression) -> None:
         new_value = __value.source if isinstance(__value, Editable) else str(__value)

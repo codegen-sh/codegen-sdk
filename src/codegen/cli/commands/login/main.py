@@ -13,7 +13,8 @@ def login_command(token: str):
     # Check if already authenticated
     token_manager = TokenManager()
     if token_manager.get_token():
-        raise click.ClickException("Already authenticated. Use 'codegen logout' to clear the token.")
+        msg = "Already authenticated. Use 'codegen logout' to clear the token."
+        raise click.ClickException(msg)
 
     # Use provided token or go through login flow
     if token:
@@ -25,6 +26,7 @@ def login_command(token: str):
             rich.print("[cyan]📊 Hey![/cyan] We collect anonymous usage data to improve your experience 🔒")
             rich.print("To opt out, set [green]telemetry_enabled = false[/green] in [cyan]~/.config/codegen-sh/analytics.json[/cyan] ✨")
         except ValueError as e:
-            raise click.ClickException(f"Error: {e!s}")
+            msg = f"Error: {e!s}"
+            raise click.ClickException(msg)
     else:
         login_routine(token)

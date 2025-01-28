@@ -8,7 +8,7 @@ iconType: "solid"
 
 This guide demonstrates how to use Codegen to generate high-quality training data for large language models (LLMs) by extracting function implementations along with their dependencies and usages. This approach is similar to [word2vec](https://www.tensorflow.org/text/tutorials/word2vec) or [node2vec](https://snap.stanford.edu/node2vec/) - given the context of a function, learn to predict the function's implementation.
 
-<Info>View the full code in our [examples repository](https://github.com/codegen-sh/codegen-examples/blob/main/examples/generate_training_data/run.py)</Info>
+<Info>View the full code in our [examples repository](https://github.com/codegen-sh/codegen-examples/tree/7b978091c3153b687c32928fe10f05425e22f6a5/examples/generate_training_data)</Info>
 
 <Tip>This example works with both Python and Typescript repositories without modification</Tip>
 
@@ -171,7 +171,7 @@ This will:
 
 <Tip>
   You can use any Git repository as your source codebase by passing the repo URL
-  to [Codebase.from_repo(...)](/api-reference/core/codebase#from-repo).
+  to [Codebase.from_repo(...)](/api-reference/core/Codebase#from-repo).
 </Tip>
 
 ## Using the Training Data
@@ -232,4 +232,4 @@ def hop_through_imports(imp: Import) -> Symbol | ExternalModule:
     return imp.imported_symbol
 ```
 
-By following these guidelines, you can generate high-quality training data for your LLM projects while maintaining code quality and consistency. 
+By following these guidelines, you can generate high-quality training data for your LLM projects while maintaining code quality and consistency.

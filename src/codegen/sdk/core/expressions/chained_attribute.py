@@ -39,11 +39,13 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
         self._object = self._parse_expression(object, default=Name)
         if self.G.parser._should_log:
             if not isinstance(self._object, Chainable):
-                raise ValueError(f"{self._object.__class__} is not chainable: {self._object.source}\nfile: {self.filepath}")
+                msg = f"{self._object.__class__} is not chainable: {self._object.source}\nfile: {self.filepath}"
+                raise ValueError(msg)
         self._attribute = self._parse_expression(attribute, default=Name)
         if self.G.parser._should_log:
             if not isinstance(self._attribute, Resolvable):
-                raise ValueError(f"{self._attribute.__class__} is not resolvable: {self._attribute.source}\nfile: {self.filepath}")
+                msg = f"{self._attribute.__class__} is not resolvable: {self._attribute.source}\nfile: {self.filepath}"
+                raise ValueError(msg)
 
     @property
     @reader

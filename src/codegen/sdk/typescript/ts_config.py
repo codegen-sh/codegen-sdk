@@ -58,7 +58,7 @@ class TSConfig:
         try:
             self.config = pyjson5.loads(config_file.content)
         except pyjson5.Json5Exception:
-            logger.error(f"Failed to parse tsconfig.json file: {config_file.filepath}")
+            logger.exception(f"Failed to parse tsconfig.json file: {config_file.filepath}")
             self.config = {}
 
         # Precompute the base config, base url, paths, and references

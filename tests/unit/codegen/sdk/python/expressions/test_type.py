@@ -1,8 +1,12 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.expressions.none_type import NoneType
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.python import PyAssignment, PyClass, PyFunction
 from codegen.sdk.python.expressions.union_type import PyUnionType
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyAssignment, PyClass, PyFunction
 
 
 def test_type_basic(tmpdir):

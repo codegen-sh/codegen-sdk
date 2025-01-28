@@ -15,14 +15,16 @@ def test_max_transactions_exceeded_reached_set_threshold(tmpdir):
 
 def test_raise_max_transactions_exceeded_reached_no_threshold(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
-        raise MaxTransactionsExceeded("test exception")
+        msg = "test exception"
+        raise MaxTransactionsExceeded(msg)
     assert str(exc_info.value) == "test exception"
     assert exc_info.value.threshold is None
 
 
 def test_raise_max_transactions_exceeded_reached_with_threshold(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
-        raise MaxTransactionsExceeded("test exception", threshold=1)
+        msg = "test exception"
+        raise MaxTransactionsExceeded(msg, threshold=1)
     assert str(exc_info.value) == "test exception"
     assert exc_info.value.threshold == 1
 

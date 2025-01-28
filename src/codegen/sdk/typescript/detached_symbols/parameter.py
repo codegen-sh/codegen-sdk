@@ -2,15 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, override
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.autocommit.decorators import writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.expressions.union_type import UnionType
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.placeholder.placeholder import Placeholder
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.sdk.typescript.expressions.object_type import TSObjectType
@@ -19,6 +15,10 @@ from codegen.sdk.typescript.symbol_groups.dict import TSPair
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.placeholder.placeholder import Placeholder
     from codegen.sdk.typescript.function import TSFunction
 
 

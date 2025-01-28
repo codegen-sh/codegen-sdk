@@ -15,11 +15,14 @@ CODEGEN_BRANCH_TEMPLATE = CODEGEN_BRANCH_PATTERN.replace("(\\d+)", "{}")
 
 def get_head_branch_name(codemod: Codemod, group: Group | None = None) -> str:
     if not codemod.version_id:
-        raise ValueError(f"CodemodRun: {codemod.run_id} does not have a codemod version!")
+        msg = f"CodemodRun: {codemod.run_id} does not have a codemod version!"
+        raise ValueError(msg)
     if not codemod.epic_id:
-        raise ValueError(f"CodemodRun: {codemod.run_id} does not have an epic!")
+        msg = f"CodemodRun: {codemod.run_id} does not have an epic!"
+        raise ValueError(msg)
     if group and group.id is None:
-        raise ValueError("Group ID is required to create a branch name")
+        msg = "Group ID is required to create a branch name"
+        raise ValueError(msg)
 
     group_id = group.id if group else DEFAULT_GROUP_ID
     return CODEGEN_BRANCH_TEMPLATE.format(codemod.epic_id, codemod.version_id, codemod.run_id, group_id)

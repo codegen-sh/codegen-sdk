@@ -15,7 +15,8 @@ class TSDeclassify(ExternalProcess):
 
         # Ensure NodeJS and npm are installed
         if not shutil.which("node") or not shutil.which("npm"):
-            raise RuntimeError("NodeJS or npm is not installed")
+            msg = "NodeJS or npm is not installed"
+            raise RuntimeError(msg)
 
     def _start(self):
         try:
@@ -33,9 +34,9 @@ class TSDeclassify(ExternalProcess):
                 logger.info(f"Running npm init in {self.working_dir}")
                 subprocess.run(["npm", "init", "-y"], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm init failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm init failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
             # NPM Install
@@ -43,20 +44,21 @@ class TSDeclassify(ExternalProcess):
                 logger.info(f"Running npm install in {self.working_dir}")
                 subprocess.run(["npm", "install", "-D", "@codemod/cli", "react-declassify"], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm install failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm install failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
             # Finalize
             self.is_ready = True
         except Exception as e:
             self._error = e
-            logger.error(f"Error installing ts-declassify: {e}")
+            logger.exception(f"Error installing ts-declassify: {e}")
             raise e
 
     def reparse(self):
-        raise NotImplementedError("TSDeclassify does not support reparse")
+        msg = "TSDeclassify does not support reparse"
+        raise NotImplementedError(msg)
 
     def declassify(self, source: str, filename: str = "file.tsx", error_on_failure: bool = True):
         assert self.ready(), "TSDeclassify is not ready"
@@ -71,9 +73,9 @@ class TSDeclassify(ExternalProcess):
             try:
                 subprocess.run(["npx", "codemod", "--plugin", "react-declassify", source_file], cwd=self.working_dir, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"DECLASSIFY FAIL: declassify failed with exit code {e.returncode}")
-                logger.error(f"DECLASSIFY FAIL stdout: {e.stdout}")
-                logger.error(f"DECLASSIFY FAIL stderr: {e.stderr}")
+                logger.exception(f"DECLASSIFY FAIL: declassify failed with exit code {e.returncode}")
+                logger.exception(f"DECLASSIFY FAIL stdout: {e.stdout}")
+                logger.exception(f"DECLASSIFY FAIL stderr: {e.stderr}")
                 raise
 
             # Get the declassified source
@@ -82,7 +84,8 @@ class TSDeclassify(ExternalProcess):
 
             # Raise an error if the declassification failed
             if error_on_failure and "Cannot perform transformation" in declassified_source:
-                raise RuntimeError("Declassification failed!")
+                msg = "Declassification failed!"
+                raise RuntimeError(msg)
         finally:
             # Remove file.tsx if it exists
             if os.path.exists(source_file):

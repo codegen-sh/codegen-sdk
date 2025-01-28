@@ -2,17 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
 
 
@@ -34,7 +35,8 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
     @classmethod
     def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSAssignmentStatement) -> MultiExpression[TSAssignmentStatement, TSAssignment]:
         if ts_node.type not in ["assignment_expression", "augmented_assignment_expression"]:
-            raise ValueError(f"Unknown assignment type: {ts_node.type}")
+            msg = f"Unknown assignment type: {ts_node.type}"
+            raise ValueError(msg)
 
         left_node = ts_node.child_by_field_name("left")
         right_node = ts_node.child_by_field_name("right")
@@ -60,7 +62,8 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
             ValueError: If the node type is not one of: "variable_declarator", "public_field_definition", or "property_signature".
         """
         if ts_node.type not in ["variable_declarator", "public_field_definition", "property_signature"]:
-            raise ValueError(f"Unknown assignment type: {ts_node.type}")
+            msg = f"Unknown assignment type: {ts_node.type}"
+            raise ValueError(msg)
 
         left_node = ts_node.child_by_field_name("name")
         right_node = ts_node.child_by_field_name("value")

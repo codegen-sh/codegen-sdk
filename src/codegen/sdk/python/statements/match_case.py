@@ -10,6 +10,7 @@ from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.python.statements.match_statement import PyMatchStatement
 
 
 @py_apidoc

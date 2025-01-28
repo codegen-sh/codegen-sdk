@@ -1,9 +1,13 @@
 # TODO: convert all of this to use mock files/tmpdir
 
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.file import SourceFile
-from codegen.sdk.core.function import Function
 from codegen.sdk.enums import ProgrammingLanguage
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.function import Function
 
 
 def test_replace_function_call_arg(tmpdir) -> None:

@@ -109,4 +109,17 @@ PyNodeClasses = NodeClasses(
         True: "True",
         False: "False",
     },
+    dynamic_import_parent_types={
+        "function_definition",
+        "if_statement",
+        "try_statement",
+        "with_statement",
+        "else_clause",
+        "for_statement",
+        "except_clause",
+        "while_statement",
+        "match_statement",
+        "case_clause",
+        "finally_clause",
+    },
 )

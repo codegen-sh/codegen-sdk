@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.expressions import Expression
 
 Parent = TypeVar("Parent")
 

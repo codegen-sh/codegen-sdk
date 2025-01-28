@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ImportType, ProgrammingLanguage
-from codegen.sdk.typescript.file import TSFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.typescript.file import TSFile
 
 
 def test_from_export_statement_default(tmpdir) -> None:

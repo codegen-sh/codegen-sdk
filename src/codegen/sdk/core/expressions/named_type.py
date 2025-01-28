@@ -9,7 +9,6 @@ from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Name, String
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.resolvable import Resolvable
@@ -18,6 +17,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")
 

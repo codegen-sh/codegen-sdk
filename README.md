@@ -2,11 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <picture>
-      <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd">
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/f4e427e2-c483-4c23-9a7a-43c4256cab18">
-      <img src="https://github.com/user-attachments/assets/a53b6ea7-4d6f-446b-bd65-c2e8cae57cfd" height="75" alt="Codegen logo"/>
-    </picture>
+    <img src="https://github.com/user-attachments/assets/3ab806b5-c3bb-42f8-ac82-177cfd7e1732" />
   </a>
 </p>
 

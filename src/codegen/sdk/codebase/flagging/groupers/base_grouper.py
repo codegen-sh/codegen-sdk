@@ -14,13 +14,16 @@ class BaseGrouper:
 
     def __init__(self) -> None:
         if type is None:
-            raise ValueError("Must set type in BaseGrouper")
+            msg = "Must set type in BaseGrouper"
+            raise ValueError(msg)
 
     @staticmethod
     def create_all_groups(flags: list[CodeFlag], repo_operator: RemoteRepoOperator | None = None) -> list[Group]:
-        raise NotImplementedError("Must implement create_all_groups in BaseGrouper")
+        msg = "Must implement create_all_groups in BaseGrouper"
+        raise NotImplementedError(msg)
 
     @staticmethod
     def create_single_group(flags: list[CodeFlag], segment: str, repo_operator: RemoteRepoOperator | None = None) -> Group:
         """TODO: handle the case when 0 flags are passed in"""
-        raise NotImplementedError("Must implement create_single_group in BaseGrouper")
+        msg = "Must implement create_single_group in BaseGrouper"
+        raise NotImplementedError(msg)

@@ -1,8 +1,10 @@
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from codegen.sdk.core.expressions.ternary_expression import TernaryExpression
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.shared.decorators.docs import ts_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")
 

@@ -46,4 +46,5 @@ def test_codemods_parse(repo: Repo, op: RepoOperator, request) -> None:
     assert memory_used <= BYTES_IN_GIGABYTE * MAX_ALLOWED_GIGABYTES, "Graph is using too much memory!"
     validation_res = post_init_validation(codebase)
     if validation_res != PostInitValidationStatus.SUCCESS:
-        raise Exception(f"Graph failed post init validation: {validation_res}!")
+        msg = f"Graph failed post init validation: {validation_res}!"
+        raise Exception(msg)

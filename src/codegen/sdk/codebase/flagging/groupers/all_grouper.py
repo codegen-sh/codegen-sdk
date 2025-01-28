@@ -17,5 +17,6 @@ class AllGrouper(BaseGrouper):
     @staticmethod
     def create_single_group(flags: list[CodeFlag], segment: str, repo_operator: RemoteRepoOperator | None = None) -> Group:
         if segment != "all":
-            raise ValueError(f"❌ Invalid segment for AllGrouper: {segment}. Only 'all' is a valid segment.")
+            msg = f"❌ Invalid segment for AllGrouper: {segment}. Only 'all' is a valid segment."
+            raise ValueError(msg)
         return Group(group_by=GroupBy.ALL, segment=segment, flags=flags)

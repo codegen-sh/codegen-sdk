@@ -3,20 +3,20 @@ from __future__ import annotations
 import os
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.expressions import Name
 from codegen.sdk.core.import_resolution import ExternalImportResolver, Import, ImportResolution
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.node_id_factory import NodeId
-from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import ImportType, NodeType
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.exportable import Exportable
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.import_statement import ImportStatement
     from codegen.sdk.python.file import PyFile
 
 import logging
@@ -202,7 +202,8 @@ class PyImport(Import["PyFile"]):
         if len(import_symbols) == 0:
             wildcard_import = next((node for node in import_statement.children if node.type == "wildcard_import"), None)
             if wildcard_import is None:
-                raise ValueError(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
+                msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
+                raise ValueError(msg)
             return [cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
 
         imports = []
@@ -214,7 +215,8 @@ class PyImport(Import["PyFile"]):
                 alias = import_symbol.child_by_field_name("alias")
                 imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
             else:
-                raise ValueError(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
+                msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
+                raise ValueError(msg)
             imports.append(imp)
         return imports
 

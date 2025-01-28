@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from typing import Generic, Literal, Self, TypeVar, override
+from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
 from tree_sitter import Node as TSNode
 
@@ -16,15 +16,11 @@ from codegen.sdk._proxy import proxy_property
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.codebase.range_index import RangeIndex
 from codegen.sdk.codebase.span import Range
-from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import commiter, mover, reader, remover, writer
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.dataclasses.usage import UsageType
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.directory import Directory
-from codegen.sdk.core.function import Function
 from codegen.sdk.core.import_resolution import Import, WildcardImport
-from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.has_block import HasBlock
@@ -39,6 +35,12 @@ from codegen.sdk.tree_sitter_parser import get_parser_by_filepath_or_extension, 
 from codegen.sdk.typescript.function import TSFunction
 from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.assignment import Assignment
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.function import Function
+    from codegen.sdk.core.interface import Interface
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +149,8 @@ class File(Editable[None]):
             ValueError: If the file is binary. Use content_bytes instead for binary files.
         """
         if self._binary:
-            raise ValueError("Cannot read binary file as string. Use content_bytes instead.")
+            msg = "Cannot read binary file as string. Use content_bytes instead."
+            raise ValueError(msg)
 
         return self.content_bytes.decode(encoding="utf-8")
 
@@ -378,10 +381,10 @@ class SourceFile(
         try:
             self.parse(G)
         except RecursionError as e:
-            logger.error(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
+            logger.exception(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
             raise e
         except Exception as e:
-            logger.error(f"Failed to parse file {filepath}: {e}")
+            logger.exception(f"Failed to parse file {filepath}: {e}")
             raise e
 
     @property
@@ -536,7 +539,8 @@ class SourceFile(
         Graph-safe.
         """
         if filepath in G.filepath_idx:
-            raise ValueError(f"File already exists in graph: {filepath}")
+            msg = f"File already exists in graph: {filepath}"
+            raise ValueError(msg)
 
         ts_node = parse_file(filepath, "")
         if ts_node.has_error:
@@ -978,7 +982,8 @@ class SourceFile(
         if existing_symbol is not None:
             return existing_symbol
         if not self.symbol_can_be_added(symbol):
-            raise ValueError(f"Symbol {symbol.name} cannot be added to this file type.")
+            msg = f"Symbol {symbol.name} cannot be added to this file type."
+            raise ValueError(msg)
 
         source = symbol.source
         if isinstance(symbol, TSFunction) and symbol.is_arrow:

@@ -2,21 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.for_loop_statement import ForLoopStatement
 from codegen.sdk.extensions.autocommit import commiter, reader
 from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.expressions import Expression
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
 
@@ -52,7 +52,8 @@ class TSForLoopStatement(ForLoopStatement["TSCodeBlock"], TSBlockStatement["TSCo
             self.item = self.child_by_field_name("left")
             self.iterable = self.child_by_field_name("right")
         else:
-            raise ValueError(f"Invalid for loop type: {ts_node.type}")
+            msg = f"Invalid for loop type: {ts_node.type}"
+            raise ValueError(msg)
 
     @property
     @reader
