@@ -23,7 +23,6 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -74,7 +73,6 @@ from codegen.sdk.typescript.interface import TSInterface
 from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
-from codegen.sdk.utils import determine_project_language, split_git_path
 from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
@@ -119,7 +117,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: None = None,
         *,
-        projects: list[ProjectConfig],
+        programming_language: None = None,
+        projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
 
@@ -128,6 +127,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str,
         *,
+        programming_language: ProgrammingLanguage,
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
@@ -136,7 +136,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str | None = None,
         *,
-        projects: list[ProjectConfig] | None = None,
+        programming_language: ProgrammingLanguage | None = None,
+        projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None:
         # Sanity check inputs
@@ -146,19 +147,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if repo_path is None and projects is None:
             raise ValueError("Must specify either repo_path or projects")
 
+        if projects is not None and programming_language is not None:
+            raise ValueError("Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language.")
+
+        # If projects is a single ProjectConfig, convert it to a list
+        if isinstance(projects, ProjectConfig):
+            projects = [projects]
+
         # Initialize project with repo_path if projects is None
         if repo_path is not None:
-            # Split repo_path into (git_root, base_path)
-            repo_path = os.path.abspath(repo_path)
-            git_root, base_path = split_git_path(repo_path)
-            # Create repo_config
-            repo_config = BaseRepoConfig()
-            # Create main project
-            main_project = ProjectConfig(
-                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=git_root),
-                programming_language=determine_project_language(repo_path),
-                base_path=base_path,
-            )
+            main_project = ProjectConfig.from_path(repo_path, programming_language=programming_language)
             projects = [main_project]
         else:
             main_project = projects[0]
@@ -1125,7 +1123,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True) -> "Codebase":
+    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True, programming_language: ProgrammingLanguage | None = None) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1133,6 +1131,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
             commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
+            programming_language (ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
+
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
         """
@@ -1163,7 +1163,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                 # Ensure the operator can handle remote operations
                 repo_operator = LocalRepoOperator.create_from_commit(
                     repo_path=repo_path,
-                    default_branch="main",  # We'll get the actual default branch after clone
                     commit=commit,
                     url=repo_url,
                 )
@@ -1171,7 +1170,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
-            project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
+            project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=programming_language)
             codebase = Codebase(projects=[project], config=DefaultConfig)
             logger.info("Codebase initialization complete")
             return codebase
