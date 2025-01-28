@@ -60,7 +60,7 @@ exists = codebase.has_directory("path/to/dir")
 - [File](/api-reference/core/File) - a general purpose class that represents any file in the codebase including non-code files like README.md, .env, .json, image files, etc.
 - [SourceFile](/api-reference/core/SourceFile) - a subclass of [File](/api-reference/core/File) that provides additional functionality for source code files written in languages supported by the [codegen-sdk](/introduction/overview) (Python, TypeScript, JavaScript, React).
 
-The majority of intended use cases involve using exclusively [SourceFile](/api-reference/core/SourceFile) objects as these contain code that can be parsed and manipulated by the [codegen-sdk](/introduction/overview). However, there may be cases where it will be necessary to work with non-code files. In these cases, you will need to use the [File](/api-reference/core/File) class.
+The majority of intended use cases involve using exclusively [SourceFile](/api-reference/core/SourceFile) objects as these contain code that can be parsed and manipulated by the [codegen-sdk](/introduction/overview). However, there may be cases where it will be necessary to work with non-code files. In these cases, the [File](/api-reference/core/File) class can be used.
 
 By default, the `codebase.files` property will only return [SourceFile](/api-reference/core/SourceFile) objects. To include non-code files the `extensions='*'` argument must be used.
 
