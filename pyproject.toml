@@ -202,12 +202,7 @@ junit_duration_report = "call"
 junit_logging = "all"
 
 [build-system]
-requires = [
-  "hatchling>=1.26.3",
-  "hatch-vcs>=0.4.0",
-  "setuptools-scm>=8.0.0",
-  "setuptools>=75.8.0",
-]
+requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"
 
 [tool.deptry]
