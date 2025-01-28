@@ -174,7 +174,7 @@ class RestAPI:
         return self._make_request(
             "GET",
             CREATE_ENDPOINT,
-            CreateInput(input=CreateInput.BaseCreateInput(name=name, query=query, repo_full_name=session.repo_name)),
+            CreateInput(input=CreateInput.BaseCreateInput(name=name, query=query, language=session.language)),
             CreateResponse,
         )
 

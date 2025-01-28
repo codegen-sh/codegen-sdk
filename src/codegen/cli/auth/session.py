@@ -8,6 +8,7 @@ from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.errors import AuthError, NoTokenError
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.utils.config import Config, get_config, write_config
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 @dataclass
@@ -108,6 +109,13 @@ class CodegenSession:
     def repo_name(self) -> str:
         """Get the current repository name"""
         return self.config.repo_full_name
+
+    @property
+    def language(self) -> ProgrammingLanguage:
+        """Get the current language"""
+        # TODO(jayhack): This is a temporary solution to get the language.
+        # We should eventually get the language on init.
+        return self.config.programming_language or ProgrammingLanguage.PYTHON
 
     @property
     def codegen_dir(self) -> Path:
