@@ -35,6 +35,9 @@ commands:
           command: |
             apt update && apt install -y git-lfs
             git lfs install
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:ea8RazQk7imbLawQlYY89xPzYPcFv91Ko8U/SQtUQT8"
   setup-lfs:
     steps:
       - run:
