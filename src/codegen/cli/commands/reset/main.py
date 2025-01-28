@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 import click
@@ -9,9 +8,9 @@ from codegen.cli.auth.constants import CODEGEN_DIR
 from codegen.cli.git.repo import get_git_repo
 
 
-def is_codegen_file(filepath: str) -> bool:
+def is_codegen_file(filepath: Path) -> bool:
     """Check if a file is in the .codegen directory."""
-    return filepath.startswith(str(CODEGEN_DIR) + "/")
+    return CODEGEN_DIR in filepath.parents
 
 
 def backup_codegen_files(repo: Repository) -> dict[str, tuple[bytes, bool]]:
@@ -22,13 +21,13 @@ def backup_codegen_files(repo: Repository) -> dict[str, tuple[bytes, bool]]:
     """
     codegen_changes = {}
     for filepath, status in repo.status().items():
-        if not is_codegen_file(filepath):
+        if not is_codegen_file(Path(filepath)):
             continue
 
         was_staged = bool(status & (FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW))
-        if status & (FileStatus.WT_MODIFIED | FileStatus.WT_NEW | FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW):
-            with open(os.path.join(repo.workdir, filepath), "rb") as f:
-                codegen_changes[filepath] = (f.read(), was_staged)
+        if status in (FileStatus.WT_MODIFIED, FileStatus.WT_NEW, FileStatus.INDEX_MODIFIED, FileStatus.INDEX_NEW):
+            file_path = Path(repo.workdir) / filepath
+            codegen_changes[filepath] = (file_path.read_bytes(), was_staged)
 
     return codegen_changes
 
@@ -38,8 +37,7 @@ def restore_codegen_files(repo: Repository, codegen_changes: dict[str, tuple[byt
     for filepath, (content, was_staged) in codegen_changes.items():
         file_path = Path(repo.workdir) / filepath
         file_path.parent.mkdir(parents=True, exist_ok=True)
-        with open(file_path, "wb") as f:
-            f.write(content)
+        file_path.write_bytes(content)
         if was_staged:
             repo.index.add(filepath)
     if codegen_changes:
@@ -49,7 +47,7 @@ def restore_codegen_files(repo: Repository, codegen_changes: dict[str, tuple[byt
 def remove_untracked_files(repo: Repository) -> None:
     """Remove untracked files except those in .codegen directory."""
     for filepath, status in repo.status().items():
-        if not is_codegen_file(filepath) and status & FileStatus.WT_NEW:
+        if not is_codegen_file(Path(filepath)) and status & FileStatus.WT_NEW:
             file_path = Path(repo.workdir) / filepath
             if file_path.is_file():
                 file_path.unlink()

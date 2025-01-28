@@ -27,7 +27,7 @@ def committed_state() -> dict[str, str]:
     return {
         "README.md": "Base README",
         "src/hello.py": "def hello():\n    print('Original hello')",
-        ".codegen/prompts/base.py": "def base():\n    pass",
+        ".codegen/codemods/base.py": "def base():\n    pass",
     }
 
 
@@ -142,11 +142,11 @@ def create_test_case(
                 changes={
                     "README.md": "Modified README",
                     "src/hello.py": "def hello():\n    print('Modified hello')",
-                    ".codegen/prompts/base.py": "def base():\n    print('Modified base')",
+                    ".codegen/codemods/base.py": "def base():\n    print('Modified base')",
                 },
                 stage=False,
                 committed_state=committed_state,
-                expected_modified={".codegen/prompts/base.py"},
+                expected_modified={".codegen/codemods/base.py"},
             ),
             id="unstaged_modifications",
         ),
@@ -155,15 +155,15 @@ def create_test_case(
                 name="unstaged new files",
                 changes={
                     "new.py": "print('new')",
-                    ".codegen/prompts/new.py": "print('new in codegen')",
+                    ".codegen/codemods/new.py": "print('new in codegen')",
                 },
                 stage=False,
                 committed_state=committed_state,
                 expected_content={
                     "new.py": None,
-                    ".codegen/prompts/new.py": "print('new in codegen')",
+                    ".codegen/codemods/new.py": "print('new in codegen')",
                 },
-                expected_untracked={".codegen/prompts/new.py"},
+                expected_untracked={".codegen/codemods/new.py"},
             ),
             id="unstaged_new_files",
         ),
@@ -173,13 +173,13 @@ def create_test_case(
                 changes={
                     "README.md": "Staged README",
                     "src/hello.py": "def hello():\n    print('Staged hello')",
-                    ".codegen/prompts/base.py": "def base():\n    print('Staged base')",
+                    ".codegen/codemods/base.py": "def base():\n    print('Staged base')",
                     "new_staged.py": "print('new staged')",
-                    ".codegen/prompts/new_staged.py": "print('new staged in codegen')",
+                    ".codegen/codemods/new_staged.py": "print('new staged in codegen')",
                 },
                 stage=True,
                 committed_state=committed_state,
-                expected_staged={".codegen/prompts/base.py", ".codegen/prompts/new_staged.py"},
+                expected_staged={".codegen/codemods/base.py", ".codegen/codemods/new_staged.py"},
             ),
             id="staged_changes",
         ),
@@ -189,11 +189,11 @@ def create_test_case(
                 changes={
                     "README.md": None,
                     "src/hello.py": None,
-                    ".codegen/prompts/base.py": None,
+                    ".codegen/codemods/base.py": None,
                 },
                 stage=True,
                 committed_state=committed_state,
-                expected_staged={".codegen/prompts/base.py"},
+                expected_staged={".codegen/codemods/base.py"},
             ),
             id="staged_deletions",
         ),
@@ -237,7 +237,7 @@ def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str
     # 1. Staged modifications
     staged_changes = {
         "README.md": "Staged README",
-        ".codegen/prompts/base.py": "def base():\n    print('Staged base')",
+        ".codegen/codemods/base.py": "def base():\n    print('Staged base')",
     }
     setup_repo_state(committed_repo, staged_changes)
     subprocess.run(["git", "add", "."], cwd=committed_repo, check=True)
@@ -246,14 +246,14 @@ def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str
     unstaged_changes = {
         "README.md": "Unstaged README",
         "src/hello.py": "def hello():\n    print('Unstaged hello')",
-        ".codegen/prompts/base.py": "def base():\n    print('Unstaged base')",
+        ".codegen/codemods/base.py": "def base():\n    print('Unstaged base')",
     }
     setup_repo_state(committed_repo, unstaged_changes)
 
     # 3. Untracked files
     untracked_changes = {
         "untracked.py": "print('untracked')",
-        ".codegen/prompts/untracked.py": "print('untracked in codegen')",
+        ".codegen/codemods/untracked.py": "print('untracked in codegen')",
     }
     setup_repo_state(committed_repo, untracked_changes)
 
@@ -267,15 +267,15 @@ def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str
             "README.md": committed_state["README.md"],
             "src/hello.py": committed_state["src/hello.py"],
             "untracked.py": None,
-            ".codegen/prompts/base.py": unstaged_changes[".codegen/prompts/base.py"],
-            ".codegen/prompts/untracked.py": untracked_changes[".codegen/prompts/untracked.py"],
+            ".codegen/codemods/base.py": unstaged_changes[".codegen/codemods/base.py"],
+            ".codegen/codemods/untracked.py": untracked_changes[".codegen/codemods/untracked.py"],
         },
     )
 
     # Verify git state
     verify_git_state(
         committed_repo,
-        expected_staged={".codegen/prompts/base.py"},
+        expected_staged={".codegen/codemods/base.py"},
         expected_modified=set(),
-        expected_untracked={".codegen/prompts/untracked.py"},
+        expected_untracked={".codegen/codemods/untracked.py"},
     )
