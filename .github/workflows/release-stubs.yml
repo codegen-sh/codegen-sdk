@@ -1,0 +1,31 @@
+name: Upload Typestubs
+
+on:
+  push:
+    tags:
+      - v*.**
+  workflow_dispatch:
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest-8
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      - name: Build release distributions
+        run: |
+          cd graph-sitter-types
+          uv build --package graph-sitter-types --wheel --sdist
+          env:
+            HATCH_BUILD_HOOKS_ENABLE: true
+      - name: Release
+        run: |
+          uv publish --trusted-publishing always --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled

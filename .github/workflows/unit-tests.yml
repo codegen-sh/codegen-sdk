@@ -1,0 +1,283 @@
+name: Unit Tests
+
+on:
+  push:
+    branches:
+      - "develop"
+  pull_request:
+    types: [ opened, synchronize, reopened, labeled ]
+    branches:
+      - "develop"
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+    runs-on: ubuntu-latest-16
+    #    concurrency:
+    #      group: ${{ github.workflow }}-${{ github.ref }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      # - name: Run ATS
+      #   uses: codecov/codecov-ats@v0.3.0
+      #   with:
+      #     static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     static_folder_to_search: src
+      #     static_folders_to_exclude: .venv
+      #     override_base_commit: ${{ github.event_name == 'push' && '' || github.event.pull_request.base.sha }}
+      - name: Install pycoverage
+        run: |
+          pip install coverage
+      - name: Create commit in codecov
+        continue-on-error: true
+        run: |
+          uv run codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
+      - name: Create commit report in codecov
+        continue-on-error: true
+        run: |
+          uv run codecovcli create-report -t ${{ secrets.CODECOV_TOKEN }}
+      - name: Static Analysis
+        continue-on-error: true
+        run: |
+          uv run codecovcli static-analysis --token ${{ secrets.CODECOV_STATIC_TOKEN }} --folders-to-exclude .venv
+      - name: Label Analysis
+        continue-on-error: true
+        run: |
+          BASE_SHA=${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          response=$(uv run codecovcli label-analysis --token ${{ secrets.CODECOV_STATIC_TOKEN }} --base-sha=$BASE_SHA --dry-run --dry-run-format="json")
+          # Create directory to put result files
+          mkdir codecov_ats
+          # Export tests to run and tests to skip into respective files
+          jq <<< "$response" '.runner_options + .ats_tests_to_run | @sh' --raw-output > codecov_ats/tests_to_run.txt
+          jq <<< "$response" '.runner_options + .ats_tests_to_skip | @sh' --raw-output > codecov_ats/tests_to_skip.txt
+          # Statistics on the test selection
+          testcount() { jq <<< "$response" ".$1 | length"; }
+          run_count=$(testcount ats_tests_to_run)
+          skip_count=$(testcount ats_tests_to_skip)
+          echo "Run count: $run_count"
+          echo "Skip count: $skip_count"
+      - name: Test with pytest
+        timeout-minutes: 6
+        run: |
+          uv run pytest --cov \
+            -o junit_suite_name="${{github.job}}" \
+            -n auto \
+            -vv \
+            --cov \
+            --cov-append \
+            --timeout 50 \
+            --cov-report=xml \
+            tests/unit
+      - name: Upload coverage reports to Codecov
+        if: (success() || failure()) # always upload coverage reports even if the tests fail
+        continue-on-error: true
+        uses: codecov/codecov-action@v5.1.2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: smart-tests
+          plugins: pycoverage,compress-pycoverage
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/test-results/test/TEST.xml
+
+  test_codemods:
+    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+    runs-on: ubuntu-latest-32
+    strategy:
+      matrix:
+        sync_graph: [ true, false ]
+        size: [ small, large ]
+        exclude:
+          # Exclude large codemod tests when not needed
+          - size: ${{(contains(github.event.pull_request.labels.*.name, 'big-codemod-tests') || github.event_name == 'push' || github.event_name == 'workflow_dispatch') && 'kevin' || 'large'}}
+          - size: large
+            sync_graph: true
+    concurrency:
+      group: ${{ github.workflow }}-${{github.ref}}-${{matrix.sync_graph}}-${{matrix.size}}-${{github.event_name == 'push'&& github.sha}}
+      cancel-in-progress: true
+    name: "Codemod tests ${{matrix.size}}: Sync Graph=${{matrix.sync_graph}}"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      - name: Cache oss-repos
+        uses: ./.github/actions/setup-oss-repos
+        with:
+          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+      # - name: Run ATS
+      #   uses: codecov/codecov-ats@v0.3.0
+      #   with:
+      #     static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
+      #     token: ${{ secrets.CODECOV_TOKEN }}
+      #     static_folder_to_search: src
+      #     static_folders_to_exclude: .venv
+      - name: Test with pytest
+        timeout-minutes: 12
+        run: |
+          uv run pytest \
+            -n auto \
+            --size=${{matrix.size}} \
+            --sync-graph=${{matrix.sync_graph}} \
+            --token $CODEGEN_BOT_GHE_TOKEN \
+            -o junit_suite_name="${{github.job}}" \
+            tests/codemod/test_codemods.py::test_codemods_cloned_repos
+        env:
+          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+      - name: Install pycoverage
+        run: |
+          pip install coverage
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/test-results/test/TEST.xml
+      - name: Upload coverage reports to Codecov
+        if: (success() || failure()) # always upload coverage reports even if the tests fail
+        continue-on-error: true
+        uses: codecov/codecov-action@v5.1.2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: smart-tests-codemod-tests-${{matrix.size}}-${{matrix.sync_graph}}
+          plugins: pycoverage,compress-pycoverage
+
+  test_verified_codemods:
+    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+    runs-on: ubuntu-latest-32
+    concurrency:
+      group: ${{ github.workflow }}-${{github.ref}}-${{github.event_name == 'push'&& github.sha}}
+      cancel-in-progress: true
+    name: "Verified Codemod tests: Sync Graph=false"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      - name: Test with pytest
+        timeout-minutes: 12
+        run: |
+          uv run pytest \
+            --cli-api-key ${{ secrets.PROD_CLI_API_KEY }} \
+            --token $CODEGEN_BOT_GHE_TOKEN \
+            -o junit_suite_name="${{github.job}}" \
+            tests/codemod/test_verified_codemods.py::test_verified_codemods
+        env:
+          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+      - name: Install pycoverage
+        run: |
+          pip install coverage
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/test-results/test/TEST.xml
+      - name: Upload coverage reports to Codecov
+        if: (success() || failure()) # always upload coverage reports even if the tests fail
+        continue-on-error: true
+        uses: codecov/codecov-action@v5.1.2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage.xml
+          flags: smart-tests-verified-codemod-tests
+          plugins: pycoverage,compress-pycoverage
+
+  parse-tests:
+    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+    runs-on: ubuntu-latest-32
+    if: contains(github.event.pull_request.labels.*.name, 'extra-parse') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+
+      - name: Cache extra-repos
+        uses: ./.github/actions/setup-extra-repos
+        with:
+          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+
+      - name: Install yarn and pnpm
+        run: |
+          npm install -g yarn &
+          npm install -g pnpm
+
+      - name: Test with pytest
+        timeout-minutes: 15
+        env:
+          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+        run: |
+          uv run pytest \
+            -n auto \
+            --extra-repos true \
+            --token $CODEGEN_BOT_GHE_TOKEN \
+            -o junit_suite_name="${{github.job}}" \
+            tests/codemod/test_parse.py
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/test-results/test/TEST.xml
+      #  test_codemod_diffs:
+      #    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+      #    runs-on: ubuntu-latest-16
+      #
+      #    steps:
+      #      - uses: actions/checkout@v4
+      #      - name: Setup backend
+      #        uses: ./.github/actions/setup-backend
+      #      - name: Cache oss-repos
+      #        uses: ./.github/actions/setup-oss-repos
+      #        with:
+      #          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+      #      - name: Test with pytest
+      #        timeout-minutes: 10
+      #        run: |
+      #          ENV=local \
+      #          uv run pytest \
+      #            -n auto \
+      #            -vv \
+      #            --token $CODEGEN_BOT_GHE_TOKEN \
+      #            tests/codemod/test_diffs.py
+      #        env:
+      #          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+      #          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+      #
+      #      - name: Publish Test Report (Verify diffs)
+      #        uses: mikepenz/action-junit-report@v4
+      #        if: (success() || failure()) # always publish report even if the tests fail
+      #        continue-on-error: true
+      #        with:
+      #          report_paths: "**/build/test-results/test/TEST.xml"
+      #          detailed_summary: true
+      #          annotate_only: true
+
+      # # Codecov is a required check but won't pass without a coverage report
+      # # Wwhen there are no changes in the backend (ex: frontend only change) we do an empty upload to force the check to pass
+      # - name: Upload empty coverage report to Codecov
+      #   if: env.skip == '0'
+      #   continue-on-error: true
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      #   run: |
+      #     cd codegen-backend
+      #     pip install codecov-cli
+      #     codecovcli create-commit -C ${{ github.event.pull_request.head.sha }}
+      #     codecovcli create-report -C ${{ github.event.pull_request.head.sha }}
+      #     codecovcli do-upload --disable-search --file empty_coverage.xml -C ${{ github.event.pull_request.head.sha }}
+      #     codecovcli empty-upload --force -C ${{ github.event.pull_request.head.sha }}
