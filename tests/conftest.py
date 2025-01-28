@@ -96,7 +96,8 @@ def pytest_runtest_makereport(item, call):
 
     if report.when == "call" and report.failed:
         if "NodeJS or npm is not installed" in str(report.longrepr):
-            raise RuntimeError("This test requires NodeJS and npm to be installed. Please install them before running the tests.")
+            msg = "This test requires NodeJS and npm to be installed. Please install them before running the tests."
+            raise RuntimeError(msg)
 
 
 @pytest.fixture(autouse=True)
