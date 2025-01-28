@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import PropertyMock, patch
 
 import pytest
 
@@ -46,7 +46,9 @@ async def test_sandbox_runner_warmup_starts_with_default_branch(mock_executor, r
 @pytest.mark.asyncio
 @patch("codegen.runner.sandbox.runner.logger")
 @patch("codegen.runner.sandbox.runner.SandboxExecutor")
-async def test_sandbox_runner_reset_runner_deletes_branches(mock_executor, mock_logger, runner: SandboxRunner):
+@patch("codegen.sdk.core.codebase.Codebase.default_branch", new_callable=PropertyMock)
+async def test_sandbox_runner_reset_runner_deletes_branches(mock_branch, mock_executor, mock_logger, runner: SandboxRunner):
+    mock_branch.return_value = "main"
     await runner.warmup()
     num_branches = len(runner.codebase._op.git_cli.heads)  # TODO: fix GHA creating master and main branch and assert the len is 1 at the start
     runner.codebase.checkout(branch="test-branch-a", create_if_missing=True)

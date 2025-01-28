@@ -1,5 +1,5 @@
 from collections.abc import Generator
-from unittest.mock import PropertyMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -56,10 +56,3 @@ def mock_codebase_config():
         secrets = Secrets(openai_key="test-key")
         mock_config.return_value = CodebaseConfig(secrets=secrets, feature_flags=gs_ffs)
         yield mock_config
-
-
-@pytest.fixture(autouse=True)
-def mock_default_branch():
-    with patch("codegen.sdk.core.codebase.Codebase.default_branch", new_callable=PropertyMock) as mock_default_branch:
-        mock_default_branch.return_value = "main"
-        yield mock_default_branch
