@@ -19,7 +19,6 @@ def update_function_imports(root_path: Path) -> None:
     from codegen.gscli.generate.runner_imports import _generate_runner_imports
 
     file_path = root_path / "src" / "codegen" / "shared" / "compilation" / "function_imports.py"
-    print(str(file_path))
     _generate_runner_imports(str(file_path))
 
 

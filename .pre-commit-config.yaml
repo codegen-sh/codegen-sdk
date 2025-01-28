@@ -79,6 +79,13 @@ repos:
         entry: scripts/disallowed-words-check.sh
         language: script
         files: ''  # Check all files
+      - id: generate-runner-imports
+        name: Generate Runner Imports
+        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
+        language: system
+        pass_filenames: false
+        always_run: true
+
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 39.120.4
     hooks:
