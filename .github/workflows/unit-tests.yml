@@ -14,8 +14,9 @@ jobs:
   unit-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-16
-    #    concurrency:
-    #      group: ${{ github.workflow }}-${{ github.ref }}
+    strategy:
+      matrix:
+        shard: [1, 2, 3]
 
     steps:
       - uses: actions/checkout@v4
@@ -23,49 +24,21 @@ jobs:
           fetch-depth: 0
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-      # - name: Run ATS
-      #   uses: codecov/codecov-ats@v0.3.0
-      #   with:
-      #     static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     static_folder_to_search: src
-      #     static_folders_to_exclude: .venv
-      #     override_base_commit: ${{ github.event_name == 'push' && '' || github.event.pull_request.base.sha }}
-      - name: Install pycoverage
-        run: |
-          pip install coverage
-      - name: Create commit in codecov
-        continue-on-error: true
+      - name: Run ATS
+        env:
+          BASE_SHA: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          DEFAULT_TESTS: "tests/unit"
+          CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          COLLECT_ARGS: "--timeout 50"
         run: |
           uv run codecovcli create-commit -t ${{ secrets.CODECOV_TOKEN }}
-      - name: Create commit report in codecov
-        continue-on-error: true
-        run: |
           uv run codecovcli create-report -t ${{ secrets.CODECOV_TOKEN }}
-      - name: Static Analysis
-        continue-on-error: true
+          bash ./.circleci/ats.sh
+      - name: Run tests
         run: |
-          uv run codecovcli static-analysis --token ${{ secrets.CODECOV_STATIC_TOKEN }} --folders-to-exclude .venv
-      - name: Label Analysis
-        continue-on-error: true
-        run: |
-          BASE_SHA=${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
-          response=$(uv run codecovcli label-analysis --token ${{ secrets.CODECOV_STATIC_TOKEN }} --base-sha=$BASE_SHA --dry-run --dry-run-format="json")
-          # Create directory to put result files
-          mkdir codecov_ats
-          # Export tests to run and tests to skip into respective files
-          jq <<< "$response" '.runner_options + .ats_tests_to_run | @sh' --raw-output > codecov_ats/tests_to_run.txt
-          jq <<< "$response" '.runner_options + .ats_tests_to_skip | @sh' --raw-output > codecov_ats/tests_to_skip.txt
-          # Statistics on the test selection
-          testcount() { jq <<< "$response" ".$1 | length"; }
-          run_count=$(testcount ats_tests_to_run)
-          skip_count=$(testcount ats_tests_to_skip)
-          echo "Run count: $run_count"
-          echo "Skip count: $skip_count"
-      - name: Test with pytest
-        timeout-minutes: 6
-        run: |
-          uv run pytest --cov \
+          TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
+          echo $TESTS_TO_RUN | xargs uv run pytest --cov \
             -o junit_suite_name="${{github.job}}" \
             -n auto \
             -vv \
@@ -74,6 +47,12 @@ jobs:
             --timeout 50 \
             --cov-report=xml \
             tests/unit
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/test-results/test/TEST.xml
       - name: Upload coverage reports to Codecov
         if: (success() || failure()) # always upload coverage reports even if the tests fail
         continue-on-error: true
@@ -83,12 +62,6 @@ jobs:
           files: coverage.xml
           flags: smart-tests
           plugins: pycoverage,compress-pycoverage
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/test-results/test/TEST.xml
 
   test_codemods:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
@@ -114,29 +87,30 @@ jobs:
         uses: ./.github/actions/setup-oss-repos
         with:
           CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
-      # - name: Run ATS
-      #   uses: codecov/codecov-ats@v0.3.0
-      #   with:
-      #     static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-      #     token: ${{ secrets.CODECOV_TOKEN }}
-      #     static_folder_to_search: src
-      #     static_folders_to_exclude: .venv
+      - name: Run ATS
+        env:
+          BASE_SHA: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          DEFAULT_TESTS: "tests/integration/codemod/test_codemods.py"
+          CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          COLLECT_ARGS: "--size=${{matrix.size}} --sync-graph=${{matrix.sync_graph}} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
+          ATS_COLLECT_ARGS: "--size=${{matrix.size}},--sync-graph=${{matrix.sync_graph}},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
+        run: |
+          bash ./.circleci/ats.sh
       - name: Test with pytest
         timeout-minutes: 12
         run: |
-          uv run pytest \
+          TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
+          echo $TESTS_TO_RUN | xargs uv run pytest \
             -n auto \
             --size=${{matrix.size}} \
             --sync-graph=${{matrix.sync_graph}} \
-            --token $CODEGEN_BOT_GHE_TOKEN \
+            --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }} \
             -o junit_suite_name="${{github.job}}" \
             tests/codemod/test_codemods.py::test_codemods_cloned_repos
         env:
           CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-      - name: Install pycoverage
-        run: |
-          pip install coverage
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
@@ -164,20 +138,28 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup backend
         uses: ./.github/actions/setup-backend
+      - name: Run ATS
+        env:
+          BASE_SHA: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          DEFAULT_TESTS: "tests/integration/codemod/test_verified_codemods.py"
+          CODECOV_STATIC_TOKEN: ${{ secrets.CODECOV_STATIC_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          COLLECT_ARGS: "--cli-api-key ${{ secrets.PROD_CLI_API_KEY }} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
+          ATS_COLLECT_ARGS: "--cli-api-key=${{ secrets.PROD_CLI_API_KEY }},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
+        run: |
+          bash ./.circleci/ats.sh
       - name: Test with pytest
         timeout-minutes: 12
         run: |
-          uv run pytest \
+          TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
+          echo $TESTS_TO_RUN | xargs uv run pytest \
             --cli-api-key ${{ secrets.PROD_CLI_API_KEY }} \
-            --token $CODEGEN_BOT_GHE_TOKEN \
+            --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }} \
             -o junit_suite_name="${{github.job}}" \
             tests/codemod/test_verified_codemods.py::test_verified_codemods
         env:
           CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-      - name: Install pycoverage
-        run: |
-          pip install coverage
       - name: Upload test results to Codecov
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
