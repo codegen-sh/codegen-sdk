@@ -5,73 +5,30 @@ icon: "flag"
 iconType: "solid"
 ---
 
-Codegen SDK provides powerful APIs for managing feature flag usage in code. This guide will walk you through the basics of how to detect and clean up obsolete feature flags.
+Codegen has been used in production for multi-million line codebases to automatically delete "dead" (rolled-out) feature flags. This guide will walk you through analyzing feature flag usage and safely removing rolled out flags.
+
+<Warning>
+    Every codebase does feature flags differently. This guide shows common techniques and syntax but likely requires adaptation to codebase-specific circumstances.
+</Warning>
+
+## Analyzing Feature Flag Usage
+
+Before removing a feature flag, it's important to analyze its usage across the codebase. Codegen provides tools to help identify where and how feature flags are used.
+
+### For Python Codebases
+
+For Python codebases using a `FeatureFlags` class pattern like so:
+```python
+class FeatureFlags:
+    FEATURE_1 = False
+    FEATURE_2 = True
+```
+
+You can use [Class.get_attribute(...)](/api-reference/core/Class#get-attribute) and [Attribute.usages](/api-reference/core/Attribute#usages) to analyze the coverage of your flags, like so:
 
 
-## Removing rolled out flags
 
-Once a feature has been fully rolled out behind a flag and is stable on production, the next step is to remove old fallback code paths.
-
-Common syntax for feature flags include:
-
-<AccordionGroup defaultExpanded={true}>
-    <Accordion title="Typsecript">
-    ```python
-feature_flag = codebase.get_symbol("ROLLED_OUT_FLAG_TO_DELETE")
-feature_flag_name = feature_flag.name
-
-# Iterate over all usages of the feature flag import
-for usage_symbol in feature_flag.get_all_symbol_usages():
-    if isinstance(usage_symbol, Function):
-        # Check statements within the function
-        for statement in usage_symbol.code_block.get_statements():
-            if isinstance(statement, IfBlockStatement) and feature_flag_name in statement.condition.source:
-                # Simplify the condition of the if statement
-                statement.reduce_condition(bool_condition=feature_flag_name == statement.condition.source)
-    elif isinstance(usage_symbol, Import):
-        # Remove the import of the feature flag
-        usage_symbol.remove()
-      ```
-  </Accordion>
-
-  <Accordion title="Python">
-      ```python
-flag_name = "CODEMOD_RUN_SYNTAX_PREHIGHLIGHT"
-
-# Get the feature flag variable
-feature_flag_file = codebase.get_file("codegen-backend/app/utils/posthog/feature_flags.py")
-flag_class = feature_flag_file.get_class("FeatureFlag")
-
-# Check if the flag_var is None before proceeding
-flag_var = flag_class.get_attribute(flag_name)
-if not flag_var:
-    raise Exception(f'No such flag: {flag_name}')
-
-# Remove the feature flag from the class
-flag_var.remove()
-
-# Remove all usages of the feature flag
-for usage in flag_var.usages():
-    # If the usage is in an if statement, remove the entire if statement
-    if isinstance(usage.parent, IfBlockStatement):
-        usage.parent.remove()
-    # If the usage is in a with statement, unwrap the with statement
-    elif isinstance(usage.parent, WithStatement):
-        usage.parent.code_block.unwrap()
-    # Otherwise, just remove the usage
-    else:
-        usage.remove()
-      ```
-  </Accordion>
-</AccordionGroup>
-
-
-## Deleting unused feature flags
-
-Detecting unused feature flag is a specific use case of [deleting dead code](/tutorials/deleting-dead-code), isolated to a specific search space.
-```python Delete unused flag
-print = codebase.log
-
+```python
 feature_flag_usage = {}
 feature_flag_class = codebase.get_class('FeatureFlag')
 
@@ -79,9 +36,9 @@ if feature_flag_class:
     # Initialize usage count for all attributes
     for attr in feature_flag_class.attributes:
         feature_flag_usage[attr.name] = 0
-
+    
     # Get all usages of the FeatureFlag class
-    for usage in feature_flag_class.usages():
+    for usage in feature_flag_class.usages:
         usage_source = usage.usage_symbol.source if hasattr(usage, 'usage_symbol') else str(usage)
         for flag_name in feature_flag_usage.keys():
             if f"FeatureFlag.{flag_name}" in usage_source:
@@ -101,17 +58,100 @@ else:
     print("❗ FeatureFlag enum not found in the codebase")
 ```
 
+This will output a table showing all feature flags and their usage counts, helping identify which flags are candidates for removal.
 
-#### Recommended Next Steps
-Once rolled out feature flags are removed, new dead code paths may have been created. Run a delete dead code codemod to ensure complete clean-up.
-
-
-## Best Practices
-1. **Use Caution**: Ensure that flags have been fully rolled out before deleting.
-
-2. **Fix Tests**: Check for additional ways feature flags are used in the codebase (e.g. string arguments in test patches).
+<Tip>
+    Learn more about [Attributes](/building-with-codegen/class-api#class-attributes) and [tracking usages](/building-with-codegen/dependencies-and-usages) here
+</Tip>
 
 
-### Related Examples
-- [reduce if statements](/building-with-codegen/reducing-conditions)
-- [unwrap with statements](/building-with-codegen/statements-and-code-blocks#wrapping-and-unwrapping-statements)
+## Removing Rolled Out Flags
+
+Once you've identified a flag that's ready to be removed, Codegen can help safely delete it and its associated code paths.
+
+<Tip>
+    This primarily leverages Codegen's API for [reduction conditions](/building-with-codegen/reducing-conditions)
+</Tip>
+
+### Python Example
+
+For Python codebases, here's how to remove a feature flag and its usages:
+
+```python
+flag_name = "FEATURE_TO_REMOVE"
+
+# Get the feature flag variable
+feature_flag_file = codebase.get_file("app/utils/feature_flags.py")
+flag_class = feature_flag_file.get_class("FeatureFlag")
+
+# Check if the flag exists
+flag_var = flag_class.get_attribute(flag_name)
+if not flag_var:
+    print(f'No such flag: {flag_name}')
+    return
+
+# Remove all usages of the feature flag
+for usage in flag_var.usages:
+    if isinstance(usage.parent, IfBlockStatement):
+        # For if statements, reduce the condition to True
+        usage.parent.reduce_condition(True)
+    elif isinstance(usage.parent, WithStatement):
+        # For with statements, keep the code block
+        usage.parent.code_block.unwrap()
+    else:
+        # For other cases, remove the usage
+        usage.remove()
+
+# Remove the flag definition
+flag_var.remove()
+
+# Commit changes
+codebase.commit()
+```
+
+### React/TypeScript Example
+
+For React applications using a hooks-based feature flag system:
+
+```python
+feature_flag_name = "NEW_UI_ENABLED"
+target_value = True  # The value to reduce the flag to
+
+print(f'Removing feature flag: {feature_flag_name}')
+
+# 1. Remove from configuration
+config_file = codebase.get_file("src/featureFlags/config.ts")
+feature_flag_config = config_file.get_symbol("FEATURE_FLAG_CONFIG").value
+if feature_flag_name in feature_flag_config.keys():
+    feature_flag_config.pop(feature_flag_name)
+    print('✅ Removed from feature flag config')
+
+# 2. Find and reduce all hook usages
+hook = codebase.get_function("useFeatureFlag")
+for usage in hook.usages:
+    fcall = usage.match
+    if isinstance(fcall, FunctionCall):
+        # Check if this usage is for our target flag
+        first_arg = fcall.args[0].value
+        if isinstance(first_arg, String) and first_arg.content == feature_flag_name:
+            print(f'Reducing in: {fcall.parent_symbol.name}')
+            # This automatically handles:
+            # - Ternary expressions: flag ? <New /> : <Old />
+            # - If statements: if (flag) { ... }
+            # - Conditional rendering: {flag && <Component />}
+            fcall.reduce_condition(target_value)
+
+# 3. Commit changes
+codebase.commit()
+```
+
+This will:
+1. Remove the feature flag from the configuration
+2. Find all usages of the `useFeatureFlag` hook for this flag
+3. Automatically reduce any conditional logic using the flag
+4. Handle common React patterns like ternaries and conditional rendering
+
+
+## Related Resources
+- [Reducing Conditions](/building-with-codegen/reducing-conditions) - Details on condition reduction APIs
+- [Dead Code Removal](/tutorials/deleting-dead-code) - Remove unused code after flag deletion
