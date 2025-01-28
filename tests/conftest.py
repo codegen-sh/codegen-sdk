@@ -96,12 +96,16 @@ def pytest_runtest_makereport(item, call):
 
     if report.when == "call" and report.failed:
         if "NodeJS or npm is not installed" in str(report.longrepr):
-            pytest.skip("Test requires NodeJS and npm to be installed")
+            raise RuntimeError("This test requires NodeJS and npm to be installed. Please install them before running the tests.")
 
 
 @pytest.fixture(autouse=True)
 def skip_lfs_tests(request):
     """Skip tests that depend on git LFS files if they haven't been pulled"""
+    # Lets not run if we are in CI
+    if os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true":
+        return
+
     # Get the test module path
     test_path = Path(request.module.__file__)
 
