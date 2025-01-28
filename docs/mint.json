@@ -131,6 +131,7 @@
 				"cli/notebook",
 				"cli/create",
 				"cli/run",
+				"cli/reset",
 				"cli/expert"
 			]
 		},
