@@ -13,33 +13,50 @@ def is_codegen_file(filepath: Path) -> bool:
     return CODEGEN_DIR in filepath.parents
 
 
-def backup_codegen_files(repo: Repository) -> dict[str, tuple[bytes, bool]]:
+def backup_codegen_files(repo: Repository) -> dict[str, tuple[bytes | None, bool]]:
     """Backup .codegen files and track if they were staged.
 
     Returns:
-        Dict mapping filepath to (content, was_staged) tuple
+        Dict mapping filepath to (content, was_staged) tuple.
+        content is None for deleted files.
     """
     codegen_changes = {}
     for filepath, status in repo.status().items():
         if not is_codegen_file(Path(filepath)):
             continue
 
-        was_staged = bool(status & (FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW))
-        if status in (FileStatus.WT_MODIFIED, FileStatus.WT_NEW, FileStatus.INDEX_MODIFIED, FileStatus.INDEX_NEW):
+        was_staged = bool(status & (FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW | FileStatus.INDEX_DELETED | FileStatus.INDEX_RENAMED))
+
+        # Handle deleted files
+        if status & (FileStatus.WT_DELETED | FileStatus.INDEX_DELETED):
+            codegen_changes[filepath] = (None, was_staged)
+            continue
+
+        # Handle modified, new, or renamed files
+        if status & (FileStatus.WT_MODIFIED | FileStatus.WT_NEW | FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW | FileStatus.INDEX_RENAMED):
             file_path = Path(repo.workdir) / filepath
-            codegen_changes[filepath] = (file_path.read_bytes(), was_staged)
+            if file_path.exists():  # Only read if file exists
+                codegen_changes[filepath] = (file_path.read_bytes(), was_staged)
 
     return codegen_changes
 
 
-def restore_codegen_files(repo: Repository, codegen_changes: dict[str, tuple[bytes, bool]]) -> None:
+def restore_codegen_files(repo: Repository, codegen_changes: dict[str, tuple[bytes | None, bool]]) -> None:
     """Restore backed up .codegen files and their staged status."""
     for filepath, (content, was_staged) in codegen_changes.items():
         file_path = Path(repo.workdir) / filepath
-        file_path.parent.mkdir(parents=True, exist_ok=True)
-        file_path.write_bytes(content)
-        if was_staged:
-            repo.index.add(filepath)
+
+        if content is None:  # Handle deleted files
+            if file_path.exists():
+                file_path.unlink()
+            if was_staged:
+                repo.index.remove(filepath)
+        else:  # Handle existing files
+            file_path.parent.mkdir(parents=True, exist_ok=True)
+            file_path.write_bytes(content)
+            if was_staged:
+                repo.index.add(filepath)
+
     if codegen_changes:
         repo.index.write()
 
@@ -49,10 +66,11 @@ def remove_untracked_files(repo: Repository) -> None:
     for filepath, status in repo.status().items():
         if not is_codegen_file(Path(filepath)) and status & FileStatus.WT_NEW:
             file_path = Path(repo.workdir) / filepath
-            if file_path.is_file():
-                file_path.unlink()
-            elif file_path.is_dir():
-                file_path.rmdir()
+            if file_path.exists():  # Only try to remove if file exists
+                if file_path.is_file():
+                    file_path.unlink()
+                elif file_path.is_dir():
+                    file_path.rmdir()
 
 
 @click.command(name="reset")
