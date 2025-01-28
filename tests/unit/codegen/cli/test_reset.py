@@ -82,8 +82,19 @@ def get_git_status(repo_path: Path) -> tuple[set[str], set[str], set[str]]:
     return staged_files, modified_files, untracked_files
 
 
-def verify_git_state(repo_path: Path, expected_staged: set[str] | None = None, expected_modified: set[str] | None = None, expected_untracked: set[str] | None = None):
+def verify_git_state(
+    repo_path: Path, expected_staged: set[str] | None = None, expected_modified: set[str] | None = None, expected_untracked: set[str] | None = None, rename_pairs: list[tuple[str, str]] | None = None
+):
     """Verify git status matches expected state"""
+    if rename_pairs is not None:
+        for old_path, new_path in rename_pairs:
+            corrected = f"{old_path} -> {new_path}"
+            if expected_staged is not None and old_path in expected_staged:
+                assert new_path in expected_staged, f"Expected {old_path} to be renamed to {new_path}, but it was not staged"
+                expected_staged.remove(old_path)
+                expected_staged.remove(new_path)
+                expected_staged.add(corrected)
+
     staged, modified, untracked = get_git_status(repo_path)
 
     if expected_staged is not None:
@@ -260,12 +271,13 @@ def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case:
         for path, content in test_case.changes.items():
             if content is None:
                 (committed_repo / path).unlink()
-
+            print(path, content)
         if test_case.stage:
             subprocess.run(["git", "add", "-A"], cwd=committed_repo, check=True)
 
     # Run reset
-    runner.invoke(reset_command)
+    result = runner.invoke(reset_command, catch_exceptions=False)
+    print(result.output)
 
     # Verify state
     verify_repo_state(committed_repo, test_case.expected_content)
@@ -274,6 +286,7 @@ def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case:
         expected_staged=test_case.expected_staged,
         expected_modified=test_case.expected_modified,
         expected_untracked=test_case.expected_untracked,
+        rename_pairs=test_case.rename_pairs,
     )
 
 

@@ -31,7 +31,6 @@ def backup_codegen_files(repo: Repository) -> dict[str, tuple[bytes | None, bool
         if status & (FileStatus.WT_DELETED | FileStatus.INDEX_DELETED):
             codegen_changes[filepath] = (None, was_staged)
             continue
-
         # Handle modified, new, or renamed files
         if status & (FileStatus.WT_MODIFIED | FileStatus.WT_NEW | FileStatus.INDEX_MODIFIED | FileStatus.INDEX_NEW | FileStatus.INDEX_RENAMED):
             file_path = Path(repo.workdir) / filepath
