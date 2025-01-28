@@ -1,0 +1,111 @@
+---
+title: "Installation"
+sidebarTitle: "Installation"
+icon: "download"
+iconType: "solid"
+---
+
+Install and set up Codegen in your development environment.
+
+## Prerequisites
+
+We recommend using [uv](https://github.com/astral-sh/uv) for installation. If you haven't installed `uv` yet:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+## Installing Codegen
+
+Install the Codegen CLI globally:
+
+```bash
+uv tool install codegen
+```
+
+
+<Note>
+This makes the `codegen` command available globally in your terminal, while keeping its dependencies isolated.
+</Note>
+
+## Quick Start
+
+Let's walk through a simple example of using Codegen in a project:
+
+1. Navigate to your repository:
+   ```bash
+   cd path/to/your/project
+   ```
+
+2. Initialize Codegen in your project:
+   ```bash
+   codegen init
+   ```
+   
+   This creates a `.codegen/` directory with:
+   ```bash
+   .codegen/
+   ├── .venv/            # Python virtual environment (gitignored)
+   ├── config.toml       # Project configuration
+   ├── codemods/         # Your codemod implementations
+   ├── jupyter/          # Jupyter notebooks for exploration
+   └── codegen-system-prompt.txt  # AI system prompt
+   ```
+
+3. Create your first codemod with [codegen create](/cli/create):
+   ```bash
+   codegen create organize-imports \
+     -d "Sort and organize imports according to PEP8"
+   ```
+    <Note>
+        The `-d` flag in `codegen create` generates an AI-powered implementation. This requires a Github account registered on [codegen.sh](https://codegen.sh)
+    </Note>
+
+
+
+4. Run your codemod with [codegen run](/cli/run):
+   ```bash
+   codegen run organize-imports
+   ```
+
+5. Reset any filesystem changes (excluding `.codegen/*`) with [codegen reset](/cli/reset):
+   ```bash
+   codegen reset
+   ```
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="IDE Integration"
+    icon="window"
+    href="/introduction/ide-usage"
+  >
+    Learn how to use Codegen effectively in VSCode, Cursor, and other IDEs.
+  </Card>
+  <Card
+    title="Tutorials"
+    icon="graduation-cap"
+    href="/tutorials/at-a-glance"
+  >
+    Follow step-by-step tutorials for common code transformation tasks.
+  </Card>
+  <Card
+    title="Work with AI"
+    icon="microchip"
+    href="/introduction/work-with-ai"
+  >
+    Leverage AI assistants like Copilot, Cursor and Devin
+    </Card>
+  <Card
+    title="Guides"
+    icon="hammer"
+    href="/building-with-codegen/at-a-glance"
+  >
+    Learn more about building with Codegen
+    </Card>
+
+</CardGroup>
+
+<Note>
+For more help, join our [community Slack](/introduction/community) or check the [FAQ](/introduction/faq).
+</Note> 

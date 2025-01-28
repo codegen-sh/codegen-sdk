@@ -5,7 +5,6 @@ from pathlib import Path
 import rich_click as click
 
 from codegen.cli.auth.constants import CODEGEN_DIR
-from codegen.cli.auth.decorators import requires_auth
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.utils.notebooks import create_notebook
@@ -21,7 +20,6 @@ def create_jupyter_dir() -> Path:
 
 
 @click.command(name="notebook")
-@requires_auth
 @requires_init
 def notebook_command(session: CodegenSession):
     """Open a Jupyter notebook with the current codebase loaded."""
