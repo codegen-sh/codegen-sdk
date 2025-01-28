@@ -1131,6 +1131,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
               allowed in a session.
             - max_seconds (int, optional): The maximum duration in seconds for a session
               before it times out.
+            - max_ai_requests (int, optional): The maximum number of AI requests
+              allowed in a session.
         """
         self.G.session_options = self.G.session_options.model_copy(update=kwargs)
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
