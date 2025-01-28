@@ -225,3 +225,10 @@ method.edit(new_impl)
   ```python
   codebase.set_session_options(max_ai_requests=200)
   ```
+<
+Note>
+  You can also use `codebase.set_session_options` to increase the execution time and the number of operations allowed in a session. This is useful for handling larger tasks or more complex operations that require additional resources. Adjust the `max_seconds` and `max_transactions` parameters to suit your needs:
+  ```python
+  codebase.set_session_options(max_seconds=300, max_transactions=500)
+  ```
+</Note>
