@@ -17,6 +17,8 @@ T = TypeVar("T")
 class CodemodRunType(str, Enum):
     """Type of codemod run."""
 
+    # TODO: move into codegen/shared
+
     DIFF = "diff"
     PR = "pr"
 
