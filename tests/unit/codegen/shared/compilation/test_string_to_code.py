@@ -52,7 +52,7 @@ print(local_a)
     assert mock_log.call_args_list[0][0][0] == "this is local_a"
 
 
-@patch("app.codemod.compilation.string_to_code.logger")
+@patch("codegen.shared.compilation.string_to_code.logger")
 def test_stop_codemod_execution_logs_and_raises(mock_logger):
     codeblock = """
 local_a = "this is local_a"

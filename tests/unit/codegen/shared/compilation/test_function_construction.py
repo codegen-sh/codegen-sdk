@@ -46,6 +46,6 @@ def test_function_str_includes_imports():
     codeblock = """
 print(len(codebase.files))
 """
-    with patch("app.codemod.compilation.function_construction.get_generated_imports", return_value="from foo import bar"):
+    with patch("codegen.shared.compilation.function_construction.get_generated_imports", return_value="from foo import bar"):
         func = create_function_str_from_codeblock(codeblock, func_name="execute")
     assert "from foo import bar" in func

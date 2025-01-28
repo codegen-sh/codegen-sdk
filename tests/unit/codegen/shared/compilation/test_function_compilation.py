@@ -6,17 +6,21 @@ from codegen.shared.exceptions.compilation import InvalidUserCodeException
 
 def test_valid_func_str_should_not_raise():
     func_str = """
+from codegen.sdk.core.codebase import Codebase
+
 def execute(codebase: Codebase):
     print(len(codebase.files))
 """
     try:
         safe_compile_function_string(custom_scope={}, func_name="execute", func_str=func_str)
     except InvalidUserCodeException:
-        pytest.fail("Unexpected InvalidPythonCodeError raised")
+        pytest.fail("Unexpected InvalidUserCodeException raised")
 
 
 def test_valid_func_str_with_nested_should_not_raise():
     func_str = """
+from codegen.sdk.core.codebase import Codebase
+
 def execute(codebase: Codebase):
     def nested():
         return "I'm nested!"
@@ -26,7 +30,7 @@ def execute(codebase: Codebase):
     try:
         safe_compile_function_string(custom_scope={}, func_name="execute", func_str=func_str)
     except InvalidUserCodeException:
-        pytest.fail("Unexpected InvalidPythonCodeError raised")
+        pytest.fail("Unexpected InvalidUserCodeException raised")
 
 
 def test_compile_syntax_error_indent_error_raises():
