@@ -18,7 +18,7 @@ This guide will show you how to safely identify and remove genuinely unused code
 
 ## Overview
 
-To simply identify code without any external usages, you can check for the absence of [`Symbol.usages`](/api-reference/core/Symbol#usages).
+To simply identify code without any external usages, you can check for the absence of [Symbol.usages](/api-reference/core/Symbol#usages).
 
 <Tip>See [Dependencies and Usages](/building-with-codegen/dependencies-and-usages) for more information on how to use these properties.</Tip>
 
@@ -28,6 +28,9 @@ for function in codebase.functions:
     # Remove functions with no usages
     if not function.usages:
         function.remove()
+
+# Commit
+codebase.commit()
 ```
 
 <Warning>
@@ -36,7 +39,7 @@ This will remove all code that is not explicitly referenced elsewhere, including
 
 ## Filtering for Special Cases
 
-To filter out special cases that are not explicitly referenced yet are, nonetheless, worth keeping around, you can use the following:
+To filter out special cases that are not explicitly referenced yet are, nonetheless, worth keeping around, you can use the following pattern:
 
 
 ```python
@@ -63,6 +66,9 @@ for function in codebase.functions:
         print(f"Removing unused function: {function.name}")
         # Remove the function from the file
         function.remove()
+
+# Commit
+codebase.commit()
 ```
 
 
@@ -74,7 +80,7 @@ for function in codebase.functions:
 
 
 
-
+        
 
 
 
