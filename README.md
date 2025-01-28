@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <img width="632" alt="Codegen logo" src="https://github.com/user-attachments/assets/7ea4aedc-54ec-4a04-873a-0321acc927d9" />
+    <img alt="Codegen logo" src="https://github.com/user-attachments/assets/7ea4aedc-54ec-4a04-873a-0321acc927d9" />
   </a>
 </p>
 
