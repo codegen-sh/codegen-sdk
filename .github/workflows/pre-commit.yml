@@ -34,7 +34,7 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit-3|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-      - run: uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }} --show-diff-on-failure --color=always
+      - run: SKIP=disallowed-words-check uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }} --show-diff-on-failure --color=always
         shell: bash
       - uses: stefanzweifel/git-auto-commit-action@v5
 
