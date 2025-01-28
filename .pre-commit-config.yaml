@@ -43,6 +43,7 @@ repos:
         exclude_types: [mdx, pyi]
       - id: check-yaml
       - id: end-of-file-fixer
+        exclude: (src/codemods/eval)|(tests/unit/skills/snapshots)|(tests/unit/codegen/sdk/output)|(tests/integration/verified_codemods)|(docs/)
       - id: check-merge-conflict
 
   - repo: https://github.com/python-jsonschema/check-jsonschema

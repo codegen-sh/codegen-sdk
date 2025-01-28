@@ -33,4 +33,3 @@ if [ ! -s codecov_ats/tests_to_run.txt ]; then
     run_count=1
     echo "Added ${TESTS_TO_RUN} as fallback. New run count: $run_count"
 fi
-
