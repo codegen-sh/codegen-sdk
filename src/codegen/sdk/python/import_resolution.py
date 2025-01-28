@@ -28,8 +28,6 @@ logger = logging.getLogger(__name__)
 class PyImport(Import["PyFile"]):
     """Extends Import for Python codebases."""
 
-    dynamic_import_parent_types = {"with_statement", "function_definition", "class_definition", "if_statement", "try_statement", "else_clause"}
-
     @reader
     def is_module_import(self) -> bool:
         """Determines if the import is a module-level or wildcard import.

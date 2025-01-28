@@ -123,3 +123,105 @@ def test_py_import_is_dynamic_in_nested_function(tmpdir):
         assert imports[1].is_dynamic  # dynamic_in_outer import
         assert imports[2].is_dynamic  # dynamic_in_inner import
         assert imports[3].is_dynamic  # from x import y
+
+
+def test_py_import_is_dynamic_in_else_clause(tmpdir):
+    # language=python
+    content = """
+    import static_import  # Static import
+
+    if condition:
+        pass
+    else:
+        import dynamic_in_else  # Dynamic import in else clause
+        from x import y        # Another dynamic import
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}, programming_language=ProgrammingLanguage.PYTHON) as codebase:
+        file = codebase.get_file("test.py")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static_import
+        assert imports[1].is_dynamic  # dynamic_in_else import
+        assert imports[2].is_dynamic  # from x import y
+
+
+def test_py_import_is_dynamic_in_except_clause(tmpdir):
+    # language=python
+    content = """
+    import static_import  # Static import
+
+    try:
+        pass
+    except ImportError:
+        import dynamic_in_except  # Dynamic import in except clause
+        from x import y          # Another dynamic import
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}, programming_language=ProgrammingLanguage.PYTHON) as codebase:
+        file = codebase.get_file("test.py")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static_import
+        assert imports[1].is_dynamic  # dynamic_in_except import
+        assert imports[2].is_dynamic  # from x import y
+
+
+def test_py_import_is_dynamic_in_finally_clause(tmpdir):
+    # language=python
+    content = """
+    import static_import  # Static import
+
+    try:
+        pass
+    except ImportError:
+        pass
+    finally:
+        import dynamic_in_finally  # Dynamic import in finally clause
+        from x import y          # Another dynamic import
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}, programming_language=ProgrammingLanguage.PYTHON) as codebase:
+        file = codebase.get_file("test.py")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static_import
+        assert imports[1].is_dynamic  # dynamic_in_finally import
+        assert imports[2].is_dynamic  # from x import y
+
+
+def test_py_import_is_dynamic_in_while_statement(tmpdir):
+    # language=python
+    content = """
+    import static_import  # Static import
+
+    while condition:
+        import dynamic_in_while  # Dynamic import in while loop
+        from a import b         # Another dynamic import
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}, programming_language=ProgrammingLanguage.PYTHON) as codebase:
+        file = codebase.get_file("test.py")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static_import
+        assert imports[1].is_dynamic  # dynamic_in_while import
+        assert imports[2].is_dynamic  # from a import b
+
+
+def test_py_import_is_dynamic_in_match_case(tmpdir):
+    # language=python
+    content = """
+    import static_import  # Static import
+
+    match value:
+        case 1:
+            import dynamic_in_case  # Dynamic import in case clause
+            from x import y        # Another dynamic import
+        case _:
+            import another_dynamic  # Dynamic import in default case
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}, programming_language=ProgrammingLanguage.PYTHON) as codebase:
+        file = codebase.get_file("test.py")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static_import
+        assert imports[1].is_dynamic  # dynamic_in_case import
+        assert imports[2].is_dynamic  # from x import y
+        assert imports[3].is_dynamic  # another_dynamic import

@@ -30,8 +30,6 @@ if TYPE_CHECKING:
 class TSImport(Import["TSFile"], Exportable):
     """Extends Import for TypeScript codebases."""
 
-    dynamic_import_parent_types = {"function_declaration", "method_definition", "arrow_function", "if_statement", "try_statement", "else_clause"}
-
     @reader
     def is_type_import(self) -> bool:
         """Checks if an import is a type import.

@@ -81,8 +81,6 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
     import_type: ImportType
     import_statement: ImportStatement
 
-    dynamic_import_parent_types = set()
-
     def __init__(
         self,
         ts_node: TSNode,
@@ -384,6 +382,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
         """
 
     @property
+    @reader
     def is_dynamic(self) -> bool:
         """Determines if this import is dynamically loaded based on its parent symbol.
 
@@ -420,11 +419,15 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
             bool: True if the import is dynamic (within a control flow or scope block),
             False if it's a top-level import.
         """
-        if not (self.ts_node.parent.parent):
-            return False
+        curr = self.ts_node
 
-        is_dynamic = self.ts_node.parent.parent.type in self.dynamic_import_parent_types
-        return is_dynamic
+        # always traverses upto the module level
+        while curr:
+            if curr.type in self.G.node_classes.dynamic_import_parent_types:
+                return True
+            curr = curr.parent
+
+        return False
 
     ####################################################################################################################
     # MANIPULATIONS

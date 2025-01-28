@@ -110,3 +110,131 @@ def test_ts_import_is_dynamic_in_try_statement(tmpdir):
 
         assert not imports[0].is_dynamic  # static import
         assert imports[1].is_dynamic  # dynamic import in try block
+
+
+def test_ts_import_is_dynamic_in_catch_clause(tmpdir):
+    # language=typescript
+    content = """
+    import { logger } from './logger';
+
+    try {
+        const x = 1;
+    } catch (error) {
+        const errorHandler = await import('./error-handler');
+        errorHandler.handle(error);
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in catch block
+
+
+def test_ts_import_is_dynamic_in_finally_clause(tmpdir):
+    # language=typescript
+    content = """
+    import { logger } from './logger';
+
+    try {
+        const x = 1;
+    } catch (error) {
+        throw error;
+    } finally {
+        const cleanup = await import('./cleanup');
+        cleanup.perform();
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in finally block
+
+
+def test_ts_import_is_dynamic_in_while_statement(tmpdir):
+    # language=typescript
+    content = """
+    import { condition } from './utils';
+
+    while (condition()) {
+        const processor = await import('./processor');
+        processor.process();
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in while loop
+
+
+def test_ts_import_is_dynamic_in_for_statement(tmpdir):
+    # language=typescript
+    content = """
+    import { items } from './data';
+
+    for (let i = 0; i < items.length; i++) {
+        const processor = await import('./processor');
+        processor.process(items[i]);
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in for loop
+
+
+def test_ts_import_is_dynamic_in_do_statement(tmpdir):
+    # language=typescript
+    content = """
+    import { shouldContinue } from './utils';
+
+    do {
+        const module = await import('./dynamic-module');
+        module.process();
+    } while (shouldContinue());
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in do-while loop
+
+
+def test_ts_import_is_dynamic_in_switch_statement(tmpdir):
+    # language=typescript
+    content = """
+    import { getFeatureFlag } from './utils';
+
+    switch (getFeatureFlag()) {
+        case 'feature1':
+            import('./feature1').then(module => {
+                module.init();
+            });
+            break;
+        case 'feature2':
+            import('./feature2').then(module => {
+                module.init();
+            });
+            break;
+        default:
+            import('./default').then(module => {
+                module.init();
+            });
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file = codebase.get_file("test.ts")
+        imports = file.imports
+
+        assert not imports[0].is_dynamic  # static import
+        assert imports[1].is_dynamic  # dynamic import in first case
+        assert imports[2].is_dynamic  # dynamic import in second case
+        assert imports[3].is_dynamic  # dynamic import in default case
