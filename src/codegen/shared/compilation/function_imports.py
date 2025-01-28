@@ -15,7 +15,7 @@ from codegen.git.models.github_named_user_context import GithubNamedUserContext
 from codegen.git.models.pr_part_context import PRPartContext
 from codegen.git.models.pull_request_context import PullRequestContext
 
-from codegen.sdk.codebase.control_flow import StopCodemodException
+from codegen.shared.exceptions.control_flow import StopCodemodException
 
 # GraphSitter imports (public)
 from codegen.sdk.codebase.flagging.enums import FlagKwargs

@@ -153,14 +153,7 @@ max-line-length = 200
 
 [tool.ruff]
 line-length = 200
-exclude = [
-  "app/codemod/compilation/function_imports.py", # generated import list to compile uesr code with
-  'codegen_tests/**/expected*/**',
-  'codegen_tests/**/original/**',
-  'codegen_tests/projects/**/codebase/**',
-  'docs/**',
-  'scripts/Debugging/**',
-]
+exclude = ["src/codegen/shared/compilation/function_imports.py", 'docs/**']
 
 lint.select = ["F", "E", "W", "I", "UP", "D", "RUF", "DTZ"]
 lint.ignore = [
@@ -192,9 +185,8 @@ lint.exclude = [
 ] # disable just linting for notebooks (allow for formatting)
 lint.pydocstyle.convention = "google"
 [tool.ruff.lint.isort]
-known-first-party = ["app"]
-known-third-party = ["git"]
-#known-local-folder=[]
+known-first-party = ["codegen"]
+
 [tool.coverage.run]
 branch = true
 plugins = ["Cython.Coverage"]

@@ -43,7 +43,6 @@ repos:
         exclude_types: [mdx, pyi]
       - id: check-yaml
       - id: end-of-file-fixer
-        files: .*/expected_diff.patch
       - id: check-merge-conflict
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
