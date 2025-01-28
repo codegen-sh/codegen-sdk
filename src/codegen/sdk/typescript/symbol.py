@@ -26,6 +26,8 @@ if TYPE_CHECKING:
     from codegen.sdk.core.import_resolution import Import
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 
 
 @ts_apidoc

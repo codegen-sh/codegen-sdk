@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from codegen.sdk.core.statements.switch_statement import SwitchStatement
 from codegen.sdk.typescript.statements.switch_case import TSSwitchCase

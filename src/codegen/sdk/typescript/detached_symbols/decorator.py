@@ -10,9 +10,13 @@ from codegen.shared.decorators.docs import ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
+    from codegen.sdk.typescript.class_definition import TSClass
+    from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
+    from codegen.sdk.typescript.function import TSFunction
+
 
 @ts_apidoc
-class TSDecorator(Decorator["JSClass", "TSFunction", "TsParameter"]):
+class TSDecorator(Decorator["TSClass", "TSFunction", "TSParameter"]):
     """Abstract representation of a Decorator"""
 
     @reader

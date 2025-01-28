@@ -10,6 +10,10 @@ from codegen.shared.decorators.docs import py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
+    from codegen.sdk.python.class_definition import PyClass
+    from codegen.sdk.python.detached_symbols.parameter import PyParameter
+    from codegen.sdk.python.function import PyFunction
+
 
 @py_apidoc
 class PyDecorator(Decorator["PyClass", "PyFunction", "PyParameter"]):

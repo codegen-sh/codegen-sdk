@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
 
 

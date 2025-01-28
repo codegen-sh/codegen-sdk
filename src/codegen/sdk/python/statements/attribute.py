@@ -13,6 +13,7 @@ from codegen.shared.exceptions.api import APINotApplicableForLanguageError
 
 if TYPE_CHECKING:
     from codegen.sdk.python.class_definition import PyClass
+    from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 
 
 @py_apidoc

@@ -15,6 +15,8 @@ if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.interfaces.has_block import HasBlock
     from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
+    from codegen.sdk.python.interfaces.has_block import PyHasBlock
 
 
 @py_apidoc

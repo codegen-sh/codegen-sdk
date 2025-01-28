@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
+    from codegen.sdk.typescript.file import TSFile
 
 
 @ts_apidoc
