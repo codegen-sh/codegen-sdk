@@ -240,7 +240,8 @@ def create_test_case(
                 },
                 stage=False,
                 committed_state=committed_state,
-                expected_modified={".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py"},
+                expected_modified={".codegen/codemods/base.py"},
+                expected_untracked={".codegen/codemods/renamed_base.py"},
                 rename_pairs=[(".codegen/codemods/base.py", ".codegen/codemods/renamed_base.py")],
             ),
             id="unstaged_renames",
@@ -277,7 +278,6 @@ def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case:
         for path, content in test_case.changes.items():
             if content is None:
                 (committed_repo / path).unlink()
-            print(path, content)
         if test_case.stage:
             subprocess.run(["git", "add", "-A"], cwd=committed_repo, check=True)
 
