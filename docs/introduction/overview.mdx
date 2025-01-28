@@ -21,6 +21,9 @@ for function in codebase.functions:
     if not function.usages:
         # Auto-handles references and imports to maintain correctness
         function.remove()
+
+# Fast, in-memory code index
+codebase.commit()
 `
 
 export const code = `def foo():
@@ -35,7 +38,7 @@ def baz():
 
 <iframe
   width="100%"
-  height="320px"
+  height="370px"
   scrolling="no"
   src={`https://chadcode.sh/embedded/codemod/?code=${encodeURIComponent(
     metaCode
@@ -45,6 +48,12 @@ def baz():
   }}
   className="rounded-xl"
 ></iframe>
+
+<Note>
+Codegen handles complex refactors while maintaining correctness, enabling a broad set of advanced code manipulation programs. 
+</Note>
+
+<Tip>Codegen works with both Python and Typescript/JSX codebases. Learn more about language support [here](/building-with-codegen/language-support).</Tip>
 
 ## Installation
 
