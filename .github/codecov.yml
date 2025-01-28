@@ -71,4 +71,3 @@ cli:
         - "--verbose"
         - "-n=auto"
       python_path: ".venv/bin/python"
-

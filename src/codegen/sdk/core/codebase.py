@@ -23,7 +23,6 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -39,6 +38,7 @@ from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.directory import Directory
+from codegen.sdk.core.export import Export
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.file import File, SourceFile
 from codegen.sdk.core.function import Function
@@ -59,19 +59,21 @@ from codegen.sdk.python.detached_symbols.parameter import PyParameter
 from codegen.sdk.python.file import PyFile
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
+from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
+from codegen.sdk.typescript.export import TSExport
 from codegen.sdk.typescript.file import TSFile
 from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.import_resolution import TSImport
 from codegen.sdk.typescript.interface import TSInterface
+from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
-from codegen.sdk.utils import determine_project_language
-from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
@@ -91,6 +93,11 @@ TInterface = TypeVar("TInterface", bound="Interface")
 TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
 TParameter = TypeVar("TParameter", bound="Parameter")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
+TExport = TypeVar("TExport", bound="Export")
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+PyGlobalVar = TypeVar("PyGlobalVar", bound="Assignment")
+TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
+PyDirectory = Directory[PyFile, PySymbol, PyImportStatement, PyGlobalVar, PyClass, PyFunction, PyImport]
 
 
 @apidoc
@@ -110,7 +117,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: None = None,
         *,
-        projects: list[ProjectConfig],
+        programming_language: None = None,
+        projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
 
@@ -119,6 +127,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str,
         *,
+        programming_language: ProgrammingLanguage,
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
@@ -127,7 +136,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str | None = None,
         *,
-        projects: list[ProjectConfig] | None = None,
+        programming_language: ProgrammingLanguage | None = None,
+        projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None:
         # Sanity check inputs
@@ -137,14 +147,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if repo_path is None and projects is None:
             raise ValueError("Must specify either repo_path or projects")
 
+        if projects is not None and programming_language is not None:
+            raise ValueError("Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language.")
+
+        # If projects is a single ProjectConfig, convert it to a list
+        if isinstance(projects, ProjectConfig):
+            projects = [projects]
+
         # Initialize project with repo_path if projects is None
         if repo_path is not None:
-            repo_path = os.path.abspath(repo_path)
-            repo_config = BaseRepoConfig()
-            main_project = ProjectConfig(
-                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=repo_path),
-                programming_language=determine_project_language(repo_path),
-            )
+            main_project = ProjectConfig.from_path(repo_path, programming_language=programming_language)
             projects = [main_project]
         else:
             main_project = projects[0]
@@ -262,6 +274,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+
+    @property
+    @py_noapidoc
+    def exports(self: "TSCodebaseType") -> list[TSExport]:
+        """Returns a list of all Export nodes in the codebase.
+
+        Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
+        including exports from both internal modules and external packages. This is a TypeScript-only codebase property.
+
+        Args:
+            None
+
+        Returns:
+            list[TSExport]: A list of Export nodes representing all exports in the codebase.
+            TExport can only be a  TSExport for TypeScript codebases.
+
+        """
+        if self.language == ProgrammingLanguage.PYTHON:
+            raise NotImplementedError("Exports are not supported for Python codebases since Python does not have an export mechanism.")
+
+        return self.G.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:
@@ -675,8 +708,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             None
         """
-        if not self.G.config.feature_flags.debug:
-            self.log("Warning: using a method that may break codemod execution. This is unnessecary in most cases. You should use this only if you are certian it's nessecary")
         self.G.commit_transactions(sync_graph=sync_graph and self.G.config.feature_flags.sync_enabled)
 
     @noapidoc
@@ -708,7 +739,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.git_cli.head.commit
 
     @stopwatch
-    def reset(self) -> None:
+    def reset(self, git_reset: bool = False) -> None:
         """Resets the codebase by:
         - Discarding any staged/unstaged changes
         - Resetting stop codemod limits: (max seconds, max transactions, max AI requests)
@@ -721,7 +752,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         - .ipynb files (Jupyter notebooks, where you are likely developing)
         """
         logger.info("Resetting codebase ...")
-        self._op.discard_changes()  # Discard any changes made to the raw file state
+        if git_reset:
+            self._op.discard_changes()  # Discard any changes made to the raw file state
         self._num_ai_requests = 0
         self.reset_logs()
         self.G.undo_applied_diffs()
@@ -788,12 +820,14 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.get_diffs(base)
 
     @noapidoc
-    def get_diff(self, base: str | None = None) -> str:
+    def get_diff(self, base: str | None = None, stage_files: bool = False) -> str:
         """Produce a single git diff for all files."""
-        self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
+        if stage_files:
+            self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
         if base is None:
-            return self._op.git_cli.git.diff(patch=True, full_index=True, staged=True)
-        return self._op.git_cli.git.diff(base, full_index=True)
+            diff = self._op.git_cli.git.diff("HEAD", patch=True, full_index=True)
+            return diff
+        return self._op.git_cli.git.diff(base, patch=True, full_index=True)
 
     @noapidoc
     def clean_repo(self):
@@ -1081,13 +1115,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return []
 
     def set_session_options(self, **kwargs: Unpack[SessionOptions]) -> None:
-        """Sets the Session options for the current codebase."""
+        """Sets the session options for the current codebase.
+
+        This method updates the session options with the provided keyword arguments and
+        configures the transaction manager accordingly. It sets the maximum number of
+        transactions and resets the stopwatch based on the updated session options.
+
+        Args:
+        **kwargs: Keyword arguments representing the session options to update.
+            - max_transactions (int, optional): The maximum number of transactions
+              allowed in a session.
+            - max_seconds (int, optional): The maximum duration in seconds for a session
+              before it times out.
+            - max_ai_requests (int, optional): The maximum number of AI requests
+              allowed in a session.
+        """
         self.G.session_options = self.G.session_options.model_copy(update=kwargs)
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True) -> "Codebase":
+    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True, programming_language: ProgrammingLanguage | None = None) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1095,6 +1143,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
             commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
+            programming_language (ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
+
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
         """
@@ -1125,7 +1175,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                 # Ensure the operator can handle remote operations
                 repo_operator = LocalRepoOperator.create_from_commit(
                     repo_path=repo_path,
-                    default_branch="main",  # We'll get the actual default branch after clone
                     commit=commit,
                     url=repo_url,
                 )
@@ -1133,7 +1182,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
-            project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
+            project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=programming_language)
             codebase = Codebase(projects=[project], config=DefaultConfig)
             logger.info("Codebase initialization complete")
             return codebase
@@ -1145,5 +1194,5 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
-PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
-TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
+PyCodebaseType = Codebase[PyFile, PyDirectory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
+TSCodebaseType = Codebase[TSFile, TSDirectory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]

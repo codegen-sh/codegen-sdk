@@ -12,7 +12,8 @@ shallow_options = [True, False]
 
 @pytest.fixture
 def op(repo_config, request, tmpdir):
-    yield RemoteRepoOperator(repo_config, shallow=request.param, base_dir=tmpdir)
+    op = RemoteRepoOperator(repo_config, shallow=request.param, base_dir=tmpdir, bot_commit=False)
+    yield op
 
 
 @pytest.mark.parametrize("op", shallow_options, ids=lambda x: f"shallow={x}", indirect=True)
