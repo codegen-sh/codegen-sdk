@@ -33,8 +33,8 @@ When you run `codegen create rename-function`, it creates:
 .codegen/
 └── codemods/
     └── rename_function/
-        ├── rename_function.py       # The codemod implementation
-        └── rename_function_prompt.md  # System prompt (if --description used)
+        ├── rename_function.py              # The codemod implementation
+        └── rename_function-system-prompt.txt  # System prompt (if --description used)
 ```
 
 The generated codemod will have this structure:
@@ -47,7 +47,16 @@ from codegen import Codebase
 def run(codebase: Codebase):
     """Add a description of what this codemod does."""
     # Add your code here
-    pass
+    print('Total files: ', len(codebase.files))
+    print('Total functions: ', len(codebase.functions))
+    print('Total imports: ', len(codebase.imports))
+
+if __name__ == "__main__":
+    print('Parsing codebase...')
+    codebase = Codebase("./")
+
+    print('Running...')
+    run(codebase)
 ```
 
 ## Examples
