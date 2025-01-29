@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <img src="https://github.com/user-attachments/assets/fdb2cd83-9967-41c2-a93d-cddff267ac79" />
+    <img src="https://i.imgur.com/ttPWzlG.jpeg" />
   </a>
 </p>
 
