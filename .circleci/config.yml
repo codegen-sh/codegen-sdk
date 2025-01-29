@@ -211,7 +211,7 @@ jobs:
   unit-tests:
     parallelism: 3
     executor: default_image
-    resource_class: "2xlarge"
+    resource_class: "large"
     steps:
     - setup-uv
     - node/install:
@@ -324,7 +324,7 @@ jobs:
 
   pre-commit:
     executor: default_image
-    resource_class: 2xlarge
+    resource_class: large
     steps:
       - setup-uv
       - node/install:
