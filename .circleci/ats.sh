@@ -26,7 +26,7 @@ fi
 for base_commit in ${base_commit_candidates[@]}
 do
     echo "Attempting label analysis with base commit: $base_commit"
-    response=$(uv run --frozen codecovcli label-analysis --token ${CODECOV_STATIC_TOKEN} --base-sha=$base_commit --dry-run --dry-run-format="json" --runner-param "$runner_param" --wait-time=2 || true)
+    response=$(uv run --frozen codecovcli label-analysis --token ${CODECOV_STATIC_TOKEN} --base-sha=$base_commit --dry-run --dry-run-format="json" --runner-param "$runner_param" --max-wait-time=2 || true)
     if [[ -n $response ]]; then
         break
     else
