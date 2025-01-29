@@ -20,9 +20,11 @@ def create_jupyter_dir() -> Path:
 
 
 @click.command(name="notebook")
+@click.option("--background", is_flag=True, help="Run Jupyter Lab in the background")
+@click.option("--demo", is_flag=True, help="Create a demo notebook with FastAPI example code")
 @requires_init
-def notebook_command(session: CodegenSession):
-    """Open a Jupyter notebook with the current codebase loaded."""
+def notebook_command(session: CodegenSession, background: bool, demo: bool):
+    """Launch Jupyter Lab with a pre-configured notebook for exploring your codebase."""
     with create_spinner("Setting up Jupyter environment...") as status:
         venv = VenvManager()
 
@@ -30,7 +32,7 @@ def notebook_command(session: CodegenSession):
         venv.ensure_jupyter()
 
         jupyter_dir = create_jupyter_dir()
-        notebook_path = create_notebook(jupyter_dir)
+        notebook_path = create_notebook(jupyter_dir, demo=demo)
 
         status.update("Running Jupyter Lab...")
 
