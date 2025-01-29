@@ -11,6 +11,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
+from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.usable import Usable
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import EdgeType, ImportType, NodeType
@@ -57,7 +58,7 @@ TSourceFile = TypeVar("TSourceFile", bound="SourceFile")
 
 
 @apidoc
-class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
+class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttribute[TSourceFile]):
     """Represents a single symbol being imported.
 
     For example, this is one `Import` in Python (and similar applies to Typescript, etc.):
@@ -115,7 +116,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
 
     @noapidoc
     @abstractmethod
-    def resolve_import(self, base_path: str | None = None) -> ImportResolution[TSourceFile] | None:
+    def resolve_import(self, base_path: str | None = None, *, add_module_name: str | None = None) -> ImportResolution[TSourceFile] | None:
         """Resolves the import to a symbol defined outside the file.
 
         Returns an ImportResolution object.
@@ -661,6 +662,17 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
             for usage in self.usages
         ):
             self.remove()
+
+    @noapidoc
+    @reader
+    def resolve_attribute(self, attribute: str) -> TSourceFile | None:
+        # Handles implicit namespace imports in python
+        if not isinstance(self._imported_symbol(), ExternalModule):
+            return None
+        resolved = self.resolve_import(add_module_name=attribute)
+        if resolved:
+            return resolved.symbol or resolved.from_file
+        return None
 
 
 TImport = TypeVar("TImport", bound="Import")
