@@ -58,10 +58,12 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
-				"introduction/guiding-principles",
-				"introduction/how-it-works",
-				"introduction/community",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/work-with-ai",
+				"introduction/how-it-works",
+				"introduction/guiding-principles",
+				"introduction/community",
 				"introduction/about",
 				"introduction/faq"
 			]
@@ -129,6 +131,7 @@
 				"cli/notebook",
 				"cli/create",
 				"cli/run",
+				"cli/reset",
 				"cli/expert"
 			]
 		},

@@ -5,19 +5,11 @@ icon: "bolt"
 iconType: "solid"
 ---
 
-Follow our step-by-step tutorial to get up and running with Codegen.
+A quick tour of Codegen in a Jupyter notebook.
 
 ## Installation
 
-We recommend using [uv](https://github.com/astral-sh/uv) to install Codegen's CLI globally.
-
-First, install `uv` if you haven't already:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-Then install Codegen:
+Install [`codegen` on pypi](https://pypi.org/project/codegen/) via [uv](https://github.com/astral-sh/uv):
 
 ```bash
 uv tool install codegen
@@ -28,9 +20,14 @@ uv tool install codegen
   keeping its dependencies isolated.
 </Note>
 
+
 ## Quick Start with Jupyter
 
-The [codgen notebook](/cli/notebook) command creates a virtual environment and opens a jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
+The [codgen notebook](/cli/notebook) command creates a virtual environment and opens a Jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
+
+<Tip>
+  Prefer working in your IDE? See [IDE Usage](/introduction/ide-usage)
+</Tip>
 
 
 ```bash
@@ -38,7 +35,6 @@ The [codgen notebook](/cli/notebook) command creates a virtual environment and o
 cd path/to/git/repository
 
 # Initialize codegen and launch Jupyter
-codegen init
 codegen notebook
 ```
 
