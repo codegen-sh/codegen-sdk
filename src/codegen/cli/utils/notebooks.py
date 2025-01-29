@@ -21,15 +21,41 @@ print(f"🔄 Total Imports: {len(codebase.imports)}")""".strip(),
 
 DEMO_CELLS = [
     ##### [ CODGEN DEMO ] #####
-    {"cell_type": "markdown", "source": "# Codegen Demo"},
+    {
+        "cell_type": "markdown",
+        "source": """# Codegen Demo: FastAPI
+
+Welcome to [Codegen](https://docs.codegen.com)!
+
+This demo notebook will walk you through some features of Codegen applied to [FastAPI](https://github.com/fastapi/fastapi).
+
+See the [getting started](https://docs.codegen.com/introduction/getting-started) guide to learn more.""".strip(),
+    },
     {
         "cell_type": "code",
         "source": """from codegen import Codebase
 
 # Initialize FastAPI codebase
+print('Cloning and parsing FastAPI to /tmp/codegen/fastapi...')
 codebase = Codebase.from_repo('fastapi/fastapi')
 
-# Print overall stats
+# To initialize a local codebase, use this constructor
+# codebase = Codebase("path/to/git/repo")""".strip(),
+    },
+    ##### [ CODEBASE ANALYSIS ] #####
+    {
+        "cell_type": "markdown",
+        "source": """# Codebase Analysis
+
+Let's do a quick codebase analysis!
+
+- Grab codebase content with [codebase.functions](https://docs.codegen.com/building-with-codegen/symbol-api) et al.
+- View inheritance hierarchies with [inhertance APIs](https://docs.codegen.com/building-with-codegen/class-api#working-with-inheritance)
+- Identify recursive functions by looking at [FunctionCalls](https://docs.codegen.com/building-with-codegen/function-calls-and-callsites)""".strip(),
+    },
+    {
+        "cell_type": "code",
+        "source": """# Print overall stats
 print("🔍 FastAPI Analysis")
 print("=" * 50)
 print(f"📚 Total Classes: {len(codebase.classes)}")
@@ -52,7 +78,12 @@ if recursive:
         print(f"  - {func.name} ({func.file.filepath})")""".strip(),
     },
     ##### [ TEST DRILL DOWN ] #####
-    {"cell_type": "markdown", "source": "# Drilling Down on Tests"},
+    {
+        "cell_type": "markdown",
+        "source": """# Drilling Down on Tests
+
+Let's specifically drill into large test files, which can be cumbersome to manage:""".strip(),
+    },
     {
         "cell_type": "code",
         "source": """from collections import Counter
@@ -70,40 +101,80 @@ print("\\n📚 Top Test Files by Count")
 print("-" * 50)
 file_test_counts = Counter([x.file for x in test_functions])
 for file, num_tests in file_test_counts.most_common()[:5]:
-    print(f"🔍 {num_tests} test classes: {file.filepath}")
-    print(f"   📏 File Length: {len(file.source)} lines")
+    print(f"🔍 {num_tests} test functions: {file.filepath}")
+    print(f"   📏 File Length: {len(file.source.split('\\n'))} lines")
     print(f"   💡 Functions: {len(file.functions)}")""".strip(),
     },
     ##### [ TEST SPLITTING ] #####
-    {"cell_type": "markdown", "source": "# Test Splitting"},
+    {
+        "cell_type": "markdown",
+        "source": """# Splitting Up Large Test Files
+
+Lets split up the largest test files into separate modules for better organization.
+
+This uses Codegen's [codebase.move_to_file(...)](https://docs.codegen.com/building-with-codegen/moving-symbols), which will:
+- update all imports
+- (optionally) move depenencies
+- do so very fast ⚡️
+
+While maintainin correctness.""",
+    },
+    ##### [ TEST SPLITTING ] #####
     {
         "cell_type": "code",
-        "source": """print("\n📦 Splitting Test Files")
+        "source": """filename = 'tests/test_path.py'
+print(f"📦 Splitting Test File: {filename}")
 print("=" * 50)
 
-# Process top 5 largest test files
-for file, num_tests in file_test_counts.most_common()[:5]:
-    # Create a new directory based on the file name
-    base_name = file.path.replace('.py', '')
-    print(f"\n🔄 Processing: {file.filepath}")
-    print(f"   📊 {num_tests} test classes to split")
+# Grab a file
+file = codebase.get_file(filename)
+base_name = filename.replace('.py', '')
 
-    # Move each test class to its own file
-    for test_class in file.classes:
-        if test_class.name.startswith('Test'):
-            # Create descriptive filename from test class name
-            new_file = f"{base_name}/{test_class.name.lower()}.py"
-            print(f"   📝 Moving {test_class.name} -> {new_file}")
+# Group tests by subpath
+test_groups = {}
+for test_function in file.functions:
+    if test_function.name.startswith('test_'):
+        test_subpath = '_'.join(test_function.name.split('_')[:3])
+        if test_subpath not in test_groups:
+            test_groups[test_subpath] = []
+        test_groups[test_subpath].append(test_function)
 
-            # Codegen handles all the complexity:
-            # - Creates directories if needed
-            # - Updates all imports automatically
-            # - Maintains test dependencies
-            # - Preserves decorators and docstrings
-            test_class.move_to_file(new_file)
+# Print and process each group
+for subpath, tests in test_groups.items():
+    print(f"\\n{subpath}/")
+    new_filename = f"{base_name}/{subpath}.py"
+
+    # Create file if it doesn't exist
+    if not codebase.has_file(new_filename):
+        new_file = codebase.create_file(new_filename)
+    file = codebase.get_file(new_filename)
+
+    # Move each test in the group
+    for test_function in tests:
+        print(f"    - {test_function.name}")
+        test_function.move_to_file(new_file, strategy="add_back_edge")
 
 # Commit changes to disk
 codebase.commit()""".strip(),
+    },
+    ##### [ RESET ] #####
+    {
+        "cell_type": "markdown",
+        "source": """## View Changes
+
+You can now view changes by `cd /tmp/codegen/fastapi && git diff`
+
+Enjoy!
+
+# Reset
+
+Reset your codebase to it's initial state, discarding all changes
+
+Learn more in [commit and reset](https://docs.codegen.com/building-with-codegen/commit-and-reset).""".strip(),
+    },
+    {
+        "cell_type": "code",
+        "source": """codebase.reset()""".strip(),
     },
 ]
 
