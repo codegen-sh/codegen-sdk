@@ -37,7 +37,7 @@ See the [getting started](https://docs.codegen.com/introduction/getting-started)
 
 # Initialize FastAPI codebase
 print('Cloning and parsing FastAPI to /tmp/codegen/fastapi...')
-codebase = Codebase.from_repo('fastapi/fastapi')
+codebase = Codebase.from_repo('fastapi/fastapi', commit="eab0653a346196bff6928710410890a300aee4ae")
 
 # To initialize a local codebase, use this constructor
 # codebase = Codebase("path/to/git/repo")""".strip(),
