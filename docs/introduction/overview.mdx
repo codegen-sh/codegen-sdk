@@ -65,6 +65,58 @@ uv tool install codegen
 pip install codegen
 ```
 
+## What can I do with Codegen?
+
+Codegen enables you to programmatically manipulate code at scale. Here's a visualization of a real-world codebase's function call graph:
+
+<iframe
+  width="100%"
+  height="500px"
+  scrolling="no"
+  src={`https://codegen.sh/embedded/graph?id=299beefe-0207-43b6-bff3-6ca9036f62eb&zoom=0.5`}
+  className="rounded-xl"
+  style={{
+    backgroundColor: "#15141b",
+  }}
+></iframe>
+
+Common use cases include:
+
+<CardGroup cols={2}>
+  <Card
+    title="Visualize Your Codebase"
+    icon="diagram-project"
+    href="/tutorials/codebase-visualization"
+  >
+    Generate interactive visualizations of your codebase's structure, dependencies, and relationships.
+  </Card>
+  <Card
+    title="Mine Codebase Data"
+    icon="robot"
+    href="/tutorials/training-data"
+  >
+    Create high-quality training data for fine-tuning LLMs on your codebase.
+  </Card>
+  <Card
+    title="Eliminate Feature Flags"
+    icon="flag"
+    href="/tutorials/manage-feature-flags"
+  >
+    Add, remove, and update feature flags across your application.
+  </Card>
+  <Card
+    title="Organize Your Codebase"
+    icon="folder-tree"
+    href="/tutorials/organize-your-codebase"
+  >
+    Restructure files, enforce naming conventions, and improve project layout.
+  </Card>
+</CardGroup>
+
+<Note>
+  Codegen handles complex operations while maintaining correctness - automatically updating imports, references, and dependencies across files.
+</Note>
+
 ## Get Started
 
 import {
