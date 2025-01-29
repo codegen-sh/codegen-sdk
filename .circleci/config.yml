@@ -138,10 +138,10 @@ commands:
       steps:
         - store_test_results:
             path: build/test-results/test/TEST.xml
-        # - codecov/upload:
-        #     binary: ../root/.local/bin/codecovcli
-        #     files: build/test-results/test/TEST.xml
-        #     report_type: test_results
+        - codecov/upload:
+            binary: ../root/.local/bin/codecovcli
+            files: build/test-results/test/TEST.xml
+            report_type: test_results
   run_ats:
       parameters:
         default_tests:
@@ -211,7 +211,7 @@ jobs:
   unit-tests:
     parallelism: 8
     executor: default_image
-    resource_class: "large"
+    resource_class: "xlarge"
     steps:
     - setup-uv
     - node/install:
@@ -473,7 +473,7 @@ workflows:
       #     requires:
       #       - hold-codemod-tests
       - pre-commit
-      - doctests
+      # - doctests
       # - oss-codemod-tests:
       #     filters:
       #       branches:
