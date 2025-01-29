@@ -41,7 +41,7 @@ class Usage:
 @unique
 @apidoc
 class UsageType(IntFlag):
-    """Describes how a symbol is used elsewhere. Used in conjunction with get_usages
+    """Describes how a symbol is used elsewhere. Used in conjunction with get_usages.
 
     Attributes:
         DIRECT: Direct imports and usages within the same file

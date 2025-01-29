@@ -1,20 +1,22 @@
+from __future__ import annotations
+
 import logging
 from typing import TYPE_CHECKING, Self, TypeVar, override
-
-from tree_sitter import Node as TSNode
 
 from codegen.sdk.core.autocommit import writer
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.string import String
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.dict import Dict, Pair
 from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc, noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
 
 Parent = TypeVar("Parent", bound="Editable")
 TExpression = TypeVar("TExpression", bound=Expression)
@@ -37,7 +39,7 @@ class TSPair(Pair):
 
     shorthand: bool
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.shorthand = ts_node.type == "shorthand_property_identifier"
 
@@ -62,7 +64,7 @@ class TSPair(Pair):
 
     @writer
     def reduce_condition(self, bool_condition: bool, node: Editable | None = None) -> None:
-        """Reduces an editable to the following condition"""
+        """Reduces an editable to the following condition."""
         if self.shorthand and node == self.value:
             # Object shorthand
             self.parent[self.key.source] = self.G.node_classes.bool_conversion[bool_condition]
@@ -72,9 +74,9 @@ class TSPair(Pair):
 
 @apidoc
 class TSDict(Dict, HasAttribute):
-    """A typescript dict object. You can use standard operations to operate on this dict (IE len, del, set, get, etc)"""
+    """A typescript dict object. You can use standard operations to operate on this dict (IE len, del, set, get, etc)."""
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = TSPair) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, delimiter: str = ",", pair_type: type[Pair] = TSPair) -> None:
         super().__init__(ts_node, file_node_id, G, parent, delimiter=delimiter, pair_type=pair_type)
 
     def __getitem__(self, __key: str) -> TExpression:
@@ -85,15 +87,13 @@ class TSDict(Dict, HasAttribute):
                 if isinstance(pair.key, String):
                     if pair.key.content == str(__key):
                         pair_match = pair
-                elif pair.key is not None:
-                    if pair.key.source == str(__key):
-                        pair_match = pair
+                elif pair.key is not None and pair.key.source == str(__key):
+                    pair_match = pair
 
                 if pair_match:
                     if pair_match.value is not None:
                         return pair_match.value
-                    else:
-                        return pair_match.key
+                    return pair_match.key
         msg = f"Key {__key} not found in {list(self.keys())} {self._underlying!r}"
         raise KeyError(msg)
 
@@ -106,9 +106,8 @@ class TSDict(Dict, HasAttribute):
                 if isinstance(pair.key, String):
                     if pair.key.content == str(__key):
                         pair_match = pair
-                elif pair.key is not None:
-                    if pair.key.source == str(__key):
-                        pair_match = pair
+                elif pair.key is not None and pair.key.source == str(__key):
+                    pair_match = pair
 
                 if pair_match:
                     # CASE: {a: b}
@@ -118,11 +117,10 @@ class TSDict(Dict, HasAttribute):
                         else:
                             pair.value.edit(f"{new_value}")
                     # CASE: {a}
+                    elif __key == new_value:
+                        pair_match.edit(f"{__key}")
                     else:
-                        if __key == new_value:
-                            pair_match.edit(f"{__key}")
-                        else:
-                            pair_match.edit(f"{__key}: {new_value}")
+                        pair_match.edit(f"{__key}: {new_value}")
                     break
         # CASE: {}
         else:
@@ -140,5 +138,5 @@ class TSDict(Dict, HasAttribute):
     @reader
     @noapidoc
     @override
-    def resolve_attribute(self, name: str) -> "Expression | None":
+    def resolve_attribute(self, name: str) -> Expression | None:
         return self.get(name, None)

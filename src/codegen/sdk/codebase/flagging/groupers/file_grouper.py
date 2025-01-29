@@ -1,10 +1,15 @@
-import logging
+from __future__ import annotations
 
-from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+import logging
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.flagging.groupers.base_grouper import BaseGrouper
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
+
+if TYPE_CHECKING:
+    from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +24,7 @@ class FileGrouper(BaseGrouper):
     @staticmethod
     def create_all_groups(flags: list[CodeFlag], repo_operator: RemoteRepoOperator | None = None) -> list[Group]:
         groups = []
-        filenames = sorted(list({f.filepath for f in flags}))
+        filenames = sorted({f.filepath for f in flags})
         for idx, filename in enumerate(filenames):
             filename_flags = [flag for flag in flags if flag.filepath == filename]
             groups.append(Group(id=idx, group_by=GroupBy.FILE, segment=filename, flags=filename_flags))

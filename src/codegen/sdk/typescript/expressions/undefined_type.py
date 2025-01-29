@@ -15,11 +15,11 @@ Parent = TypeVar("Parent")
 class TSUndefinedType(Type[Parent], Generic[Parent]):
     """Undefined type. Represents the undefined keyword
     Examples:
-        undefined
+        undefined.
     """
 
     @noapidoc
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         pass
 
     @reader

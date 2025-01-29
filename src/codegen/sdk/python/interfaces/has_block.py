@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from functools import cached_property
 
 from codegen.sdk.core.autocommit import reader, writer

@@ -68,8 +68,7 @@ class TSParameter(Parameter[TSType, Collection["TSParameter", "TSFunction"]]):
             # In this case, individual destructured parameters are not marked as optional
             # The entire object might be optional, but that's handled at the function level
             return False
-        else:
-            return self.ts_node.type == "optional_parameter"
+        return self.ts_node.type == "optional_parameter"
 
     @property
     @reader
@@ -101,8 +100,7 @@ class TSParameter(Parameter[TSType, Collection["TSParameter", "TSFunction"]]):
         if self.is_destructured:
             if self.ts_node.type == "object_assignment_pattern":
                 return self.ts_node.children[-1].text.decode("utf-8")
-            else:
-                return None
+            return None
 
         # =====[ Not destructured ]=====
         default_node = self.ts_node.child_by_field_name("value")
@@ -114,9 +112,8 @@ class TSParameter(Parameter[TSType, Collection["TSParameter", "TSFunction"]]):
     @commiter
     @override
     def _compute_dependencies(self, usage_type: UsageKind | None = None, dest: HasName | None = None) -> None:
-        if self.type:
-            if not (self.is_destructured and self.index > 0):
-                self.type._compute_dependencies(UsageKind.TYPE_ANNOTATION, dest or self.parent.self_dest)
+        if self.type and not (self.is_destructured and self.index > 0):
+            self.type._compute_dependencies(UsageKind.TYPE_ANNOTATION, dest or self.parent.self_dest)
         if self.value:
             self.value._compute_dependencies(UsageKind.DEFAULT_VALUE, dest or self.parent.self_dest)
 

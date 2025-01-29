@@ -331,7 +331,4 @@ class AsyncifyTypeAliasElements(Skill):
             processed.add(f)
             if not f.is_async:
                 f.asyncify()
-
-                for call_site in f.call_sites:
-                    if call_site.parent and isinstance(call_site.parent, Function):
-                        funcs_to_asyncify.append(call_site.parent)
+                funcs_to_asyncify.extend(call_site.parent for call_site in f.call_sites if call_site.parent and isinstance(call_site.parent, Function))

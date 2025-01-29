@@ -1,8 +1,14 @@
-from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.flagging.groupers.base_grouper import BaseGrouper
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
+
+if TYPE_CHECKING:
+    from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 
 DEFAULT_CHUNK_SIZE = 5
 

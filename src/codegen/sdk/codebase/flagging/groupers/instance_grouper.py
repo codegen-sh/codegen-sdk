@@ -1,8 +1,14 @@
-from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.flagging.groupers.base_grouper import BaseGrouper
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
+
+if TYPE_CHECKING:
+    from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 
 
 class InstanceGrouper(BaseGrouper):
@@ -22,6 +28,6 @@ class InstanceGrouper(BaseGrouper):
         try:
             flag = CodeFlag.from_json(segment)
             return Group(group_by=GroupBy.INSTANCE, segment=segment, flags=[flag])
-        except Exception as e:
+        except Exception:
             msg = f"Unable to deserialize segment ({segment}) into CodeFlag. Unable to create group."
             raise ValueError(msg)

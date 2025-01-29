@@ -28,7 +28,7 @@ class TSCodeBlock(CodeBlock[Parent, "TSAssignment"], Generic[Parent]):
         start_node = line_nodes[1][0] if len(line_nodes) > 1 else line_nodes[0][0]
         end_node = line_nodes[-2][1] if len(line_nodes) > 1 else line_nodes[-1][1]
         indent_size = start_node.start_point[1]
-        collection = MultiLineCollection(
+        return MultiLineCollection(
             children=statements,
             file_node_id=self.file_node_id,
             G=self.G,
@@ -39,12 +39,11 @@ class TSCodeBlock(CodeBlock[Parent, "TSAssignment"], Generic[Parent]):
             start_byte=start_node.start_byte - indent_size,
             end_byte=end_node.end_byte + 1,
         )
-        return collection
 
     @reader
     @noapidoc
     def _get_line_starts(self) -> list[Editable]:
-        """Returns an ordered list of first Editable for each non-empty line within the code block"""
+        """Returns an ordered list of first Editable for each non-empty line within the code block."""
         line_start_nodes = super()._get_line_starts()
         if len(line_start_nodes) >= 3 and line_start_nodes[0].source == "{" and line_start_nodes[-1].source == "}":
             # Remove the first and last line of the code block as they are opening and closing braces.
@@ -54,7 +53,7 @@ class TSCodeBlock(CodeBlock[Parent, "TSAssignment"], Generic[Parent]):
     @reader
     @noapidoc
     def _get_line_ends(self) -> list[Editable]:
-        """Returns an ordered list of last Editable for each non-empty line within the code block"""
+        """Returns an ordered list of last Editable for each non-empty line within the code block."""
         line_end_nodes = super()._get_line_ends()
         # Remove the first and last line of the code block as they are opening and closing braces.
         return line_end_nodes[1:-1]

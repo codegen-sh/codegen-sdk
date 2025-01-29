@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from enum import IntFlag, auto
 from typing import TypedDict
 
@@ -8,7 +10,7 @@ from codegen.shared.decorators.docs import apidoc
 
 @apidoc
 class MessageType(IntFlag):
-    """Destination of the message
+    """Destination of the message.
 
     Attributes:
         CODEGEN: Rendered in the diff preview

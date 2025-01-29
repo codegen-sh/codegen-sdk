@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 @py_apidoc
 class PyCommentGroup(CommentGroup):
-    """A group of related symbols that represent a comment or docstring in Python
+    """A group of related symbols that represent a comment or docstring in Python.
 
     For example:
     ```
@@ -53,12 +53,11 @@ class PyCommentGroup(CommentGroup):
         from codegen.sdk.python.class_definition import PyClass
 
         # Check if the function node is a method
-        if symbol.symbol_type == SymbolType.Function:
-            if isinstance(symbol.parent_class, PyClass):
-                # Filter out the class docstring if it exists
-                if symbol.parent_class.docstring:
-                    docstring_comments = set(symbol.parent_class.docstring.symbols)
-                    comments = [c for c in comments if c not in docstring_comments]
+        if symbol.symbol_type == SymbolType.Function and isinstance(symbol.parent_class, PyClass):
+            # Filter out the class docstring if it exists
+            if symbol.parent_class.docstring:
+                docstring_comments = set(symbol.parent_class.docstring.symbols)
+                comments = [c for c in comments if c not in docstring_comments]
 
         if not comments:
             return None
@@ -73,11 +72,10 @@ class PyCommentGroup(CommentGroup):
         siblings = statement.parent.statements
         comment_nodes = []
         # Check if there are any comments after the function node
-        if index + 1 < len(siblings):
-            if siblings[index + 1].statement_type == StatementType.COMMENT:
-                # Check if the comment is on the same line
-                if siblings[index].end_point[0] == siblings[index + 1].start_point[0]:
-                    comment_nodes.append(siblings[index + 1])
+        if index + 1 < len(siblings) and siblings[index + 1].statement_type == StatementType.COMMENT:
+            # Check if the comment is on the same line
+            if siblings[index].end_point[0] == siblings[index + 1].start_point[0]:
+                comment_nodes.append(siblings[index + 1])
 
         if not comment_nodes:
             return None
@@ -92,7 +90,7 @@ class PyCommentGroup(CommentGroup):
         if top_child.type == "expression_statement":
             string_node = top_child.children[0]
             if string_node.type == "string":
-                text = string_node.text.decode("utf-8")
+                string_node.text.decode("utf-8")
                 comment_node = PyComment.from_code_block(string_node, symbol)
                 return cls([comment_node], symbol.file_node_id, symbol.G, symbol)
         return None
@@ -114,7 +112,7 @@ class PyCommentGroup(CommentGroup):
         NAME_OF_RETURNS_SECTION = "Returns:"
 
         def parse_google_block(section_header: str, first_line: str, docstring_iter) -> str:
-            """Parse the parameters section of the docstring"""
+            """Parse the parameters section of the docstring."""
             unrelated_strings = []
             parameters = {}
 
@@ -137,7 +135,7 @@ class PyCommentGroup(CommentGroup):
             return unrelated_strings, parameters
 
         def merge_codebase_docstring(codebase_doc, parsed_doc):
-            """Merge the codebase docstring with the parsed docstring"""
+            """Merge the codebase docstring with the parsed docstring."""
             for param_name, (param_type, param_description) in codebase_doc.items():
                 if param_name in parsed_doc:
                     # Merge the types and descriptions

@@ -21,7 +21,7 @@ Parent = TypeVar("Parent")
 
 @ts_apidoc
 class TSConditionalType(Type[Parent], Generic[Parent]):
-    """Conditional Type
+    """Conditional Type.
 
     Examples:
     typeof s
@@ -32,14 +32,14 @@ class TSConditionalType(Type[Parent], Generic[Parent]):
     consequence: "TSType[Self]"
     alternative: "TSType[Self]"
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.left = self.child_by_field_name("left")
         self.right = self.child_by_field_name("right")
         self.consequence = self.child_by_field_name("consequence")
         self.alternative = self.child_by_field_name("alternative")
 
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         self.left._compute_dependencies(usage_type, dest)
         self.right._compute_dependencies(usage_type, dest)
         self.consequence._compute_dependencies(usage_type, dest)

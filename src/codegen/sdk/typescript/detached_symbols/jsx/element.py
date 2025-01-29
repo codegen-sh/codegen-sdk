@@ -77,7 +77,7 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
     @noapidoc
     @reader
     def _attribute_nodes(self) -> list[Editable]:
-        """Returns all attribute nodes of the element"""
+        """Returns all attribute nodes of the element."""
         open_tag = self.ts_node.child_by_field_name("open_tag") or self.ts_node
         attribute_nodes = open_tag.children_by_field_name("attribute")
         return [Value(x, self.file_node_id, self.G, self) for x in attribute_nodes]
@@ -175,7 +175,7 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
     @reader
     @noapidoc
     def _source(self):
-        """Text representation of the Editable instance"""
+        """Text representation of the Editable instance."""
         return self.ts_node.text.decode("utf-8").strip()
 
     @writer

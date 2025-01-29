@@ -25,19 +25,13 @@ class PyDecorator(Decorator["PyClass", "PyFunction", "PyParameter"]):
         for child in self.ts_node.children:
             # =====[ Identifier ]=====
             # Just `@dataclass` etc.
-            if child.type == "identifier":
-                return child
-
-            # =====[ Attribute ]=====
-            # e.g. `@a.b`
-            elif child.type == "attribute":
+            if child.type in ("identifier", "attribute"):
                 return child
 
             # =====[ Call ]=====
             # e.g. `@a.b()`
-            elif child.type == "call":
-                func = child.child_by_field_name("function")
-                return func
+            if child.type == "call":
+                return child.child_by_field_name("function")
 
         msg = f"Could not find decorator name within {self.source}"
         raise ValueError(msg)

@@ -11,7 +11,7 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @py_apidoc
 class PyConditionalExpression(TernaryExpression[Parent]):
-    """Conditional Expressions (A if condition else B)"""
+    """Conditional Expressions (A if condition else B)."""
 
     def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)

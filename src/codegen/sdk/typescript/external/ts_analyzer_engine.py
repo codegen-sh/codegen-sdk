@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import json
 import logging
 import os
@@ -8,14 +10,15 @@ from abc import abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from py_mini_racer import MiniRacer
-from py_mini_racer._objects import JSMappedObject
 from py_mini_racer._types import JSEvalException
 
 from codegen.sdk.core.external.language_engine import LanguageEngine
 from codegen.sdk.typescript.external.mega_racer import MegaRacer
 
 if TYPE_CHECKING:
+    from py_mini_racer import MiniRacer
+    from py_mini_racer._objects import JSMappedObject
+
     from codegen.sdk.core.external.dependency_manager import DependencyManager
     from codegen.sdk.core.interfaces.editable import Editable
 
@@ -24,14 +27,14 @@ logger = logging.getLogger(__name__)
 
 
 class TypescriptEngine(LanguageEngine):
-    dependency_manager: "DependencyManager | None"
+    dependency_manager: DependencyManager | None
 
-    def __init__(self, repo_path: str, base_path: str | None = None, dependency_manager: "DependencyManager | None" = None):
+    def __init__(self, repo_path: str, base_path: str | None = None, dependency_manager: DependencyManager | None = None) -> None:
         super().__init__(repo_path, base_path)
         self.dependency_manager = dependency_manager
 
     @abstractmethod
-    def _start(self):
+    def _start(self) -> None:
         # If a dependency manager is provided, make sure it is ready
         if self.dependency_manager:
             logger.info(f"TypescriptEngine: Waiting for {self.dependency_manager.__class__.__name__} to be ready...")
@@ -59,10 +62,10 @@ class V8TypescriptEngine(TypescriptEngine):
         self,
         repo_path: str,
         base_path: str | None = None,
-        dependency_manager: "DependencyManager | None" = None,
+        dependency_manager: DependencyManager | None = None,
         hard_memory_limit: int = 1024 * 1024 * 1024 * 16,
         soft_memory_limit: int = 1024 * 1024 * 1024 * 8,
-    ):
+    ) -> None:
         super().__init__(repo_path, base_path, dependency_manager)
         logger.info(f"Initializing V8TypescriptEngine with hard_memory_limit={hard_memory_limit} and soft_memory_limit={soft_memory_limit}")
         self.hard_memory_limit: int = hard_memory_limit
@@ -79,7 +82,7 @@ class V8TypescriptEngine(TypescriptEngine):
         self.engine_source: str = open(self.engine_path).read()
         self._patch_engine_source()
 
-    def _start(self):
+    def _start(self) -> None:
         try:
             logger.info("Starting V8TypescriptEngine")
             super()._start()
@@ -114,7 +117,7 @@ class V8TypescriptEngine(TypescriptEngine):
             self._error = e
             logger.error(f"Error starting V8TypescriptEngine: {e}", exc_info=True)
 
-    def _populate_fs_files(self, fs_files: dict):
+    def _populate_fs_files(self, fs_files: dict) -> None:
         for root, _, files in os.walk(self.full_path):
             for filename in files:
                 file_path = Path(root) / filename
@@ -126,16 +129,15 @@ class V8TypescriptEngine(TypescriptEngine):
 
                 try:
                     with open(file_path, encoding="utf-8") as f:
-                        if "node_modules" in s_fp:
-                            if not s_fp.endswith(".json") and not s_fp.endswith(".d.ts"):
-                                continue
+                        if "node_modules" in s_fp and not s_fp.endswith(".json") and not s_fp.endswith(".d.ts"):
+                            continue
                         content = f.read()
                         fs_files[str(file_path)] = content
                 except (UnicodeDecodeError, OSError):
                     # Skip files that can't be read as text
                     continue
 
-    def _patch_engine_source(self):
+    def _patch_engine_source(self) -> None:
         """MiniRacer does not support require and export, so we need to patch the engine source to remove them."""
         logger.info("Patching engine source to remove require and export")
         patch_map = {
@@ -149,11 +151,11 @@ class V8TypescriptEngine(TypescriptEngine):
         for old, new in patch_map.items():
             self.engine_source = self.engine_source.replace(old, new)
 
-    def get_return_type(self, node: "Editable") -> str | None:
+    def get_return_type(self, node: Editable) -> str | None:
         file_path = os.path.join(self.repo_path, node.filepath)
         try:
             return self.ctx.eval(f"type_script_analyzer.getFunctionAtPosition('{file_path}', {node.start_byte})")
-        except JSEvalException as e:
+        except JSEvalException:
             return None
 
 
@@ -168,7 +170,7 @@ class NodeTypescriptEngine(TypescriptEngine):
 
     type_data: dict | None
 
-    def __init__(self, repo_path: str, base_path: str | None = None, dependency_manager: "DependencyManager | None" = None):
+    def __init__(self, repo_path: str, base_path: str | None = None, dependency_manager: DependencyManager | None = None) -> None:
         super().__init__(repo_path, base_path, dependency_manager)
         logger.info("Initializing NodeTypescriptEngine")
         self.type_data: dict | None = None
@@ -187,7 +189,7 @@ class NodeTypescriptEngine(TypescriptEngine):
             msg = f"Typescript analyzer not found at {self.analyzer_path}"
             raise FileNotFoundError(msg)
 
-    def _start(self):
+    def _start(self) -> None:
         try:
             logger.info("Starting NodeTypescriptEngine")
             super()._start()
@@ -239,7 +241,7 @@ class NodeTypescriptEngine(TypescriptEngine):
             self._error = e
             logger.error(f"Error starting NodeTypescriptEngine: {e}", exc_info=True)
 
-    def get_return_type(self, node: "Editable") -> str | None:
+    def get_return_type(self, node: Editable) -> str | None:
         file_path: str = os.path.join(self.repo_path, node.filepath)
         if not self.type_data:
             return None
@@ -247,4 +249,4 @@ class NodeTypescriptEngine(TypescriptEngine):
         file_data: dict = codebase_data.get(file_path, {})
         functions_data: dict = file_data.get("functions", {})
         function_data: dict = functions_data.get(node.name, {})
-        return function_data.get("returnType", None)
+        return function_data.get("returnType")

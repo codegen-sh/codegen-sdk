@@ -1,18 +1,20 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.expressions.expression import Expression
 from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.expressions.value import Value
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.typescript.symbol_groups.dict import TSDict, TSPair
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.expressions.expression import Expression
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
 
 import logging
 
@@ -23,7 +25,7 @@ Parent = TypeVar("Parent")
 
 
 class TSObjectPair(TSPair, Generic[Parent]):
-    """Object type
+    """Object type.
 
     Examples:
         a: {a: int; b?(a: int): c}
@@ -72,10 +74,10 @@ class TSObjectType(TSDict, Type[Parent], Generic[Parent]):
     in TypeScript code.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent, delimiter=";", pair_type=TSObjectPair)
 
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         for child in self.values():
             if isinstance(child, Type):
                 child._compute_dependencies(usage_type, dest)

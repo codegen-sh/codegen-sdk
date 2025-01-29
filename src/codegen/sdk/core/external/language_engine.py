@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
@@ -17,11 +19,11 @@ class LanguageEngine(ExternalProcess):
     """
 
     @abstractmethod
-    def get_return_type(self, node: "Editable") -> str | None:
+    def get_return_type(self, node: Editable) -> str | None:
         pass
 
 
-def get_language_engine(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph", use_ts: bool = False, use_v8: bool = False) -> LanguageEngine | None:
+def get_language_engine(language: ProgrammingLanguage, codebase_graph: CodebaseGraph, use_ts: bool = False, use_v8: bool = False) -> LanguageEngine | None:
     from codegen.sdk.typescript.external.ts_analyzer_engine import NodeTypescriptEngine, V8TypescriptEngine
 
     use_ts = use_ts or codebase_graph.config.feature_flags.ts_language_engine
@@ -30,7 +32,7 @@ def get_language_engine(language: ProgrammingLanguage, codebase_graph: "Codebase
         if use_ts and use_v8:
             # Enables with both ts_language_engine and v8_ts_engine feature flags are on
             return V8TypescriptEngine(repo_path=codebase_graph.repo_path, base_path=codebase_graph.projects[0].base_path, dependency_manager=codebase_graph.dependency_manager)
-        elif use_ts:
+        if use_ts:
             # Enabled with only ts_language_engine feature flag is on
             return NodeTypescriptEngine(repo_path=codebase_graph.repo_path, base_path=codebase_graph.projects[0].base_path, dependency_manager=codebase_graph.dependency_manager)
 

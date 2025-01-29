@@ -2,6 +2,7 @@ import logging
 import os
 import shutil
 import subprocess
+from typing import NoReturn
 
 from codegen.sdk.core.external.external_process import ExternalProcess
 
@@ -9,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class TSDeclassify(ExternalProcess):
-    def __init__(self, repo_path: str, base_path: str, working_dir: str = "/tmp/ts_declassify"):
+    def __init__(self, repo_path: str, base_path: str, working_dir: str = "/tmp/ts_declassify") -> None:
         super().__init__(repo_path, base_path)
         self.working_dir = working_dir
 
@@ -18,7 +19,7 @@ class TSDeclassify(ExternalProcess):
             msg = "NodeJS or npm is not installed"
             raise RuntimeError(msg)
 
-    def _start(self):
+    def _start(self) -> None:
         try:
             logger.info("Installing ts-declassify...")
 
@@ -54,9 +55,9 @@ class TSDeclassify(ExternalProcess):
         except Exception as e:
             self._error = e
             logger.exception(f"Error installing ts-declassify: {e}")
-            raise e
+            raise
 
-    def reparse(self):
+    def reparse(self) -> NoReturn:
         msg = "TSDeclassify does not support reparse"
         raise NotImplementedError(msg)
 

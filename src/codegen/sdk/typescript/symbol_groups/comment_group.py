@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class TSCommentGroup(CommentGroup):
-    """A group of related symbols that represent a comment or docstring in TypeScript
+    """A group of related symbols that represent a comment or docstring in TypeScript.
 
     For example:
     ```
@@ -89,12 +89,11 @@ class TSCommentGroup(CommentGroup):
 
         comment_nodes = []
         # Check if there are any comments after the function node
-        if function_index + 1 < len(parent_node.children):
-            if parent_node.children[function_index + 1].type == "comment":
-                # Check if the comment is on the same line
-                if parent_node.children[function_index].end_point[0] == parent_node.children[function_index + 1].start_point[0]:
-                    comment = TSComment.from_code_block(parent_node.children[function_index + 1], symbol)
-                    comment_nodes.append(comment)
+        if function_index + 1 < len(parent_node.children) and parent_node.children[function_index + 1].type == "comment":
+            # Check if the comment is on the same line
+            if parent_node.children[function_index].end_point[0] == parent_node.children[function_index + 1].start_point[0]:
+                comment = TSComment.from_code_block(parent_node.children[function_index + 1], symbol)
+                comment_nodes.append(comment)
 
         if not comment_nodes:
             return None
@@ -104,7 +103,7 @@ class TSCommentGroup(CommentGroup):
     @classmethod
     @noapidoc
     def from_docstring(cls, symbol: TSSymbol) -> TSCommentGroup | None:
-        """Returns the docstring of the function"""
+        """Returns the docstring of the function."""
         comment_nodes = cls._get_sibbling_comments(symbol)
         if not comment_nodes:
             return None

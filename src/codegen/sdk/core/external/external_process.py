@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import os
 import threading
@@ -26,14 +28,14 @@ class ExternalProcess(ABC):
     is_ready: bool
     _error: BaseException | None
 
-    def __init__(self, repo_path: str, base_path: str | None = None):
+    def __init__(self, repo_path: str, base_path: str | None = None) -> None:
         self.repo_path: str = repo_path
         self.base_path: str | None = base_path
         self.full_path = os.path.join(repo_path, base_path) if base_path else repo_path
         self.is_ready: bool = False
         self._error: BaseException | None = None
 
-    def start(self, async_start: bool = False):
+    def start(self, async_start: bool = False) -> None:
         if async_start:
             # Create a new thread to start the engine
             thread = threading.Thread(target=self._start)
@@ -45,7 +47,7 @@ class ExternalProcess(ABC):
     def _start(self):
         pass
 
-    def reparse(self, async_start: bool = False):
+    def reparse(self, async_start: bool = False) -> None:
         # Reparse logic is handled by re-running start()
         self.is_ready = False
         self.start(async_start=async_start)
@@ -56,7 +58,7 @@ class ExternalProcess(ABC):
     def error(self) -> BaseException | None:
         return self._error
 
-    def wait_until_ready(self, ignore_error: bool = False):
+    def wait_until_ready(self, ignore_error: bool = False) -> None:
         logger.info(f"Waiting for {self.__class__.__name__} to be ready...")
         # Wait for 3 minutes first
         start_time = time.time()

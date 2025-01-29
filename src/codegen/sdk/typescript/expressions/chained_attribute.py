@@ -21,7 +21,7 @@ class TSChainedAttribute(ChainedAttribute[Expression, Name, Parent], Generic[Par
     and property components of the expression, as well as analyzing function calls made on the object.
     """
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent):
+    def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent, object=ts_node.child_by_field_name("object"), attribute=ts_node.child_by_field_name("property"))
 
     @property

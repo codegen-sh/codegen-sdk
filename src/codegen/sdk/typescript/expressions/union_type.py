@@ -11,10 +11,8 @@ Parent = TypeVar("Parent")
 
 @ts_apidoc
 class TSUnionType(UnionType["TSType", Parent], Generic[Parent]):
-    """Union type
+    """Union type.
 
     Examples:
         string | number
     """
-
-    pass

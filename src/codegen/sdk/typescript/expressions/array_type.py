@@ -1,9 +1,12 @@
-from typing import TypeVar
+from __future__ import annotations
 
-from tree_sitter import Node as TSNode
+from typing import TYPE_CHECKING, TypeVar
 
 from codegen.sdk.typescript.expressions.named_type import TSNamedType
 from codegen.shared.decorators.docs import ts_apidoc
+
+if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
 
 Parent = TypeVar("Parent")
 
@@ -12,7 +15,7 @@ Parent = TypeVar("Parent")
 class TSArrayType(TSNamedType[Parent]):
     """Array type
     Examples:
-        string[]
+        string[].
     """
 
     def _get_name_node(self) -> TSNode | None:

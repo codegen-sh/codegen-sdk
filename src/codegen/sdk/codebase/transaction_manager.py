@@ -1,6 +1,6 @@
+from __future__ import annotations
+
 import time
-from collections.abc import Callable
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
@@ -16,6 +16,9 @@ from codegen.sdk.codebase.transactions import (
 from codegen.shared.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+    from pathlib import Path
+
     from codegen.sdk.core.file import File
 
 import logging
@@ -43,11 +46,11 @@ class TransactionManager:
     stopwatch_max_seconds: int | None = None  # None = no limit
 
     def __init__(self) -> None:
-        self.queued_transactions = dict()
+        self.queued_transactions = {}
         self.pending_undos = set()
 
     def sort_transactions(self) -> None:
-        for file_path, file_transactions in self.queued_transactions.items():
+        for file_transactions in self.queued_transactions.values():
             file_transactions.sort(key=Transaction._to_sort_key)
 
     def clear_transactions(self) -> None:
@@ -65,7 +68,7 @@ class TransactionManager:
         return "\n".join([">" * 100 + f"\n[ID: {t.transaction_id}]: {t.diff_str()}" + "<" * 100 for t in transactions])
 
     def get_transactions_str(self) -> str:
-        """Returns a human-readable string representation of the transactions"""
+        """Returns a human-readable string representation of the transactions."""
         return "\n\n\n".join([f"{file_path}:\n{self._format_transactions(transactions)}" for file_path, transactions in self.queued_transactions.items()])
 
     ####################################################################################################################
@@ -73,7 +76,7 @@ class TransactionManager:
     ####################################################################################################################
 
     def get_num_transactions(self) -> int:
-        """Returns total number of transactions created to date"""
+        """Returns total number of transactions created to date."""
         return sum([len(transactions) for transactions in self.queued_transactions.values()])
 
     def set_max_transactions(self, max_transactions: int | None = None) -> None:
@@ -96,9 +99,8 @@ class TransactionManager:
     def is_time_exceeded(self) -> bool:
         if self.stopwatch_max_seconds is None:
             return False
-        else:
-            num_seconds = time.time() - self.stopwatch_start
-            return num_seconds > self.stopwatch_max_seconds
+        num_seconds = time.time() - self.stopwatch_start
+        return num_seconds > self.stopwatch_max_seconds
 
     ####################################################################################################################
     # Transaction Creation
@@ -108,11 +110,11 @@ class TransactionManager:
         t = FileAddTransaction(filepath)
         self.add_transaction(t)
 
-    def add_file_rename_transaction(self, file: "File", new_filepath: str) -> None:
+    def add_file_rename_transaction(self, file: File, new_filepath: str) -> None:
         t = FileRenameTransaction(file, new_filepath)
         self.add_transaction(t)
 
-    def add_file_remove_transaction(self, file: "File") -> None:
+    def add_file_remove_transaction(self, file: File) -> None:
         t = FileRemoveTransaction(file)
         self.add_transaction(t)
 
@@ -134,11 +136,11 @@ class TransactionManager:
         self.check_limits()
         return True
 
-    def check_limits(self):
+    def check_limits(self) -> None:
         self.check_max_transactions()
         self.check_max_preview_time()
 
-    def check_max_transactions(self):
+    def check_max_transactions(self) -> None:
         # =====[ Max transactions ]=====
         # max_transactions is set so that long-running codemods terminate early so we can quickly surface a subset
         # of the results to the user. This may result in errors that do not get covered.
@@ -147,7 +149,7 @@ class TransactionManager:
             msg = f"Max transactions reached: {self.max_transactions}"
             raise MaxTransactionsExceeded(msg, threshold=self.max_transactions)
 
-    def check_max_preview_time(self):
+    def check_max_preview_time(self) -> None:
         # =====[ Max preview time ]=====
         # This is to prevent the preview from taking too long. We want to keep it at like ~5s in the frontend during debugging
         if self.is_time_exceeded():
@@ -160,7 +162,7 @@ class TransactionManager:
     ####################################################################################################################
 
     def to_commit(self, files: set[Path] | None = None) -> set[Path]:
-        """Get node ids of files to commit"""
+        """Get node ids of files to commit."""
         if files is None:
             return set(self.queued_transactions.keys())
         return files.intersection(self.queued_transactions)
@@ -170,7 +172,7 @@ class TransactionManager:
         Returns the list of diffs that were committed.
         """
         if self._commiting:
-            logger.warn("Skipping commit, already committing")
+            logger.warning("Skipping commit, already committing")
             return []
         self._commiting = True
         try:
@@ -232,21 +234,20 @@ class TransactionManager:
                     if isinstance(completely_overlapping, RemoveTransaction):
                         return None
                     # If the overlapping transaction is an edit, raise an error
-                    elif isinstance(completely_overlapping, EditTransaction):
+                    if isinstance(completely_overlapping, EditTransaction):
                         if break_down(completely_overlapping):
                             return transaction
 
-                        raise TransactionError()
-                else:
-                    # If current transaction is deleted, remove all conflicting transactions
-                    if isinstance(transaction, RemoveTransaction):
-                        for t in conflicts:
-                            file_queue.remove(t)
-                    # If current transaction is edit, raise an error
-                    elif isinstance(transaction, EditTransaction):
-                        if break_down(transaction):
-                            return None
-                        raise TransactionError()
+                        raise TransactionError
+                # If current transaction is deleted, remove all conflicting transactions
+                elif isinstance(transaction, RemoveTransaction):
+                    for t in conflicts:
+                        file_queue.remove(t)
+                # If current transaction is edit, raise an error
+                elif isinstance(transaction, EditTransaction):
+                    if break_down(transaction):
+                        return None
+                    raise TransactionError
 
             # Add to priority queue and rebuild the queue
             return transaction
@@ -283,14 +284,13 @@ class TransactionManager:
                 if t.end_byte == end_byte:
                     if transaction_order is None or t.transaction_order == transaction_order:
                         matching_transactions.append(t)
-                elif combined and t.start_byte != t.end_byte:
-                    if other := self.get_transactions_at_range(t.file_path, t.end_byte, end_byte, transaction_order, combined=combined):
-                        return [t, *other]
+                elif combined and t.start_byte != t.end_byte and (other := self.get_transactions_at_range(t.file_path, t.end_byte, end_byte, transaction_order, combined=combined)):
+                    return [t, *other]
 
         return matching_transactions
 
     def _get_conflicts(self, transaction: Transaction) -> list[Transaction]:
-        """Returns all transactions that overlap with the given transaction"""
+        """Returns all transactions that overlap with the given transaction."""
         overlapping_transactions = []
         queued_transactions = list(self.queued_transactions[transaction.file_path])
         for t in queued_transactions:
@@ -299,7 +299,7 @@ class TransactionManager:
         return overlapping_transactions
 
     def _get_overlapping_conflicts(self, transaction: Transaction) -> Transaction | None:
-        """Returns the transaction that completely overlaps with the given transaction"""
+        """Returns the transaction that completely overlaps with the given transaction."""
         for t in self.queued_transactions[transaction.file_path]:
             if transaction.start_byte >= t.start_byte and transaction.end_byte <= t.end_byte:
                 return t

@@ -1,21 +1,24 @@
-from collections.abc import Generator
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, override
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.type import Type
-from codegen.sdk.core.interfaces.importable import Importable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
 from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnTypePlaceholder
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    from tree_sitter import Node as TSNode
+
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.resolution_stack import ResolutionStack
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.expressions.type import TSType
 
 
@@ -33,11 +36,11 @@ class TSFunctionType(Type[Parent], Generic[Parent]):
         a: (a: number) => number
     """
 
-    return_type: "TSType[Self] | TSReturnTypePlaceholder[Self]"
+    return_type: TSType[Self] | TSReturnTypePlaceholder[Self]
     _parameters: Collection[TSParameter, Self]
     name: None = None  # This lets parameters generate their node_id properly
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         params_node = self.ts_node.child_by_field_name("parameters")
@@ -74,7 +77,7 @@ class TSFunctionType(Type[Parent], Generic[Parent]):
             self.return_type.insert_before("Promise<", newline=False)
             self.return_type.insert_after(">", newline=False)
 
-    def _compute_dependencies(self, usage_type: UsageKind | None = None, dest: Importable | None = None):
+    def _compute_dependencies(self, usage_type: UsageKind | None = None, dest: Importable | None = None) -> None:
         if self.return_type:
             self.return_type._compute_dependencies(UsageKind.GENERIC, dest)
 

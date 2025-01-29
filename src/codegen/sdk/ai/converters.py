@@ -1,4 +1,6 @@
 # TODO: these should move to claude
+from __future__ import annotations
+
 import json
 import logging
 
@@ -39,7 +41,7 @@ def convert_messages(messages: list) -> list:
         elif isinstance(message, dict):
             new_message = convert_dict_message(message)
         else:
-            logger.warn(f"Message type not supported: {type(message)}")
+            logger.warning(f"Message type not supported: {type(message)}")
             continue
         new_messages.append(new_message)
     return new_messages
@@ -66,15 +68,14 @@ def convert_openai_message(message):
 def convert_dict_message(message):
     """Converts a dictionary message to an Anthropic message."""
     role = message.get("role")
-    if role == "user" or role == "assistant":
+    if role in ("user", "assistant"):
         if "tool_calls" in message:
             return create_anthropic_message_with_tool_calls(role, message["content"], message["tool_calls"])
         return {"role": role, "content": message["content"]}
-    elif role == "tool":
+    if role == "tool":
         return {"role": "user", "content": [{"type": "tool_result", "tool_use_id": message["tool_call_id"], "content": message["content"]}]}
-    else:
-        logger.warn(f"Unsupported role: {role}")
-        return None
+    logger.warning(f"Unsupported role: {role}")
+    return None
 
 
 def create_anthropic_message_with_tool_calls(role, content, tool_calls):
@@ -89,12 +90,12 @@ def create_anthropic_message_with_tool_calls(role, content, tool_calls):
                 "id": tool_call.id if hasattr(tool_call, "id") else tool_call["id"],
                 "name": tool_call.function.name if hasattr(tool_call, "function") else tool_call["function"]["name"],
                 "input": json.loads(tool_call.function.arguments if hasattr(tool_call, "function") else tool_call["function"]["arguments"]),
-            }
+            },
         )
     return {"role": role, "content": message_content}
 
 
-def merge_user_messages(existing_message, new_message):
+def merge_user_messages(existing_message, new_message) -> None:
     """Merges two user messages into a single message."""
     if isinstance(existing_message["content"], list):
         existing_message["content"].extend(new_message["content"] if isinstance(new_message["content"], list) else [{"type": "text", "text": new_message["content"]}])

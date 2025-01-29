@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from abc import abstractmethod
 from typing import TYPE_CHECKING
 
@@ -27,12 +29,11 @@ class DependencyManager(ExternalProcess):
         pass
 
 
-def get_dependency_manager(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph", enabled: bool = False) -> DependencyManager | None:
+def get_dependency_manager(language: ProgrammingLanguage, codebase_graph: CodebaseGraph, enabled: bool = False) -> DependencyManager | None:
     from codegen.sdk.typescript.external.dependency_manager import TypescriptDependencyManager
 
     ts_enabled = enabled or codebase_graph.config.feature_flags.ts_dependency_manager
-    if language == ProgrammingLanguage.TYPESCRIPT:
-        if ts_enabled:
-            return TypescriptDependencyManager(repo_path=codebase_graph.repo_path, base_path=codebase_graph.projects[0].base_path)
+    if language == ProgrammingLanguage.TYPESCRIPT and ts_enabled:
+        return TypescriptDependencyManager(repo_path=codebase_graph.repo_path, base_path=codebase_graph.projects[0].base_path)
 
     return None

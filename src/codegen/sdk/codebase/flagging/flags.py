@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import MessageType
-from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.shared.decorators.docs import noapidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.flagging.group import Group
 
 
 @dataclass
@@ -56,10 +61,9 @@ class Flags:
         """
         if self._find_mode:
             return False
-        elif self._active_group is None:
+        if self._active_group is None:
             return True
-        else:
-            return flag.hash in self._active_group_hashes
+        return flag.hash in self._active_group_hashes
 
     @noapidoc
     def set_find_mode(self, find_mode: bool) -> None:
@@ -71,4 +75,4 @@ class Flags:
         # TODO - flesh this out more with Group datatype and GroupBy
         self._active_group = group.flags
         self._find_mode = False
-        self._active_group_hashes = set(flag.hash for flag in group.flags)
+        self._active_group_hashes = {flag.hash for flag in group.flags}

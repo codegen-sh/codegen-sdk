@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import concurrent.futures
 import json
 import logging
@@ -39,7 +41,7 @@ class TypescriptDependencyManager(DependencyManager):
 
     """Handles dependency management for Typescript projects. Uses npm, yarn, or pnpm if applicable."""
 
-    def __init__(self, repo_path: str, base_path: str | None = None, should_install_dependencies: bool = True, force_installer: str | None = None):
+    def __init__(self, repo_path: str, base_path: str | None = None, should_install_dependencies: bool = True, force_installer: str | None = None) -> None:
         super().__init__(repo_path, base_path)
         logger.info(f"Initializing TypescriptDependencyManager with should_install_dependencies={should_install_dependencies}")
         # Ensure that node, npm, yarn, and pnpm are installed
@@ -75,14 +77,13 @@ class TypescriptDependencyManager(DependencyManager):
     def _detect_installer_type(self) -> InstallerType:
         if os.path.exists(os.path.join(self.full_path, "yarn.lock")):
             return InstallerType.YARN
-        elif os.path.exists(os.path.join(self.full_path, "package-lock.json")):
+        if os.path.exists(os.path.join(self.full_path, "package-lock.json")):
             return InstallerType.NPM
-        elif os.path.exists(os.path.join(self.full_path, "pnpm-lock.yaml")):
+        if os.path.exists(os.path.join(self.full_path, "pnpm-lock.yaml")):
             return InstallerType.PNPM
-        else:
-            logger.warning("Could not detect installer type. Defaulting to NPM!")
-            return InstallerType.NPM
-            # return InstallerType.UNKNOWN
+        logger.warning("Could not detect installer type. Defaulting to NPM!")
+        return InstallerType.NPM
+        # return InstallerType.UNKNOWN
 
     @staticmethod
     def _check_package_exists(package_name: str) -> bool:
@@ -120,12 +121,12 @@ class TypescriptDependencyManager(DependencyManager):
 
         return valid_deps, invalid_deps
 
-    def parse_dependencies(self):
+    def parse_dependencies(self) -> None:
         # Clear the package_json_data
         self.package_json_data.clear()
 
         # Walk through directory tree
-        for current_dir, subdirs, files in os.walk(self.full_path):
+        for current_dir, _subdirs, files in os.walk(self.full_path):
             # Skip node_modules directories
             if "node_modules" in current_dir:
                 continue
@@ -151,14 +152,14 @@ class TypescriptDependencyManager(DependencyManager):
                     logger.exception(f"Could not find package.json at {package_json_path}")
                 except ValueError:
                     logger.exception(f"Invalid json in package.json at {package_json_path}")
-                except Exception as e:
-                    raise e
+                except Exception:
+                    raise
 
         # Set the base package.json data
         base_package_json_path = os.path.join(self.full_path, "package.json")
         self.base_package_json_data = self.package_json_data.get(base_package_json_path, None)
 
-    def _install_dependencies_npm(self):
+    def _install_dependencies_npm(self) -> None:
         logger.info("Installing dependencies with NPM")
         # Shadow package-lock.json, if it exists
         files_to_shadow = []
@@ -188,7 +189,7 @@ class TypescriptDependencyManager(DependencyManager):
                 logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
-    def _install_dependencies_yarn(self):
+    def _install_dependencies_yarn(self) -> None:
         logger.info("Installing dependencies with Yarn")
         # Shadow yarn.lock, yarn.config.cjs, and .yarnrc.yml, if they exist
         files_to_shadow = []
@@ -268,7 +269,7 @@ class TypescriptDependencyManager(DependencyManager):
                     # Delete the .yarnrc.yml file
                     os.remove(os.path.join(self.full_path, ".yarnrc.yml"))
 
-    def _install_dependencies_pnpm(self):
+    def _install_dependencies_pnpm(self) -> None:
         logger.info("Installing dependencies with PNPM")
         # Shadow pnpm-lock.yaml, if it exists
         files_to_shadow = []
@@ -297,7 +298,7 @@ class TypescriptDependencyManager(DependencyManager):
                 logger.exception(f"PNPM FAIL stderr: {e.stderr}")
                 raise
 
-    def _clean_package_json(self, package_json_path: str):
+    def _clean_package_json(self, package_json_path: str) -> None:
         # Get the package data
         data = self.package_json_data[package_json_path]
 
@@ -334,23 +335,23 @@ class TypescriptDependencyManager(DependencyManager):
 
                 # Install dependencies, now that we have a valid package.json
                 return self.install_dependencies(validate_dependencies=False)
+        elif self.installer_type == InstallerType.NPM:
+            return self._install_dependencies_npm()
+        elif self.installer_type == InstallerType.YARN:
+            return self._install_dependencies_yarn()
+        elif self.installer_type == InstallerType.PNPM:
+            return self._install_dependencies_pnpm()
         else:
-            if self.installer_type == InstallerType.NPM:
-                return self._install_dependencies_npm()
-            elif self.installer_type == InstallerType.YARN:
-                return self._install_dependencies_yarn()
-            elif self.installer_type == InstallerType.PNPM:
-                return self._install_dependencies_pnpm()
-            else:
-                logger.warning(f"Installer type {self.installer_type} not implemented")
+            logger.warning(f"Installer type {self.installer_type} not implemented")
+            return None
 
-    def remove_dependencies(self):
+    def remove_dependencies(self) -> None:
         # Delete node_modules folder if it exists
         node_modules_path = os.path.join(self.full_path, "node_modules")
         if os.path.exists(node_modules_path):
             shutil.rmtree(node_modules_path)
 
-    def _start(self):
+    def _start(self) -> None:
         try:
             logger.info(f"Starting TypescriptDependencyManager with should_install_dependencies={self.should_install_dependencies}")
             super()._start()

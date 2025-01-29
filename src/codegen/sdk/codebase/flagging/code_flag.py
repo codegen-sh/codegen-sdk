@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -27,9 +29,7 @@ class CodeFlag[Symbol: Editable | None]:
             return False
         if self.message != other.message:
             return False
-        if self.message_type != other.message_type:
-            return False
-        return True
+        return not self.message_type != other.message_type
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<CodeFlag symbol={self.symbol.span} message={self.message} message_type={self.message_type}>"

@@ -1,20 +1,22 @@
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, override
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Expression
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.has_value import HasValue
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.function import Function
     from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement
+    from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
 
 
 @ts_apidoc
@@ -24,7 +26,7 @@ class JSXProp(Expression["Function | JSXElement | JSXProp"], HasName, HasValue):
     _name_node: Name | None
     _expression_node: JSXExpression | None
 
-    def __init__(self, ts_node: TSNode, parent: "Function | JSXElement | JSXProp") -> None:
+    def __init__(self, ts_node: TSNode, parent: Function | JSXElement | JSXProp) -> None:
         super().__init__(ts_node, parent.file_node_id, parent.G, parent)
         self._name_node = self._parse_expression(self.ts_node.children[0], default=Name)
         if len(self.ts_node.children) > 2:

@@ -1,11 +1,16 @@
-import logging
+from __future__ import annotations
 
-from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+import logging
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.flagging.groupers.base_grouper import BaseGrouper
 from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
 from codegen.shared.string.csv_utils import comma_separated_to_list, list_to_comma_separated
+
+if TYPE_CHECKING:
+    from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 
 logger = logging.getLogger(__name__)
 

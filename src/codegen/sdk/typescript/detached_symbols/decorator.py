@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class TSDecorator(Decorator["TSClass", "TSFunction", "TSParameter"]):
-    """Abstract representation of a Decorator"""
+    """Abstract representation of a Decorator."""
 
     @reader
     def _get_name_node(self) -> TSNode:
@@ -25,19 +25,13 @@ class TSDecorator(Decorator["TSClass", "TSFunction", "TSParameter"]):
         for child in self.ts_node.children:
             # =====[ Identifier ]=====
             # Just `@dataclass` etc.
-            if child.type == "identifier":
-                return child
-
-            # =====[ Attribute ]=====
-            # e.g. `@a.b`
-            elif child.type == "member_expression":
+            if child.type in ("identifier", "member_expression"):
                 return child
 
             # =====[ Call ]=====
             # e.g. `@a.b()`
-            elif child.type == "call_expression":
-                func = child.child_by_field_name("function")
-                return func
+            if child.type == "call_expression":
+                return child.child_by_field_name("function")
 
         msg = f"Could not find decorator name within {self.source}"
         raise ValueError(msg)

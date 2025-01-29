@@ -559,7 +559,7 @@ export const mapper = {
         assert len(list(d.items())) == 3
         assert list(d.keys()) == ["method1", "method2", "method3"]
         assert all(isinstance(v, TSFunction) for v in list(d.values()))
-        for key, func_def in d.items():
+        for func_def in d.values():
             func_def.insert_before("async ", newline=False, extended=False)
             func_def.set_return_type(f"Promise<{func_def.return_type.source}>")
 

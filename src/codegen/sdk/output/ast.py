@@ -1,9 +1,12 @@
-from typing import Self
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Self
 
 from openai import BaseModel
 from pydantic import ConfigDict
 
-from codegen.sdk.codebase.span import Span
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.span import Span
 
 
 class AST(BaseModel):

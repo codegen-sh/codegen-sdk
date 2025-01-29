@@ -1,26 +1,28 @@
+from __future__ import annotations
+
 from functools import cached_property
 from typing import TYPE_CHECKING, Self, override
 
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.expressions import Expression
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.interfaces.unwrappable import Unwrappable
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.core.dataclasses.usage import UsageKind
+    from codegen.sdk.core.expressions import Expression
     from codegen.sdk.core.function import Function
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement
     from codegen.sdk.typescript.detached_symbols.jsx.prop import JSXProp
 
 
 @ts_apidoc
 class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
-    """Abstract representation of TSX/JSX expression"""
+    """Abstract representation of TSX/JSX expression."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.statement
 
@@ -48,7 +50,6 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
     def reduce_condition(self, bool_condition: bool, node: Editable) -> None:
         """Simplifies a JSX expression by reducing it based on a boolean condition.
 
-
         Args:
             bool_condition (bool): The boolean value to reduce the condition to.
 
@@ -62,7 +63,6 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
     @override
     def unwrap(self, node: Expression | None = None) -> None:
         """Removes the brackets from a JSX expression.
-
 
         Returns:
             None

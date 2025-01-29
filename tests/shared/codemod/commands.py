@@ -27,7 +27,7 @@ def generate_cases(extra_repos: bool = False):
     """Generate cases for codemod tests. Very slow"""
     repos = find_repos(extra_repos=extra_repos)
     for codemod in find_codemods():
-        for repo_name, repo in repos.items():
+        for repo_name in repos.keys():
             (codemod.test_dir / f"test_{repo_name}").mkdir(parents=True, exist_ok=True)
     _generate_diffs(extra_repos=extra_repos)
     _clean_diffs(aggressive=True)

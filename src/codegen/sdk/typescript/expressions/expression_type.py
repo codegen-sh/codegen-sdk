@@ -16,7 +16,7 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @ts_apidoc
 class TSExpressionType(TSNamedType, Generic[Parent]):
-    """Type defined by evaluation of an expression
+    """Type defined by evaluation of an expression.
 
     Attributes:
         expression: The expression to evaluate that yields the type
@@ -24,6 +24,6 @@ class TSExpressionType(TSNamedType, Generic[Parent]):
 
     expression: Expression["TSExpressionType[Parent]"]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.expression = self._parse_expression(ts_node)

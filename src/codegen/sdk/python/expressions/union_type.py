@@ -11,10 +11,8 @@ Parent = TypeVar("Parent")
 
 @py_apidoc
 class PyUnionType(UnionType["PyType", Parent], Generic[Parent]):
-    """Union type
+    """Union type.
 
     Examples:
         str | int
     """
-
-    pass

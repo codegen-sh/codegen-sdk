@@ -27,7 +27,7 @@ class PyCodeBlock(CodeBlock[Parent, "PyAssignment"], Generic[Parent]):
     @reader
     def _parse_statements(self) -> MultiLineCollection[Statement, Self]:
         statements: list[Statement] = self.G.parser.parse_py_statements(self.ts_node, self.file_node_id, self.G, self)
-        collection = MultiLineCollection(
+        return MultiLineCollection(
             children=statements,
             file_node_id=self.file_node_id,
             G=self.G,
@@ -37,7 +37,6 @@ class PyCodeBlock(CodeBlock[Parent, "PyAssignment"], Generic[Parent]):
             leading_delimiter="",
             start_byte=self.start_byte - self.start_point[1],
         )
-        return collection
 
     @property
     @reader
@@ -70,8 +69,7 @@ class PyCodeBlock(CodeBlock[Parent, "PyAssignment"], Generic[Parent]):
             if isinstance(self.parent, BlockStatement):
                 self.parent.remove(*args, **kwargs)
                 return True
-            else:
-                self.remove_byte_range(self.start_byte, self.end_byte)
-                self.parent.insert_after("pass", newline=False)
-                return True
+            self.remove_byte_range(self.start_byte, self.end_byte)
+            self.parent.insert_after("pass", newline=False)
+            return True
         return False

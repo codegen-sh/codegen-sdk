@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import json
 import logging
 from abc import ABC, abstractmethod
+from typing import NoReturn
 
 import anthropic
 import anthropic.types as anthropic_types
@@ -33,10 +36,10 @@ ENCODERS = {
 
 
 def count_tokens(s: str, model_name: str = "gpt-4-32k") -> int:
-    """Uses tiktoken"""
+    """Uses tiktoken."""
     if s is None:
         return 0
-    enc = ENCODERS.get(model_name, None)
+    enc = ENCODERS.get(model_name)
     if not enc:
         ENCODERS[model_name] = tiktoken.encoding_for_model(model_name)
         enc = ENCODERS[model_name]
@@ -64,7 +67,7 @@ class AbstractAIHelper(ABC):
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def embeddings_with_backoff(self, **kwargs):
+    def embeddings_with_backoff(self, **kwargs) -> NoReturn:
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
@@ -79,27 +82,29 @@ class AbstractAIHelper(ABC):
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def llm_query_with_retry(self, **kwargs):
+    def llm_query_with_retry(self, **kwargs) -> NoReturn:
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def llm_query_no_retry(self, messages: list = [], model: str = "gpt-4-32k", max_tokens: int | None = None):
+    def llm_query_no_retry(self, messages: list | None = None, model: str = "gpt-4-32k", max_tokens: int | None = None) -> NoReturn:
+        if messages is None:
+            messages = []
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def llm_query_functions_with_retry(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None):
+    def llm_query_functions_with_retry(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None) -> NoReturn:
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def llm_query_functions(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None):
+    def llm_query_functions(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None) -> NoReturn:
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
     @abstractmethod
-    def llm_response_to_json(response) -> str:
+    def llm_response_to_json(self) -> str:
         msg = "This is an abstract class"
         raise NotImplementedError(msg)
 
@@ -151,7 +156,9 @@ class OpenAIHelper(AbstractAIHelper):
     def llm_query_with_retry(self, **kwargs):
         return self.llm_query_no_retry(**kwargs)
 
-    def llm_query_no_retry(self, messages: list = [], model: str = "gpt-4-32k", max_tokens: int | None = None, **kwargs):
+    def llm_query_no_retry(self, messages: list | None = None, model: str = "gpt-4-32k", max_tokens: int | None = None, **kwargs):
+        if messages is None:
+            messages = []
         return self.client.chat.completions.create(
             messages=messages,
             model=model,
@@ -227,7 +234,10 @@ class AnthropicHelper(AbstractAIHelper):
         return new_functions
 
     def _convert_claude_response_to_openai(
-        self, response: anthropic_types.Message | anthropic_tool_types.ToolsBetaMessage, parse_function_calls: bool = False, parse_result_block: bool = False
+        self,
+        response: anthropic_types.Message | anthropic_tool_types.ToolsBetaMessage,
+        parse_function_calls: bool = False,
+        parse_result_block: bool = False,
     ) -> openai_types.chat_completion.ChatCompletion:
         choices = []
         if len(response.content) != 0:
@@ -244,7 +254,7 @@ class AnthropicHelper(AbstractAIHelper):
                             index=0,
                             finish_reason="stop" if response.stop_reason in ("end_turn", "stop_sequence") else "length",
                             message=openai_types.chat_completion_message.ChatCompletionMessage(content=resp.text, role="assistant"),
-                        )
+                        ),
                     )
                 elif isinstance(resp, anthropic_tool_types.ToolUseBlock):
                     # If the previous choice is a chat message, then we can add the tool call to it
@@ -269,10 +279,10 @@ class AnthropicHelper(AbstractAIHelper):
                                             arguments=json.dumps(resp.input),
                                         ),
                                         type="function",
-                                    )
+                                    ),
                                 ],
                             ),
-                        )
+                        ),
                     )
         return openai_types.chat_completion.ChatCompletion(
             id=response.id,
@@ -284,7 +294,7 @@ class AnthropicHelper(AbstractAIHelper):
         )
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
-    def embeddings_with_backoff(self, **kwargs):
+    def embeddings_with_backoff(self, **kwargs) -> NoReturn:
         msg = "Embeddings are not supported for AnthropicHelper"
         raise NotImplementedError(msg)
         # response = self.client.embeddings.create(**kwargs)
@@ -304,7 +314,7 @@ class AnthropicHelper(AbstractAIHelper):
         # return embeddings[0]
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
-    def completions_with_backoff(self, **kwargs):
+    def completions_with_backoff(self, **kwargs) -> NoReturn:
         msg = "Claude's completion api is deprecated. Please use messages_with_backoff instead."
         raise Exception(msg)
 
@@ -316,8 +326,10 @@ class AnthropicHelper(AbstractAIHelper):
     def llm_query_with_retry(self, **kwargs):
         return self.llm_query_no_retry(**kwargs)
 
-    def llm_query_no_retry(self, messages: list = [], model: str = "claude-2.0", max_tokens: int | None = None, system_prompt: str | anthropic.NotGiven | None = None, **kwargs):
-        system_prompt = anthropic.NotGiven() if not system_prompt else system_prompt
+    def llm_query_no_retry(self, messages: list | None = None, model: str = "claude-2.0", max_tokens: int | None = None, system_prompt: str | anthropic.NotGiven | None = None, **kwargs):
+        if messages is None:
+            messages = []
+        system_prompt = system_prompt if system_prompt else anthropic.NotGiven()
         if self.openai_anthropic_translation and model in CLAUDE_OPENAI_MODEL_MAP:
             model = CLAUDE_OPENAI_MODEL_MAP[model]
         if self.openai_anthropic_translation:
@@ -329,15 +341,14 @@ class AnthropicHelper(AbstractAIHelper):
         response = self.client.beta.tools.messages.create(max_tokens=max_tokens, system=claude_system_prompt, messages=messages, model=model, **kwargs)
         if self.openai_anthropic_translation:
             return self._convert_claude_response_to_openai(response)
-        else:
-            return response
+        return response
 
     @retry(wait=wait_random_exponential(min=70, max=600), stop=stop_after_attempt(10))
     def llm_query_functions_with_retry(self, **kwargs):
         return self.llm_query_functions(**kwargs)
 
     def llm_query_functions(self, model: str, messages: list, functions: list, max_tokens: int | None = None, system_prompt: str | anthropic.NotGiven | None = None, **kwargs):
-        system_prompt = anthropic.NotGiven() if not system_prompt else system_prompt
+        system_prompt = system_prompt if system_prompt else anthropic.NotGiven()
         if self.openai_anthropic_translation and model in CLAUDE_OPENAI_MODEL_MAP:
             model = CLAUDE_OPENAI_MODEL_MAP[model]
         if functions is not None:
@@ -359,27 +370,23 @@ class AnthropicHelper(AbstractAIHelper):
             )
             if self.openai_anthropic_translation:
                 return self._convert_claude_response_to_openai(response, parse_function_calls=True, parse_result_block=True)
-            else:
-                return response
-        else:
-            response = self.llm_query_no_retry(
-                model=model,
-                messages=messages,
-                max_tokens=max_tokens or anthropic.NotGiven(),
-                system_prompt=system_prompt,
-                **kwargs,
-            )
-        return response
+            return response
+        return self.llm_query_no_retry(
+            model=model,
+            messages=messages,
+            max_tokens=max_tokens or anthropic.NotGiven(),
+            system_prompt=system_prompt,
+            **kwargs,
+        )
 
     @staticmethod
     def llm_response_to_json(response: openai_types.chat_completion.ChatCompletion | anthropic_types.Message) -> str:
         if isinstance(response, openai_types.chat_completion.ChatCompletion):
             return OpenAIHelper.llm_response_to_json(response)
-        else:
-            js = json.loads(response.model_dump_json())
-            if len(js["content"]) == 0:
-                return ""
-            return js["content"][0]["text"]
+        js = json.loads(response.model_dump_json())
+        if len(js["content"]) == 0:
+            return ""
+        return js["content"][0]["text"]
 
 
 class MultiProviderAIHelper(AbstractAIHelper):
@@ -411,62 +418,58 @@ class MultiProviderAIHelper(AbstractAIHelper):
         # Prioritize OpenAI First
         if self.use_openai:
             return self.openai_helper.embeddings_with_backoff(**kwargs)
-        elif self.use_claude:
+        if self.use_claude:
             return self.anthropic_helper.embeddings_with_backoff(**kwargs)
-        else:
-            msg = "MultiProviderAIHelper: No AI helper is enabled"
-            raise Exception(msg)
+        msg = "MultiProviderAIHelper: No AI helper is enabled"
+        raise Exception(msg)
 
     def get_embeddings(self, content_strs: list[str]) -> list[list[float]]:
         # Prioritize OpenAI First
         if self.use_openai:
             return self.openai_helper.get_embeddings(content_strs)
-        elif self.use_claude:
+        if self.use_claude:
             return self.anthropic_helper.get_embeddings(content_strs)
-        else:
-            msg = "MultiProviderAIHelper: No AI helper is enabled"
-            raise Exception(msg)
+        msg = "MultiProviderAIHelper: No AI helper is enabled"
+        raise Exception(msg)
 
     def get_embedding(self, content_str: str) -> list[float]:
         # Prioritize OpenAI First
         if self.use_openai:
             return self.openai_helper.get_embedding(content_str)
-        elif self.use_claude:
+        if self.use_claude:
             return self.anthropic_helper.get_embedding(content_str)
-        else:
-            msg = "MultiProviderAIHelper: No AI helper is enabled"
-            raise Exception(msg)
+        msg = "MultiProviderAIHelper: No AI helper is enabled"
+        raise Exception(msg)
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def completions_with_backoff(self, **kwargs):
         # This is OpenAI specific
         if self.use_openai:
             return self.openai_helper.completions_with_backoff(**kwargs)
-        else:
-            msg = "MultiProviderAIHelper: OpenAI Helper is not enabled"
-            raise Exception(msg)
+        msg = "MultiProviderAIHelper: OpenAI Helper is not enabled"
+        raise Exception(msg)
 
     @backoff.on_exception(backoff.expo, anthropic.RateLimitError)
     def messages_with_backoff(self, **kwargs):
         # This is Anthropic specific
         if self.use_claude:
             return self.anthropic_helper.messages_with_backoff(**kwargs)
-        else:
-            msg = "MultiProviderAIHelper: Anthropic Helper is not enabled"
-            raise Exception(msg)
+        msg = "MultiProviderAIHelper: Anthropic Helper is not enabled"
+        raise Exception(msg)
 
     @retry(wait=wait_random_exponential(min=70, max=600), stop=stop_after_attempt(10))
     def llm_query_with_retry(self, **kwargs):
         return self.llm_query_no_retry(**kwargs)
 
-    def llm_query_no_retry(self, messages: list = [], model: str = "gpt-4-32k", max_tokens: int | None = None, **kwargs):
+    def llm_query_no_retry(self, messages: list | None = None, model: str = "gpt-4-32k", max_tokens: int | None = None, **kwargs):
+        if messages is None:
+            messages = []
         if self.use_openai and model.startswith("gpt"):
             return self.openai_helper.llm_query_no_retry(messages=messages, model=model, max_tokens=max_tokens, **kwargs)
-        elif self.use_claude and model.startswith("claude"):
+        if self.use_claude and model.startswith("claude"):
             return self.anthropic_helper.llm_query_no_retry(messages=messages, model=model, max_tokens=max_tokens, **kwargs)
-        else:
-            msg = f"MultiProviderAIHelper: Unknown Model {model}"
-            raise Exception(msg)
+        msg = f"MultiProviderAIHelper: Unknown Model {model}"
+        raise Exception(msg)
 
     @retry(wait=wait_random_exponential(min=70, max=600), stop=stop_after_attempt(10))
     def llm_query_functions_with_retry(self, **kwargs):
@@ -475,11 +478,10 @@ class MultiProviderAIHelper(AbstractAIHelper):
     def llm_query_functions(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None, **kwargs):
         if self.use_openai and model.startswith("gpt"):
             return self.openai_helper.llm_query_functions(model, messages, functions, max_tokens, **kwargs)
-        elif self.use_claude and model.startswith("claude"):
+        if self.use_claude and model.startswith("claude"):
             return self.anthropic_helper.llm_query_functions(model, messages, functions, max_tokens, **kwargs)
-        else:
-            msg = f"MultiProviderAIHelper: Unknown Model {model}"
-            raise Exception(msg)
+        msg = f"MultiProviderAIHelper: Unknown Model {model}"
+        raise Exception(msg)
 
     @staticmethod
     def llm_response_to_json(response) -> str:

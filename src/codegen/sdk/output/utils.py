@@ -1,16 +1,22 @@
+from __future__ import annotations
+
 import json
 import sys
 from decimal import Decimal
-from os import PathLike
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from rich.console import Console, RenderResult
 from rich.syntax import Syntax
 from rich.text import Text
-from tree_sitter import Node as TSNode
-from tree_sitter import Point
 
 from codegen.sdk.output.constants import MAX_EDITABLE_LINES
+
+if TYPE_CHECKING:
+    from os import PathLike
+
+    from tree_sitter import Node as TSNode
+    from tree_sitter import Point
 
 
 def style_editable(ts_node: TSNode, filepath: PathLike, file_node: TSNode) -> RenderResult:
@@ -39,7 +45,7 @@ def _stylize_range(end_col, end_line, file_node, filepath, start_col, start_line
     return syntax
 
 
-def stylize_error(path: PathLike, start: tuple[int, int] | Point, end: tuple[int, int] | Point, file_node: TSNode, content: str, message: str):
+def stylize_error(path: PathLike, start: tuple[int, int] | Point, end: tuple[int, int] | Point, file_node: TSNode, content: str, message: str) -> None:
     Path(path).write_text(content)
     source = _stylize_range(end[1], end[0] + 1, file_node, path, start[1], start[0] + 1)
     console = Console(file=sys.stderr)
@@ -61,7 +67,7 @@ class DeterministicJSONEncoder(json.JSONEncoder):
         if isinstance(obj, Decimal):
             return f"{obj:.10f}"
         if isinstance(obj, set):
-            return sorted(list(obj))
+            return sorted(obj)
         if hasattr(obj, "__dict__"):
             return {key: self.default(value) for key, value in obj.__dict__.items()}
         return super().default(obj)
@@ -71,14 +77,12 @@ def deterministic_json_dumps(data, **kwargs):
     def sort_dict(item):
         if isinstance(item, dict):
             return {key: sort_dict(value) for key, value in sorted(item.items())}
-        elif isinstance(item, list):
+        if isinstance(item, list):
             if len(item) > 0 and isinstance(item[0], dict):
                 # Sort list of dictionaries based on all keys
                 return sorted([sort_dict(i) for i in item], key=lambda x: json.dumps(x, sort_keys=True))
-            else:
-                return [sort_dict(i) for i in item]
-        else:
-            return item
+            return [sort_dict(i) for i in item]
+        return item
 
     sorted_data = sort_dict(data)
     return json.dumps(sorted_data, cls=DeterministicJSONEncoder, **kwargs)
