@@ -73,6 +73,7 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/migrating-apis",
+				"tutorials/codebase-visualization",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
 				"tutorials/deleting-dead-code",
