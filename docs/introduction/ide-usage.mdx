@@ -15,11 +15,13 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
 
 <AccordionGroup>
   <Accordion title="VSCode, Cursor and Windsurf" icon="window-maximize">
-    1. Open the Command Palette (Cmd/Ctrl + Shift + P)
-    2. Type "Python: Select Interpreter"
+    1. Install the VSCode Python Extensions for LSP and debugging support. We recommend Python, Pylance and Python Debugger for the best experience.
+      <img src="/images/python-extensions.png" />
+    2. Open the Command Palette (Cmd/Ctrl + Shift + P)
+    3. Type "Python: Select Interpreter"
     <img src="/images/set-interpreter.png" />
-    3. Choose "Enter interpreter path"
-    4. Navigate to and select:
+    4. Choose "Enter interpreter path"
+    5. Navigate to and select:
        ```bash
        .codegen/.venv/bin/python
        ```
@@ -33,9 +35,6 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
           ]
         }
         ```
-
-    5. Install the VSCode Python Extensions for LSP and debugging support. We recommend Python, Pylance and Python Debugger for the best experience.
-      <img src="/images/python-extensions.png" />
   </Accordion>
 
   <Accordion title="PyCharm" icon="python">
