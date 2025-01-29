@@ -1,7 +1,7 @@
 [project]
 name = "codegen"
 dynamic = ["version", "urls"]
-description = "A python library for manipulating codebases"
+description = "Scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter"
 readme = "README.md"
 # renovate: datasource=python-version depName=python
 requires-python = ">=3.12, <3.14"
