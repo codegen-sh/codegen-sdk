@@ -47,7 +47,7 @@ def deploy_functions(session: CodegenSession, functions: list[DecoratedFunction]
 @click.argument("name", required=False)
 @click.option("-d", "--directory", type=click.Path(exists=True, path_type=Path), help="Directory to search for functions")
 @click.option("-m", "--message", help="Optional message to include with the deploy")
-def deploy_command(session: CodegenSession, name: str | None = None, directory: Path | None = None, message: str | None = None):
+def deploy_command(session: CodegenSession, name: str | None = None, directory: Path | None = None, message: str | None = None) -> None:
     """Deploy codegen functions.
 
     If NAME is provided, deploys a specific function by that name.

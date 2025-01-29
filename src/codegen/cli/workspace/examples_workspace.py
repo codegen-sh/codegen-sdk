@@ -8,7 +8,7 @@ from codegen.cli.auth.session import CodegenSession
 from codegen.cli.codemod.convert import convert_to_cli
 
 
-def populate_examples(session: CodegenSession, dest: Path, examples: list[SerializedExample], status: Status):
+def populate_examples(session: CodegenSession, dest: Path, examples: list[SerializedExample], status: Status) -> None:
     """Populate the examples folder with examples for the current repository."""
     status.update("Populating example codemods...")
     # Remove existing examples

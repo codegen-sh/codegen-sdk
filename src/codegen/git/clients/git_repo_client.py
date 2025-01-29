@@ -417,7 +417,7 @@ class GitRepoClient:
             logger.warning(f"Error getting workflow by file name: {file_name}\n\t{e}")
             return None
 
-    def create_workflow_dispatch(self, workflow: Workflow, ref: Branch | Tag | Commit | str, inputs: Opt[dict] = NotSet):
+    def create_workflow_dispatch(self, workflow: Workflow, ref: Branch | Tag | Commit | str, inputs: Opt[dict] = NotSet) -> None:
         writeable_workflow = self._write_client.get_workflow(workflow.id)
         writeable_workflow.create_dispatch(ref=ref, inputs=inputs)
 

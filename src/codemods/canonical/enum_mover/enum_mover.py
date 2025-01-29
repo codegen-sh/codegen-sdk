@@ -24,7 +24,7 @@ class EnumMover(Codemod, Skill):
     language = ProgrammingLanguage.PYTHON
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def execute(self, codebase: CodebaseType):
+    def execute(self, codebase: CodebaseType) -> None:
         # Iterate over all classes in the codebase
         for cls in codebase.classes:
             # Check if the class is a subclass of Enum

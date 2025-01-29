@@ -21,7 +21,7 @@ install(show_locals=True)
 
 @click.group()
 @click.version_option(prog_name="codegen", message="%(version)s")
-def main():
+def main() -> None:
     """Codegen CLI - Transform your code with AI."""
 
 

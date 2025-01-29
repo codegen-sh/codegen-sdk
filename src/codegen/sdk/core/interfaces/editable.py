@@ -712,7 +712,7 @@ class Editable(JSONable, Generic[Parent]):
             removed_end_byte = max(parent.end_byte, removed_end_byte)
             parent = parent.parent
 
-        def should_keep(node: TSNode):
+        def should_keep(node: TSNode) -> bool:
             if node.type == "comment":
                 # Remove comments on the same rows as the deleted node
                 if node.end_point[0] <= self.end_point[0] and node.start_byte > removed_start_byte:
@@ -970,7 +970,7 @@ class Editable(JSONable, Generic[Parent]):
         return self._add_symbol_usages(identifiers, usage_type, dest)
 
     @noapidoc
-    def _log_parse(self, msg: str, *args, **kwargs):
+    def _log_parse(self, msg: str, *args, **kwargs) -> None:
         self.G.parser.log(msg, *args, **kwargs)
 
     @property

@@ -73,7 +73,7 @@ def post_sync_validation(codebase: CodebaseType) -> bool:
     )
 
 
-def log_or_throw(message, thread_message: str):
+def log_or_throw(message, thread_message: str) -> None:
     hostname = socket.gethostname()
     logger.error(message)
     # logger.error(thread_message)

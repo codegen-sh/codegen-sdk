@@ -8,7 +8,7 @@ from codegen.cli.auth.constants import CODEGEN_DIR
 class VenvManager:
     """Manages the virtual environment for codegen."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.codegen_dir = Path.cwd() / CODEGEN_DIR
         self.venv_dir = self.codegen_dir / ".venv"
 
@@ -17,7 +17,7 @@ class VenvManager:
         python_path = self.venv_dir / "bin" / "python"
         return self.venv_dir.exists() and python_path.exists()
 
-    def create_venv(self, python_version: str = "3.13"):
+    def create_venv(self, python_version: str = "3.13") -> None:
         """Create a virtual environment using uv."""
         self.codegen_dir.mkdir(parents=True, exist_ok=True)
         subprocess.run(
@@ -25,7 +25,7 @@ class VenvManager:
             check=True,
         )
 
-    def install_packages(self, *packages: str):
+    def install_packages(self, *packages: str) -> None:
         """Install packages into the virtual environment using uv pip."""
         subprocess.run(
             ["uv", "pip", "install", *packages],
@@ -33,7 +33,7 @@ class VenvManager:
             env={**os.environ, "VIRTUAL_ENV": str(self.venv_dir)},
         )
 
-    def run_python(self, script: str, *args: str):
+    def run_python(self, script: str, *args: str) -> None:
         """Run a Python script in the virtual environment."""
         python_path = self.venv_dir / "bin" / "python"
         subprocess.run([str(python_path), "-c", script, *args], check=True)
@@ -46,7 +46,7 @@ class VenvManager:
         """Check if a virtual environment is active."""
         return "VIRTUAL_ENV" in os.environ
 
-    def ensure_jupyter(self):
+    def ensure_jupyter(self) -> None:
         """Ensure Jupyter Lab is installed in the virtual environment."""
         try:
             subprocess.run(

@@ -674,7 +674,7 @@ class WildcardExport(Chainable, Generic[TExport]):
     exp: TExport
     symbol: Exportable
 
-    def __init__(self, exp: TExport, symbol: Exportable):
+    def __init__(self, exp: TExport, symbol: Exportable) -> None:
         self.exp = exp
         self.symbol = symbol
 

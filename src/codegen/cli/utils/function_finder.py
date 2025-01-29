@@ -80,7 +80,7 @@ class DecoratedFunction:
 
 
 class CodegenFunctionVisitor(ast.NodeVisitor):
-    def __init__(self):
+    def __init__(self) -> None:
         self.functions: list[DecoratedFunction] = []
 
     def get_function_body(self, node: ast.FunctionDef) -> str:
@@ -174,7 +174,7 @@ class CodegenFunctionVisitor(ast.NodeVisitor):
 
         return parameters
 
-    def visit_FunctionDef(self, node):
+    def visit_FunctionDef(self, node) -> None:
         for decorator in node.decorator_list:
             if (
                 isinstance(decorator, ast.Call)
@@ -219,7 +219,7 @@ class CodegenFunctionVisitor(ast.NodeVisitor):
             node = node.value
         return attrs
 
-    def visit_Module(self, node):
+    def visit_Module(self, node) -> None:
         # Store the full source code for later use
         self.source = self.file_content
         self.generic_visit(node)

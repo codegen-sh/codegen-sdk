@@ -59,7 +59,7 @@ def create_execute_function_from_codeblock(codeblock: str, custom_scope: dict | 
         _line_offset = line_offset
 
         # Wrap the func for better tracing
-        def wrapped_func(*args, **kwargs):
+        def wrapped_func(*args, **kwargs) -> None:
             """Wraps the user code to capture and format exceptions + grab locals"""
             try:
                 linecache.cache["<string>"] = (len(_func_str), None, _func_str.splitlines(True), "<string>")

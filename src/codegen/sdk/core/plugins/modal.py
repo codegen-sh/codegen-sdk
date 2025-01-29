@@ -13,7 +13,7 @@ logger = getLogger(__name__)
 class ModalApiFinder(Plugin):
     language: ProgrammingLanguage = ProgrammingLanguage.PYTHON
 
-    def execute(self, codebase: "PyCodebaseType"):
+    def execute(self, codebase: "PyCodebaseType") -> None:
         logger.info("Scanning for modal endpoints")
         endpoints = 0
         for func in codebase.functions:

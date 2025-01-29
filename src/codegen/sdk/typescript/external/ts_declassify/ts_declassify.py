@@ -61,7 +61,7 @@ class TSDeclassify(ExternalProcess):
         msg = "TSDeclassify does not support reparse"
         raise NotImplementedError(msg)
 
-    def declassify(self, source: str, filename: str = "file.tsx", error_on_failure: bool = True):
+    def declassify(self, source: str, filename: str = "file.tsx", error_on_failure: bool = True) -> str:
         assert self.ready(), "TSDeclassify is not ready"
 
         try:

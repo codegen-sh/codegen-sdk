@@ -21,7 +21,7 @@ class SplitLargeFiles(Codemod, Skill):
     language = ProgrammingLanguage.TYPESCRIPT
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def execute(self, codebase: Codebase):
+    def execute(self, codebase: Codebase) -> None:
         # Define constants for maximum lengths
         MAX_FILE_LENGTH = 500
         MAX_SYMBOL_LENGTH = 50

@@ -85,7 +85,7 @@ class UnwrapFunctionBody(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCasePyFile(input=py_input, output=py_output_unwrap_function)])], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Unwraps the body of all functions in the file"""
         # iterate through all functions in the codebase
         for function in codebase.functions:
@@ -94,7 +94,7 @@ class UnwrapFunctionBody(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCaseTSFile(input=ts_input, output=ts_output_unwrap_function)])], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Unwraps the body of all functions in the file"""
         # iterate through all functions in the codebase
         for function in codebase.functions:
@@ -145,7 +145,7 @@ class UnwrapIfStatement(Skill, ABC):
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCasePyFile(input=py_input, output=py_output_unwrap_if_statement)])], language=ProgrammingLanguage.PYTHON)
     @skill_impl([SkillTestCase(files=[SkillTestCaseTSFile(input=ts_input, output=ts_output_unwrap_if_statement)])], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         for file in codebase.files:
             for if_block in file.code_block.if_blocks:
                 if_block.consequence_block.unwrap()
@@ -174,7 +174,7 @@ class UnwrapWithStatement(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCasePyFile(input=py_input, output=py_output_unwrap_with_statement)])], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Unwraps the body of all with statements in the file"""
         # for all functions in the codebase
         for function in codebase.functions:
@@ -185,7 +185,7 @@ class UnwrapWithStatement(Skill, ABC):
 
     @staticmethod
     @skill_impl([], language=ProgrammingLanguage.TYPESCRIPT, ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """With Statements are not supported in TypeScript"""
         ...
 
@@ -377,7 +377,7 @@ class ConvertStatementToArgument(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCasePyFile(input=py_convert_test_assertion_input, output=py_convert_test_assertion_output)])], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Transform test assertion statements into an argument to test functions that make a call to a http method."""
         methods = ["post", "get", "put", "delete", "patch"]
         client_name = "client"
@@ -415,7 +415,7 @@ class ConvertStatementToArgument(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCaseTSFile(input=ts_convert_test_assertion_input, output=ts_convert_test_assertion_output)])], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Transform test assertion statements into an argument to test functions that make a call to a http method."""
         methods = ["post", "get", "put", "delete", "patch"]
         client_name = "client"

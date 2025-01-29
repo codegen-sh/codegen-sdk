@@ -1,5 +1,9 @@
 from typing import TYPE_CHECKING, Generic, TypeVar
 
+from src.codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from src.codegen.sdk.core.node_id_factory import NodeId
+from tree_sitter import Node as TSNode
+
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
@@ -21,7 +25,7 @@ class TSChainedAttribute(ChainedAttribute[Expression, Name, Parent], Generic[Par
     and property components of the expression, as well as analyzing function calls made on the object.
     """
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent, object=ts_node.child_by_field_name("object"), attribute=ts_node.child_by_field_name("property"))
 
     @property

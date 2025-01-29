@@ -37,7 +37,7 @@ class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
             node = children[0].ts_node
         super().__init__(node, file_node_id, G, parent)
 
-    def _init_children(self): ...
+    def _init_children(self) -> None: ...
 
     @repr_func  # HACK
     def __hash__(self):

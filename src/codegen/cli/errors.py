@@ -36,7 +36,7 @@ class ServerError(CodegenError):
     pass
 
 
-def format_error_message(error):
+def format_error_message(error) -> str:
     """Format error message based on error type."""
     if isinstance(error, AuthError):
         return "[red]Authentication Error:[/red] Please run 'codegen login' first."

@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 
 
 class ConfigParser(ABC):
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
     @abstractmethod

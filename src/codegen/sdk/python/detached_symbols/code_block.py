@@ -11,6 +11,8 @@ from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollec
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from src.codegen.sdk.core.interfaces.editable import Editable
+
     from codegen.sdk.python.assignment import PyAssignment
     from codegen.sdk.python.interfaces.has_block import PyHasBlock
     from codegen.sdk.python.statements.with_statement import WithStatement
@@ -64,7 +66,7 @@ class PyCodeBlock(CodeBlock[Parent, "PyAssignment"], Generic[Parent]):
         """
         return [x for x in self.with_statements if x.parent.level == level]
 
-    def _smart_remove(self, child, *args, **kwargs) -> bool:
+    def _smart_remove(self, child: Editable, *args, **kwargs) -> bool:
         if len(self.statements) <= 1 and not isinstance(child, ImportStatement):
             if isinstance(self.parent, BlockStatement):
                 self.parent.remove(*args, **kwargs)

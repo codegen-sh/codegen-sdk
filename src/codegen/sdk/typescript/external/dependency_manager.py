@@ -326,7 +326,7 @@ class TypescriptDependencyManager(DependencyManager):
             json_str = json.dumps(clean_package_data, indent=2)
             f.write(json_str)
 
-    def install_dependencies(self, validate_dependencies: bool = True):
+    def install_dependencies(self, validate_dependencies: bool = True) -> None:
         if validate_dependencies:
             with shadow_files(list(self.package_json_data.keys())):
                 logger.info(f"Cleaning package.json files: {list(self.package_json_data.keys())}")

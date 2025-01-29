@@ -138,5 +138,5 @@ class Statement(Expression[Parent], Generic[Parent]):
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None) -> None:
         self._add_all_identifier_usages(usage_type, dest=dest)

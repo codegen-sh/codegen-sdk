@@ -1,7 +1,7 @@
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
-def test_code_block_append_single_element(tmpdir):
+def test_code_block_append_single_element(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -27,7 +27,7 @@ def foo():
     )
 
 
-def test_code_block_append_multiple_element(tmpdir):
+def test_code_block_append_multiple_element(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -55,7 +55,7 @@ def foo():
     )
 
 
-def test_code_block_insert_single_element_beginning(tmpdir):
+def test_code_block_insert_single_element_beginning(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -81,7 +81,7 @@ def foo():
     )
 
 
-def test_code_block_insert_multiple_element_beginning(tmpdir):
+def test_code_block_insert_multiple_element_beginning(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -109,7 +109,7 @@ def foo():
     )
 
 
-def test_code_block_insert_single_element_middle(tmpdir):
+def test_code_block_insert_single_element_middle(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -135,7 +135,7 @@ def foo():
     )
 
 
-def test_code_block_insert_multiple_element_middle(tmpdir):
+def test_code_block_insert_multiple_element_middle(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -163,7 +163,7 @@ def foo():
     )
 
 
-def test_code_block_insert_single_element_end(tmpdir):
+def test_code_block_insert_single_element_end(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -189,7 +189,7 @@ def foo():
     )
 
 
-def test_code_block_insert_multiple_element_end(tmpdir):
+def test_code_block_insert_multiple_element_end(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -217,7 +217,7 @@ def foo():
     )
 
 
-def test_code_block_insert_multiple_out_of_order(tmpdir):
+def test_code_block_insert_multiple_out_of_order(tmpdir) -> None:
     # language=python
     content = """
 def foo():

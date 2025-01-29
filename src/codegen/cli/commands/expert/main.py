@@ -13,7 +13,7 @@ from codegen.cli.workspace.decorators import requires_init
 @click.option("--query", "-q", help="The question to ask the expert.")
 @requires_auth
 @requires_init
-def expert_command(session: CodegenSession, query: str):
+def expert_command(session: CodegenSession, query: str) -> None:
     """Asks a codegen expert a question."""
     status = Status("Asking expert...", spinner="dots", spinner_style="purple")
     status.start()

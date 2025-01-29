@@ -120,7 +120,7 @@ class CountUntypedAttributesInCodebase(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CountUntypedAttributesInCodebasePyTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[CountUntypedAttributesInCodebaseTSTest], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         untyped_attributes_count = 0
         typed_attributes_count = 0
 

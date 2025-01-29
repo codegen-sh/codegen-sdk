@@ -503,7 +503,7 @@ class SourceFile(
         self.code_block._compute_dependencies()
 
     @noapidoc
-    def invalidate(self):
+    def invalidate(self) -> None:
         self.__dict__.pop("valid_symbol_names", None)
         self.__dict__.pop("valid_import_names", None)
         for imp in self.imports:

@@ -82,7 +82,7 @@ def print_errors(filepath: PathLike, content: str) -> None:
     ts_node = parser.parse(bytes(content, "utf-8")).root_node
     if ts_node.has_error:
 
-        def traverse(node):
+        def traverse(node) -> None:
             if node.is_error or node.is_missing:
                 stylize_error(filepath, node.start_point, node.end_point, ts_node, content, "with ts_node type of " + node.type)
             if node.has_error:

@@ -47,7 +47,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
     parent: Self | None
     items: dict[str, TFile | Self]
 
-    def __init__(self, path: Path, dirpath: str, parent: Self | None):
+    def __init__(self, path: Path, dirpath: str, parent: Self | None) -> None:
         self.path = path
         self.dirpath = dirpath
         self.parent = parent
@@ -95,7 +95,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         """Get a recursive list of all files in the directory and its subdirectories."""
         files = []
 
-        def _get_files(directory: Directory):
+        def _get_files(directory: Directory) -> None:
             for item in directory.items.values():
                 if isinstance(item, Directory):
                     _get_files(item)
@@ -110,7 +110,7 @@ class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TF
         """Get a recursive list of all subdirectories in the directory and its subdirectories."""
         subdirectories = []
 
-        def _get_subdirectories(directory: Directory):
+        def _get_subdirectories(directory: Directory) -> None:
             for item in directory.items.values():
                 if isinstance(item, Directory):
                     subdirectories.append(item)

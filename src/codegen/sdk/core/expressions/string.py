@@ -45,7 +45,7 @@ class String(Expression[Parent], Builtin, Generic[Parent]):
             return True
         return super().__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.content
 
     def __hash__(self):

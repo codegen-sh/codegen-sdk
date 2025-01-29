@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from docstring_parser import Docstring, DocstringStyle, parse
 
@@ -36,7 +36,7 @@ class PyCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_symbol_comments(cls, symbol: PySymbol):
+    def from_symbol_comments(cls, symbol: PySymbol) -> Self | None:
         siblings = symbol.parent.parent.statements
         comments = []
         # Iterate backwards from the function node to collect all preceding comment nodes
@@ -66,7 +66,7 @@ class PyCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_symbol_inline_comments(cls, symbol: PySymbol, node: TSNode | None = None):
+    def from_symbol_inline_comments(cls, symbol: PySymbol, node: TSNode | None = None) -> Self | None:
         statement = symbol.parent
         index = statement.index
         siblings = statement.parent.statements
@@ -84,7 +84,7 @@ class PyCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_docstring(cls, symbol: PySymbol):
+    def from_docstring(cls, symbol: PySymbol) -> Self | None:
         # Check if there is an expression node above the symbol
         top_child = symbol.code_block.ts_node.children[0]
         if top_child.type == "expression_statement":

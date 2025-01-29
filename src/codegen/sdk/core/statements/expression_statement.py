@@ -63,7 +63,7 @@ class ExpressionStatement(Statement, HasValue, IWrapper, Generic[Parent, TCodeBl
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None) -> None:
         if self._value_node:
             self.resolve()._compute_dependencies(usage_type, dest)
 

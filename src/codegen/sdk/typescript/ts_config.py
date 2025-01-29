@@ -50,7 +50,7 @@ class TSConfig:
     # when computing the import resolution.
     _import_optimization_enabled: bool = False
 
-    def __init__(self, config_file: File, config_parser: "TSConfigParser"):
+    def __init__(self, config_file: File, config_parser: "TSConfigParser") -> None:
         self.config_file = config_file
         self.config_parser = config_parser
         # Try to parse the config file as JSON5. Fallback to empty dict if it fails.
@@ -64,10 +64,10 @@ class TSConfig:
         # Precompute the base config, base url, paths, and references
         self._precompute_config_values()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TSConfig({self.config_file.filepath})"
 
-    def _precompute_config_values(self):
+    def _precompute_config_values(self) -> None:
         """Precomputes the base config, base url, paths, and references."""
         # Precompute the base config
         self._base_config = None
@@ -138,7 +138,7 @@ class TSConfig:
         self._references = [*self_references]  # MAYBE add base references here? This breaks the reference chain though.
         self._self_references = self_references
 
-    def _precompute_import_aliases(self):
+    def _precompute_import_aliases(self) -> None:
         """Precomputes the import aliases."""
         if self._computed_path_import_aliases:
             return

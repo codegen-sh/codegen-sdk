@@ -22,7 +22,7 @@ def complex_operation(x, y):
     return result
 
 
-def main():
+def main() -> None:
     greet_user("Alice")
     data = [1, 2, 3, 4, 5]
     processed = process_data(data, 2)

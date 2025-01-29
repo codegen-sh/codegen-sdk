@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_reduce_ternary_condition_to_true(tmpdir):
+def test_reduce_ternary_condition_to_true(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -32,7 +32,7 @@ function foo(): void {
     )
 
 
-def test_reduce_ternary_condition_to_false(tmpdir):
+def test_reduce_ternary_condition_to_false(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -57,7 +57,7 @@ function foo(): void {
     )
 
 
-def test_reduce_nested_ternary_condition_to_true_and_false(tmpdir):
+def test_reduce_nested_ternary_condition_to_true_and_false(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -84,7 +84,7 @@ function foo(): void {
     )
 
 
-def test_reduce_nested_ternary_condition_outer_false(tmpdir):
+def test_reduce_nested_ternary_condition_outer_false(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -109,7 +109,7 @@ function foo(): void {
     )
 
 
-def test_reduce_multiple_ternary_conditions(tmpdir):
+def test_reduce_multiple_ternary_conditions(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -138,7 +138,7 @@ function foo(): void {
     )
 
 
-def test_reduce_ternary_condition_with_function_call(tmpdir):
+def test_reduce_ternary_condition_with_function_call(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -163,7 +163,7 @@ function foo(): void {
     )
 
 
-def test_reduce_ternary_condition_with_dict(tmpdir):
+def test_reduce_ternary_condition_with_dict(tmpdir) -> None:
     # language=typescript jsx
     # language=typescript
     content = """
@@ -198,7 +198,7 @@ function foo(): { a: number } {
     )
 
 
-def test_reduce_ternary_condition_with_dict_complex(tmpdir):
+def test_reduce_ternary_condition_with_dict_complex(tmpdir) -> None:
     # language=typescript jsx
     # language=typescript
     content = """
@@ -234,7 +234,7 @@ function foo(): { a: number } {
     )
 
 
-def test_reduce_ternary_condition_with_dict_trailing_comma(tmpdir):
+def test_reduce_ternary_condition_with_dict_trailing_comma(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): { a: number } {

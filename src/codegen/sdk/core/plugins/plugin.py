@@ -13,5 +13,5 @@ class Plugin(ABC):
 
     @abstractmethod
     def execute(self, codebase: "Codebase"): ...
-    def register_api(self, method: str, label: str, node: Editable):
+    def register_api(self, method: str, label: str, node: Editable) -> None:
         pass

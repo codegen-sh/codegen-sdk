@@ -17,7 +17,7 @@ def find_dirs_to_ignore(start_dir, prefix):
     return dirs_to_ignore
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser) -> None:
     parser.addoption(
         "--size",
         action="append",
@@ -68,7 +68,7 @@ def pytest_addoption(parser):
 
 
 # content of conftest.py
-def pytest_configure(config):
+def pytest_configure(config) -> None:
     worker_id = os.environ.get("PYTEST_XDIST_WORKER")
     if worker_id is not None:
         os.makedirs("build/logs", exist_ok=True)
@@ -101,7 +101,7 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(autouse=True)
-def skip_lfs_tests(request):
+def skip_lfs_tests(request) -> None:
     """Skip tests that depend on git LFS files if they haven't been pulled"""
     # Lets not run if we are in CI
     if os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true":

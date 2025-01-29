@@ -672,7 +672,7 @@ class WildcardImport(Chainable, Generic[TImport]):
     imp: TImport
     symbol: Importable
 
-    def __init__(self, imp: TImport, symbol: Importable):
+    def __init__(self, imp: TImport, symbol: Importable) -> None:
         self.imp = imp
         self.symbol = symbol
         self.ts_node = imp.ts_node

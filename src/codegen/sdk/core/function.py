@@ -411,5 +411,5 @@ class Function(
         return symbols
 
     @noapidoc
-    def register_api(self, url: str):
+    def register_api(self, url: str) -> None:
         self.G.global_context.multigraph.api_definitions[url] = self

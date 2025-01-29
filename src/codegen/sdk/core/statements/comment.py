@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, NoReturn, TypeVar
 
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
@@ -119,7 +119,7 @@ class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
 
     @noapidoc
     @commiter
-    def _unparse_comment(self, new_src: str):
+    def _unparse_comment(self, new_src: str) -> NoReturn:
         """Unparses cleaned text content into a comment block."""
         msg = "This method should be implemented by the subclass"
         raise NotImplementedError(msg)

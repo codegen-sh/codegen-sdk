@@ -18,7 +18,7 @@ class DecoratedFunction:
         webhook_config: dict | None = None,
         lint_mode: bool = False,
         lint_user_whitelist: Sequence[str] | None = None,
-    ):
+    ) -> None:
         self.name = name
         self.func: Callable | None = None
         self.params_type = None

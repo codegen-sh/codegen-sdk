@@ -111,7 +111,7 @@ class DeadCode(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[PyDeadCodeTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a directed graph to visualize dead and second-order dead code
         G = nx.DiGraph()
 

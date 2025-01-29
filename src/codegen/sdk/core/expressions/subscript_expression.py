@@ -31,7 +31,7 @@ class SubscriptExpression(Expression[Parent], Resolvable[Parent], Generic[Object
     object: Object
     indices: list[Index]
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent):
+    def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)
         self.object = self._parse_expression(self.ts_node.children[0], default=Name)
         self.indices = self.children[1:]

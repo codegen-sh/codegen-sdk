@@ -28,7 +28,7 @@ class SandboxExecutor:
     codebase: CodebaseType
     remote_repo: SandboxRepo
 
-    def __init__(self, codebase: CodebaseType):
+    def __init__(self, codebase: CodebaseType) -> None:
         self.codebase = codebase
         self.remote_repo = SandboxRepo(self.codebase)
 

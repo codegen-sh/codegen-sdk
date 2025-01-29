@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class MethodRemover(ast.NodeTransformer):
-    def __init__(self, conditions: list[Callable[[ast.FunctionDef], bool]]):
+    def __init__(self, conditions: list[Callable[[ast.FunctionDef], bool]]) -> None:
         self.conditions = conditions
 
     def visit_ClassDef(self, node: ast.ClassDef) -> ast.ClassDef:
@@ -43,7 +43,7 @@ class MethodRemover(ast.NodeTransformer):
 
 
 class FieldRemover(ast.NodeTransformer):
-    def __init__(self, conditions: list[Callable[[ast.FunctionDef], bool]]):
+    def __init__(self, conditions: list[Callable[[ast.FunctionDef], bool]]) -> None:
         self.conditions = conditions
 
     def visit_ClassDef(self, node: ast.ClassDef) -> ast.ClassDef:

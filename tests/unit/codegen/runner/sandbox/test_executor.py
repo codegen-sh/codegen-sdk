@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @pytest.mark.asyncio
-async def test_execute_func_pass_in_codemod_context_takes_priority(executor: SandboxExecutor):
+async def test_execute_func_pass_in_codemod_context_takes_priority(executor: SandboxExecutor) -> None:
     codemod_context = CodemodContext(
         CODEMOD_LINK="http://codegen.sh/codemod/5678",
     )
@@ -85,7 +85,7 @@ print(context.CODEMOD_LINK)
 
 
 @pytest.mark.asyncio
-async def test_run_max_preview_time_exceeded_sets_observation_meta(executor: SandboxExecutor):
+async def test_run_max_preview_time_exceeded_sets_observation_meta(executor: SandboxExecutor) -> None:
     mock_source = """
 codebase.files[0].edit("a = 2")
 """
@@ -97,7 +97,7 @@ codebase.files[0].edit("a = 2")
 
 
 @pytest.mark.asyncio
-async def test_run_max_ai_requests_error_sets_observation_meta(executor: SandboxExecutor):
+async def test_run_max_ai_requests_error_sets_observation_meta(executor: SandboxExecutor) -> None:
     mock_source = """
 codebase.ai("tell me a joke")
 """
@@ -109,7 +109,7 @@ codebase.ai("tell me a joke")
 
 
 @pytest.mark.asyncio
-async def test_run_max_transactions_exceeded_sets_observation_meta(executor: SandboxExecutor):
+async def test_run_max_transactions_exceeded_sets_observation_meta(executor: SandboxExecutor) -> None:
     mock_source = """
 codebase.files[0].edit("a = 2")
 """
@@ -122,7 +122,7 @@ codebase.files[0].edit("a = 2")
 
 
 @pytest.mark.asyncio
-async def test_find_flag_groups_with_subdirectories(executor: SandboxExecutor):
+async def test_find_flag_groups_with_subdirectories(executor: SandboxExecutor) -> None:
     groups = await executor.find_flag_groups(
         code_flags=[
             CodeFlag(
@@ -151,7 +151,7 @@ async def test_find_flag_groups_with_subdirectories(executor: SandboxExecutor):
 
 
 @pytest.mark.asyncio
-async def test_find_flag_groups_with_group_by(executor: SandboxExecutor):
+async def test_find_flag_groups_with_group_by(executor: SandboxExecutor) -> None:
     groups = await executor.find_flag_groups(
         code_flags=[
             CodeFlag(
@@ -185,7 +185,7 @@ async def test_find_flag_groups_with_group_by(executor: SandboxExecutor):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("codebase", [121], indirect=True)
-async def test_find_flag_groups_with_group_by_app(executor: SandboxExecutor):
+async def test_find_flag_groups_with_group_by_app(executor: SandboxExecutor) -> None:
     groups = await executor.find_flag_groups(
         code_flags=[
             CodeFlag(
@@ -213,7 +213,7 @@ async def test_find_flag_groups_with_group_by_app(executor: SandboxExecutor):
 
 @pytest.mark.skip(reason="TODO: add max_prs as part of find_flag_groups")
 @pytest.mark.asyncio
-async def test_find_flag_groups_with_max_prs(executor: SandboxExecutor):
+async def test_find_flag_groups_with_max_prs(executor: SandboxExecutor) -> None:
     groups = await executor.find_flag_groups(
         code_flags=[
             CodeFlag(

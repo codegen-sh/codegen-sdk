@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_wrap_with_if_statement(tmpdir):
+def test_wrap_with_if_statement(tmpdir) -> None:
     # language=typescript jsx
     content = """
 function funcA(a) {

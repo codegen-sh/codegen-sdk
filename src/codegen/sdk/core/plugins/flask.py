@@ -30,7 +30,7 @@ def extract_methods(decorator):
 class FlaskApiFinder(Plugin):
     language: ProgrammingLanguage = ProgrammingLanguage.PYTHON
 
-    def execute(self, codebase: "PyCodebaseType"):
+    def execute(self, codebase: "PyCodebaseType") -> None:
         logger.info("Scanning for flask endpoints")
         endpoints = 0
         for func in codebase.functions:

@@ -20,7 +20,7 @@ class SplitFile(Codemod, Skill):
     language = ProgrammingLanguage.PYTHON
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def execute(self, codebase: Codebase):
+    def execute(self, codebase: Codebase) -> None:
         # Grab large file to split
         file = codebase.get_file("sqlglot/optimizer/scope.py", optional=True)
         if file is None:

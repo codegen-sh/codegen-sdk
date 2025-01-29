@@ -5,7 +5,7 @@ class StopCodemodException(Exception):
 
     threshold: int | None = None
 
-    def __init__(self, message: str | None = None, threshold: int | None = None):
+    def __init__(self, message: str | None = None, threshold: int | None = None) -> None:
         super().__init__(message)
         self.threshold = threshold
 

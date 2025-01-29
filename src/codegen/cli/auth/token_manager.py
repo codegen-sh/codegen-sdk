@@ -9,12 +9,12 @@ class TokenManager:
     # Simple token manager to store and retrieve tokens.
     # This manager checks if the token is expired before retrieval.
     # TODO: add support for refreshing token and re authorization via supabase oauth
-    def __init__(self):
+    def __init__(self) -> None:
         self.config_dir = CONFIG_DIR
         self.token_file = AUTH_FILE
         self._ensure_config_dir()
 
-    def _ensure_config_dir(self):
+    def _ensure_config_dir(self) -> None:
         """Create config directory if it doesn't exist."""
         if not os.path.exists(self.config_dir):
             Path(self.config_dir).mkdir(parents=True, exist_ok=True)

@@ -19,7 +19,7 @@ class NoneType(Type[Parent], Generic[Parent]):
     """Represents a None or Null object."""
 
     @noapidoc
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         pass
 
     @reader

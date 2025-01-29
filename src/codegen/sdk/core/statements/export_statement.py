@@ -35,7 +35,7 @@ class ExportStatement(Statement["TSCodeBlock"], Generic[TExport]):
     exports: Collection[TExport, Self]
     statement_type = StatementType.EXPORT_STATEMENT
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock, pos: int):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock, pos: int) -> None:
         super().__init__(ts_node, parent.file_node_id, parent.G, parent, pos)
         export_node = self.ts_node
         if node := self.child_by_field_types(["export_clause", "export_statement"]):

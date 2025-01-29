@@ -65,7 +65,7 @@ class CodemodRunMiddleware[TRequest, TResponse](BaseHTTPMiddleware):
             res.background = background_tasks
             return res
 
-    async def cleanup_after_codemod(self, is_exception: bool = False):
+    async def cleanup_after_codemod(self, is_exception: bool = False) -> None:
         if is_exception:
             # TODO: instead of committing transactions, we should just rollback
             logger.info("Committing pending transactions due to exception")

@@ -17,7 +17,7 @@ class Boolean(Expression[Parent], Builtin, Generic[Parent]):
     True, False
     """
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         return self.ts_node.type == "true"
 
     @noapidoc

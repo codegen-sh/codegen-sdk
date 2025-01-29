@@ -29,7 +29,7 @@ class SandboxRepo:
         # checkout the base branch (and possibly sync graph)
         self.codebase.checkout(branch=base_branch)
 
-    def set_up_head_branch(self, head_branch: str, force_push_head_branch: bool):
+    def set_up_head_branch(self, head_branch: str, force_push_head_branch: bool) -> None:
         """Set-up head branch by pushing latest highside branch to lowside and fetching the branch (so that it can be checked out later)."""
         # If head branch is not specified, do nothing
         if head_branch is None:

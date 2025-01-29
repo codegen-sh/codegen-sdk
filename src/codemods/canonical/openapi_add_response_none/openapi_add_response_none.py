@@ -43,7 +43,7 @@ class OpenAPIAddResponseNone(Codemod, Skill):
     language = ProgrammingLanguage.PYTHON
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def execute(self, codebase: Codebase):
+    def execute(self, codebase: Codebase) -> None:
         def get_response_decorators(method: Symbol) -> list[Decorator]:
             """Returns a list of decorators that contain the string '.response' in the source code"""
             return [d for d in method.decorators if ".response" in d.source]

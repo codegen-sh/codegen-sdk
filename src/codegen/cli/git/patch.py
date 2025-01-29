@@ -4,7 +4,7 @@ from pygit2.repository import Repository
 from rich.status import Status
 
 
-def apply_patch(git_repo: Repository, patch: str):
+def apply_patch(git_repo: Repository, patch: str) -> None:
     """Apply a git patch to the repository.
 
     Args:

@@ -25,7 +25,7 @@ class SplitFileAndRenameSymbols(Codemod, Skill):
     language = ProgrammingLanguage.PYTHON
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def execute(self, codebase: CodebaseType):
+    def execute(self, codebase: CodebaseType) -> None:
         # Get file to split up
         source_file = codebase.get_file("redash/models/types.py", optional=True)
         if source_file is None:

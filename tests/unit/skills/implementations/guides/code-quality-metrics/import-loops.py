@@ -87,7 +87,7 @@ class ImportCycleDetectionAndVisualization(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[ImportCycleDetectionAndVisualizationTest], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         G: DiGraph = networkx.DiGraph()
 
         # iterate over all imports

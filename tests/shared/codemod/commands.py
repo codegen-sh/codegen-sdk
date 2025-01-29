@@ -23,7 +23,7 @@ def codemod() -> None:
 
 @codemod.command()
 @click.option("--extra-repos", is_flag=True)
-def generate_cases(extra_repos: bool = False):
+def generate_cases(extra_repos: bool = False) -> None:
     """Generate cases for codemod tests. Very slow"""
     repos = find_repos(extra_repos=extra_repos)
     for codemod in find_codemods():
@@ -33,14 +33,14 @@ def generate_cases(extra_repos: bool = False):
     _clean_diffs(aggressive=True)
 
 
-def _generate_diffs(extra_repos: bool = False):
+def _generate_diffs(extra_repos: bool = False) -> None:
     """Generate diffs for codemod tests"""
     os.system(f"pytest tests/integration/codemod/test_codemods.py::test_codemods_cloned_repos  --size small --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
     os.system(f"pytest tests/integration/codemod/test_codemods.py::test_codemods_cloned_repos  --size large --extra-repos={str(extra_repos).lower()} -n auto --snapshot-update")
 
 
 @codemod.command()
-def generate_diffs():
+def generate_diffs() -> None:
     """Generate diffs for codemod tests"""
     _generate_diffs()
     _clean_diffs()
@@ -67,7 +67,7 @@ def gather_repos_per_codemod() -> dict[str, dict[tuple[Size, bool], list[ClonedR
 MAX_CASES = {Size.Small: 1, Size.Large: 1}
 
 
-def _clean_diffs(aggressive: bool = False):
+def _clean_diffs(aggressive: bool = False) -> None:
     repos = {**find_repos(extra_repos=True), **find_repos(extra_repos=False)}
 
     for test_case in find_codemod_test_cases(repos=repos):
@@ -93,7 +93,7 @@ def _clean_diffs(aggressive: bool = False):
 
 @codemod.command()
 @click.option("--aggressive", is_flag=True)
-def clean_diffs(aggressive: bool = False):
+def clean_diffs(aggressive: bool = False) -> None:
     _clean_diffs(aggressive)
 
 
@@ -204,7 +204,7 @@ def _fetch_and_store_codemod(repo_id: str, url: str, cli_api_key: str) -> tuple[
 
 @codemod.command()
 @click.option("--cli-api-key", required=True, help="API key for authentication")
-def fetch_verified_codemods(cli_api_key: str):
+def fetch_verified_codemods(cli_api_key: str) -> None:
     """Fetch codemods for all repos in REPO_ID_TO_URL and save to JSON files."""
     VERIFIED_CODEMOD_DATA_DIR.mkdir(parents=True, exist_ok=True)
     repos_to_commits: dict[str, list[dict]] = {}

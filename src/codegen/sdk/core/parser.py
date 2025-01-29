@@ -282,11 +282,11 @@ class Parser(Generic[Expression]):
                 statements[-1].nested_code_blocks
         return statements
 
-    def report(self):
+    def report(self) -> None:
         if self._uncovered_nodes:
             self._console.print(f"Encountered unimplemented nodes {self._uncovered_nodes}")
 
-    def log(self, message: str, *args):
+    def log(self, message: str, *args) -> None:
         if self._should_log:
             try:
                 self._console.log(message % args)

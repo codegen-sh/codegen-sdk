@@ -8,7 +8,7 @@ from codegen.cli.auth.token_manager import TokenManager
 
 @click.command(name="login")
 @click.option("--token", required=False, help="API token for authentication")
-def login_command(token: str):
+def login_command(token: str) -> None:
     """Store authentication token."""
     # Check if already authenticated
     token_manager = TokenManager()

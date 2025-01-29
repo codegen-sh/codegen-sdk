@@ -19,7 +19,7 @@ logger = getLogger(__name__)
 class AxiosApiFinder(Plugin):
     language: ProgrammingLanguage = ProgrammingLanguage.TYPESCRIPT
 
-    def execute(self, codebase: "TSCodebaseType"):
+    def execute(self, codebase: "TSCodebaseType") -> None:
         logger.info("Scanning for Axios API calls")
         api_calls = 0
 

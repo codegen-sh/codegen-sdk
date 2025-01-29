@@ -19,7 +19,7 @@ class TSConfigParser(ConfigParser):
     config_files: dict[Path, TSConfig]
     G: "CodebaseGraph"
 
-    def __init__(self, codebase_graph: "CodebaseGraph", default_config_name: str = "tsconfig.json"):
+    def __init__(self, codebase_graph: "CodebaseGraph", default_config_name: str = "tsconfig.json") -> None:
         super().__init__()
         self.config_files = dict()
         self.G = codebase_graph
@@ -34,7 +34,7 @@ class TSConfigParser(ConfigParser):
             return self.config_files.get(path)
         return None
 
-    def parse_configs(self):
+    def parse_configs(self) -> None:
         # This only yields a 0.05s speedup, but its funny writing dynamic programming code
         @cache
         def get_config_for_dir(dir_path: Path) -> TSConfig | None:

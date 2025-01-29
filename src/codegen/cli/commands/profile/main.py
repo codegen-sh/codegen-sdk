@@ -11,7 +11,7 @@ from codegen.cli.workspace.decorators import requires_init
 @click.command(name="profile")
 @requires_auth
 @requires_init
-def profile_command(session: CodegenSession):
+def profile_command(session: CodegenSession) -> None:
     """Display information about the currently authenticated user."""
     rich.print(
         Panel(

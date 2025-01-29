@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_indent_left_once(tmpdir):
+def test_indent_left_once(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -32,7 +32,7 @@ return x + y
     )
 
 
-def test_indent_left_exceed_limit(tmpdir):
+def test_indent_left_exceed_limit(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -57,7 +57,7 @@ return x + y
     )
 
 
-def test_indent_right_once(tmpdir):
+def test_indent_right_once(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -82,7 +82,7 @@ def foo():
     )
 
 
-def test_indent_right_multiple(tmpdir):
+def test_indent_right_multiple(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -107,7 +107,7 @@ def foo():
     )
 
 
-def test_indent_zero(tmpdir):
+def test_indent_zero(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -122,7 +122,7 @@ def foo():
     assert file.content == content
 
 
-def test_indent_nested_code_blocks(tmpdir):
+def test_indent_nested_code_blocks(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -181,7 +181,7 @@ return 0
     )
 
 
-def test_indent_only_nested_block(tmpdir):
+def test_indent_only_nested_block(tmpdir) -> None:
     # language=python
     content = """
 def foo():

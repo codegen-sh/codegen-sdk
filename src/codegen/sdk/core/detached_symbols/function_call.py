@@ -588,12 +588,12 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
 
     @noapidoc
     @writer
-    def rename_if_matching(self, old: str, new: str):
+    def rename_if_matching(self, old: str, new: str) -> None:
         if name := self.get_name():
             name.rename_if_matching(old, new)
 
     @noapidoc
-    def register_api_call(self, url: str):
+    def register_api_call(self, url: str) -> None:
         assert url, self
         self.G.global_context.multigraph.usages[url].append(self)
 

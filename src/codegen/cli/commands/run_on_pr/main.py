@@ -36,7 +36,7 @@ def run_on_pr(session: CodegenSession, codemod_name: str, pr_number: int) -> Non
 @requires_auth
 @click.argument("codemod_name", type=str)
 @click.argument("pr_number", type=int)
-def run_on_pr_command(session: CodegenSession, codemod_name: str, pr_number: int):
+def run_on_pr_command(session: CodegenSession, codemod_name: str, pr_number: int) -> None:
     """Test a webhook against a specific PR.
 
     CODEMOD_NAME is the name of the codemod to test

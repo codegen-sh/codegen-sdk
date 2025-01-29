@@ -46,7 +46,7 @@ class CodegenSession:
     _identity: Identity | None = None
     _profile: UserProfile | None = None
 
-    def __init__(self, token: str | None = None):
+    def __init__(self, token: str | None = None) -> None:
         self.token = token or get_current_token()
 
     @property

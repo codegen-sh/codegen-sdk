@@ -9,7 +9,7 @@ from codegen.cli.utils.codemod_manager import CodemodManager
 
 
 @click.command(name="list")
-def list_command():
+def list_command() -> None:
     """List available codegen functions."""
     functions = CodemodManager.get_decorated()
     if functions:

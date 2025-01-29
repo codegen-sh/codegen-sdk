@@ -22,7 +22,7 @@ def run_command(
     web: bool = False,
     diff_preview: int | None = None,
     arguments: str | None = None,
-):
+) -> None:
     """Run a codegen function by its label."""
     # Ensure venv is initialized
     venv = VenvManager()

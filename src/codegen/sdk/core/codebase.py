@@ -178,7 +178,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return f"<Codebase(name={self.name}, language={self.language}, path={self.repo_path})>"
 
     @noapidoc
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -846,7 +846,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.git_cli.git.diff(base, patch=True, full_index=True)
 
     @noapidoc
-    def clean_repo(self):
+    def clean_repo(self) -> None:
         """Cleaning a codebase repo by:
         1. Deleting all branches except the checked out one
         2. Deleting all remotes except origin
@@ -859,12 +859,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._op.clean_branches()
 
     @noapidoc
-    def stash_changes(self):
+    def stash_changes(self) -> None:
         """Stash all changes in the codebase."""
         self._op.stash_push()
 
     @noapidoc
-    def restore_stashed_changes(self):
+    def restore_stashed_changes(self) -> None:
         """Restore the most recent stash in the codebase."""
         self._op.stash_pop()
 

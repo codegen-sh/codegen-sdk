@@ -4,7 +4,7 @@ from difflib import unified_diff
 from enum import IntEnum
 from functools import cached_property
 from pathlib import Path
-from typing import TYPE_CHECKING, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, NoReturn, Protocol, runtime_checkable
 
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 
@@ -78,7 +78,7 @@ class Transaction:
     def length(self):
         return self.end_byte - self.start_byte
 
-    def execute(self):
+    def execute(self) -> NoReturn:
         msg = "Transaction.execute() must be implemented by subclasses"
         raise NotImplementedError(msg)
 
@@ -87,20 +87,20 @@ class Transaction:
         msg = "Transaction.get_diff() must be implemented by subclasses"
         raise NotImplementedError(msg)
 
-    def diff_str(self):
+    def diff_str(self) -> NoReturn:
         """Human-readable string representation of the change"""
         msg = "Transaction.diff_str() must be implemented by subclasses"
         raise NotImplementedError(msg)
 
-    def _to_sort_key(transaction: "Transaction"):
+    def _to_sort_key(self: "Transaction"):
         # Sort by:
         # 1. Descending start_byte
         # 2. Ascending transaction type
         # 3. Ascending priority
         # 4. Descending time of transaction=
-        priority = (transaction.priority,) if isinstance(transaction.priority, int) else transaction.priority
+        priority = (self.priority,) if isinstance(self.priority, int) else self.priority
 
-        return -transaction.start_byte, transaction.transaction_order.value, priority, -transaction.transaction_id
+        return -self.start_byte, self.transaction_order.value, priority, -self.transaction_id
 
     @cached_property
     def new_content(self) -> str | None:

@@ -8,7 +8,7 @@ from codegen.shared.exceptions.compilation import DangerousUserCodeException, In
 from codegen.shared.exceptions.control_flow import StopCodemodException
 
 
-def test_syntax_error_raises():
+def test_syntax_error_raises() -> None:
     codeblock = """
 print "syntax error"
 """
@@ -20,7 +20,7 @@ print "syntax error"
     assert 'print "syntax error"' in error_msg
 
 
-def test_print_os_environ_raises():
+def test_print_os_environ_raises() -> None:
     codeblock = """
 print(os.environ["ENV"])
 """
@@ -28,7 +28,7 @@ print(os.environ["ENV"])
         create_execute_function_from_codeblock(codeblock=codeblock)
 
 
-def test_print_calls_codebase_log():
+def test_print_calls_codebase_log() -> None:
     """Test print is monkey patched to call codebase.log"""
     codeblock = """
 print("actually codebase.log")
@@ -40,7 +40,7 @@ print("actually codebase.log")
     assert mock_log.call_args_list[0][0][0] == "actually codebase.log"
 
 
-def test_set_custom_scope_does_not_raise():
+def test_set_custom_scope_does_not_raise() -> None:
     """Test if the custom scope is set and the codeblock uses a var defined in the scope, it does not raise a NameError."""
     codeblock = """
 print(local_a)
@@ -53,7 +53,7 @@ print(local_a)
 
 
 @patch("codegen.shared.compilation.string_to_code.logger")
-def test_stop_codemod_execution_logs_and_raises(mock_logger):
+def test_stop_codemod_execution_logs_and_raises(mock_logger) -> None:
     codeblock = """
 local_a = "this is local_a"
 raise StopCodemodException("test exception")
@@ -65,7 +65,7 @@ raise StopCodemodException("test exception")
     mock_logger.info.call_args_list[1][0][0] == "Stopping codemod due to StopCodemodException: test exception"
 
 
-def test_references_import_from_generated_imports_does_not_raise():
+def test_references_import_from_generated_imports_does_not_raise() -> None:
     codeblock = """
 print(os.getcwd()) # test external import
 print(MessageType.GITHUB) # test gs private import
@@ -77,7 +77,7 @@ print(Export.__name__) # test gs public import
     assert mock_log.call_count == 3
 
 
-def test_references_import_not_in_generated_imports_raises_runtime_error():
+def test_references_import_not_in_generated_imports_raises_runtime_error() -> None:
     codeblock = """
 print(Chainable.__name__)
 """
@@ -90,7 +90,7 @@ print(Chainable.__name__)
     assert "> 1:     print(Chainable.__name__)" in error_msg
 
 
-def test_error_during_execution_raises_runtime_error():
+def test_error_during_execution_raises_runtime_error() -> None:
     codeblock = """
 print(var_that_does_not_exist)
 """
@@ -105,7 +105,7 @@ print(var_that_does_not_exist)
 
 
 @pytest.mark.xfail(reason="TODO(CG-9581): fix codeblocks with return statements")
-def test_return_statement_still_returns_locals():
+def test_return_statement_still_returns_locals() -> None:
     """Test if there is a return statement in a customer code block, the function should still return the locals"""
     codeblock = """
 local_a = "this is local_a"

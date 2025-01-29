@@ -31,7 +31,7 @@ class GenericType(NamedType[Parent], Generic[TType, Parent]):
 
     _parameters: Collection[TType, Self]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self._parameters = self._get_parameters()
 
@@ -54,7 +54,7 @@ class GenericType(NamedType[Parent], Generic[TType, Parent]):
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         super()._compute_dependencies(usage_type, dest)
         for param in self._parameters:
             param._compute_dependencies(UsageKind.GENERIC, dest)

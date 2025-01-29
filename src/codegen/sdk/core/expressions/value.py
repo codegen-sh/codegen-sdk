@@ -23,12 +23,12 @@ class Value(Expression[Parent], Generic[Parent]):
     See also HasValue.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.G.parser.log_unparsed(self.ts_node)
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None) -> None:
         for node in self.children:
             node._compute_dependencies(usage_type, dest=dest)

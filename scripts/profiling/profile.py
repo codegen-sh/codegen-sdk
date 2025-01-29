@@ -5,7 +5,7 @@ from subprocess import Popen
 import typer
 
 
-def profile(repo: str, memory: bool = False):
+def profile(repo: str, memory: bool = False) -> None:
     type = "mem" if memory else "cpu"
     base = f".profiles/{type}/{repo}"
     os.makedirs(base, exist_ok=True)
@@ -37,7 +37,7 @@ def profile(repo: str, memory: bool = False):
         test.kill()
 
 
-def main():
+def main() -> None:
     typer.run(profile)
 
 

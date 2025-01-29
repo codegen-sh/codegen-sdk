@@ -12,7 +12,7 @@ class RangeIndex:
     _ranges: defaultdict[Range, list[Editable]]
     _canonical_range: defaultdict[Range, dict[int, Editable]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._ranges = defaultdict(list)
         self._canonical_range = defaultdict(dict)
 
@@ -29,7 +29,7 @@ class RangeIndex:
         if mapping := self._canonical_range.get(range, None):
             return mapping.get(kind_id, None)
 
-    def clear(self):
+    def clear(self) -> None:
         self._ranges.clear()
         self._canonical_range.clear()
         self.__dict__.pop("children", None)

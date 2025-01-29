@@ -13,7 +13,7 @@ from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.utils.url import generate_webapp_url
 
 
-def run_cloud(session: CodegenSession, function, apply_local: bool = False, diff_preview: int | None = None):
+def run_cloud(session: CodegenSession, function, apply_local: bool = False, diff_preview: int | None = None) -> None:
     """Run a function on the cloud service.
 
     Args:

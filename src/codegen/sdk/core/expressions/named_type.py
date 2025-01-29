@@ -26,7 +26,7 @@ Parent = TypeVar("Parent", bound="Editable")
 class NamedType(Resolvable, Type[Parent], HasName, Generic[Parent]):
     """An abstract representation of a named type."""
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self._name_node = self._parse_expression(self._get_name_node(), default=Name)
 
@@ -56,7 +56,7 @@ class NamedType(Resolvable, Type[Parent], HasName, Generic[Parent]):
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         if isinstance(self.get_name(), String):
             # TODO: string annotations
             self._log_parse("String type annotations are not currently supported")
@@ -71,5 +71,5 @@ class NamedType(Resolvable, Type[Parent], HasName, Generic[Parent]):
 
     @noapidoc
     @writer
-    def rename_if_matching(self, old: str, new: str):
+    def rename_if_matching(self, old: str, new: str) -> None:
         self.get_name().rename_if_matching(old, new)

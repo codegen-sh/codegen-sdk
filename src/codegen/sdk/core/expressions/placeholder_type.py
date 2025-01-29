@@ -22,7 +22,7 @@ class PlaceholderType(Type[Parent], Generic[TType, Parent]):
 
     @noapidoc
     @commiter
-    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
+    def _compute_dependencies(self, usage_type: UsageKind, dest: Importable) -> None:
         self._add_all_identifier_usages(usage_type, dest=dest)
 
     @reader

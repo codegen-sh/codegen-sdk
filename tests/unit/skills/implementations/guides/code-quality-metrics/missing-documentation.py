@@ -69,7 +69,7 @@ class AutoDocstringGenerator(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[AutoDocstringGeneratorTest], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         functions_without_docstring = 0
         # Iterate over all functions in the codebase
         for function in codebase.functions:

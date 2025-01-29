@@ -20,7 +20,7 @@ class CountFunctionsArgs(BaseModel):
 
 
 @codegen.cli.sdk.decorator.function("count-functions")
-def run(codebase, pr_options, arguments: CountFunctionsArgs):
+def run(codebase, pr_options, arguments: CountFunctionsArgs) -> None:
     # Count Functions in Codebase
 
     # Initialize a total function counter

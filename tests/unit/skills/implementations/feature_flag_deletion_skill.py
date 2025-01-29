@@ -101,7 +101,7 @@ class DeleteRolledOutFeatureFlagSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=py_files)], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType):
+    def python_skill_func(codebase: PyCodebaseType) -> None:
         """Implements the feature flag deletion for Python codebases."""
         feature_flag = codebase.get_symbol("ROLLED_OUT_FLAG_TO_DELETE")
         feature_flag_name = feature_flag.name
@@ -123,7 +123,7 @@ class DeleteRolledOutFeatureFlagSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=ts_files)], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType):
+    def typescript_skill_func(codebase: TSCodebaseType) -> None:
         """Implements the feature flag deletion for TypeScript codebases."""
         feature_flag = codebase.get_symbol("ROLLED_OUT_FLAG_TO_DELETE")
         feature_flag_name = feature_flag.name

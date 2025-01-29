@@ -51,7 +51,7 @@ def get_generated_imports():
 )
 
 
-def fix_ruff_imports(objects: list[DocumentedObject]):
+def fix_ruff_imports(objects: list[DocumentedObject]) -> None:
     root, _ = split_git_path(str(Path(__file__)))
     to_add = []
     for obj in objects:

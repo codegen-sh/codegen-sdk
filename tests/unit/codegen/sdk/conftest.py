@@ -28,7 +28,7 @@ def codebase(tmp_path, original: dict[str, str], programming_language: Programmi
 
 @pytest.fixture
 def assert_expected(expected: dict[str, str], tmp_path):
-    def assert_expected(codebase: Codebase):
+    def assert_expected(codebase: Codebase) -> None:
         codebase.commit()
         for file in expected:
             assert tmp_path.joinpath(file).exists()

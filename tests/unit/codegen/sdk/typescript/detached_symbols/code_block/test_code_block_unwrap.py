@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_unwrap_flat_statements(tmpdir):
+def test_unwrap_flat_statements(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -40,7 +40,7 @@ if (a) {
     )
 
 
-def test_unwrap_nested_statements(tmpdir):
+def test_unwrap_nested_statements(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -83,7 +83,7 @@ function foo(): void {
     )
 
 
-def test_unwrap_sandwiched_statements(tmpdir):
+def test_unwrap_sandwiched_statements(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {
@@ -124,7 +124,7 @@ function foo(): void {
     )
 
 
-def test_unwrap_multiline_wrapper(tmpdir):
+def test_unwrap_multiline_wrapper(tmpdir) -> None:
     # language=typescript
     content = """
 function foo(): void {

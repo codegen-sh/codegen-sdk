@@ -1,7 +1,7 @@
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 
 
-def test_code_block_remove_multiple_element(tmpdir):
+def test_code_block_remove_multiple_element(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -25,7 +25,7 @@ def foo():
     )
 
 
-def test_code_block_remove_insert_beginning(tmpdir):
+def test_code_block_remove_insert_beginning(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -51,7 +51,7 @@ def foo():
     )
 
 
-def test_code_block_insert_remove_beginning(tmpdir):
+def test_code_block_insert_remove_beginning(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -77,7 +77,7 @@ def foo():
     )
 
 
-def test_code_block_remove_insert_middle(tmpdir):
+def test_code_block_remove_insert_middle(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -103,7 +103,7 @@ def foo():
     )
 
 
-def test_code_block_insert_remove_middle(tmpdir):
+def test_code_block_insert_remove_middle(tmpdir) -> None:
     # language=python
     content = """
 def foo():

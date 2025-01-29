@@ -28,7 +28,7 @@ class MoveFunctionsToNewFile(Codemod, Skill):
     language = ProgrammingLanguage.PYTHON
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.PYTHON)
-    def execute(self, codebase: Codebase):
+    def execute(self, codebase: Codebase) -> None:
         # Create a new file for storing the functions that contain pylsp util functions
         new_file: SourceFile = codebase.create_file("pylsp/pylsp_shared.py", "")
         for file in codebase.files:

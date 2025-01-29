@@ -1,6 +1,6 @@
-def foo_bar():
+def foo_bar() -> int:
     return 1
 
 
-def foo_char():
+def foo_char() -> int:
     return 2

@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_function_calls_from_function_call(tmpdir):
+def test_function_calls_from_function_call(tmpdir) -> None:
     # language=typescript
     content = """
 describe("LoadManager test", () => {
@@ -19,7 +19,7 @@ describe("LoadManager test", () => {
         assert len(func_call) == 6
 
 
-def test_remove_parenthesized(tmpdir):
+def test_remove_parenthesized(tmpdir) -> None:
     # language=typescript
     content = """
 const a = (b) || c;
@@ -37,7 +37,7 @@ const a = c;
     )
 
 
-def test_remove_tsx(tmpdir):
+def test_remove_tsx(tmpdir) -> None:
     # language=typescript jsx
     content = """
 const element = <h1>Hello, {name}</h1>;

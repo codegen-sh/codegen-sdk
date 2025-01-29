@@ -34,7 +34,7 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     _object: Object
     _attribute: Attribute
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent, object: TSNode, attribute: TSNode):
+    def __init__(self, ts_node, file_node_id, G, parent: Parent, object: TSNode, attribute: TSNode) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)
         self._object = self._parse_expression(object, default=Name)
         if self.G.parser._should_log:
@@ -130,6 +130,6 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
 
     @noapidoc
     @writer
-    def rename_if_matching(self, old: str, new: str):
+    def rename_if_matching(self, old: str, new: str) -> None:
         if self.attribute.source == old:
             self.attribute.edit(new)

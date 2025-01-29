@@ -115,7 +115,7 @@ def get_langauge(symbol: Class | Function | PyAttribute) -> str:
         return "ALL"
 
 
-def get_type(method: Function):
+def get_type(method: Function) -> str:
     """Return the type of method.
 
     Args:

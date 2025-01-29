@@ -12,7 +12,7 @@ class LanguageType(StrEnum):
     BOTH = "BOTH"
 
 
-def generate_builtins_file(path_to_builtins: str, language_type: LanguageType):
+def generate_builtins_file(path_to_builtins: str, language_type: LanguageType) -> None:
     """Generates and writes the builtins file"""
     documented_imports = get_documented_objects()
     all_objects = chain(documented_imports["apidoc"], documented_imports["py_apidoc"], documented_imports["ts_apidoc"])

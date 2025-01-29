@@ -70,7 +70,7 @@ def make_relative(path: Path) -> str:
 @click.argument("path", type=click.Path(path_type=Path), default=Path.cwd())
 @click.option("--description", "-d", default=None, help="Description of what this codemod does.")
 @click.option("--overwrite", is_flag=True, help="Overwrites function if it already exists.")
-def create_command(session: CodegenSession, name: str, path: Path, description: str | None = None, overwrite: bool = False):
+def create_command(session: CodegenSession, name: str, path: Path, description: str | None = None, overwrite: bool = False) -> None:
     """Create a new codegen function.
 
     NAME is the name/label for the function

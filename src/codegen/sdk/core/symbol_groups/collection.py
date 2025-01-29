@@ -47,7 +47,7 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         if children is not None:
             self._init_children(children)
 
-    def _init_children(self, symbols: list[Child]):
+    def _init_children(self, symbols: list[Child]) -> None:
         """Call this after setting self._symbols."""
         if self.ts_node.start_point[0] != self.ts_node.end_point[0] and symbols:
             # This is a multiline collection.
@@ -264,11 +264,11 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
             return -1
 
     @noapidoc
-    def _mark_dirty(self):
+    def _mark_dirty(self) -> None:
         self.transaction_manager.pending_undos.add(self.reset)
 
     @noapidoc
-    def reset(self):
+    def reset(self) -> None:
         self._pending_removes = 0
         self._elements = len(self._original_children)
         self._symbols = self._original_children.copy()

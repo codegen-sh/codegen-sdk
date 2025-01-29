@@ -55,7 +55,7 @@ class RestAPI:
 
     auth_token: str | None = None
 
-    def __init__(self, auth_token: str):
+    def __init__(self, auth_token: str) -> None:
         self.auth_token = auth_token
 
     def _get_headers(self) -> dict[str, str]:

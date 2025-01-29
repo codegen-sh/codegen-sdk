@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from codegen.sdk.core.symbol_groups.comment_group import CommentGroup
 from codegen.sdk.typescript.statements.comment import TSComment, TSCommentType
@@ -62,7 +62,7 @@ class TSCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_symbol_comments(cls, symbol: TSSymbol):
+    def from_symbol_comments(cls, symbol: TSSymbol) -> Self | None:
         comment_nodes = cls._get_sibbling_comments(symbol)
         if not comment_nodes:
             return None
@@ -70,7 +70,7 @@ class TSCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_symbol_inline_comments(cls, symbol: TSSymbol):
+    def from_symbol_inline_comments(cls, symbol: TSSymbol) -> Self | None:
         # Locate the body that contains the comment nodes
         current_node = symbol.ts_node
         parent_node = symbol.ts_node.parent
@@ -115,7 +115,7 @@ class TSCommentGroup(CommentGroup):
 
     @classmethod
     @noapidoc
-    def from_comment_nodes(cls, comment_nodes: list[TSComment], symbol: TSSymbol):
+    def from_comment_nodes(cls, comment_nodes: list[TSComment], symbol: TSSymbol) -> Self | None:
         if not comment_nodes:
             return None
 

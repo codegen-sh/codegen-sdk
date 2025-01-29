@@ -25,7 +25,7 @@ class ParenthesizedExpression(Unwrappable[Parent], HasValue, IWrapper, Generic[P
         ```
     """
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent):
+    def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)
         value_node = self.ts_node.named_children[0]
         self._value_node = self.G.parser.parse_expression(value_node, self.file_node_id, self.G, self) if value_node else None

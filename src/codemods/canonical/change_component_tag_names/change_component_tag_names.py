@@ -35,7 +35,7 @@ class ChangeJSXElementName(Codemod, Skill):
     language = ProgrammingLanguage.TYPESCRIPT
 
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def execute(self, codebase: Codebase):
+    def execute(self, codebase: Codebase) -> None:
         # Grab the NewName component
         PrivateRoutesContainer = codebase.get_symbol("PrivateRoutesContainer", optional=True)
         if PrivateRoutesContainer is None or not PrivateRoutesContainer.is_jsx:

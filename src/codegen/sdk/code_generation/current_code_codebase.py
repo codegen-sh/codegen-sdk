@@ -43,7 +43,7 @@ def get_current_code_codebase(config: CodebaseConfig = DefaultConfig, subdirecto
     return codebase
 
 
-def import_all_codegen_sdk_modules():
+def import_all_codegen_sdk_modules() -> None:
     # for file in codegen.sdk:
 
     CODEGEN_SDK_DIR = Path(get_graphsitter_repo_path())

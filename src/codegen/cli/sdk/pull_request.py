@@ -14,7 +14,7 @@ class CodegenPullRequest:
     codegen_pr_id: int
     patch_set: PatchSet | None = None
 
-    def __init__(self, url: str, number: int, title: str, github_pr_number: int, codegen_pr_id: int, patch_set: PatchSet | None = None):
+    def __init__(self, url: str, number: int, title: str, github_pr_number: int, codegen_pr_id: int, patch_set: PatchSet | None = None) -> None:
         self.url = url
         self.number = number
         self.title = title
@@ -47,5 +47,5 @@ class CodegenPullRequest:
             patch_set=None,  # Can be loaded on demand if needed
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"CodegenPullRequest(url={self.url}, number={self.number}, title={self.title}, github_pr_number={self.github_pr_number}, codegen_pr_id={self.codegen_pr_id})"

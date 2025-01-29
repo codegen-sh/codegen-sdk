@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_convert_simple_props_to_interface(tmpdir):
+def test_convert_simple_props_to_interface(tmpdir) -> None:
     # language=typescript
     content = """
 function Button(props: {
@@ -40,7 +40,7 @@ function Button(props: ButtonProps) {
     )
 
 
-def test_convert_props_to_interface_with_complex_types(tmpdir):
+def test_convert_props_to_interface_with_complex_types(tmpdir) -> None:
     # language=typescript
     content = """
 function DataGrid(props: {
@@ -75,7 +75,7 @@ function DataGrid(props: DataGridProps) {
     )
 
 
-def test_convert_props_to_interface_with_generics(tmpdir):
+def test_convert_props_to_interface_with_generics(tmpdir) -> None:
     # language=typescript
     content = """
 function List<T>(props: {
@@ -111,7 +111,7 @@ function List<T>(props: ListProps<T>) {
     )
 
 
-def test_convert_props_to_interface_with_extends(tmpdir):
+def test_convert_props_to_interface_with_extends(tmpdir) -> None:
     # language=typescript
     content = """
 function CustomButton(props: {

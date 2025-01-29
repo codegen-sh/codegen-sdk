@@ -37,7 +37,7 @@ class SkillImplementation:
         si_id: int | None = None,
         from_app: bool = False,
         external: bool = False,
-    ):
+    ) -> None:
         self.name = name or skill_func.__name__
         self.language = language
         self.test_cases = [] if skip_test else test_cases
@@ -122,6 +122,6 @@ class SkillImplementation:
     def __call__(self, codebase: CodebaseType):
         self._skill_func(codebase)
 
-    def __str__(self):
+    def __str__(self) -> str:
         source = inspect.getsource(self._skill_func)
         return textwrap.dedent(source).strip()

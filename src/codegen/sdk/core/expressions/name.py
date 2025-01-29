@@ -45,6 +45,6 @@ class Name(Expression[Parent], Resolvable, Generic[Parent]):
 
     @noapidoc
     @writer
-    def rename_if_matching(self, old: str, new: str):
+    def rename_if_matching(self, old: str, new: str) -> None:
         if self.source == old:
             self.edit(new)

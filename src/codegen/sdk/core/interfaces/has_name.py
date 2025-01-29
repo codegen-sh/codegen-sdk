@@ -90,7 +90,7 @@ class HasName:
 
     @noapidoc
     @commiter
-    def _add_name_usage(self, usage_type: UsageKind):
+    def _add_name_usage(self, usage_type: UsageKind) -> None:
         if name := self.get_name():
             if resolved := name.resolved_symbol():
                 self._add_symbol_usages(usage_type, [resolved])

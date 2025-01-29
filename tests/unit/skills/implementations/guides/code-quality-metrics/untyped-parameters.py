@@ -76,7 +76,7 @@ class CountUntypedParameters(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[CountUntypedParametersTest], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         untitled_parameters_count = 0
 
         # Iterate through all files in the codebase

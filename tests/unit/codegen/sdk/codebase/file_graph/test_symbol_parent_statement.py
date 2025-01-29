@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_parent_statement_function(tmpdir):
+def test_parent_statement_function(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -17,7 +17,7 @@ def foo():
         assert codebase.get_function("foo").parent_statement == file.code_block.statements[0]
 
 
-def test_parent_statement_class(tmpdir):
+def test_parent_statement_class(tmpdir) -> None:
     # language=python
     content = """
 class Foo:
@@ -28,7 +28,7 @@ class Foo:
         assert codebase.get_class("Foo").parent_statement == file.code_block.statements[0]
 
 
-def test_parent_statement_assignment(tmpdir):
+def test_parent_statement_assignment(tmpdir) -> None:
     # language=python
     content = """
 foo = 1
@@ -38,7 +38,7 @@ foo = 1
         assert file.get_global_var("foo").parent_statement == file.code_block.statements[0]
 
 
-def test_parent_statement_nested_symbols(tmpdir):
+def test_parent_statement_nested_symbols(tmpdir) -> None:
     # language=python
     content = """
 logger = get_logger()

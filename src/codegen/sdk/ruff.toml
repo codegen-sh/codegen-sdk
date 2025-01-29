@@ -1,0 +1,10 @@
+extend = "../../../ruff.toml"
+
+[lint]
+extend-select = ["PERF"]
+extend-ignore = ["PERF401"]
+
+
+[lint.per-file-ignores]
+"skills/**.py" = ["PERF"]
+"utils/**.py" = ["PERF"]

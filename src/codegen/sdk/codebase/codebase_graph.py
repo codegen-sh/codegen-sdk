@@ -167,7 +167,7 @@ class CodebaseGraph:
         self.pending_files = set()
         self.flags = Flags()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__class__.__name__
 
     @stopwatch_with_sentry(name="build_graph")
@@ -487,7 +487,7 @@ class CodebaseGraph:
         finally:
             self._computing = False
 
-    def _compute_dependencies(self, to_update: list[Importable], incremental: bool):
+    def _compute_dependencies(self, to_update: list[Importable], incremental: bool) -> None:
         seen = set()
         while to_update:
             step = to_update.copy()
@@ -621,7 +621,7 @@ class CodebaseGraph:
     def remove_node(self, n: NodeId):
         return self._graph.remove_node(n)
 
-    def remove_edge(self, u: NodeId, v: NodeId, *, edge_type: EdgeType | None = None):
+    def remove_edge(self, u: NodeId, v: NodeId, *, edge_type: EdgeType | None = None) -> None:
         for edge in self._graph.edge_indices_from_endpoints(u, v):
             if edge_type is not None:
                 if self._graph.get_edge_data_by_index(edge).type != edge_type:
