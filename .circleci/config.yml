@@ -209,7 +209,7 @@ commands:
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   unit-tests:
-    parallelism: 3
+    parallelism: 4
     executor: default_image
     resource_class: "large"
     steps:
