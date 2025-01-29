@@ -99,13 +99,15 @@ def pytest_runtest_makereport(item, call):
             raise RuntimeError(msg)
 
 
-@pytest.fixture(autouse=True)
+# Lets not run if we are in CI
+
+
+IS_CI = os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true"
+
+
+@pytest.fixture(autouse=IS_CI)
 def skip_lfs_tests(request) -> None:
     """Skip tests that depend on git LFS files if they haven't been pulled"""
-    # Lets not run if we are in CI
-    if os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true":
-        return
-
     # Get the test module path
     test_path = Path(request.module.__file__)
 
