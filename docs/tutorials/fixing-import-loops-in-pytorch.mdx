@@ -4,7 +4,19 @@ description: "Learn how to identify and fix problematic import loops using Codeg
 icon: "arrows-rotate"
 iconType: "solid"
 ---
-  <img src="/images/import-loops.png" />
+<Frame caption="Import loops in pytorch/torchgen/model.py">
+    <iframe
+    width="100%"
+    height="500px"
+    scrolling="no"
+    src={`https://www.codegen.sh/embedded/graph?id=ce2b4bee-fd40-4007-9540-f7ef18812d37&zoom=0.7`}
+    className="rounded-xl"
+    style={{
+        backgroundColor: "#15141b",
+    }}
+    ></iframe>
+</Frame>
+
 
 Import loops occur when two or more Python modules depend on each other, creating a circular dependency. While some import cycles can be harmless, others can lead to runtime errors and make code harder to maintain. 
 
@@ -118,7 +130,18 @@ cycle_graph = create_single_loop_graph(cycle)
 codebase.visualize(cycle_graph)
 ```
 
-<img src="/images/large-import-loop.png" />
+<Frame caption="Import loop in pytorch/torchgen/model.py">
+    <iframe
+    width="100%"
+    height="500px"
+    scrolling="no"
+    src={`https://www.codegen.sh/embedded/graph?id=f3cc5dbb-c577-4c80-991b-3a27f0fe9892&zoom=1`}
+    className="rounded-xl "
+    style={{
+        backgroundColor: "#15141B",
+    }}
+    ></iframe>
+</Frame>
 
 # Step 3: Identify problematic cycles with mixed static & dynamic imports
 
@@ -138,9 +161,64 @@ from .flex_attention import (
 def create_flex_decoding_kernel(*args, **kwargs):
     from .flex_attention import set_head_dim_values  # dynamic import
 ```
+
 It's clear that there is both a top level and a dynamic import that imports from the *same* module. Thus, this can cause issues if not handled carefully.
 
 <img src="/images/problematic-import-loop.png" />
+
+Let's find these problematic cycles:
+```
+import networkx as nx
+
+G = nx.MultiDiGraph()
+
+```python
+def find_problematic_import_loops(G, sccs):
+    """Find cycles where files have both static and dynamic imports between them."""
+    problematic_cycles = []
+
+    for i, scc in enumerate(sccs):
+        if i == 2:  # skipping the second import loop as it's incredibly long (it's also invalid)
+            continue
+        mixed_import_files = {}  # (from_file, to_file) -> {dynamic: count, static: count}
+
+        # Check all file pairs in the cycle
+        for from_file in scc:
+            for to_file in scc:
+                if G.has_edge(from_file, to_file):
+                    # Get all edges between these files
+                    edges = G.get_edge_data(from_file, to_file)
+
+                    # Count imports by type
+                    dynamic_count = sum(1 for e in edges.values() if e["color"] == "red")
+                    static_count = sum(1 for e in edges.values() if e["color"] == "black")
+
+                    # If we have both types between same files, this is problematic
+                    if dynamic_count > 0 and static_count > 0:
+                        mixed_import_files[(from_file, to_file)] = {"dynamic": dynamic_count, "static": static_count, "edges": edges}
+
+        if mixed_import_files:
+            problematic_cycles.append({"files": scc, "mixed_imports": mixed_import_files, "index": i})
+
+    # Print findings
+    print(f"Found {len(problematic_cycles)} cycles with mixed imports:")
+    for i, cycle in enumerate(problematic_cycles):
+        print(f"\n⚠️  Problematic Cycle #{i + 1}:")
+        print(f"\n⚠️  Index #{cycle['index']}:")
+        print(f"Size: {len(cycle['files'])} files")
+
+        for (from_file, to_file), data in cycle["mixed_imports"].items():
+            print("\n📁 Mixed imports detected:")
+            print(f"  From: {from_file}")
+            print(f"  To:   {to_file}")
+            print(f"  Dynamic imports: {data['dynamic']}")
+            print(f"  Static imports: {data['static']}")
+
+    return problematic_cycles
+
+problematic_cycles = find_problematic_import_loops(G, cycles)
+```
+
 
 One common fix to this problem to break this cycle is to move all the shared symbols to a separate `utils.py` file. We can do this using codegen `symbol.move_to_file`:
 
@@ -176,83 +254,6 @@ for symbol in symbols_to_move:
 ```python
 # run this command to have the changes take effect in the codebase
 codebase.commit()
-```
-
-
-
-Let's use Codeium to analyze PyTorch's codebase for import cycles. First, we'll set up our analysis:
-
-
-
-
-```python
-from codegen.sdk import Codebase
-
-# Load PyTorch codebase
-codebase = Codebase.from_repo("pytorch/pytorch")
-# If you have PyTorch cloned locally:
-# codebase = Codebase("path/to/pytorch")
-```
-
-Now we'll create a graph representation of imports and analyze it for cycles:
-
-```python
-import networkx as nx
-
-G = nx.MultiDiGraph()
-
-# Add all edges to the graph
-for imp in codebase.imports:
-    if imp.from_file and imp.to_file:
-        edge_color = "red" if imp.is_dynamic else "black"
-        edge_label = "dynamic" if imp.is_dynamic else "static"
-        
-        G.add_edge(
-            imp.to_file.filepath,
-            imp.from_file.filepath,
-            color=edge_color,
-            label=edge_label,
-            is_dynamic=imp.is_dynamic,
-            import_statement=imp,
-            key=id(imp.import_statement),
-        )
-```
-
-## Identifying Problematic Cycles
-
-The most problematic import cycles are those that mix static and dynamic imports between the same files. Let's write a function to find these:
-
-```python
-def find_problematic_import_loops(G, sccs):
-    """Find cycles where files have both static and dynamic imports between them."""
-    problematic_cycles = []
-    
-    for i, scc in enumerate(sccs):
-        mixed_import_files = {}
-        
-        for from_file in scc:
-            for to_file in scc:
-                if G.has_edge(from_file, to_file):
-                    edges = G.get_edge_data(from_file, to_file)
-                    
-                    dynamic_count = sum(1 for e in edges.values() if e["color"] == "red")
-                    static_count = sum(1 for e in edges.values() if e["color"] == "black")
-                    
-                    if dynamic_count > 0 and static_count > 0:
-                        mixed_import_files[(from_file, to_file)] = {
-                            "dynamic": dynamic_count,
-                            "static": static_count,
-                            "edges": edges
-                        }
-                        
-        if mixed_import_files:
-            problematic_cycles.append({
-                "files": scc,
-                "mixed_imports": mixed_import_files,
-                "index": i
-            })
-    
-    return problematic_cycles
 ```
 
 Next Steps
