@@ -2,11 +2,13 @@ import os
 import shutil
 import subprocess
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from click.testing import CliRunner
 
 from codegen.cli.commands.init.main import init_command
+from codegen.cli.workspace.venv_manager import VenvManager
 
 
 @pytest.fixture
@@ -32,7 +34,10 @@ def runner():
 @pytest.fixture
 def initialized_repo(sample_repository: Path, runner: CliRunner):
     os.chdir(sample_repository)
-    runner.invoke(init_command)
+
+    with patch.object(VenvManager, "is_initialized", return_value=True):
+        runner.invoke(init_command)
     subprocess.run(["git", "add", "."], cwd=sample_repository, check=True)
     subprocess.run(["git", "commit", "-m", "Initialize codegen"], cwd=sample_repository, check=True)
+
     return sample_repository
