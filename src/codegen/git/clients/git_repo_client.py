@@ -82,6 +82,11 @@ class GitRepoClient:
         except UnknownObjectException:
             logger.info(f"File: {file_path} not found in ref: {ref}")
             return None
+        except GithubException as e:
+            if e.status == 404:
+                logger.info(f"File: {file_path} not found in ref: {ref}")
+                return None
+            raise
 
     def get_last_modified_date_of_path(self, path: str) -> datetime:
         """Uses the GitHub API to return the last modified date of a given directory or file.
