@@ -11,8 +11,7 @@ from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollec
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
-    from src.codegen.sdk.core.interfaces.editable import Editable
-
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.python.assignment import PyAssignment
     from codegen.sdk.python.interfaces.has_block import PyHasBlock
     from codegen.sdk.python.statements.with_statement import WithStatement

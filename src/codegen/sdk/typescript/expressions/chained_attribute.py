@@ -1,12 +1,12 @@
 from typing import TYPE_CHECKING, Generic, TypeVar
 
-from src.codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from src.codegen.sdk.core.node_id_factory import NodeId
 from tree_sitter import Node as TSNode
 
+from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Expression, Name
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
+from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import ts_apidoc
 

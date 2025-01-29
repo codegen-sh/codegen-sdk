@@ -9,9 +9,8 @@ from codegen.sdk.typescript.statements.block_statement import TSBlockStatement
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
-    from src.codegen.sdk.typescript.statements.switch_statement import TSSwitchStatement
-
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.typescript.statements.switch_statement import TSSwitchStatement
 
 
 @ts_apidoc

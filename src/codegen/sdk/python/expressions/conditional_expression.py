@@ -1,10 +1,10 @@
 from typing import TYPE_CHECKING, TypeVar
 
-from src.codegen.sdk.codebase.codebase_graph import CodebaseGraph
-from src.codegen.sdk.core.node_id_factory import NodeId
 from tree_sitter import Node as TSNode
 
+from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.expressions.ternary_expression import TernaryExpression
+from codegen.sdk.core.node_id_factory import NodeId
 from codegen.shared.decorators.docs import py_apidoc
 
 if TYPE_CHECKING:
