@@ -52,19 +52,7 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
     1. Right-click on `.codegen/.venv`
     2. Mark Directory as > Sources Root
   </Accordion>
-
-  <Accordion title="Troubleshooting" icon="wrench">
-    Common issues and solutions:
-
-    - **Missing Completions**: Make sure the interpreter is correctly set and the environment has `codegen` installed
-    - **Import Errors**: Verify the environment is activated and Python path includes the virtual environment
-    - **Wrong Python Version**: Check that you're using Python 3.11 or higher in `.codegen/.venv`
-    
-    Run this to verify your environment:
-    ```bash
-    .codegen/.venv/bin/python -c "import codegen; print(codegen.__version__)"
-    ```
-  </Accordion>
+  
 </AccordionGroup>
 
 
