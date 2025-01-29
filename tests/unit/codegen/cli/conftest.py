@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 from pathlib import Path
 
@@ -30,4 +31,5 @@ def initialized_repo(sample_repository: Path, runner: CliRunner):
     runner.invoke(init_command)
     subprocess.run(["git", "add", "."], cwd=sample_repository, check=True)
     subprocess.run(["git", "commit", "-m", "Initialize codegen"], cwd=sample_repository, check=True)
-    return sample_repository
+    yield sample_repository
+    shutil.rmtree(sample_repository)
