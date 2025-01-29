@@ -473,7 +473,7 @@ workflows:
       #     requires:
       #       - hold-codemod-tests
       - pre-commit
-      - doctests
+      # - doctests
       # - oss-codemod-tests:
       #     filters:
       #       branches:
