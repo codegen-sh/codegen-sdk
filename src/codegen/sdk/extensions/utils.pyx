@@ -54,6 +54,7 @@ def find_all_descendants(node: TSNode, type_names: Iterable[str] | str, max_dept
 def iter_all_descendants(node: TSNode, type_names: Iterable[str] | str, max_depth: int | None = None, nested: bool = True) -> Generator[TSNode, None, None]:
     if isinstance(type_names, str):
         type_names = [type_names]
+    type_names = frozenset(type_names)
 
     def traverse(current_node: TSNode, depth=0):
         if max_depth is not None and depth > max_depth:

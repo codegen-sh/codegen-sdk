@@ -42,6 +42,7 @@ class GSFeatureFlags(BaseModel):
     full_range_index: bool = False
     ignore_process_errors: bool = True  # Ignore errors from dependency manager and language engine
     import_resolution_overrides: dict[str, str] = {}  # Override import resolution for specific modules
+    disable_graph: bool = False  # Turn of graph generation entirely. Speeds up parsing but disables usages and dependencies
 
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)

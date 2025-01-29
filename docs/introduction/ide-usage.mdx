@@ -25,14 +25,17 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
        ```
     
     Alternatively, create a `.vscode/settings.json`:
-    ```json
-    {
-      "python.defaultInterpreterPath": "${workspaceFolder}/.codegen/.venv/bin/python",
-      "python.analysis.extraPaths": [
-        "${workspaceFolder}/.codegen/.venv/lib/python3.11/site-packages"
-      ]
-    }
-    ```
+        ```json
+        {
+          "python.defaultInterpreterPath": "${workspaceFolder}/.codegen/.venv/bin/python",
+          "python.analysis.extraPaths": [
+            "${workspaceFolder}/.codegen/.venv/lib/python3.11/site-packages"
+          ]
+        }
+        ```
+
+    5. Install the VSCode Python Extensions for LSP and debugging support. We recommend Python, Pylance and Python Debugger for the best experience.
+      <img src="/images/python-extensions.png" />
   </Accordion>
 
   <Accordion title="PyCharm" icon="python">
