@@ -83,8 +83,9 @@ repos:
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: "0.5.25"
     hooks:
-      - id: uv-lock
-        entry: bash -c "uv lock --frozen"
+      - id: uv-sync
+        args: ["--frozen", "--all-packages", "--all-extras"]
+
   - repo: https://github.com/zahorniak/pre-commit-circleci.git
     rev: v1.1.0
     hooks:
