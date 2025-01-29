@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyAssignment, PyClass, PyFunction
 
 
-def test_type_basic(tmpdir) -> None:
+def test_type_basic(tmpdir):
     file = "test.py"
     # language=python
     content = """
@@ -35,7 +35,7 @@ def foo(a: str):
     )
 
 
-def test_type_generic(tmpdir) -> None:
+def test_type_generic(tmpdir):
     file = "test.py"
     # language=python
     content = """
@@ -63,7 +63,7 @@ def foo(a: tuple[int, int, str]):
     )
 
 
-def test_type_union(tmpdir) -> None:
+def test_type_union(tmpdir):
     file = "test.py"
     # language=python
     content = """
@@ -90,7 +90,7 @@ def foo(a: int | None | str):
     )
 
 
-def test_type_multi_file(tmpdir) -> None:
+def test_type_multi_file(tmpdir):
     file2 = "test2.py"
     # language=python
     content2 = """

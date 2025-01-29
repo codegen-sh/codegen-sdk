@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python.file import PyFile
 
 
-def test_reduce_binary_simple(tmpdir) -> None:
+def test_reduce_binary_simple(tmpdir):
     # language=python
     content = """
 def foo():
@@ -31,7 +31,7 @@ def foo():
     )
 
 
-def test_reduce_binary_complex_condition(tmpdir) -> None:
+def test_reduce_binary_complex_condition(tmpdir):
     # language=python
     content = """
 def bar():
@@ -58,7 +58,7 @@ def bar():
     )
 
 
-def test_reduce_negation_condition(tmpdir) -> None:
+def test_reduce_negation_condition(tmpdir):
     # language=python
     content = """
 def baz():
@@ -84,7 +84,7 @@ def baz():
     )
 
 
-def test_reduce_binary_with_string(tmpdir) -> None:
+def test_reduce_binary_with_string(tmpdir):
     # language=python
     content = """
 def qux():
@@ -108,7 +108,7 @@ def qux():
     )
 
 
-def test_reduce_complex_condition_with_string(tmpdir) -> None:
+def test_reduce_complex_condition_with_string(tmpdir):
     # language=python
     content = """
 def quux():

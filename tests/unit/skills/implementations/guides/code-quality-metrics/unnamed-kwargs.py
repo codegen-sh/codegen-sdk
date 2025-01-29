@@ -83,7 +83,7 @@ class CountUnnamedKeywordArguments(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[CountUnnamedKeywordArgumentsTest], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         unnamed_kwargs_count = 0
 
         # Iterate through all files in the codebase

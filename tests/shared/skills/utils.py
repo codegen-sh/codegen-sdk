@@ -17,7 +17,7 @@ SKILLS_PATH: Path = REPO_ROOT_PATH / "tests" / "unit" / "skills" / "implementati
 CODEMODS_PATH: Path = REPO_ROOT_PATH / "src" / "codemods" / "canonical"
 
 
-def import_skills_from(path: Path, module_prefix: str) -> None:
+def import_skills_from(path: Path, module_prefix: str):
     for file in path.rglob("*.py"):
         relative_path = file.relative_to(path)
         if "evaluation" in relative_path.parts or "__init__" in file.name:
@@ -26,7 +26,7 @@ def import_skills_from(path: Path, module_prefix: str) -> None:
         importlib.import_module(module)
 
 
-def import_all_skills() -> None:
+def import_all_skills():
     import_skills_from(SKILLS_PATH, "tests.unit.skills.implementations")
     import_skills_from(CODEMODS_PATH, "codemods.canonical")
 

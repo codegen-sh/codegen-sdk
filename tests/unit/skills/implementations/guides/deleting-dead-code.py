@@ -122,7 +122,7 @@ class RemoveUnusedSymbols(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedSymbolsPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[RemoveUnusedSymbolsTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all symbols in the codebase
         for symbol in codebase.symbols:
             # Check if the symbols has no usages
@@ -195,7 +195,7 @@ class RemoveUnusedFunctions(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedFunctionsPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[RemoveUnusedFunctionsTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all functions in the codebase
         for function in codebase.functions:
             # Check if the function has no usages and no call sites
@@ -262,7 +262,7 @@ class RemoveUnusedImports(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedImportsPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[RemoveUnusedImportsTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all imports in the codebase
         for import_stmt in codebase.imports:
             # Check if the import statement has no usages
@@ -335,7 +335,7 @@ class RemoveUnusedLocalVariableAssignments(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedLocalVariableAssignmentsPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[RemoveUnusedLocalVariableAssignmentsTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all functions in the codebase
         for func in codebase.functions:
             # Iterate through local variable assignments in the function
@@ -407,7 +407,7 @@ class RemoveUnusedParametersAndArguments(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedParametersAndArgumentsPyTestCase], language=ProgrammingLanguage.PYTHON, ignore=True)
     @skill_impl(test_cases=[RemoveUnusedParametersAndArgumentsTSTestCase], language=ProgrammingLanguage.TYPESCRIPT, ignore=True)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # iterate through all functions in the codebase
         for function in codebase.functions:
             for param in function.parameters:
@@ -492,7 +492,7 @@ class RemoveUnusedClasses(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RemoveUnusedClassesPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[RemoveUnusedClassesTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all classes in the codebase
         for cls in codebase.classes:
             # Check if the class has no usages
@@ -582,7 +582,7 @@ class CleanUpCodebase(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CleanUpCodebasePyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[CleanUpCodebaseTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # iterate through all files in the codebase
         for file in codebase.files:
             # Check if the file is empty

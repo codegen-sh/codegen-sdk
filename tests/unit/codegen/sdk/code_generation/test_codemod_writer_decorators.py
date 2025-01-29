@@ -8,7 +8,7 @@ from codegen.sdk.code_generation.current_code_codebase import import_all_codegen
 
 
 @pytest.mark.skip("broken after repo split, fix or move over")
-def test_get_documented_objects() -> None:
+def test_get_documented_objects():
     """Test that importing everything in codegen-sdk
     doesn't invoke any functionality (incase someone leaves actual
     functionality at the top level of a file).

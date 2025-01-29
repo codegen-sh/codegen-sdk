@@ -21,7 +21,7 @@ def test_codemods_diffs(_codebase: Codebase, expected: Path) -> None:
     verify_diffs(_codebase)
 
 
-def verify_diffs(_codebase) -> None:
+def verify_diffs(_codebase):
     modified = gather_modified_files(_codebase)
     diffs = [DiffLite.from_git_diff(diff) for diff in _codebase.get_diffs()]
     _codebase.G.apply_diffs(diffs)

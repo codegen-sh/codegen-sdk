@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_export_aliased(tmpdir) -> None:
+def test_export_aliased(tmpdir):
     # language=typescript
     content = """
 function foo() {}
@@ -31,7 +31,7 @@ export { foo as foop, fuzz };
         assert fuzz_export.resolved_symbol == file.get_function("fuzz")
 
 
-def test_export_aliased_multiple(tmpdir) -> None:
+def test_export_aliased_multiple(tmpdir):
     # language=typescript
     content = """
 function foo() {}
@@ -60,7 +60,7 @@ export { foo as foop, bar as barp, baz };
         assert baz_export.resolved_symbol == file.get_function("baz")
 
 
-def test_export_aliased_default(tmpdir) -> None:
+def test_export_aliased_default(tmpdir):
     # language=typescript
     content = """
 function foo() {}

@@ -4,7 +4,7 @@ from codegen.shared.compilation.function_compilation import safe_compile_functio
 from codegen.shared.exceptions.compilation import InvalidUserCodeException
 
 
-def test_valid_func_str_should_not_raise() -> None:
+def test_valid_func_str_should_not_raise():
     func_str = """
 from codegen.sdk.core.codebase import Codebase
 
@@ -17,7 +17,7 @@ def execute(codebase: Codebase):
         pytest.fail("Unexpected InvalidUserCodeException raised")
 
 
-def test_valid_func_str_with_nested_should_not_raise() -> None:
+def test_valid_func_str_with_nested_should_not_raise():
     func_str = """
 from codegen.sdk.core.codebase import Codebase
 
@@ -33,7 +33,7 @@ def execute(codebase: Codebase):
         pytest.fail("Unexpected InvalidUserCodeException raised")
 
 
-def test_compile_syntax_error_indent_error_raises() -> None:
+def test_compile_syntax_error_indent_error_raises():
     func_str = """
 def execute(codebase: Codebase):
 a = 1
@@ -47,7 +47,7 @@ a = 1
     assert "> 3: a = 1" in error_msg
 
 
-def test_compile_syntax_error_raises() -> None:
+def test_compile_syntax_error_raises():
     func_str = """
 def execute(codebase: Codebase):
     print "syntax error"
@@ -61,7 +61,7 @@ def execute(codebase: Codebase):
     assert '> 3:     print "syntax error"' in error_msg
 
 
-def test_compile_non_syntax_error_unicode_error_raises() -> None:
+def test_compile_non_syntax_error_unicode_error_raises():
     func_str = """
 def execute(codebase: Codebase):
     print("hello")\udcff
@@ -78,7 +78,7 @@ def execute(codebase: Codebase):
     assert "'utf-8' codec can't encode character '\\udcff'" in error_msg
 
 
-def test_exec_error_non_syntax_error_zero_division_raises() -> None:
+def test_exec_error_non_syntax_error_zero_division_raises():
     """This is to test that we're handling errors (ex: ZeroDivisionError) that are raised during `exec` properly.
 
     NOTE: this case wouldn't happen with an actual func_str from create_function_str_from_codeblock b/c the func_str would just take in a codebase.
@@ -95,7 +95,7 @@ def execute(codebase: Codebase, exec_error: int = 1/0):
     assert "> 2: def execute(codebase: Codebase, exec_error: int = 1/0):" in error_msg
 
 
-def test_exec_error_non_syntax_error_name_error_raises() -> None:
+def test_exec_error_non_syntax_error_name_error_raises():
     """This is to test that we're handling errors (ex: NameError) that are raised during `exec` properly.
 
     NOTE: this case wouldn't happen with an actual func_str from create_function_str_from_codeblock b/c the func_str would not have any patches.
@@ -113,7 +113,7 @@ def execute(codebase: Codebase):
     assert '> 2: @patch("foo", return_value="bar")' in error_msg
 
 
-def test_func_str_uses_custom_scope_var_does_not_raise() -> None:
+def test_func_str_uses_custom_scope_var_does_not_raise():
     """This tests if a func_str references a var that is included in custom scope, it will not raise a NameError.
     This is to test the case when a group of codemods is run and a later one relies on a local defined in a previous one.
     """

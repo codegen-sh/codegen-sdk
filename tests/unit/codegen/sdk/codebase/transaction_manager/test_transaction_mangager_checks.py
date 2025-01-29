@@ -6,7 +6,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.exceptions.control_flow import MaxPreviewTimeExceeded, MaxTransactionsExceeded
 
 
-def test_check_max_preview_time_exceeded(tmpdir) -> None:
+def test_check_max_preview_time_exceeded(tmpdir):
     with pytest.raises(MaxPreviewTimeExceeded) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,
@@ -20,7 +20,7 @@ def test_check_max_preview_time_exceeded(tmpdir) -> None:
     assert exc_info.value.threshold == 0
 
 
-def test_check_max_preview_time_exceeded_set_session_options(tmpdir) -> None:
+def test_check_max_preview_time_exceeded_set_session_options(tmpdir):
     with get_codebase_session(
         tmpdir=tmpdir,
         files={"file_a.py": "a = 1", "file_b": "b = 1"},
@@ -34,7 +34,7 @@ def test_check_max_preview_time_exceeded_set_session_options(tmpdir) -> None:
     assert exc_info.value.threshold == 0
 
 
-def test_check_max_transactions_exceeded(tmpdir) -> None:
+def test_check_max_transactions_exceeded(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,
@@ -48,7 +48,7 @@ def test_check_max_transactions_exceeded(tmpdir) -> None:
     assert exc_info.value.threshold == 0
 
 
-def test_check_max_transactions_exceeded_set_session_options(tmpdir) -> None:
+def test_check_max_transactions_exceeded_set_session_options(tmpdir):
     with get_codebase_session(
         tmpdir=tmpdir,
         files={"file_a.py": "a = 1", "file_b": "b = 1"},

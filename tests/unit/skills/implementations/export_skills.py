@@ -63,7 +63,7 @@ class ExportSkills(Skill):
 
     @staticmethod
     @skill_impl(ts_test_cases, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType) -> None:
+    def typescript_skill_func(codebase: TSCodebaseType):
         """Convert default exports to named exports in TypeScript"""
         for file in codebase.files:
             for export in file.exports:

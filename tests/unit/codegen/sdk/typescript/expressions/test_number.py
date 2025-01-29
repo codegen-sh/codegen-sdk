@@ -4,7 +4,7 @@ from codegen.sdk.core.expressions.number import Number
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_number_parse(tmpdir) -> None:
+def test_number_parse(tmpdir):
     # language=typescript
     content = """
 const a = 1;

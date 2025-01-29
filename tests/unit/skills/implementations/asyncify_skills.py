@@ -133,7 +133,7 @@ class AsyncifyFunctionSkill(Skill):
     """
 
     @staticmethod
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         pass
 
     @staticmethod
@@ -158,7 +158,7 @@ class AsyncifyFunctionSkill(Skill):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=ts_files)], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType) -> None:
+    def typescript_skill_func(codebase: TSCodebaseType):
         func_to_convert = codebase.get_function("funcToConvert")
 
         convert_queue = deque([func_to_convert])

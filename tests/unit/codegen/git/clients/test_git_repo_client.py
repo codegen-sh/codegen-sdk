@@ -7,7 +7,7 @@ from codegen.git.schemas.github import GithubScope
 @patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_default(
     mock_github_client_factory,
-) -> None:
+):
     git_repo_client = GitRepoClient(repo_config=MagicMock(), access_scope=GithubScope.WRITE)
     git_repo_client.read_client = MagicMock(default_branch="default-branch")
     git_repo_client.delete_branch(branch_name="default-branch")
@@ -18,7 +18,7 @@ def test_delete_branch_default(
 @patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_non_default_branch(
     mock_github_client_factory,
-) -> None:
+):
     git_repo_client = GitRepoClient(repo_config=MagicMock(), access_scope=GithubScope.WRITE)
     git_repo_client.read_client = MagicMock(default_branch="default-branch")
     mock_ref = MagicMock()
@@ -30,7 +30,7 @@ def test_delete_branch_non_default_branch(
 @patch("codegen.git.clients.git_repo_client.GithubClientFactory")
 def test_delete_branch_cannot_write_branch(
     mock_github_client_factory,
-) -> None:
+):
     git_repo_client = GitRepoClient(repo_config=MagicMock(), access_scope=GithubScope.WRITE)
     git_repo_client.read_client = MagicMock(default_branch="default-branch")
     git_repo_client.delete_branch(branch_name="not-default-branch")

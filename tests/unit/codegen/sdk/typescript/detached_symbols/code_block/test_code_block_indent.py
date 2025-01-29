@@ -3,7 +3,7 @@ from codegen.sdk.core.statements.statement import StatementType
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_indent_once_to_left(tmpdir) -> None:
+def test_indent_once_to_left(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -30,7 +30,7 @@ return x + y;
     )
 
 
-def test_indent_left_exceed_limit(tmpdir) -> None:
+def test_indent_left_exceed_limit(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -57,7 +57,7 @@ return x + y;
     )
 
 
-def test_indent_right_once(tmpdir) -> None:
+def test_indent_right_once(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -84,7 +84,7 @@ function foo(): number {
     )
 
 
-def test_indent_right_multiple(tmpdir) -> None:
+def test_indent_right_multiple(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -111,7 +111,7 @@ function foo(): number {
     )
 
 
-def test_indent_zero(tmpdir) -> None:
+def test_indent_zero(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -128,7 +128,7 @@ function foo(): number {
     assert file.content == content
 
 
-def test_indent_nested_code_blocks(tmpdir) -> None:
+def test_indent_nested_code_blocks(tmpdir):
     # language=typescript
     content = """
 function foo(): number {
@@ -201,7 +201,7 @@ return 0;
     )
 
 
-def test_indent_only_nested_block(tmpdir) -> None:
+def test_indent_only_nested_block(tmpdir):
     # language=typescript
     content = """
 function foo(a: boolean, b: any, c: any, d: boolean): void {

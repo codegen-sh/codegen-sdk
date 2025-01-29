@@ -57,7 +57,7 @@ class UpdateFunctionDocstring(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[UpdateFunctionDocstringPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         # Get a specific function
         function = codebase.get_file("path/to/file.py").get_function("my_function")
         # Update its docstring
@@ -65,7 +65,7 @@ class UpdateFunctionDocstring(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[UpdateFunctionDocstringTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         # Get a specific function
         function = codebase.get_file("path/to/file.ts").get_function("myFunction")
         # Update its docstring
@@ -157,7 +157,7 @@ class CalculateDocumentationCoverage(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CalculateDocumentationCoveragePyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[CalculateDocumentationCoverageTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Initialize counters for total and documented functions/classes
         count_total = 0
         count_documented = 0
@@ -230,7 +230,7 @@ class DocstringEnhancer(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[DocstringEnhancerPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[DocstringEnhancerTSTestCase], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         for function in codebase.functions:
             current_docstring = function.docstring
             if current_docstring:
@@ -363,7 +363,7 @@ class StaticDocstringGenerator(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[StaticDocstringGeneratorPyTestCase], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[StaticDocstringGeneratorTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Iterate through all functions in the codebase
         for function in codebase.functions:
             # Check if the function has a docstring

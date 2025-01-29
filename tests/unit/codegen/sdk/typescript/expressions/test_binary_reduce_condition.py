@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_reduce_binary_simple(tmpdir) -> None:
+def test_reduce_binary_simple(tmpdir):
     # language=typescript
     content = """
 function foo(): void {
@@ -33,7 +33,7 @@ function foo(): void {
     )
 
 
-def test_reduce_binary_object(tmpdir) -> None:
+def test_reduce_binary_object(tmpdir):
     # language=typescript
     content = """
 function foo(): void {
@@ -62,7 +62,7 @@ function foo(): void {
     )
 
 
-def test_reduce_binary_complex_condition(tmpdir) -> None:
+def test_reduce_binary_complex_condition(tmpdir):
     # language=typescript
     content = """
 function bar(): void {
@@ -91,7 +91,7 @@ function bar(): void {
     )
 
 
-def test_reduce_negation_condition(tmpdir) -> None:
+def test_reduce_negation_condition(tmpdir):
     # language=typescript
     content = """
 function baz(): void {
@@ -119,7 +119,7 @@ function baz(): void {
     )
 
 
-def test_reduce_jsx_element(tmpdir) -> None:
+def test_reduce_jsx_element(tmpdir):
     # language=typescript jsx
     content = """
 const MyComponent: React.FC = () => {
@@ -154,7 +154,7 @@ const MyComponent: React.FC = () => {
     )
 
 
-def test_reduce_jsx_element_keep(tmpdir) -> None:
+def test_reduce_jsx_element_keep(tmpdir):
     # language=typescript jsx
     content = """
 const MyComponent: React.FC = () => {
@@ -188,7 +188,7 @@ const MyComponent: React.FC = () => {
     )
 
 
-def test_reduce_complex_condition_with_JSX(tmpdir) -> None:
+def test_reduce_complex_condition_with_JSX(tmpdir):
     # language=typescript jsx
     content = """
 const AnotherComponent: React.FC = () => {

@@ -18,7 +18,7 @@ class DictToSchema(Skill):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType) -> None:
+    def python_skill_func(codebase: PyCodebaseType):
         """Converts a dictionary into a Schema object. Converts the key value pairs into arguments for the constructor"""
         # iterate over all global vars
         for v in codebase.global_vars:

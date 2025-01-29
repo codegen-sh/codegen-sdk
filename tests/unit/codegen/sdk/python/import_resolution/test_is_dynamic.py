@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_py_import_is_dynamic_in_function(tmpdir) -> None:
+def test_py_import_is_dynamic_in_function(tmpdir):
     # language=python
     content = """
     def my_function():
@@ -23,7 +23,7 @@ def test_py_import_is_dynamic_in_function(tmpdir) -> None:
         assert not imports[2].is_dynamic  # import static_import
 
 
-def test_py_import_is_dynamic_in_if_block(tmpdir) -> None:
+def test_py_import_is_dynamic_in_if_block(tmpdir):
     # language=python
     content = """
     import top_level  # Static import
@@ -41,7 +41,7 @@ def test_py_import_is_dynamic_in_if_block(tmpdir) -> None:
         assert imports[2].is_dynamic  # from x import y
 
 
-def test_py_import_is_dynamic_in_try_except(tmpdir) -> None:
+def test_py_import_is_dynamic_in_try_except(tmpdir):
     # language=python
     content = """
     import static_first  # Static import
@@ -61,7 +61,7 @@ def test_py_import_is_dynamic_in_try_except(tmpdir) -> None:
         assert imports[2].is_dynamic  # from x.y import z
 
 
-def test_py_import_is_dynamic_in_with_block(tmpdir) -> None:
+def test_py_import_is_dynamic_in_with_block(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -79,7 +79,7 @@ def test_py_import_is_dynamic_in_with_block(tmpdir) -> None:
         assert imports[2].is_dynamic  # from a.b import c
 
 
-def test_py_import_is_dynamic_in_class_method(tmpdir) -> None:
+def test_py_import_is_dynamic_in_class_method(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -103,7 +103,7 @@ def test_py_import_is_dynamic_in_class_method(tmpdir) -> None:
         assert imports[3].is_dynamic  # another_dynamic import
 
 
-def test_py_import_is_dynamic_in_nested_function(tmpdir) -> None:
+def test_py_import_is_dynamic_in_nested_function(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -125,7 +125,7 @@ def test_py_import_is_dynamic_in_nested_function(tmpdir) -> None:
         assert imports[3].is_dynamic  # from x import y
 
 
-def test_py_import_is_dynamic_in_else_clause(tmpdir) -> None:
+def test_py_import_is_dynamic_in_else_clause(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -145,7 +145,7 @@ def test_py_import_is_dynamic_in_else_clause(tmpdir) -> None:
         assert imports[2].is_dynamic  # from x import y
 
 
-def test_py_import_is_dynamic_in_except_clause(tmpdir) -> None:
+def test_py_import_is_dynamic_in_except_clause(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -165,7 +165,7 @@ def test_py_import_is_dynamic_in_except_clause(tmpdir) -> None:
         assert imports[2].is_dynamic  # from x import y
 
 
-def test_py_import_is_dynamic_in_finally_clause(tmpdir) -> None:
+def test_py_import_is_dynamic_in_finally_clause(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -187,7 +187,7 @@ def test_py_import_is_dynamic_in_finally_clause(tmpdir) -> None:
         assert imports[2].is_dynamic  # from x import y
 
 
-def test_py_import_is_dynamic_in_while_statement(tmpdir) -> None:
+def test_py_import_is_dynamic_in_while_statement(tmpdir):
     # language=python
     content = """
     import static_import  # Static import
@@ -205,7 +205,7 @@ def test_py_import_is_dynamic_in_while_statement(tmpdir) -> None:
         assert imports[2].is_dynamic  # from a import b
 
 
-def test_py_import_is_dynamic_in_match_case(tmpdir) -> None:
+def test_py_import_is_dynamic_in_match_case(tmpdir):
     # language=python
     content = """
     import static_import  # Static import

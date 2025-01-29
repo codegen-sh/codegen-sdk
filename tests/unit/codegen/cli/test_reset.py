@@ -47,7 +47,7 @@ def committed_repo(initialized_repo: Path, committed_state: dict[str, str]) -> P
     return initialized_repo
 
 
-def setup_repo_state(repo_path: Path, state: dict[str, str]) -> None:
+def setup_repo_state(repo_path: Path, state: dict[str, str]):
     """Helper to set up files in the repo"""
     for filepath, content in state.items():
         file_path = repo_path / filepath
@@ -93,7 +93,7 @@ def get_git_status(repo_path: Path) -> tuple[set[str], set[str], set[str]]:
 
 def verify_git_state(
     repo_path: Path, expected_staged: set[str] | None = None, expected_modified: set[str] | None = None, expected_untracked: set[str] | None = None, rename_pairs: list[tuple[str, str]] | None = None
-) -> None:
+):
     """Verify git status matches expected state"""
     if rename_pairs is not None:
         for old_path, new_path in rename_pairs:
@@ -114,7 +114,7 @@ def verify_git_state(
         assert untracked == expected_untracked, f"Untracked files mismatch.\nExpected: {expected_untracked}\nActual: {untracked}"
 
 
-def verify_repo_state(repo_path: Path, expected_content: dict[str, str | None]) -> None:
+def verify_repo_state(repo_path: Path, expected_content: dict[str, str | None]):
     """Verify file contents in repo"""
     for path, content in expected_content.items():
         file_path = repo_path / path
@@ -265,7 +265,7 @@ def create_test_case(
         ),
     ],
 )
-def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case: ResetTestCase, runner: CliRunner) -> None:
+def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case: ResetTestCase, runner: CliRunner):
     """Test reset command with various scenarios"""
     # Get test case from factory function if needed
     if callable(test_case):
@@ -299,7 +299,7 @@ def test_reset(committed_repo: Path, committed_state: dict[str, str], test_case:
     )
 
 
-def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str, str], runner: CliRunner) -> None:
+def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str, str], runner: CliRunner):
     """Test reset with a mix of staged, unstaged, and untracked changes"""
     # 1. Staged modifications
     staged_changes = {
@@ -348,7 +348,7 @@ def test_reset_with_mixed_states(committed_repo: Path, committed_state: dict[str
     )
 
 
-def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[str, str], runner: CliRunner) -> None:
+def test_reset_with_mixed_renames(committed_repo: Path, committed_state: dict[str, str], runner: CliRunner):
     """Test reset with a mix of staged and unstaged renames"""
     # 1. Staged rename
     staged_changes = {

@@ -18,7 +18,7 @@ def op(repo_config, request, tmpdir):
 
 @pytest.mark.parametrize("op", shallow_options, ids=lambda x: f"shallow={x}", indirect=True)
 @patch("codegen.git.clients.github_client.Github")
-def test_checkout_branch(mock_git_client, op: RemoteRepoOperator) -> None:
+def test_checkout_branch(mock_git_client, op: RemoteRepoOperator):
     mock_git_client.return_value = Github("test_token", "https://api.github.com")
     op.pull_repo()
     op.checkout_commit(op.head_commit)
@@ -40,7 +40,7 @@ def test_checkout_branch(mock_git_client, op: RemoteRepoOperator) -> None:
 
 @pytest.mark.parametrize("op", [True], ids=lambda x: f"shallow={x}", indirect=True)
 @patch("codegen.git.clients.github_client.Github")
-def test_checkout_branch_local_already_checked_out(mock_git_client, op: RemoteRepoOperator) -> None:
+def test_checkout_branch_local_already_checked_out(mock_git_client, op: RemoteRepoOperator):
     mock_git_client.return_value = Github("test_token", "https://api.github.com")
 
     op.checkout_commit(op.head_commit)
@@ -60,7 +60,7 @@ def test_checkout_branch_local_already_checked_out(mock_git_client, op: RemoteRe
 
 @pytest.mark.parametrize("op", [True], ids=lambda x: f"shallow={x}", indirect=True)
 @patch("codegen.git.clients.github_client.Github")
-def test_checkout_branch_remote_already_checked_out_resets_branch(mock_git_client, op: RemoteRepoOperator) -> None:
+def test_checkout_branch_remote_already_checked_out_resets_branch(mock_git_client, op: RemoteRepoOperator):
     mock_git_client.return_value = Github("test_token", "https://api.github.com")
 
     original_commit_head = op.head_commit

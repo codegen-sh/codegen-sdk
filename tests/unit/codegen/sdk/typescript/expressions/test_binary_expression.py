@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_binary_expressions(tmpdir) -> None:
+def test_binary_expressions(tmpdir):
     # language=typescript
     content = """
 let a: number = 1 + 2;
@@ -127,7 +127,7 @@ let v: boolean = 43 in 44;
         assert file.get_global_var("v").value.operator.source == "in"
 
 
-def test_chained_binary_expressions(tmpdir) -> None:
+def test_chained_binary_expressions(tmpdir):
     # language=typescript
     content = """
 // binary operators

@@ -55,14 +55,14 @@ class AppendParameterSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(py_test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType) -> None:
+    def python_skill_func(codebase: PyCodebaseType):
         """Append a parameter to the function signature in Python"""
         foo = codebase.get_symbol("foo")
         foo.parameters.append("b: int")
 
     @staticmethod
     @skill_impl(ts_test_cases, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType) -> None:
+    def typescript_skill_func(codebase: TSCodebaseType):
         """Append a parameter to the function signature in TypeScript"""
         foo = codebase.get_symbol("foo")
         foo.parameters.append("b: number")

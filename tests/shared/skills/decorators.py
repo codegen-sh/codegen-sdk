@@ -77,7 +77,7 @@ def properly_named_function(name: str, language: ProgrammingLanguage):
         return False
 
 
-def skill_func_name_error(name: str, language: ProgrammingLanguage) -> str:
+def skill_func_name_error(name: str, language: ProgrammingLanguage):
     if language == ProgrammingLanguage.PYTHON:
         return f"Function name must be 'skill_func', 'python_skill_func' or 'execute' for Python skills. Got {name}."
     elif language == ProgrammingLanguage.TYPESCRIPT:

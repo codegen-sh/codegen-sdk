@@ -20,7 +20,7 @@ def ts_file(tmpdir):
 
 @pytest.fixture
 def export_check(ts_file):
-    def _export_check(*sources) -> None:
+    def _export_check(*sources):
         file = ts_file("\n".join(sources))
         assert len(file.export_statements) == len(sources)
         for i, source in enumerate(sources):
@@ -32,137 +32,137 @@ def export_check(ts_file):
 # 1. Named exports
 
 
-def test_named_exports__export_const(export_check) -> None:
+def test_named_exports__export_const(export_check):
     export_check("export const variable = value;")
 
 
-def test_named_exports__export_let(export_check) -> None:
+def test_named_exports__export_let(export_check):
     export_check("export let variable = value;")
 
 
-def test_named_exports__export_var(export_check) -> None:
+def test_named_exports__export_var(export_check):
     export_check("export var variable = value;")
 
 
-def test_named_exports__export_function(export_check) -> None:
+def test_named_exports__export_function(export_check):
     export_check("export function functionName() { /* ... */ }")
 
 
-def test_named_exports__export_class(export_check) -> None:
+def test_named_exports__export_class(export_check):
     export_check("export class ClassName { /* ... */ }")
 
 
-def test_named_exports__export_interface(export_check) -> None:
+def test_named_exports__export_interface(export_check):
     export_check("export interface InterfaceName { /* ... */ }")
 
 
-def test_named_exports__export_type(export_check) -> None:
+def test_named_exports__export_type(export_check):
     export_check("export type TypeName = value;")
 
 
-def test_named_exports__export_enum(export_check) -> None:
+def test_named_exports__export_enum(export_check):
     export_check("export enum EnumName { /* ... */ }")
 
 
 # 2. Default exports
 
 
-def test_default_exports__export_default_value(export_check) -> None:
+def test_default_exports__export_default_value(export_check):
     export_check("export default value;")
 
 
-def test_default_exports__export_default_function(export_check) -> None:
+def test_default_exports__export_default_function(export_check):
     export_check("export default function() { /* ... */ }")
 
 
-def test_default_exports__export_default_class(export_check) -> None:
+def test_default_exports__export_default_class(export_check):
     export_check("export default class { /* ... */ }")
 
 
 # 3. Exporting declarations after they're defined
 
 
-def test_defined_declarations__just_export_statement(export_check) -> None:
+def test_defined_declarations__just_export_statement(export_check):
     export_check("export { variable, functionName, ClassName };")
 
 
 # 4. Exporting with aliases
 
 
-def test_exporting_with_aliases(export_check) -> None:
+def test_exporting_with_aliases(export_check):
     export_check("export { variable as aliasName };")
 
 
 # 5. Re-exporting
 
 
-def test_reexporting__export_many_names(export_check) -> None:
+def test_reexporting__export_many_names(export_check):
     export_check("export { name1, name2 } from './other-module';")
 
 
-def test_reexporting__export_many_names_with_aliases(export_check) -> None:
+def test_reexporting__export_many_names_with_aliases(export_check):
     export_check("export { import1 as name1, import2 as name2 } from './other-module';")
 
 
-def test_reexporting__export_star(export_check) -> None:
+def test_reexporting__export_star(export_check):
     export_check("export * from './other-module';")
 
 
-def test_reexporting__export_default(export_check) -> None:
+def test_reexporting__export_default(export_check):
     export_check("export { default } from './other-module';")
 
 
 # 6. Combining default and named exports
 
 
-def test_default_named__export_default_class(export_check) -> None:
+def test_default_named__export_default_class(export_check):
     export_check("export default class { /* ... */ }")
 
 
-def test_default_named__export_const(export_check) -> None:
+def test_default_named__export_const(export_check):
     export_check("export const namedExport = value;")
 
 
 # 7. Exporting types
 
 
-def test_types__export_type_block(export_check) -> None:
+def test_types__export_type_block(export_check):
     export_check("export type { SomeType } from './types';")
 
 
 # 8. Exporting namespaces
 
 
-def test_export_namespace(export_check) -> None:
+def test_export_namespace(export_check):
     export_check("export namespace MyNamespace { export const something = value; }")
 
 
 # 9. Exporting as a namespace
 
 
-def test_export_star_as_namespace(export_check) -> None:
+def test_export_star_as_namespace(export_check):
     export_check("export * as myNamespace from './module';")
 
 
 # 10. Exporting declarations with modifiers
 
 
-def test_declaration_with_modifiers__export_abstract_class(export_check) -> None:
+def test_declaration_with_modifiers__export_abstract_class(export_check):
     export_check("export abstract class AbstractClass { /* ... */ }")
 
 
-def test_declaration_with_modifiers__export_const_enum(export_check) -> None:
+def test_declaration_with_modifiers__export_const_enum(export_check):
     export_check("export const enum ConstEnum { /* ... */ }")
 
 
 # 11. Exporting with generics
 
 
-def test_generics__export_function(export_check) -> None:
+def test_generics__export_function(export_check):
     export_check("export function genericFunction<T>() { /* ... */ }")
 
 
-def test_generics__export_class(export_check) -> None:
+def test_generics__export_class(export_check):
     export_check("export class GenericClass<T> { /* ... */ }")
 
 

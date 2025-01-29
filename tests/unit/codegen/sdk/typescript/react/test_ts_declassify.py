@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_declassify_class_component(tmpdir) -> None:
+def test_declassify_class_component(tmpdir):
     # language=typescript
     content = """
 import React from "react";

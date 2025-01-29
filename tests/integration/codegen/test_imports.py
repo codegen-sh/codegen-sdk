@@ -2,10 +2,10 @@ import codegen
 from codegen import Codebase
 
 
-def test_codegen_imports() -> None:
+def test_codegen_imports():
     # Test decorated function
     @codegen.function(name="sample_codemod")
-    def run(codebase) -> None:
+    def run(codebase):
         pass
 
     # Test class

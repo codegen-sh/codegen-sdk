@@ -9,7 +9,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.typescript.function import TSFunction
 
 
-def test_dict_basic(tmpdir) -> None:
+def test_dict_basic(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -36,7 +36,7 @@ let symbol = {a: 1, b: 2, d: 4}
     )
 
 
-def test_dict_multiline(tmpdir) -> None:
+def test_dict_multiline(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -73,7 +73,7 @@ let symbol = {
     )
 
 
-def test_dict_insert(tmpdir) -> None:
+def test_dict_insert(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -98,7 +98,7 @@ cases = list(product(range(2), repeat=2))
 
 
 @pytest.mark.parametrize("removes,inserts", cases, ids=[f"{removes=}-{inserts=}" for removes, inserts in cases])
-def test_dict_interleaved(tmpdir, removes, inserts) -> None:
+def test_dict_interleaved(tmpdir, removes, inserts):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(removes)}
     file = "test.ts"
     content = f"""
@@ -124,7 +124,7 @@ let symbol = {ref_dict}
 
 
 @pytest.mark.parametrize("removes,inserts", cases, ids=[f"{removes=}-{inserts=}" for removes, inserts in cases])
-def test_dict_removes_first(tmpdir, removes, inserts) -> None:
+def test_dict_removes_first(tmpdir, removes, inserts):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(removes)}
     file = "test.ts"
     content = f"""
@@ -149,7 +149,7 @@ let symbol = {ref_dict}
 
 
 @pytest.mark.parametrize("removes,inserts", cases, ids=[f"{removes=}-{inserts=}" for removes, inserts in cases])
-def test_dict_inserts_first(tmpdir, removes, inserts) -> None:
+def test_dict_inserts_first(tmpdir, removes, inserts):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(removes)}
     file = "test.ts"
     content = f"""
@@ -174,7 +174,7 @@ let symbol = {ref_dict}
 
 
 @pytest.mark.parametrize("existing,inserts", cases, ids=[f"{existing=}-{inserts=}" for existing, inserts in cases])
-def test_dict_append_existing(tmpdir, existing, inserts) -> None:
+def test_dict_append_existing(tmpdir, existing, inserts):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(existing)}
     file = "test.ts"
     content = f"""
@@ -196,7 +196,7 @@ let symbol = {ref_dict}
 
 
 @pytest.mark.parametrize("existing", list(range(4)), ids=[f"existing={existing}" for existing in range(4)])
-def test_dict_set_existing(tmpdir, existing) -> None:
+def test_dict_set_existing(tmpdir, existing):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(existing)}
     file = "test.ts"
     content = f"""
@@ -218,7 +218,7 @@ let symbol = {ref_dict}
 
 
 @pytest.mark.parametrize("existing,inserts", cases, ids=[f"existing={existing + 1}-{inserts=}" for existing, inserts in cases])
-def test_dict_set_existing_same(tmpdir, existing, inserts) -> None:
+def test_dict_set_existing_same(tmpdir, existing, inserts):
     ref_dict = {str(-1 + -i): -(i**2) for i in range(existing)}
     file = "test.ts"
     content = f"""
@@ -239,7 +239,7 @@ let symbol = {ref_dict}
     )
 
 
-def test_dict_empty(tmpdir) -> None:
+def test_dict_empty(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -263,7 +263,7 @@ let symbol = {a: 0, c: 1, e}
     )
 
 
-def test_dict_remove_insert(tmpdir) -> None:
+def test_dict_remove_insert(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -286,7 +286,7 @@ let symbol = {b: 1, c: 2}
     )
 
 
-def test_dict_shorthand_remove_insert(tmpdir) -> None:
+def test_dict_shorthand_remove_insert(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -309,7 +309,7 @@ let symbol = {b, c}
     )
 
 
-def test_dict_edit(tmpdir) -> None:
+def test_dict_edit(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -330,7 +330,7 @@ let symbol = {a: 1}
     )
 
 
-def test_dict_edit_shorthand(tmpdir) -> None:
+def test_dict_edit_shorthand(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -351,7 +351,7 @@ let symbol = {a}
     )
 
 
-def test_dict_edit_not_shorthand(tmpdir) -> None:
+def test_dict_edit_not_shorthand(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -372,7 +372,7 @@ let symbol = {a: 1}
     )
 
 
-def test_dict_clear(tmpdir) -> None:
+def test_dict_clear(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -394,7 +394,7 @@ let symbol = {}
 
 
 @pytest.mark.xfail(reason="Not implemented Yet")
-def test_dict_obj(tmpdir) -> None:
+def test_dict_obj(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -421,7 +421,7 @@ function printCoord(pt: { x: number; y: number; z: number }) {
     )
 
 
-def test_dict_shorthand(tmpdir) -> None:
+def test_dict_shorthand(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -448,7 +448,7 @@ let symbol = {a, b, d}
     )
 
 
-def test_shorthand_multiline(tmpdir) -> None:
+def test_shorthand_multiline(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -485,7 +485,7 @@ let symbol = {
     )
 
 
-def test_convert_shorthand(tmpdir) -> None:
+def test_convert_shorthand(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -509,7 +509,7 @@ let symbol = {a, b: 2, c, d: 4}
     )
 
 
-def test_dict_shorthand_insert(tmpdir) -> None:
+def test_dict_shorthand_insert(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -530,7 +530,7 @@ let symbol = {a: 1, b: 2, c: 3, d}
     )
 
 
-def test_dict_function_values(tmpdir) -> None:
+def test_dict_function_values(tmpdir):
     # language=typescript
     content = """
 export const mapper = {
@@ -559,7 +559,7 @@ export const mapper = {
         assert len(list(d.items())) == 3
         assert list(d.keys()) == ["method1", "method2", "method3"]
         assert all(isinstance(v, TSFunction) for v in list(d.values()))
-        for func_def in d.values():
+        for key, func_def in d.items():
             func_def.insert_before("async ", newline=False, extended=False)
             func_def.set_return_type(f"Promise<{func_def.return_type.source}>")
 
@@ -588,7 +588,7 @@ export const mapper = {
     )
 
 
-def test_dict_usage(tmpdir) -> None:
+def test_dict_usage(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -604,7 +604,7 @@ let obj = {key: foo}
         assert {*foo.symbol_usages} == {obj}
 
 
-def test_dict_usage_shorthand(tmpdir) -> None:
+def test_dict_usage_shorthand(tmpdir):
     file = "test.ts"
     # language=typescript
     content = """
@@ -620,7 +620,7 @@ let obj = {foo}
         assert {*foo.symbol_usages} == {obj}
 
 
-def test_dict_usage_spread(tmpdir) -> None:
+def test_dict_usage_spread(tmpdir):
     file = "test.ts"
     # language=typescript jsx
     # language=typescript

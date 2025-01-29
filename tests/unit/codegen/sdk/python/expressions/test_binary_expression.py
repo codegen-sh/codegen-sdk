@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_all_binary_expression_types(tmpdir) -> None:
+def test_all_binary_expression_types(tmpdir):
     # language=python
     content = """
 a = 1 + 2
@@ -133,7 +133,7 @@ w = 45 in 46
         assert file.get_global_var("w").value.operator.source == "in"
 
 
-def test_chained_binary_expressions(tmpdir) -> None:
+def test_chained_binary_expressions(tmpdir):
     # language=python
     content = """
 a = 1 + 2 - 3 * 4 / 5 % 6 ** 7 // 8                                 # binary operators
@@ -157,7 +157,7 @@ c = True and False or False and True or False                       # boolean op
 
 
 @pytest.mark.skip(reason="CG-8883: Parenthesized expressions not implemented yet")
-def test_chained_multiline_binary_expressions_using_parenthesis(tmpdir) -> None:
+def test_chained_multiline_binary_expressions_using_parenthesis(tmpdir):
     # language=python
     content = """
 a = (1 + 2 - 3 * 4
@@ -185,7 +185,7 @@ c = (True and False
         assert [x.source for x in c.operators] == ["and", "or", "and", "or"]
 
 
-def test_chained_multiline_binary_expressions_using_backslash(tmpdir) -> None:
+def test_chained_multiline_binary_expressions_using_backslash(tmpdir):
     # language=python
     content = """
 a = 1 + 2 - 3 * 4 \
@@ -214,7 +214,7 @@ c = True and False \
 
 
 @pytest.mark.skip(reason="CG-8886: Mixed expression groups not implemented yet")
-def test_chained_mixed_binary_expressions(tmpdir) -> None:
+def test_chained_mixed_binary_expressions(tmpdir):
     # language=python
     content = """
 a = 1 + 2 == True != False or True and False * 12
@@ -238,7 +238,7 @@ c = 45 < 12 + foo
 
 
 @pytest.mark.skip(reason="CG-8883: Parenthesized expressions not implemented yet")
-def test_chained_mixed_multiline_binary_expressions_with_parenthesis(tmpdir) -> None:
+def test_chained_mixed_multiline_binary_expressions_with_parenthesis(tmpdir):
     # language=python
     content = """
 a = (1 + 2 == True
@@ -253,7 +253,7 @@ a = (1 + 2 == True
 
 
 @pytest.mark.skip(reason="CG-8886: Mixed expression groups not implemented yet")
-def test_chained_mixed_multiline_binary_expressions_with_backslash(tmpdir) -> None:
+def test_chained_mixed_multiline_binary_expressions_with_backslash(tmpdir):
     # language=python
     content = """
 a = 1 + 2 == True \

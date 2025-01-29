@@ -5,7 +5,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python.assignment import PyAssignment
 
 
-def test_boolean_parse(tmpdir) -> None:
+def test_boolean_parse(tmpdir):
     # language=python
     content = """
 a = True

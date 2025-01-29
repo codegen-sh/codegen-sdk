@@ -4,7 +4,7 @@ from codegen.shared.compilation.codeblock_validation import check_for_dangerous_
 from codegen.shared.exceptions.compilation import DangerousUserCodeException
 
 
-def test_no_dangerous_operations() -> None:
+def test_no_dangerous_operations():
     codeblock = """
 print("not dangerous")
 """
@@ -14,7 +14,7 @@ print("not dangerous")
         pytest.fail("Unexpected DangerousPythonCodeError raised")
 
 
-def test_dangerous_operations() -> None:
+def test_dangerous_operations():
     codeblock = """
 print(os.environ["ENV"])
 """

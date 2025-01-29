@@ -10,7 +10,7 @@ from codegen.sdk.core.codebase import Codebase
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset(codebase: Codebase, assert_expected, tmp_path):
     # External change should be preserved
     (tmp_path / "a.py").write_text("b")
     # Programmatic change should be reset
@@ -27,7 +27,7 @@ def test_codebase_reset(codebase: Codebase, assert_expected, tmp_path) -> None:
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_external_changes(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_external_changes(codebase: Codebase, assert_expected):
     # External change should be preserved
     codebase.get_file("a.py").path.write_text("b")
     codebase.commit()
@@ -42,7 +42,7 @@ def test_codebase_reset_external_changes(codebase: Codebase, assert_expected) ->
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_manual_file_add(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_manual_file_add(codebase: Codebase, assert_expected, tmp_path):
     # Manually create a new file - should be preserved
     new_file = tmp_path / "new.py"
     new_file.write_text("new content")
@@ -60,7 +60,7 @@ def test_codebase_reset_manual_file_add(codebase: Codebase, assert_expected, tmp
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_manual_file_delete(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_manual_file_delete(codebase: Codebase, assert_expected):
     # Manual deletion should be preserved
     codebase.get_file("b.py").path.unlink()
     # Programmatic change should be reset
@@ -77,7 +77,7 @@ def test_codebase_reset_manual_file_delete(codebase: Codebase, assert_expected) 
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_manual_file_rename(codebase: Codebase, tmp_path, assert_expected) -> None:
+def test_codebase_reset_manual_file_rename(codebase: Codebase, tmp_path, assert_expected):
     # Manual rename should be preserved
     old_path = codebase.get_file("old.py").path
     new_path = tmp_path / "new.py"
@@ -104,7 +104,7 @@ def test_codebase_reset_manual_file_rename(codebase: Codebase, tmp_path, assert_
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_nested_directories(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_nested_directories(codebase: Codebase, assert_expected, tmp_path):
     """Test reset with nested directory structure."""
     # External changes should be preserved
     (tmp_path / "src/main.py").write_text("def main():\n    print('modified')")
@@ -133,7 +133,7 @@ def test_codebase_reset_nested_directories(codebase: Codebase, assert_expected, 
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_mixed_content(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_mixed_content(codebase: Codebase, assert_expected, tmp_path):
     """Test reset with different types of file content."""
     # External changes should be preserved
     (tmp_path / "config.json").write_text('{\n    "debug": false,\n    "env": "prod"\n}')
@@ -187,7 +187,7 @@ def test_codebase_reset_mixed_content(codebase: Codebase, assert_expected, tmp_p
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_large_file(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_large_file(codebase: Codebase, assert_expected):
     """Test reset with a larger file containing multiple methods."""
     codebase.get_file("module.py").edit("""class ModifiedClass:
     def __init__(self):
@@ -204,7 +204,7 @@ def test_codebase_reset_large_file(codebase: Codebase, assert_expected) -> None:
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_preserves_external_changes(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_preserves_external_changes(codebase: Codebase, assert_expected, tmp_path):
     # Make external changes to existing file
     src_dir = tmp_path / "src"
     src_dir.mkdir(exist_ok=True)
@@ -229,7 +229,7 @@ def test_codebase_reset_preserves_external_changes(codebase: Codebase, assert_ex
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_mixed_changes(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_mixed_changes(codebase: Codebase, assert_expected, tmp_path):
     # Make programmatic change that should be reset
     codebase.get_file("src/utils.py").edit("def helper():\n    return None")
 
@@ -250,7 +250,7 @@ def test_codebase_reset_mixed_changes(codebase: Codebase, assert_expected, tmp_p
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_nested_external_changes(codebase: Codebase, assert_expected, tmp_path) -> None:
+def test_codebase_reset_nested_external_changes(codebase: Codebase, assert_expected, tmp_path):
     # Create nested directory structure with changes
     config_dir = tmp_path / "config"
     config_dir.mkdir(exist_ok=True)
@@ -277,7 +277,7 @@ def test_codebase_reset_nested_external_changes(codebase: Codebase, assert_expec
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_multiple_programmatic_edits(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_multiple_programmatic_edits(codebase: Codebase, assert_expected):
     """Test reset after multiple programmatic edits to the same file."""
     # Make multiple programmatic changes that should all be reset
     codebase.get_file("file.py").edit("first edit")
@@ -302,7 +302,7 @@ def test_codebase_reset_multiple_programmatic_edits(codebase: Codebase, assert_e
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_interleaved_changes(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_interleaved_changes(codebase: Codebase, assert_expected):
     """Test reset with interleaved programmatic and external changes."""
     # Interleave programmatic and external changes
     codebase.get_file("file.py").edit("def main():\n    return 1")
@@ -335,7 +335,7 @@ class Test:
     ],
     indirect=["original", "expected"],
 )
-def test_codebase_reset_complex_changes(codebase: Codebase, assert_expected) -> None:
+def test_codebase_reset_complex_changes(codebase: Codebase, assert_expected):
     """Test reset with a mix of content additions, modifications, and external changes."""
     # Make several programmatic changes
     for i in range(5):

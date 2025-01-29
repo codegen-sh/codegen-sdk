@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_function_is_async_basic(tmpdir) -> None:
+def test_function_is_async_basic(tmpdir):
     # language=python
     content = """
 def foo():
@@ -56,7 +56,7 @@ class MyClass:
     )
 
 
-def test_function_is_async_extended(tmpdir) -> None:
+def test_function_is_async_extended(tmpdir):
     # language=python
     content = """
 @my_decorator

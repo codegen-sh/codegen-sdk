@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_convert_props_to_interface_with_proptypes_oneof(tmpdir) -> None:
+def test_convert_props_to_interface_with_proptypes_oneof(tmpdir):
     # language=typescript
     content = """
 import { PropTypes } from 'react';
@@ -53,7 +53,7 @@ const Component = ({ type, message, action }: ComponentProps) => {
     )
 
 
-def test_convert_class_props_to_interface_with_proptypes_oneof(tmpdir) -> None:
+def test_convert_class_props_to_interface_with_proptypes_oneof(tmpdir):
     # language=typescript
     content = """
 import { PropTypes } from 'react';
@@ -103,7 +103,7 @@ class Component extends React.Component<ComponentProps> {
     )
 
 
-def test_convert_simple_function_props_to_interface(tmpdir) -> None:
+def test_convert_simple_function_props_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -140,7 +140,7 @@ const Component = ({ label, onClick, disabled }: ComponentProps) => {
     )
 
 
-def test_convert_complex_function_props_to_interface(tmpdir) -> None:
+def test_convert_complex_function_props_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -210,7 +210,7 @@ const Component = ({ data, columns, sorting, pagination, onSort, onPageChange }:
     )
 
 
-def test_convert_simple_class_props_to_interface(tmpdir) -> None:
+def test_convert_simple_class_props_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -255,7 +255,7 @@ class Component extends React.Component<ComponentProps> {
     )
 
 
-def test_convert_function_props_with_inferred_parameters_to_interface(tmpdir) -> None:
+def test_convert_function_props_with_inferred_parameters_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -316,7 +316,7 @@ const Component = ({ onValueChange, onValidate }: ComponentProps) => {
     )
 
 
-def test_convert_class_props_with_inferred_parameters_to_interface(tmpdir) -> None:
+def test_convert_class_props_with_inferred_parameters_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -383,7 +383,7 @@ class Component extends React.Component<ComponentProps> {
     )
 
 
-def test_convert_props_to_interface_with_any_params(tmpdir) -> None:
+def test_convert_props_to_interface_with_any_params(tmpdir):
     # language=typescript
     content = """
 import { PropTypes } from 'react';
@@ -420,7 +420,7 @@ const Component = ({ data, onProcess }: ComponentProps) => {
     )
 
 
-def test_convert_class_props_to_interface_with_any_params(tmpdir) -> None:
+def test_convert_class_props_to_interface_with_any_params(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -465,7 +465,7 @@ class Component extends React.Component<ComponentProps> {
     )
 
 
-def test_convert_complex_class_props_to_interface(tmpdir) -> None:
+def test_convert_complex_class_props_to_interface(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from "react";
@@ -549,7 +549,7 @@ class Component extends React.Component<ComponentProps> {
     )
 
 
-def test_convert_props_to_interface_with_nested_structures(tmpdir) -> None:
+def test_convert_props_to_interface_with_nested_structures(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -636,7 +636,7 @@ OtherComponent.propTypes = {
     )
 
 
-def test_convert_class_props_to_interface_with_nested_structures(tmpdir) -> None:
+def test_convert_class_props_to_interface_with_nested_structures(tmpdir):
     # language=typescript
     content = """
 import React, { PropTypes } from 'react';
@@ -737,7 +737,7 @@ OtherComponent.propTypes = {
     )
 
 
-def test_convert_props_to_interface_with_proptypes_node_and_element(tmpdir) -> None:
+def test_convert_props_to_interface_with_proptypes_node_and_element(tmpdir):
     # language=typescript
     content = """
 import { PropTypes } from 'react';

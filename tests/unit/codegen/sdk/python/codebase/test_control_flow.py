@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 import pytest
 
 from codegen.sdk.codebase.config import SessionOptions
@@ -9,13 +7,13 @@ from codegen.sdk.core.codebase import MaxAIRequestsError
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_max_transactions_exceeded_reached_set_threshold(tmpdir) -> None:
+def test_max_transactions_exceeded_reached_set_threshold(tmpdir):
     e = MaxTransactionsExceeded("test exception", threshold=1)
     assert str(e) == "test exception"
     assert e.threshold == 1
 
 
-def test_raise_max_transactions_exceeded_reached_no_threshold(tmpdir) -> NoReturn:
+def test_raise_max_transactions_exceeded_reached_no_threshold(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
         msg = "test exception"
         raise MaxTransactionsExceeded(msg)
@@ -23,7 +21,7 @@ def test_raise_max_transactions_exceeded_reached_no_threshold(tmpdir) -> NoRetur
     assert exc_info.value.threshold is None
 
 
-def test_raise_max_transactions_exceeded_reached_with_threshold(tmpdir) -> NoReturn:
+def test_raise_max_transactions_exceeded_reached_with_threshold(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
         msg = "test exception"
         raise MaxTransactionsExceeded(msg, threshold=1)
@@ -31,7 +29,7 @@ def test_raise_max_transactions_exceeded_reached_with_threshold(tmpdir) -> NoRet
     assert exc_info.value.threshold == 1
 
 
-def test_max_transactions_exceeded_reached(tmpdir) -> None:
+def test_max_transactions_exceeded_reached(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,
@@ -45,7 +43,7 @@ def test_max_transactions_exceeded_reached(tmpdir) -> None:
     assert exc_info.value.threshold == 1
 
 
-def test_max_transactions_exceeded_reached_should_still_commit(tmpdir) -> None:
+def test_max_transactions_exceeded_reached_should_still_commit(tmpdir):
     with pytest.raises(MaxTransactionsExceeded) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,
@@ -61,7 +59,7 @@ def test_max_transactions_exceeded_reached_should_still_commit(tmpdir) -> None:
     assert exc_info.value.threshold == 1
 
 
-def test_max_preview_time_exceeded_reached(tmpdir) -> None:
+def test_max_preview_time_exceeded_reached(tmpdir):
     with pytest.raises(MaxPreviewTimeExceeded) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,
@@ -75,7 +73,7 @@ def test_max_preview_time_exceeded_reached(tmpdir) -> None:
     assert exc_info.value.threshold == 0
 
 
-def test_max_ai_requests_error_reached(tmpdir) -> None:
+def test_max_ai_requests_error_reached(tmpdir):
     with pytest.raises(MaxAIRequestsError) as exc_info:
         with get_codebase_session(
             tmpdir=tmpdir,

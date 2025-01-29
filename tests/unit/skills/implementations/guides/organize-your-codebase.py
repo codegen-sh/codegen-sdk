@@ -67,7 +67,7 @@ class SplitFunctionsIntoSeparateFiles(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[SplitFunctionsIntoSeparateFilesPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Retrieve the Python file from the codebase
         file = codebase.get_file("path/to/file.py")
         # Iterate through the functions in the file
@@ -147,7 +147,7 @@ class MoveSymbolDemonstration(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolDemonstrationPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         source_file = codebase.get_file("path/to/source_file.py")
         # =====[ Code Snippet ]=====
         # Get the symbol
@@ -159,7 +159,7 @@ class MoveSymbolDemonstration(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolDemonstrationTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         source_file = codebase.get_file("path/to/source_file.ts")
         # =====[ Code Snippet ]=====
         # Get the symbol
@@ -247,7 +247,7 @@ class MoveSymbolWithUpdatedImports(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolWithUpdatedImportsPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         symbol_to_move = codebase.get_symbol("symbol_to_move")
         dst_file = codebase.create_file("new_file.py")
         symbol_to_move.move_to_file(dst_file, strategy="update_all_imports")
@@ -337,7 +337,7 @@ class MoveSymbolWithAddBackEdgeStrategy(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolWithAddBackEdgeStrategyPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         symbol_to_move = codebase.get_symbol("symbol_to_move")
         dst_file = codebase.create_file("new_file.py")
         symbol_to_move.move_to_file(dst_file, strategy="add_back_edge")
@@ -447,14 +447,14 @@ class MoveSymbolToFileWithDependencies(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolToFileWithDependenciesPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         my_symbol = codebase.get_symbol("my_symbol")
         dst_file = codebase.create_file("new_file.py")
         my_symbol.move_to_file(dst_file, include_dependencies=True)
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolToFileWithDependenciesTSTestCase], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType) -> None:
+    def typescript_skill_func(codebase: TSCodebaseType):
         my_symbol = codebase.get_symbol("mySymbol")
         dst_file = codebase.create_file("new_file.ts")
         my_symbol.move_to_file(dst_file, include_dependencies=True)
@@ -526,7 +526,7 @@ class MoveSymbolsWithDependencies(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[MoveSymbolsWithDependenciesPyTestCase], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # Retrieve the source and destination files
         source_file = codebase.get_file("path/to/source_file.py")
         dest_file = codebase.get_file("path/to/destination_file.py")

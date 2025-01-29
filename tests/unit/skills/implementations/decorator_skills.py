@@ -44,7 +44,7 @@ class AddDecoratorToFunction(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Adds a decorator to each function or method in the codebase if they do not already have it."""
         # get the decorator symbol
         decorator_symbol = codebase.get_symbol("my_decorator")
@@ -72,7 +72,7 @@ class AddDecoratorToFunction(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """TODO: Implement this method @Rishi Desai"""
         ...
 
@@ -134,7 +134,7 @@ class UpdateDocStringOfDecoratedMethods(Skill, ABC):
         language=ProgrammingLanguage.PYTHON,
         prompt="Update the docstring of class methods if it has a decarators containing `with_user` in its name by appending 'OPERATES ON USER DATA'.",
     )
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         for cls in codebase.classes:
             for method in cls.methods:
                 if method.decorators and any(["with_user" in dec.name for dec in method.decorators]):
@@ -146,7 +146,7 @@ class UpdateDocStringOfDecoratedMethods(Skill, ABC):
         language=ProgrammingLanguage.TYPESCRIPT,
         prompt="Update the docstring of class methods if it has a decarators containing `withUser` in its name by appending 'OPERATES ON USER DATA'.",
     )
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         for cls in codebase.classes:
             for method in cls.methods:
                 if method.decorators and any(["withUser" in dec.name for dec in method.decorators]):

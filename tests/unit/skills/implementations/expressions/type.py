@@ -30,7 +30,7 @@ class AppendTypeToUnionTypeSkill(Skill):
 
     @staticmethod
     @skill_impl(test_cases_append_py, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """If the type of 'a' is a UnionType, append "str" to it if it doesn't already exist"""
         a: PyAssignment = codebase.get_symbol("a")
         if isinstance(a.type, UnionType):
@@ -39,7 +39,7 @@ class AppendTypeToUnionTypeSkill(Skill):
 
     @staticmethod
     @skill_impl(test_cases_append_ts, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """If the type of 'a' is a UnionType, append "str" to it if it doesn't already exist"""
         a: TSAssignment = codebase.get_symbol("a")
         if isinstance(a.type, UnionType):
@@ -73,7 +73,7 @@ class ConvertToBuiltInTypeSkill(Skill):
 
     @staticmethod
     @skill_impl([SkillTestCase(files=[SkillTestCasePyFile(input=built_in_type_input, output=built_in_type_output)])], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Replaces type annotations using typing module with builtin types."""
         import_replacements = {"List": "list", "Dict": "dict", "Set": "set", "Tuple": "tuple"}
 
@@ -92,6 +92,6 @@ class ConvertToBuiltInTypeSkill(Skill):
 
     @staticmethod
     @skill_impl([], language=ProgrammingLanguage.TYPESCRIPT, ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """The typing package is only available in Python"""
         ...

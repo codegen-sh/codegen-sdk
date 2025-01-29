@@ -3,7 +3,7 @@ from unittest.mock import patch
 from codegen.shared.compilation.function_construction import create_function_str_from_codeblock
 
 
-def test_no_execute_func_wraps() -> None:
+def test_no_execute_func_wraps():
     codeblock = """
 print(len(codebase.files))
 """
@@ -18,7 +18,7 @@ def execute(codebase: Codebase, pr_options: PROptions | None = None, pr = None, 
     )
 
 
-def test_func_name_already_exists() -> None:
+def test_func_name_already_exists():
     codeblock = """
 def execute(codebase: Codebase):
     print(len(codebase.files))
@@ -27,7 +27,7 @@ def execute(codebase: Codebase):
     assert codeblock in func
 
 
-def test_func_name_not_execute() -> None:
+def test_func_name_not_execute():
     codeblock = """
 print(len(codebase.files))
 """
@@ -42,7 +42,7 @@ def not_execute(codebase: Codebase, pr_options: PROptions | None = None, pr = No
     )
 
 
-def test_function_str_includes_imports() -> None:
+def test_function_str_includes_imports():
     codeblock = """
 print(len(codebase.files))
 """

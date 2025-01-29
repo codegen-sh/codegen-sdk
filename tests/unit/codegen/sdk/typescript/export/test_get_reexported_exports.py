@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_get_reexported_exports(tmpdir) -> None:
+def test_get_reexported_exports(tmpdir):
     # language=typescript
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -42,7 +42,7 @@ def test_get_reexported_exports(tmpdir) -> None:
         assert len(reexports) == 0
 
 
-def test_get_reexported_export_with_external_module_on_export(tmpdir) -> None:
+def test_get_reexported_export_with_external_module_on_export(tmpdir):
     # language=typescript
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -70,7 +70,7 @@ def test_get_reexported_export_with_external_module_on_export(tmpdir) -> None:
         assert len(reexports) == 2
 
 
-def test_get_reexported_export_with_alias(tmpdir) -> None:
+def test_get_reexported_export_with_alias(tmpdir):
     # language=typescript
     with get_codebase_session(
         tmpdir=tmpdir,

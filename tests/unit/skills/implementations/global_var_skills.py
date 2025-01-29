@@ -92,7 +92,7 @@ class DeleteUnusedLoggerSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(py_test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType) -> None:
+    def python_skill_func(codebase: PyCodebaseType):
         """Remove all global variables that are defined as `logger = get_logger(__name__)` if they are unused"""
         for file in codebase.files:
             for var in file.global_vars:
@@ -101,7 +101,7 @@ class DeleteUnusedLoggerSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(ts_test_cases, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType) -> None:
+    def typescript_skill_func(codebase: TSCodebaseType):
         """Remove all global variables that are defined as `logger = getLogger()` if they are unused"""
         for file in codebase.files:
             for var in file.global_vars:

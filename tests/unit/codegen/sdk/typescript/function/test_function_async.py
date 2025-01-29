@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_function_is_async_basic(tmpdir) -> None:
+def test_function_is_async_basic(tmpdir):
     # language=typescript
     content = """
 function foo(): void {
@@ -66,7 +66,7 @@ class MyClass {
     )
 
 
-def test_function_is_async_extended(tmpdir) -> None:
+def test_function_is_async_extended(tmpdir):
     # language=typescript
     content = """
 /** Docstring */
@@ -146,7 +146,7 @@ class MyClass {
     )
 
 
-def test_function_is_async_other_syntax(tmpdir) -> None:
+def test_function_is_async_other_syntax(tmpdir):
     # language=typescript
     content = """
 // Arrow functions

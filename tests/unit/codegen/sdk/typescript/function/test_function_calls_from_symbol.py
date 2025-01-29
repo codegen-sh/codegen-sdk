@@ -13,7 +13,7 @@ from codegen.sdk.typescript.expressions.chained_attribute import TSChainedAttrib
 from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
 
 
-def test_function_calls_from_file(tmpdir) -> None:
+def test_function_calls_from_file(tmpdir):
     # language=typescript
     content = """
 import { x, y, z } from './some_file';
@@ -59,7 +59,7 @@ function bar(): number {
         ]
 
 
-def test_function_calls_from_class(tmpdir) -> None:
+def test_function_calls_from_class(tmpdir):
     # language=typescript
     content = """
 import { bar } from './some_file';
@@ -100,7 +100,7 @@ class A {
 
 
 @pytest.mark.skip(reason="CG-9422 TS method decorator parsing needs to be fixed first")
-def test_function_calls_from_decorated_definitions(tmpdir) -> None:
+def test_function_calls_from_decorated_definitions(tmpdir):
     # language=typescript
     content = """
 import { describe, it } from 'jest';
@@ -139,7 +139,7 @@ class A {
 
 
 @pytest.mark.xfail(reason="Broken by function call changes")
-def test_function_calls_from_datatypes(tmpdir) -> None:
+def test_function_calls_from_datatypes(tmpdir):
     # language=typescript
     content = """
 function getConfig(): { max_retries: number; timeout: number } {
@@ -178,7 +178,7 @@ const transformed = data.map(x => transform(x));
         ]
 
 
-def test_function_calls_from_function_parameters(tmpdir) -> None:
+def test_function_calls_from_function_parameters(tmpdir):
     # language=typescript
     content = """
 // function parameters
@@ -200,7 +200,7 @@ function greet(name: string = getDefaultName()): void {
         ]
 
 
-def test_function_calls_from_while_loop(tmpdir) -> None:
+def test_function_calls_from_while_loop(tmpdir):
     # language=typescript
     content = """
 // while loop conditions
@@ -222,7 +222,7 @@ while (hasNextItem()) {
         assert file.function_calls[1].parent.statement_type == StatementType.EXPRESSION_STATEMENT
 
 
-def test_function_calls_from_if_conditions(tmpdir) -> None:
+def test_function_calls_from_if_conditions(tmpdir):
     # language=typescript
     content = """
 // if conditions
@@ -247,7 +247,7 @@ if (isValid(userInput)) {
         ]
 
 
-def test_function_calls_for_nested_calls(tmpdir) -> None:
+def test_function_calls_for_nested_calls(tmpdir):
     # language=typescript
     content = """
 parent(nested())
@@ -265,7 +265,7 @@ parent(nested())
         ]
 
 
-def test_function_calls_for_chained_calls(tmpdir) -> None:
+def test_function_calls_for_chained_calls(tmpdir):
     # language=typescript
     content = """
 parent().child().grandchild()
@@ -287,7 +287,7 @@ parent().child().grandchild()
         assert fcalls[2].parent.parent == fcalls[1]
 
 
-def test_function_calls_in_function_call(tmpdir) -> None:
+def test_function_calls_in_function_call(tmpdir):
     # language=typescript
     content = """
 describe("top level", () => {

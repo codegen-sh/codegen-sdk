@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_unwrap_flat_statements(tmpdir) -> None:
+def test_unwrap_flat_statements(tmpdir):
     # language=python
     content = """
 def foo():
@@ -36,7 +36,7 @@ else:
     )
 
 
-def test_unwrap_nested_statements(tmpdir) -> None:
+def test_unwrap_nested_statements(tmpdir):
     # language=python
     content = """
 def foo():
@@ -72,7 +72,7 @@ def foo():
     )
 
 
-def test_unwrap_sandwiched_statements(tmpdir) -> None:
+def test_unwrap_sandwiched_statements(tmpdir):
     # language=python
     content = """
 def foo():
@@ -108,7 +108,7 @@ def foo():
     )
 
 
-def test_unwrap_multiline_wrapper(tmpdir) -> None:
+def test_unwrap_multiline_wrapper(tmpdir):
     # language=python
     content = """
 def foo():

@@ -149,7 +149,7 @@ def capture_single_file_stats(files_dir: Path, files, expected_dir: Path, extens
     return diff
 
 
-def capture_modified_file_stats(left_lines: list[str], right_lines: list[str], diff_stats: dict) -> None:
+def capture_modified_file_stats(left_lines: list[str], right_lines: list[str], diff_stats: dict):
     """Captures stats on the differences between two complementary files, a file that
     exists in both the expected and modified codebases.
     """

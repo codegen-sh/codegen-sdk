@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_ts_import_is_dynamic_in_function_declaration(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_function_declaration(tmpdir):
     # language=typescript
     content = """
     import { staticImport } from './static';
@@ -21,7 +21,7 @@ def test_ts_import_is_dynamic_in_function_declaration(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in function
 
 
-def test_ts_import_is_dynamic_in_method_definition(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_method_definition(tmpdir):
     # language=typescript
     content = """
     import { Component } from '@angular/core';
@@ -46,7 +46,7 @@ def test_ts_import_is_dynamic_in_method_definition(tmpdir) -> None:
         assert imports[2].is_dynamic  # dynamic import in decorated method
 
 
-def test_ts_import_is_dynamic_in_arrow_function(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_arrow_function(tmpdir):
     # language=typescript
     content = """
     import { useState } from 'react';
@@ -67,7 +67,7 @@ def test_ts_import_is_dynamic_in_arrow_function(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in async arrow function
 
 
-def test_ts_import_is_dynamic_in_if_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_if_statement(tmpdir):
     # language=typescript
     content = """
     import { isFeatureEnabled } from './utils';
@@ -91,7 +91,7 @@ def test_ts_import_is_dynamic_in_if_statement(tmpdir) -> None:
         assert imports[2].is_dynamic  # dynamic import in else block
 
 
-def test_ts_import_is_dynamic_in_try_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_try_statement(tmpdir):
     # language=typescript
     content = """
     import { logger } from './logger';
@@ -112,7 +112,7 @@ def test_ts_import_is_dynamic_in_try_statement(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in try block
 
 
-def test_ts_import_is_dynamic_in_catch_clause(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_catch_clause(tmpdir):
     # language=typescript
     content = """
     import { logger } from './logger';
@@ -132,7 +132,7 @@ def test_ts_import_is_dynamic_in_catch_clause(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in catch block
 
 
-def test_ts_import_is_dynamic_in_finally_clause(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_finally_clause(tmpdir):
     # language=typescript
     content = """
     import { logger } from './logger';
@@ -154,7 +154,7 @@ def test_ts_import_is_dynamic_in_finally_clause(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in finally block
 
 
-def test_ts_import_is_dynamic_in_while_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_while_statement(tmpdir):
     # language=typescript
     content = """
     import { condition } from './utils';
@@ -172,7 +172,7 @@ def test_ts_import_is_dynamic_in_while_statement(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in while loop
 
 
-def test_ts_import_is_dynamic_in_for_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_for_statement(tmpdir):
     # language=typescript
     content = """
     import { items } from './data';
@@ -190,7 +190,7 @@ def test_ts_import_is_dynamic_in_for_statement(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in for loop
 
 
-def test_ts_import_is_dynamic_in_do_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_do_statement(tmpdir):
     # language=typescript
     content = """
     import { shouldContinue } from './utils';
@@ -208,7 +208,7 @@ def test_ts_import_is_dynamic_in_do_statement(tmpdir) -> None:
         assert imports[1].is_dynamic  # dynamic import in do-while loop
 
 
-def test_ts_import_is_dynamic_in_switch_statement(tmpdir) -> None:
+def test_ts_import_is_dynamic_in_switch_statement(tmpdir):
     # language=typescript
     content = """
     import { getFeatureFlag } from './utils';

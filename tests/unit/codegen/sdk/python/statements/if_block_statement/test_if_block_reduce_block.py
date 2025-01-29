@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_reduce_condition_to_true_elif(tmpdir) -> None:
+def test_reduce_condition_to_true_elif(tmpdir):
     # language=python
     content = """
 def foo():
@@ -41,7 +41,7 @@ def foo():
     )
 
 
-def test_reduce_condition_to_false_elif(tmpdir) -> None:
+def test_reduce_condition_to_false_elif(tmpdir):
     # language=python
     content = """
 def foo():
@@ -71,7 +71,7 @@ def foo():
     )
 
 
-def test_reduce_condition_to_true_else(tmpdir) -> None:
+def test_reduce_condition_to_true_else(tmpdir):
     # language=python
     content = """
 def foo():
@@ -97,7 +97,7 @@ def foo():
     )
 
 
-def test_reduce_condition_to_false_else(tmpdir) -> None:
+def test_reduce_condition_to_false_else(tmpdir):
     # language=python
     content = """
 def foo():
@@ -123,7 +123,7 @@ def foo():
     )
 
 
-def test_reduce_condition_multiple_if_blocks(tmpdir) -> None:
+def test_reduce_condition_multiple_if_blocks(tmpdir):
     # language=python
     content = """
 def foo():
@@ -155,7 +155,7 @@ def foo():
     )
 
 
-def test_reduce_condition_nested_if(tmpdir) -> None:
+def test_reduce_condition_nested_if(tmpdir):
     # language=python
     content = """
 class MyClass:
@@ -198,7 +198,7 @@ class MyClass:
     )
 
 
-def test_reduce_condition_else_if_to_true(tmpdir) -> None:
+def test_reduce_condition_else_if_to_true(tmpdir):
     # language=python
     content = """
 def foo():
@@ -234,7 +234,7 @@ def foo():
     )
 
 
-def test_reduce_condition_else_if_to_false(tmpdir) -> None:
+def test_reduce_condition_else_if_to_false(tmpdir):
     # language=python
     content = """
 def foo():
@@ -268,7 +268,7 @@ def foo():
     )
 
 
-def test_reduce_condition_second_else_if_to_true(tmpdir) -> None:
+def test_reduce_condition_second_else_if_to_true(tmpdir):
     # language=python
     content = """
 def foo():
@@ -300,7 +300,7 @@ def foo():
     )
 
 
-def test_reduce_condition_second_else_if_to_false(tmpdir) -> None:
+def test_reduce_condition_second_else_if_to_false(tmpdir):
     # language=python
     content = """
 def foo():
@@ -332,7 +332,7 @@ def foo():
     )
 
 
-def test_reduce_condition_else_statement_raises(tmpdir) -> None:
+def test_reduce_condition_else_statement_raises(tmpdir):
     # language=python
     content = """
 def foo():
@@ -351,7 +351,7 @@ def foo():
             else_block.reduce_condition(True)
 
 
-def test_reduce_condition_to_true_single_if(tmpdir) -> None:
+def test_reduce_condition_to_true_single_if(tmpdir):
     # language=python
     content = """
 def foo():
@@ -375,7 +375,7 @@ def foo():
     )
 
 
-def test_reduce_condition_to_false_single_if(tmpdir) -> None:
+def test_reduce_condition_to_false_single_if(tmpdir):
     # language=python
     content = """
 def foo():

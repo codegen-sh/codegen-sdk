@@ -25,7 +25,7 @@ class AddCopyrightHeaderSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_1")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         r"""Adds the following header to all files in the codebase: 'Copyright (c) Codegen.\nAll rights reserved.\n\n'"""
         for file in codebase.files:
             # Adds header to the file. Note: comments are added
@@ -33,7 +33,7 @@ class AddCopyrightHeaderSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(EVAL_SKILLS_TEST_DIR / "sample_ts_1")], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         r"""Adds the following header to all files in the codebase: '// Copyright (c) Codegen.\n// All rights reserved.\n\n'"""
         for file in codebase.files:
             # Adds header to the file. Note: comments are added
@@ -46,7 +46,7 @@ class MoveFooFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_2")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Move all functions starting with 'foo' to foo.py."""
         # get the foo.py file if it exists, otherwise create it Note: extension is included in the file name
         foo_file = codebase.get_file("foo.py") if codebase.has_file("foo.py") else codebase.create_file("foo.py")
@@ -60,7 +60,7 @@ class MoveFooFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         ...
 
@@ -71,7 +71,7 @@ class AddDecoratorToFooFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_3")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Adds the following decorator to all functions starting with 'foo': '@decorator_function'."""
         # get the decorator_function symbol
         decorator_symbol = codebase.get_symbol("decorator_function")
@@ -90,7 +90,7 @@ class AddDecoratorToFooFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         ...
 
@@ -101,7 +101,7 @@ class RenameFooToBarSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_4")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Renames all functions starting with 'foo' to start with 'bar'."""
         # for each function in the codebase
         for function in codebase.functions:
@@ -112,7 +112,7 @@ class RenameFooToBarSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         # for each function in the codebase
         for function in codebase.functions:
@@ -128,7 +128,7 @@ class AddReturnTypeHintSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_5")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Adds an int return type hint to all functions starting with 'foo'."""
         # for each function in the codebase
         for function in codebase.functions:
@@ -139,7 +139,7 @@ class AddReturnTypeHintSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         ...
 
@@ -158,7 +158,7 @@ class MoveEnumsToSeparateFileSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_7")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Moves any enums within a file into a file called: `enums.py`. Creates the `enums.py` if it does not
         exist. If the original file only contains enums this skill renames it to `enums.py`
         """
@@ -188,7 +188,7 @@ class MoveEnumsToSeparateFileSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         ...
 
@@ -199,13 +199,13 @@ class UpdateOptionalTypeHintsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_8")], language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Replaces Optional[type] with type | None in all functions."""
         # pattern to match Optional[type]
         optional_type_pattern = re.compile(r"Optional\[(.*?)]")
 
         # update optional parameter type hints
-        def update_optional_parameter_type_hints(function: PyFunction) -> None:
+        def update_optional_parameter_type_hints(function: PyFunction):
             # for each parameter in the function
             for parameter in function.parameters:
                 # if the parameter is typed
@@ -219,7 +219,7 @@ class UpdateOptionalTypeHintsSkill(Skill, ABC):
                         # update the parameter type hint
                         parameter.set_type_annotation(new_type)
 
-        def update_optional_return_type_hints(function: PyFunction) -> None:
+        def update_optional_return_type_hints(function: PyFunction):
             # if the function has a return type
             if function.return_type:
                 # get the old return type
@@ -249,7 +249,7 @@ class UpdateOptionalTypeHintsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Not Implemented"""
         ...
 
@@ -265,7 +265,7 @@ class DeleteUnusedSymbolsSkill(Skill, ABC):
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(EVAL_SKILLS_TEST_DIR / "sample_ts_3")], language=ProgrammingLanguage.TYPESCRIPT)
     @skill_impl([SkillTestCase.from_dir(filepath=EVAL_SKILLS_TEST_DIR / "sample_py_6")], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         # for each symbol in the codebase
         for symbol in codebase.symbols:
             # if the symbol has no usages
@@ -290,7 +290,7 @@ class MarkInternalFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(EVAL_SKILLS_TEST_DIR / "sample_ts_7")], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Marks all functions that are only used in the `app` directory as an internal function. Marks functions as
         internal by adding the @internal tag to the bottom of the docstring.
         """
@@ -325,7 +325,7 @@ class MarkInternalFunctionsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Not implemented for Python"""
         ...
 
@@ -343,7 +343,7 @@ class MoveNonDefaultExportedJSXComponentsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([SkillTestCase.from_dir(EVAL_SKILLS_TEST_DIR / "sample_ts_2")], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType) -> None:
+    def typescript_skill_func(codebase: CodebaseType):
         """Moves all JSX components that are not exported by default into a new file that is in the same directory as the original file."""
         # for each file in the codebase
         for file in codebase.files:
@@ -376,6 +376,6 @@ class MoveNonDefaultExportedJSXComponentsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def python_skill_func(codebase: CodebaseType) -> None:
+    def python_skill_func(codebase: CodebaseType):
         """Not implemented for Python"""
         ...

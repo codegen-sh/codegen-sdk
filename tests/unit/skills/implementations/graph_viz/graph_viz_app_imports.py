@@ -29,7 +29,7 @@ class FileAppImportGraph(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[FileAppImportGraphTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType) -> None:
+    def skill_func(codebase: CodebaseType):
         import networkx as nx
 
         # Create a directed graph
