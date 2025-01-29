@@ -27,7 +27,7 @@ class AppendToGlobalList(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases_append_py, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases_append_ts, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         """Append 2 to the global list variable 'a' in Python."""
         a = codebase.get_symbol("a")
         a.value.append("2")
@@ -58,7 +58,7 @@ class RemoveFromGlobalList(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases_remove_py, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases_remove_ts, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         """Remove 2 from the global list variable 'a'"""
         a = codebase.get_symbol("a", optional=True)
         assert a, "Symbol 'a' not found"
@@ -87,7 +87,7 @@ class ClearGlobalList(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases_clear_py, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases_clear_ts, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         """Clear the global list variable 'a'"""
         a = codebase.get_symbol("a")
         a.value.clear()

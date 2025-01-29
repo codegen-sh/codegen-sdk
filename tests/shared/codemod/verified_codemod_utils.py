@@ -83,7 +83,7 @@ class RepoCodemodMetadata(BaseModel):
 
 
 class CodemodAPI:
-    def __init__(self, api_key: str | None = None, modal_prefix: str = "https://codegen-sh"):
+    def __init__(self, api_key: str | None = None, modal_prefix: str = "https://codegen-sh") -> None:
         self.api_key = api_key
         self.modal_prefix = modal_prefix
         self.get_codemods_url = f"{self.modal_prefix}--{GET_CODEMODS_URL_SUFFIX}"

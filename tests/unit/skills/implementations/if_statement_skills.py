@@ -93,7 +93,7 @@ class ReduceIfStatementConditionSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(py_test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType):
+    def python_skill_func(codebase: PyCodebaseType) -> None:
         """Simplifies the if/else control flow by reducing conditions that are `condition_to_set` to True"""
         for file in codebase.files:
             for function in file.functions:
@@ -106,7 +106,7 @@ class ReduceIfStatementConditionSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(ts_test_cases, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType):
+    def typescript_skill_func(codebase: TSCodebaseType) -> None:
         """Simplifies the if/else control flow by reducing conditions that are `conditionToSet` to True"""
         for file in codebase.files:
             for function in file.functions:

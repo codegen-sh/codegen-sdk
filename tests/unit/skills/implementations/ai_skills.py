@@ -25,7 +25,7 @@ class RefactorClass(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RefactorClassPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         my_class = codebase.get_symbol("MyClass", optional=True)
         if my_class is None:
             msg = "MyClass not found in codebase"
@@ -49,7 +49,7 @@ class GenerateDocstrings(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[GenerateDocstringsPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         for cls in codebase.classes:
             for method in cls.methods:
                 new_docstring = codebase.ai(
@@ -73,7 +73,7 @@ class WriteTest(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[WriteTestPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         my_function = codebase.get_function("my_function", optional=True)
         if my_function is None:
             msg = "my_function not found in codebase"
@@ -100,7 +100,7 @@ class RenameMethods(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[RenameMethodsPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         for cls in codebase.classes:
             for method in cls.methods:
                 new_name = codebase.ai(f"Create a better name for the method {method.name}.", target=method)

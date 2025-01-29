@@ -2,8 +2,8 @@ from codegen.sdk.core.codebase import Codebase
 from codemods.codemod import Codemod
 
 
-def test_codemod_execute():
-    def sample_execute(codebase: Codebase):
+def test_codemod_execute() -> None:
+    def sample_execute(codebase: Codebase) -> None:
         for file in codebase.files:
             file.content = "print('hello')"
 

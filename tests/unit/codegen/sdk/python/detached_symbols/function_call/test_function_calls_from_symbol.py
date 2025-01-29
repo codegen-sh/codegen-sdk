@@ -10,7 +10,7 @@ from codegen.sdk.python.detached_symbols.decorator import PyDecorator
 from codegen.sdk.python.statements.if_block_statement import PyIfBlockStatement
 
 
-def test_function_calls_from_file(tmpdir):
+def test_function_calls_from_file(tmpdir) -> None:
     # language=python
     content = """
 from some_file import x, y, z
@@ -45,7 +45,7 @@ if __name__ == "__main__":
         ]
 
 
-def test_function_calls_from_class(tmpdir):
+def test_function_calls_from_class(tmpdir) -> None:
     # language=python
     content = """
 from some_file import bar
@@ -86,7 +86,7 @@ class A:
         assert third_call.parent.statement_type == StatementType.RETURN_STATEMENT
 
 
-def test_function_calls_from_decorated_definitions(tmpdir):
+def test_function_calls_from_decorated_definitions(tmpdir) -> None:
     # language=python
     content = """
 @pytest.mark.parametrize("x", [1, 2, 3])
@@ -124,7 +124,7 @@ class A:
 
 
 @pytest.mark.xfail(reason="Broken by function call changes")
-def test_function_calls_from_datatypes(tmpdir):
+def test_function_calls_from_datatypes(tmpdir) -> None:
     # language=python
     content = """
 def get_config():
@@ -168,7 +168,7 @@ subset = my_list[start_index():end_index()]
         ]
 
 
-def test_function_calls_from_function_parameters(tmpdir):
+def test_function_calls_from_function_parameters(tmpdir) -> None:
     # language=python
     content = """
 # function parameters
@@ -189,7 +189,7 @@ def greet(name=get_default_name()):
         ]
 
 
-def test_function_calls_from_while_loop(tmpdir):
+def test_function_calls_from_while_loop(tmpdir) -> None:
     # language=python
     content = """
 # while loop conditions
@@ -209,7 +209,7 @@ while has_next_item():
         ]
 
 
-def test_function_calls_from_if_conditions(tmpdir):
+def test_function_calls_from_if_conditions(tmpdir) -> None:
     # language=python
     content = """
 # if conditions
@@ -233,7 +233,7 @@ elif is_invalid(user_input):
         ]
 
 
-def test_function_calls_from_with_clause(tmpdir):
+def test_function_calls_from_with_clause(tmpdir) -> None:
     # language=python
     content = """
 # with clause
@@ -255,5 +255,5 @@ with open('file.txt', 'r') as file:
 
 
 @pytest.mark.skip(reason="Ellen: why is this test empty?")
-def test_function_calls_from_function_calls(tmpdir):
+def test_function_calls_from_function_calls(tmpdir) -> None:
     pass

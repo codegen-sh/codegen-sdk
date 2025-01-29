@@ -22,7 +22,7 @@ class SetGlobalVarValueSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Set the value of all global variables to 2 if their current assigned literal is 1"""
         for file in codebase.files:
             for v in file.global_vars:
@@ -31,7 +31,7 @@ class SetGlobalVarValueSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -48,7 +48,7 @@ class RenameGlobalVarSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Rename all global variables named 'x' to 'y'."""
         for file in codebase.files:
             for v in file.global_vars:
@@ -57,7 +57,7 @@ class RenameGlobalVarSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -136,7 +136,7 @@ class SkipAllTests(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Adds pytest.mark.skip decorator to all test functions with reason="This is a test"."""
         for file in codebase.files:
             for function in file.functions:
@@ -152,7 +152,7 @@ class SkipAllTests(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -173,7 +173,7 @@ class AddTypeHintsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Adds type hints to function parameters and return values."""
         for function in codebase.functions:
             if not function.return_type:
@@ -195,7 +195,7 @@ class AddTypeHintsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         """Adds type hints to function parameters and return values."""
         for function in codebase.functions:
@@ -241,7 +241,7 @@ class RenameClassSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Rename the class OldName => NewName"""
         old_name = "OldName"
         new_name = "NewName"
@@ -252,7 +252,7 @@ class RenameClassSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -311,7 +311,7 @@ class AddWrapperFunctionSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Add a trivial wrapper function called `new_{function.name}` around each function and class method that just calls the original function."""
         for file in codebase.files:
             for function in file.functions:
@@ -327,7 +327,7 @@ class AddWrapperFunctionSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -363,7 +363,7 @@ class RemoveUnusedImportsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Removes unused import statements from the code."""
         for file in codebase.files:
             for imp in file.imports:
@@ -372,7 +372,7 @@ class RemoveUnusedImportsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...
 
@@ -406,7 +406,7 @@ class AddDocstringsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: CodebaseType):
+    def python_skill_func(codebase: CodebaseType) -> None:
         """Adds docstrings to all functions and methods."""
         for file in codebase.files:
             for function in file.functions:
@@ -416,6 +416,6 @@ class AddDocstringsSkill(Skill, ABC):
 
     @staticmethod
     @skill_impl([], ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Not implemented for TypeScript"""
         ...

@@ -31,5 +31,5 @@ class MockAIHelper(AbstractAIHelper):
     def llm_query_functions(self, model: str, messages: list, functions: list[dict], max_tokens: int | None = None) -> None:
         pass
 
-    def llm_response_to_json(response) -> str:
+    def llm_response_to_json(self) -> str:
         pass

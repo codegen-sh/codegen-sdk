@@ -32,4 +32,7 @@ def initialized_repo(sample_repository: Path, runner: CliRunner):
     subprocess.run(["git", "add", "."], cwd=sample_repository, check=True)
     subprocess.run(["git", "commit", "-m", "Initialize codegen"], cwd=sample_repository, check=True)
     yield sample_repository
-    shutil.rmtree(sample_repository)
+    try:
+        shutil.rmtree(sample_repository)
+    except FileNotFoundError:
+        pass

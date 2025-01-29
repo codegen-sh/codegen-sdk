@@ -224,12 +224,12 @@ class SearchTypeAliasInheritanceSkill(Skill):
         pass
 
     @staticmethod
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         pass
 
     @staticmethod
     @skill_impl([SkillTestCase(files=ts_files_readonly)], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType):
+    def typescript_skill_func(codebase: TSCodebaseType) -> None:
         """Given a type alias 'MyMapper', find all inherited or extended implementations of the type object.
         Loops through all codebase symbols and handles each symbol type accordingly.
         """
@@ -270,12 +270,12 @@ class AsyncifyTypeAliasElements(Skill):
         pass
 
     @staticmethod
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         pass
 
     @staticmethod
     @skill_impl([SkillTestCase(files=ts_files_write)], language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType):
+    def typescript_skill_func(codebase: TSCodebaseType) -> None:
         FUNC_NAME_TO_CONVERT = "convert"
 
         mapper_symbol: TypeAlias = codebase.get_symbol("MyMapper")
@@ -331,7 +331,4 @@ class AsyncifyTypeAliasElements(Skill):
             processed.add(f)
             if not f.is_async:
                 f.asyncify()
-
-                for call_site in f.call_sites:
-                    if call_site.parent and isinstance(call_site.parent, Function):
-                        funcs_to_asyncify.append(call_site.parent)
+                funcs_to_asyncify.extend(call_site.parent for call_site in f.call_sites if call_site.parent and isinstance(call_site.parent, Function))

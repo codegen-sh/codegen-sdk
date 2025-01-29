@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_with_statement_single_var(tmpdir):
+def test_with_statement_single_var(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -38,7 +38,7 @@ def foo():
     )
 
 
-def test_with_statement_aliased_var(tmpdir):
+def test_with_statement_aliased_var(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -67,7 +67,7 @@ def foo():
     )
 
 
-def test_with_statement_multiple_vars(tmpdir):
+def test_with_statement_multiple_vars(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -96,7 +96,7 @@ def foo():
     )
 
 
-def test_with_statement_multiline_vars(tmpdir):
+def test_with_statement_multiline_vars(tmpdir) -> None:
     # language=python
     content = """
 def foo():
@@ -137,7 +137,7 @@ def foo():
     )
 
 
-def test_with_statement_function_call(tmpdir):
+def test_with_statement_function_call(tmpdir) -> None:
     # language=python
     content = """
 def foo():

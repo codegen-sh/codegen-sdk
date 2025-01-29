@@ -3,7 +3,7 @@ from codegen.sdk.core.expressions.binary_expression import BinaryExpression
 from codegen.sdk.core.expressions.number import Number
 
 
-def test_number_parse(tmpdir):
+def test_number_parse(tmpdir) -> None:
     # language=python
     content = """
 a = 1

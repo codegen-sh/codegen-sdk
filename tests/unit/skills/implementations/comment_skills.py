@@ -52,7 +52,7 @@ class EslintCommentSkill(Skill):
 
     @staticmethod
     @skill_impl(ts_test_cases, language=ProgrammingLanguage.TYPESCRIPT)
-    def typescript_skill_func(codebase: TSCodebaseType):
+    def typescript_skill_func(codebase: TSCodebaseType) -> None:
         ESLINT_RULE = "@typescript-eslint/no-explicit-any"
 
         # Iterate over all files in the codebase

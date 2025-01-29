@@ -22,13 +22,13 @@ def setup_codebase(num_files: int, extension: str, tmp_path: Path):
     return codebase, files
 
 
-def reset_codebase(codebase: Codebase):
+def reset_codebase(codebase: Codebase) -> None:
     codebase.reset()
 
 
 @pytest.mark.benchmark(group="sdk-benchmark", min_time=1, max_time=5, disable_gc=True)
 @pytest.mark.parametrize("extension", ["txt", "py"])
-def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark):
+def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark) -> None:
     def setup():
         codebase, _ = setup_codebase(NUM_FILES, extension, tmp_path)
         return ((codebase,), {})
@@ -38,7 +38,7 @@ def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark):
 
 @pytest.mark.timeout(5, func_only=True)
 @pytest.mark.parametrize("extension", ["txt", "py"])
-def test_codebase_reset_correctness(extension: str, tmp_path):
+def test_codebase_reset_correctness(extension: str, tmp_path) -> None:
     codebase, files = setup_codebase(NUM_FILES, extension, tmp_path)
     codebase.reset()
     for file, original_content in files.items():

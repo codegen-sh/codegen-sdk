@@ -71,7 +71,7 @@ class CountLargeFiles(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CountLargeFilesPyTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[CountLargeFilesTSTest], language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         file_to_lines = {}
         for file in codebase.files:
             file_to_lines[file.filepath] = file.end_point[0]

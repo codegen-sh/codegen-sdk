@@ -61,7 +61,7 @@ class CallGraphFromNode(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CallGraphFromNodeTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a directed graph
         G = nx.DiGraph()
 
@@ -71,7 +71,7 @@ class CallGraphFromNode(Skill, ABC):
         # ===== [ Maximum Recursive Depth ] =====
         MAX_DEPTH = 5
 
-        def create_downstream_call_trace(parent: FunctionCall | Function | None = None, depth: int = 0):
+        def create_downstream_call_trace(parent: FunctionCall | Function | None = None, depth: int = 0) -> None:
             """Creates call graph for parent
 
             This function recurses through the call graph of a function and creates a visualization
@@ -194,7 +194,7 @@ class CallGraphFilter(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CallGraphFilterTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a directed graph
         G = nx.DiGraph()
 
@@ -212,7 +212,7 @@ class CallGraphFilter(Skill, ABC):
         cls = codebase.get_class("MyClass")
 
         # Define a recursive function to traverse function calls
-        def create_filtered_downstream_call_trace(parent: FunctionCall | Function, current_depth, max_depth):
+        def create_filtered_downstream_call_trace(parent: FunctionCall | Function, current_depth, max_depth) -> None:
             if current_depth > max_depth:
                 return
 
@@ -289,7 +289,7 @@ class CallPathsBetweenNodes(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[CallPathsBetweenNodesTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a directed graph
         G = nx.DiGraph()
 
@@ -297,7 +297,7 @@ class CallPathsBetweenNodes(Skill, ABC):
         MAX_DEPTH = 5
 
         # Define a recursive function to traverse usages
-        def create_downstream_call_trace(parent: FunctionCall | Function, end: Callable, current_depth, max_depth):
+        def create_downstream_call_trace(parent: FunctionCall | Function, end: Callable, current_depth, max_depth) -> None:
             if current_depth > max_depth:
                 return
 

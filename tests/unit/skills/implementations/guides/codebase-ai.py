@@ -44,7 +44,7 @@ class MethodSummaryGenerator(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[MethodSummaryGeneratorPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # get the method and its parent class
         method: Function = codebase.get_class("MyClass").get_method("target_method")
         parent_class = method.parent
@@ -150,7 +150,7 @@ class FunctionDecomposition(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[FunctionDecompositionPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Get the large function
         large_function = codebase.get_function("large_function")
 
@@ -194,7 +194,7 @@ class DocstringGenerator(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[DocstringGeneratorPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Loop through all functions in the codebase
         for function in codebase.functions:
             # Generate a new docstring for the function
@@ -237,7 +237,7 @@ class DocstringFormatter(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[DocstringFormatterPyTestCase], skip_test=True, language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Loop through all functions in the codebase
         for function in codebase.functions:
             # Convert the docstring to the new format

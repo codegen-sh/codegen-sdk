@@ -85,7 +85,7 @@ class RepoDirTree(Skill, ABC):
     @staticmethod
     @skill_impl(test_cases=[PyRepoDirTreeTest], language=ProgrammingLanguage.PYTHON)
     @skill_impl(test_cases=[], skip_test=True, language=ProgrammingLanguage.TYPESCRIPT)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a directed graph
         G = nx.DiGraph()
 

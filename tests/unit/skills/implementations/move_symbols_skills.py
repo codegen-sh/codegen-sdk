@@ -61,7 +61,7 @@ class MoveDataclassesSkills(Skill):
 
     @staticmethod
     @skill_impl(py_test_cases, language=ProgrammingLanguage.PYTHON)
-    def python_skill_func(codebase: PyCodebaseType):
+    def python_skill_func(codebase: PyCodebaseType) -> None:
         """Moves the dataclasses and adds a back edge to the moved symbol in the original file"""
         # Iterate over all files in the codebase
         for file in codebase.files:
@@ -85,6 +85,6 @@ class MoveDataclassesSkills(Skill):
 
     @staticmethod
     @skill_impl([], language=ProgrammingLanguage.TYPESCRIPT, ignore=True)
-    def typescript_skill_func(codebase: CodebaseType):
+    def typescript_skill_func(codebase: CodebaseType) -> None:
         """Dataclasses is only available in Python"""
         ...

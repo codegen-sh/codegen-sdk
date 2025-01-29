@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_export_export_statement(tmpdir):
+def test_export_export_statement(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -29,7 +29,7 @@ export { foo as foop, fuzz };
         ]
 
 
-def test_remove_export(tmpdir):
+def test_remove_export(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -55,7 +55,7 @@ export { bar as barp };
     )
 
 
-def test_remove_all_exports(tmpdir):
+def test_remove_all_exports(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -77,7 +77,7 @@ function bar() {}
     )
 
 
-def test_add_export(tmpdir):
+def test_add_export(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -101,7 +101,7 @@ export { foo, bar };
     )
 
 
-def test_insert_export_at_start(tmpdir):
+def test_insert_export_at_start(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -125,7 +125,7 @@ export { bar, bar };
     )
 
 
-def test_remove_middle_export(tmpdir):
+def test_remove_middle_export(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}
@@ -150,7 +150,7 @@ export { foo, baz };
     )
 
 
-def test_remove_inline_export(tmpdir):
+def test_remove_inline_export(tmpdir) -> None:
     # language=typescript
     content = """
 export function foo() {}
@@ -172,7 +172,7 @@ export class Baz {}
     )
 
 
-def test_add_remove_reexport_inline(tmpdir):
+def test_add_remove_reexport_inline(tmpdir) -> None:
     # language=typescript
     content = """
 export { foo, bar } from './other';
@@ -198,7 +198,7 @@ export { baz, boop } from './another';
     )
 
 
-def test_remove_namespace_export(tmpdir):
+def test_remove_namespace_export(tmpdir) -> None:
     # language=typescript
     content = """
 export namespace Foo {
@@ -224,7 +224,7 @@ export namespace Baz {
     )
 
 
-def test_remove_add_wildcard_export(tmpdir):
+def test_remove_add_wildcard_export(tmpdir) -> None:
     # language=typescript
     content = """
 export * from './foo';
@@ -245,7 +245,7 @@ export * as bar from './bar';
     )
 
 
-def test_remove_all_exports_multiline(tmpdir):
+def test_remove_all_exports_multiline(tmpdir) -> None:
     # language=typescript
     content = """
 function foo() {}

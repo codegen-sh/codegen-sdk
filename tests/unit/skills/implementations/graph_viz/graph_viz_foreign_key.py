@@ -97,7 +97,7 @@ class ForeignKeyGraph(Skill, ABC):
 
     @staticmethod
     @skill_impl(test_cases=[PyForeignKeyGraphTest], language=ProgrammingLanguage.PYTHON)
-    def skill_func(codebase: CodebaseType):
+    def skill_func(codebase: CodebaseType) -> None:
         # Create a mapping dictionary to hold relationships
         foreign_key_mapping = {}
 

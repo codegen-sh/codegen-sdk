@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     from codegen.sdk.python import PyFile
 
 
-def test_wrap_with_with_statement(tmpdir):
+def test_wrap_with_with_statement(tmpdir) -> None:
     # language=python
     content = """
 def foo(a: bool):
@@ -33,7 +33,7 @@ def foo(a: bool):
     )
 
 
-def test_wrap_with_function(tmpdir):
+def test_wrap_with_function(tmpdir) -> None:
     # language=python
     content = """
 if a:

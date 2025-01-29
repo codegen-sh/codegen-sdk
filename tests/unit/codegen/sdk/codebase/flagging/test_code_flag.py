@@ -2,7 +2,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.codebase.flagging.enums import MessageType
 
 
-def test_code_flag_properties(tmpdir):
+def test_code_flag_properties(tmpdir) -> None:
     # language=python
     content = """
     class Foo:

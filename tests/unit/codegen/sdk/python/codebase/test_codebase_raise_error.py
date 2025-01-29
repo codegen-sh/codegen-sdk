@@ -4,7 +4,7 @@ from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
 
-def test_python_exports_not_supported(tmpdir):
+def test_python_exports_not_supported(tmpdir) -> None:
     """Test that exports are not supported in Python codebases."""
     # language=python
     content = """

@@ -5,7 +5,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.typescript.assignment import TSAssignment
 
 
-def test_boolean_parse(tmpdir):
+def test_boolean_parse(tmpdir) -> None:
     # language=typescript
     content = """
 const a = true;

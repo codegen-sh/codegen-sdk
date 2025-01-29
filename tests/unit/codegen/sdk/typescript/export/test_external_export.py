@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
 
-def test_is_external_export_true(tmpdir):
+def test_is_external_export_true(tmpdir) -> None:
     # language=typescript
     content = """
     export { default as React } from "react";
@@ -22,7 +22,7 @@ def test_is_external_export_true(tmpdir):
         assert file.exports[0].is_external_export is True
 
 
-def test_is_external_export_false(tmpdir):
+def test_is_external_export_false(tmpdir) -> None:
     # language=typescript
     content = """
     export { foo } from "./foo";
@@ -40,7 +40,7 @@ def test_is_external_export_false(tmpdir):
         assert file.exports[0].is_external_export is False
 
 
-def test_multiple_external_exports(tmpdir):
+def test_multiple_external_exports(tmpdir) -> None:
     # language=typescript
     content = """
     export { default as React } from "react";
@@ -57,7 +57,7 @@ def test_multiple_external_exports(tmpdir):
         assert all(export.is_external_export for export in file.exports)
 
 
-def test_mixed_internal_external_exports(tmpdir):
+def test_mixed_internal_external_exports(tmpdir) -> None:
     # language=typescript
     content = """
     export { default as lodash } from "lodash";
@@ -80,7 +80,7 @@ def test_mixed_internal_external_exports(tmpdir):
         assert file.exports[2].is_external_export is False
 
 
-def test_nested_reexports(tmpdir):
+def test_nested_reexports(tmpdir) -> None:
     # language=typescript
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -106,7 +106,7 @@ def test_nested_reexports(tmpdir):
         assert services_file.exports[0].is_external_export is False
 
 
-def test_wildcard_exports(tmpdir):
+def test_wildcard_exports(tmpdir) -> None:
     # language=typescript
     with get_codebase_session(
         tmpdir=tmpdir,
