@@ -15,41 +15,24 @@ Install [codegen](https://pypi.org/project/codegen/) on Pypi via [uv](https://gi
 uv tool install codegen
 ```
 
-<Note>
-  This makes the `codegen` command available globally in your terminal, while
-  keeping its dependencies isolated.
-</Note>
-
-
 ## Quick Start with Jupyter
 
 The [codgen notebook](/cli/notebook) command creates a virtual environment and opens a Jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
 
-<Tip>
-  Prefer working in your IDE? See [IDE Usage](/introduction/ide-usage)
-</Tip>
-
-
 ```bash
-# Navigate to your repository
-cd path/to/git/repository
-
-# Initialize codegen and launch Jupyter with a demo notebook
+# Launch Jupyter with a demo notebook
 codegen notebook --demo
 ```
 
-This will:
-
-1. Create a `.codegen/` directory with:
-   - `.venv/` - A dedicated virtual environment for this project
-   - `jupyter/` - Jupyter notebooks for exploring your code
-   - `config.toml` - Project configuration
-2. Launch Jupyter Lab with a pre-configured notebook
 
 <Tip>
-  The `notebook --demo` comes pre-configured to load [FastAPI](https://github.com/fastapi/fastapi)'s codebase , so you can start
+  The `notebook --demo` comes pre-configured to load [FastAPI](https://github.com/fastapi/fastapi)'s codebase, so you can start
   exploring right away!
 </Tip>
+
+<Note>
+  Prefer working in your IDE? See [IDE Usage](/introduction/ide-usage)
+</Note>
 
 ## Initializing a Codebase
 
@@ -58,24 +41,17 @@ Instantiating a [Codebase](/api-reference/core/Codebase) will automatically pars
 ```python
 from codegen import Codebase
 
-# Initialize FastAPI codebase
-print('Cloning and parsing FastAPI to /tmp/codegen/fastapi...')
+# Clone + parse fastapi/fastapi
 codebase = Codebase.from_repo('fastapi/fastapi')
 
-# To initialize an existing local codebase, use this constructor
-# codebase = Codebase("path/to/git/repo")
+# Or, parse a local repository
+codebase = Codebase("path/to/git/repo")
 ```
 
 <Note>
   This will automatically infer the programming language of the codebase and
   parse all files in the codebase. Learn more about [parsing codebases here](/building-with-codegen/parsing-codebases)
 </Note>
-
-<Tip>
-  The initial parse may take a few minutes for large codebases. This
-  pre-computation enables constant-time operations afterward. [Learn more
-  here.](/introduction/how-it-works)
-</Tip>
 
 ## Exploring Your Codebase
 
