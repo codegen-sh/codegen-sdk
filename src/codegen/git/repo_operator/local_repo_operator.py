@@ -32,14 +32,15 @@ class LocalRepoOperator(RepoOperator):
 
     def __init__(
         self,
-        repo_config: BaseRepoConfig,
         repo_path: str,  # full path to the repo
+        repo_config: BaseRepoConfig | None = None,
         bot_commit: bool = True,
     ) -> None:
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
+        repo_config = repo_config or BaseRepoConfig()
         super().__init__(repo_config, self.repo_path, bot_commit)
 
     ####################################################################################################################
@@ -72,8 +73,8 @@ class LocalRepoOperator(RepoOperator):
     def create_from_commit(cls, repo_path: str, commit: str, url: str) -> Self:
         """Do a shallow checkout of a particular commit to get a repository from a given remote URL."""
         op = cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
+        op.discard_changes()
         if op.get_active_branch_or_commit() != commit:
-            op.discard_changes()
             op.create_remote("origin", url)
             op.git_cli.remotes["origin"].fetch(commit, depth=1)
             op.checkout_commit(commit)

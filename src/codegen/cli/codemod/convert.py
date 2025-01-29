@@ -2,19 +2,21 @@ from textwrap import indent
 
 
 def convert_to_cli(input: str, language: str, name: str) -> str:
-    codebase_type = "PyCodebaseType" if language.lower() == "python" else "TSCodebaseType"
-    return f"""import codegen.cli.sdk.decorator
-# from app.codemod.compilation.models.context import CodemodContext
-#from app.codemod.compilation.models.pr_options import PROptions
-
-from codegen.sdk import {codebase_type}
-
-context: Any
+    return f"""import codegen
+from codegen import Codebase
 
 
-@codegen.cli.sdk.decorator.function('{name}')
-def run(codebase: {codebase_type}, pr_options: Any):
+@codegen.function('{name}')
+def run(codebase: Codebase):
 {indent(input, "    ")}
+
+
+if __name__ == "__main__":
+    print('Parsing codebase...')
+    codebase = Codebase("./")
+
+    print('Running function...')
+    codegen.run(run)
 """
 
 

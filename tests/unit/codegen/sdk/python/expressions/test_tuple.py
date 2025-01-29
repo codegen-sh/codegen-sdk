@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.symbol_groups.tuple import Tuple
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.symbol_groups.tuple import Tuple
 
 
 def test_tuple_basic(tmpdir) -> None:

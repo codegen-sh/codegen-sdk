@@ -8,7 +8,7 @@ import re
 from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Generic, Literal, TypeVar, Unpack, overload
+from typing import TYPE_CHECKING, Generic, Literal, TypeVar, Unpack, overload
 
 import plotly.graph_objects as go
 import rich.repr
@@ -23,7 +23,6 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -59,22 +58,27 @@ from codegen.sdk.python.detached_symbols.parameter import PyParameter
 from codegen.sdk.python.file import PyFile
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
+from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
+from codegen.sdk.typescript.export import TSExport
 from codegen.sdk.typescript.file import TSFile
 from codegen.sdk.typescript.function import TSFunction
 from codegen.sdk.typescript.import_resolution import TSImport
 from codegen.sdk.typescript.interface import TSInterface
+from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
-from codegen.sdk.utils import determine_project_language
-from codegen.shared.decorators.docs import apidoc, noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.export import Export
 
 logger = logging.getLogger(__name__)
 MAX_LINES = 10000  # Maximum number of lines of text allowed to be logged
@@ -91,6 +95,11 @@ TInterface = TypeVar("TInterface", bound="Interface")
 TTypeAlias = TypeVar("TTypeAlias", bound="TypeAlias")
 TParameter = TypeVar("TParameter", bound="Parameter")
 TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
+TExport = TypeVar("TExport", bound="Export")
+TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+PyGlobalVar = TypeVar("PyGlobalVar", bound="Assignment")
+TSDirectory = Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]
+PyDirectory = Directory[PyFile, PySymbol, PyImportStatement, PyGlobalVar, PyClass, PyFunction, PyImport]
 
 
 @apidoc
@@ -110,7 +119,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: None = None,
         *,
-        projects: list[ProjectConfig],
+        programming_language: None = None,
+        projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
 
@@ -119,6 +129,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str,
         *,
+        programming_language: ProgrammingLanguage | None = None,
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None: ...
@@ -127,24 +138,30 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str | None = None,
         *,
-        projects: list[ProjectConfig] | None = None,
+        programming_language: ProgrammingLanguage | None = None,
+        projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> None:
         # Sanity check inputs
         if repo_path is not None and projects is not None:
-            raise ValueError("Cannot specify both repo_path and projects")
+            msg = "Cannot specify both repo_path and projects"
+            raise ValueError(msg)
 
         if repo_path is None and projects is None:
-            raise ValueError("Must specify either repo_path or projects")
+            msg = "Must specify either repo_path or projects"
+            raise ValueError(msg)
+
+        if projects is not None and programming_language is not None:
+            msg = "Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language."
+            raise ValueError(msg)
+
+        # If projects is a single ProjectConfig, convert it to a list
+        if isinstance(projects, ProjectConfig):
+            projects = [projects]
 
         # Initialize project with repo_path if projects is None
         if repo_path is not None:
-            repo_path = os.path.abspath(repo_path)
-            repo_config = BaseRepoConfig()
-            main_project = ProjectConfig(
-                repo_operator=LocalRepoOperator(repo_config=repo_config, repo_path=repo_path),
-                programming_language=determine_project_language(repo_path),
-            )
+            main_project = ProjectConfig.from_path(repo_path, programming_language=programming_language)
             projects = [main_project]
         else:
             main_project = projects[0]
@@ -226,7 +243,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             # Return all source files
             files = self.G.get_nodes(NodeType.FILE)
         elif isinstance(extensions, str) and extensions != "*":
-            raise ValueError("extensions must be a list of extensions or '*'")
+            msg = "extensions must be a list of extensions or '*'"
+            raise ValueError(msg)
         else:
             files = []
             # Get all files with the specified extensions
@@ -262,6 +280,28 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
         return self.G.get_nodes(NodeType.IMPORT)
+
+    @property
+    @py_noapidoc
+    def exports(self: "TSCodebaseType") -> list[TSExport]:
+        """Returns a list of all Export nodes in the codebase.
+
+        Retrieves all Export nodes from the codebase graph. These exports represent all export statements across all files in the codebase,
+        including exports from both internal modules and external packages. This is a TypeScript-only codebase property.
+
+        Args:
+            None
+
+        Returns:
+            list[TSExport]: A list of Export nodes representing all exports in the codebase.
+            TExport can only be a  TSExport for TypeScript codebases.
+
+        """
+        if self.language == ProgrammingLanguage.PYTHON:
+            msg = "Exports are not supported for Python codebases since Python does not have an export mechanism."
+            raise NotImplementedError(msg)
+
+        return self.G.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:
@@ -379,7 +419,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             file_cls = self.G.node_classes.file_cls
             file = file_cls.from_content(filepath, content, self.G, sync=sync)
             if file is None:
-                raise ValueError(f"Failed to parse file with content {content}. Please make sure the content syntax is valid with respect to the filepath extension.")
+                msg = f"Failed to parse file with content {content}. Please make sure the content syntax is valid with respect to the filepath extension."
+                raise ValueError(msg)
         else:
             # Create file as non-source file
             file = File.from_content(filepath, content, self.G, sync=False)
@@ -462,7 +503,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                     if str(absolute_path).lower() == str(file).lower():
                         return get_file_from_path(file)
         elif not optional:
-            raise ValueError(f"File {filepath} not found in codebase. Use optional=True to return None instead.")
+            msg = f"File {filepath} not found in codebase. Use optional=True to return None instead."
+            raise ValueError(msg)
         return None
 
     def has_directory(self, dir_path: str, ignore_case: bool = False) -> bool:
@@ -496,7 +538,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         dir_path = "" if dir_path == "." else dir_path
         directory = self.G.get_directory(self.G.to_absolute(dir_path), ignore_case=ignore_case)
         if directory is None and not optional:
-            raise ValueError(f"Directory {dir_path} not found in codebase. Use optional=True to return None instead.")
+            msg = f"Directory {dir_path} not found in codebase. Use optional=True to return None instead."
+            raise ValueError(msg)
         return directory
 
     def has_symbol(self, symbol_name: str) -> bool:
@@ -531,10 +574,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         symbols = self.get_symbols(symbol_name)
         if len(symbols) == 0:
             if not optional:
-                raise ValueError(f"Symbol {symbol_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Symbol {symbol_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(symbols) > 1:
-            raise ValueError(f"Symbol {symbol_name} is ambiguous in codebase - more than one instance")
+            msg = f"Symbol {symbol_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return symbols[0]
 
     def get_symbols(self, symbol_name: str) -> list[TSymbol]:
@@ -569,10 +614,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         matches = [c for c in self.classes if c.name == class_name]
         if len(matches) == 0:
             if not optional:
-                raise ValueError(f"Class {class_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Class {class_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(matches) > 1:
-            raise ValueError(f"Class {class_name} is ambiguous in codebase - more than one instance")
+            msg = f"Class {class_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return matches[0]
 
     def get_function(self, function_name: str, optional: bool = False) -> TFunction | None:
@@ -596,10 +643,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         matches = [f for f in self.functions if f.name == function_name]
         if len(matches) == 0:
             if not optional:
-                raise ValueError(f"Function {function_name} not found in codebase. Use optional=True to return None instead.")
+                msg = f"Function {function_name} not found in codebase. Use optional=True to return None instead."
+                raise ValueError(msg)
             return None
         if len(matches) > 1:
-            raise ValueError(f"Function {function_name} is ambiguous in codebase - more than one instance")
+            msg = f"Function {function_name} is ambiguous in codebase - more than one instance"
+            raise ValueError(msg)
         return matches[0]
 
     @noapidoc
@@ -675,8 +724,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             None
         """
-        if not self.G.config.feature_flags.debug:
-            self.log("Warning: using a method that may break codemod execution. This is unnessecary in most cases. You should use this only if you are certian it's nessecary")
         self.G.commit_transactions(sync_graph=sync_graph and self.G.config.feature_flags.sync_enabled)
 
     @noapidoc
@@ -708,7 +755,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.git_cli.head.commit
 
     @stopwatch
-    def reset(self) -> None:
+    def reset(self, git_reset: bool = False) -> None:
         """Resets the codebase by:
         - Discarding any staged/unstaged changes
         - Resetting stop codemod limits: (max seconds, max transactions, max AI requests)
@@ -721,7 +768,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         - .ipynb files (Jupyter notebooks, where you are likely developing)
         """
         logger.info("Resetting codebase ...")
-        self._op.discard_changes()  # Discard any changes made to the raw file state
+        if git_reset:
+            self._op.discard_changes()  # Discard any changes made to the raw file state
         self._num_ai_requests = 0
         self.reset_logs()
         self.G.undo_applied_diffs()
@@ -788,12 +836,14 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return self._op.get_diffs(base)
 
     @noapidoc
-    def get_diff(self, base: str | None = None) -> str:
+    def get_diff(self, base: str | None = None, stage_files: bool = False) -> str:
         """Produce a single git diff for all files."""
-        self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
+        if stage_files:
+            self._op.git_cli.git.add(A=True)  # add all changes to the index so untracked files are included in the diff
         if base is None:
-            return self._op.git_cli.git.diff(patch=True, full_index=True, staged=True)
-        return self._op.git_cli.git.diff(base, full_index=True)
+            diff = self._op.git_cli.git.diff("HEAD", patch=True, full_index=True)
+            return diff
+        return self._op.git_cli.git.diff(base, patch=True, full_index=True)
 
     @noapidoc
     def clean_repo(self):
@@ -983,7 +1033,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         # Create a singleton AIHelper instance
         if self._ai_helper is None:
             if self.G.config.secrets.openai_key is None:
-                raise ValueError("OpenAI key is not set")
+                msg = "OpenAI key is not set"
+                raise ValueError(msg)
 
             self._ai_helper = MultiProviderAIHelper(openai_key=self.G.config.secrets.openai_key, use_openai=True, use_claude=False)
         return self._ai_helper
@@ -1011,7 +1062,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._num_ai_requests += 1
         if self.G.session_options.max_ai_requests is not None and self._num_ai_requests > self.G.session_options.max_ai_requests:
             logger.info(f"Max AI requests reached: {self.G.session_options.max_ai_requests}. Stopping codemod.")
-            raise MaxAIRequestsError(f"Maximum number of AI requests reached: {self.G.session_options.max_ai_requests}", threshold=self.G.session_options.max_ai_requests)
+            msg = f"Maximum number of AI requests reached: {self.G.session_options.max_ai_requests}"
+            raise MaxAIRequestsError(msg, threshold=self.G.session_options.max_ai_requests)
 
         params = {
             "messages": [{"role": "system", "content": generate_system_prompt(target, context)}, {"role": "user", "content": prompt}],
@@ -1038,17 +1090,23 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                     if "answer" in response_answer:
                         response_answer = response_answer["answer"]
                     else:
-                        raise ValueError("No answer found in tool call. (tool_call.function.arguments does not contain answer)")
+                        msg = "No answer found in tool call. (tool_call.function.arguments does not contain answer)"
+                        raise ValueError(msg)
                 else:
-                    raise ValueError("No tool call found in AI response. (choice.message.tool_calls is empty)")
+                    msg = "No tool call found in AI response. (choice.message.tool_calls is empty)"
+                    raise ValueError(msg)
             elif choice.finish_reason == "length":
-                raise ValueError("AI response too long / ran out of tokens. (choice.finish_reason == length)")
+                msg = "AI response too long / ran out of tokens. (choice.finish_reason == length)"
+                raise ValueError(msg)
             elif choice.finish_reason == "content_filter":
-                raise ValueError("AI response was blocked by OpenAI's content filter. (choice.finish_reason == content_filter)")
+                msg = "AI response was blocked by OpenAI's content filter. (choice.finish_reason == content_filter)"
+                raise ValueError(msg)
             else:
-                raise ValueError(f"Unknown finish reason from AI: {choice.finish_reason}")
+                msg = f"Unknown finish reason from AI: {choice.finish_reason}"
+                raise ValueError(msg)
         else:
-            raise ValueError("No response from AI Provider. (response.choices is empty)")
+            msg = "No response from AI Provider. (response.choices is empty)"
+            raise ValueError(msg)
 
         # Agent sometimes fucks up and does \\\\n for some reason.
         response_answer = codecs.decode(response_answer, "unicode_escape")
@@ -1081,13 +1139,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return []
 
     def set_session_options(self, **kwargs: Unpack[SessionOptions]) -> None:
-        """Sets the Session options for the current codebase."""
+        """Sets the session options for the current codebase.
+
+        This method updates the session options with the provided keyword arguments and
+        configures the transaction manager accordingly. It sets the maximum number of
+        transactions and resets the stopwatch based on the updated session options.
+
+        Args:
+        **kwargs: Keyword arguments representing the session options to update.
+            - max_transactions (int, optional): The maximum number of transactions
+              allowed in a session.
+            - max_seconds (int, optional): The maximum duration in seconds for a session
+              before it times out.
+            - max_ai_requests (int, optional): The maximum number of AI requests
+              allowed in a session.
+        """
         self.G.session_options = self.G.session_options.model_copy(update=kwargs)
         self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True) -> "Codebase":
+    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True, programming_language: ProgrammingLanguage | None = None) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1095,6 +1167,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
             commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
+            programming_language (ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
+
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
         """
@@ -1102,7 +1176,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         # Parse repo name
         if "/" not in repo_name:
-            raise ValueError("repo_name must be in format 'owner/repo'")
+            msg = "repo_name must be in format 'owner/repo'"
+            raise ValueError(msg)
         owner, repo = repo_name.split("/")
 
         # Setup temp directory
@@ -1125,7 +1200,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                 # Ensure the operator can handle remote operations
                 repo_operator = LocalRepoOperator.create_from_commit(
                     repo_path=repo_path,
-                    default_branch="main",  # We'll get the actual default branch after clone
                     commit=commit,
                     url=repo_url,
                 )
@@ -1133,17 +1207,17 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
-            project = ProjectConfig(repo_operator=repo_operator, programming_language=determine_project_language(repo_path))
+            project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=programming_language)
             codebase = Codebase(projects=[project], config=DefaultConfig)
             logger.info("Codebase initialization complete")
             return codebase
         except Exception as e:
-            logger.error(f"Failed to initialize codebase: {e}")
+            logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases
 CodebaseType = Codebase[SourceFile, Directory, Symbol, Class, Function, Import, Assignment, Interface, TypeAlias, Parameter, CodeBlock]
-PyCodebaseType = Codebase[PyFile, Directory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
-TSCodebaseType = Codebase[TSFile, Directory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]
+PyCodebaseType = Codebase[PyFile, PyDirectory, PySymbol, PyClass, PyFunction, PyImport, PyAssignment, Interface, TypeAlias, PyParameter, PyCodeBlock]
+TSCodebaseType = Codebase[TSFile, TSDirectory, TSSymbol, TSClass, TSFunction, TSImport, TSAssignment, TSInterface, TSTypeAlias, TSParameter, TSCodeBlock]

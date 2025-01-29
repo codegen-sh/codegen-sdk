@@ -8,6 +8,7 @@ from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.errors import AuthError, NoTokenError
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.utils.config import Config, get_config, write_config
+from codegen.sdk.enums import ProgrammingLanguage
 
 
 @dataclass
@@ -62,7 +63,8 @@ class CodegenSession:
         if self._identity:
             return self._identity
         if not self.token:
-            raise NoTokenError("No authentication token found")
+            msg = "No authentication token found"
+            raise NoTokenError(msg)
 
         from codegen.cli.api.client import RestAPI
 
@@ -101,13 +103,21 @@ class CodegenSession:
     def git_repo(self) -> Repository:
         git_repo = get_git_repo(Path.cwd())
         if not git_repo:
-            raise ValueError("No git repository found")
+            msg = "No git repository found"
+            raise ValueError(msg)
         return git_repo
 
     @property
     def repo_name(self) -> str:
         """Get the current repository name"""
         return self.config.repo_full_name
+
+    @property
+    def language(self) -> ProgrammingLanguage:
+        """Get the current language"""
+        # TODO(jayhack): This is a temporary solution to get the language.
+        # We should eventually get the language on init.
+        return self.config.programming_language or ProgrammingLanguage.PYTHON
 
     @property
     def codegen_dir(self) -> Path:
@@ -124,9 +134,11 @@ class CodegenSession:
     def assert_authenticated(self) -> None:
         """Raise an AuthError if the session is not fully authenticated"""
         if not self.identity:
-            raise AuthError("No identity found for session")
+            msg = "No identity found for session"
+            raise AuthError(msg)
         if self.identity.status != "active":
-            raise AuthError("Current session is not active. API Token may be invalid or may have expired.")
+            msg = "Current session is not active. API Token may be invalid or may have expired."
+            raise AuthError(msg)
 
     def write_config(self) -> None:
         """Write the config to the codegen-sh/config.toml file"""

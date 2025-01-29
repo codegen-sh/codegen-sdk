@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.comment import Comment
 from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.shared.decorators.docs import apidoc, noapidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
 
 Parent = TypeVar("Parent")
 

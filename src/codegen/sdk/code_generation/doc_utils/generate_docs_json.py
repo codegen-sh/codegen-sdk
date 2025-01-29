@@ -52,14 +52,16 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             return
 
         if not method.docstring:
-            raise ValueError(f"Method {cls.name}.{method.name} does not have a docstring")
+            msg = f"Method {cls.name}.{method.name} does not have a docstring"
+            raise ValueError(msg)
 
         method_path = create_path(method, cls)
         parameters = []
 
         parsed = parse_docstring(method.docstring.source)
         if parsed is None:
-            raise ValueError(f"Method {cls.name}.{method.name} docstring does not exist or has incorrect format.")
+            msg = f"Method {cls.name}.{method.name} docstring does not exist or has incorrect format."
+            raise ValueError(msg)
 
         # Update parameter types
         for param, parsed_param in zip(method.parameters[1:], parsed["arguments"]):

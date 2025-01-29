@@ -79,15 +79,18 @@ class Transaction:
         return self.end_byte - self.start_byte
 
     def execute(self):
-        raise NotImplementedError("Transaction.execute() must be implemented by subclasses")
+        msg = "Transaction.execute() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        raise NotImplementedError("Transaction.get_diff() must be implemented by subclasses")
+        msg = "Transaction.get_diff() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def diff_str(self):
         """Human-readable string representation of the change"""
-        raise NotImplementedError("Transaction.diff_str() must be implemented by subclasses")
+        msg = "Transaction.diff_str() must be implemented by subclasses"
+        raise NotImplementedError(msg)
 
     def _to_sort_key(transaction: "Transaction"):
         # Sort by:
@@ -127,7 +130,7 @@ class RemoveTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Modified, self.file_path)
+        return DiffLite(ChangeType.Modified, self.file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""
@@ -170,7 +173,7 @@ class InsertTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Modified, self.file_path)
+        return DiffLite(ChangeType.Modified, self.file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""
@@ -205,7 +208,7 @@ class EditTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Modified, self.file_path)
+        return DiffLite(ChangeType.Modified, self.file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""
@@ -269,7 +272,7 @@ class FileRenameTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Renamed, self.file_path, self.file_path, self.new_file_path)
+        return DiffLite(ChangeType.Renamed, self.file_path, self.file_path, self.new_file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""
@@ -294,7 +297,7 @@ class FileRemoveTransaction(Transaction):
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
-        return DiffLite(ChangeType.Removed, self.file_path)
+        return DiffLite(ChangeType.Removed, self.file_path, old_content=self.file.content_bytes)
 
     def diff_str(self) -> str:
         """Human-readable string representation of the change"""

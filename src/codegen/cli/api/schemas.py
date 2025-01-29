@@ -92,8 +92,8 @@ class DocsResponse(SafeBaseModel):
 class CreateInput(SafeBaseModel):
     class BaseCreateInput(SafeBaseModel):
         name: str
-        query: str | None = None
-        repo_full_name: str | None = None
+        query: str
+        language: ProgrammingLanguage
 
     input: BaseCreateInput
 
@@ -102,8 +102,7 @@ class CreateResponse(SafeBaseModel):
     success: bool
     response: str
     code: str
-    codemod_id: int
-    context: str | None = None
+    context: str
 
 
 ###########################################################################

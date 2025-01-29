@@ -2,21 +2,21 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Self, TypeVar
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.dataclasses.usage import UsageKind
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.statement import Statement
-from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.node_id_factory import NodeId
+    from codegen.sdk.core.symbol_groups.collection import Collection
 
 
 TSourceFile = TypeVar("TSourceFile", bound="SourceFile")

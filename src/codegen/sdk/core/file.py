@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from typing import Generic, Literal, Self, TypeVar, override
+from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
 from tree_sitter import Node as TSNode
 
@@ -16,15 +16,11 @@ from codegen.sdk._proxy import proxy_property
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.codebase.range_index import RangeIndex
 from codegen.sdk.codebase.span import Range
-from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import commiter, mover, reader, remover, writer
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.dataclasses.usage import UsageType
-from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.directory import Directory
-from codegen.sdk.core.function import Function
 from codegen.sdk.core.import_resolution import Import, WildcardImport
-from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.has_block import HasBlock
@@ -39,6 +35,12 @@ from codegen.sdk.tree_sitter_parser import get_parser_by_filepath_or_extension, 
 from codegen.sdk.typescript.function import TSFunction
 from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.assignment import Assignment
+    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
+    from codegen.sdk.core.function import Function
+    from codegen.sdk.core.interface import Interface
 
 logger = logging.getLogger(__name__)
 
@@ -147,7 +149,8 @@ class File(Editable[None]):
             ValueError: If the file is binary. Use content_bytes instead for binary files.
         """
         if self._binary:
-            raise ValueError("Cannot read binary file as string. Use content_bytes instead.")
+            msg = "Cannot read binary file as string. Use content_bytes instead."
+            raise ValueError(msg)
 
         return self.content_bytes.decode(encoding="utf-8")
 
@@ -341,6 +344,73 @@ class File(Editable[None]):
     def _compute_dependencies(self, *args, **kwargs) -> None:
         pass
 
+    @writer
+    def edit(self, new_src: str, fix_indentation: bool = False, priority: int = 0, dedupe: bool = True) -> None:
+        """Replace the source of this file with new_src.
+
+        For non-source files, replaces the entire content. For source files, delegates to the parent
+        Editable implementation which uses TreeSitter nodes for precise editing.
+
+        Args:
+            new_src (str): The new source text to replace the current text with.
+            fix_indentation (bool): If True, adjusts the indentation of new_src to match the current
+                text's indentation level. Only applies to source files. Defaults to False.
+            priority (int): The priority of the edit transaction. Higher priority edits are
+                applied first. Defaults to 0.
+            dedupe (bool): If True, deduplicates identical transactions. Defaults to True.
+
+        Raises:
+            ValueError: If attempting to edit a binary file.
+
+        Returns:
+            None
+        """
+        if self.is_binary:
+            msg = "Cannot replace content in binary files"
+            raise ValueError(msg)
+
+        if self.ts_node is None or not isinstance(self, SourceFile):
+            self._edit_byte_range(new_src, 0, len(self.content_bytes), priority, dedupe)
+        else:
+            super().edit(new_src, fix_indentation, priority, dedupe)
+
+    @writer
+    def replace(self, old: str, new: str, count: int = -1, is_regex: bool = False, priority: int = 0) -> int:
+        """Replace occurrences of text in the file.
+
+        For non-source files, performs a direct string replacement. For source files, delegates to the
+        parent Editable implementation which uses TreeSitter nodes for precise replacements.
+
+        Args:
+            old (str): The text to be replaced.
+            new (str): The text to replace with.
+            count (int): Maximum number of replacements to make. -1 means replace all occurrences.
+                Only applies to source files. Defaults to -1.
+            is_regex (bool): If True, treat 'old' as a regular expression pattern.
+                Only applies to source files. Defaults to False.
+            priority (int): The priority of the edit transaction. Higher priority edits are
+                applied first. Defaults to 0.
+
+        Raises:
+            ValueError: If attempting to replace content in a binary file.
+
+        Returns:
+            list[Editable]: List of affected Editable objects. For non-source files, always returns
+                an empty list since they don't have Editable sub-components.
+        """
+        if self.is_binary:
+            msg = "Cannot replace content in binary files"
+            raise ValueError(msg)
+
+        if self.ts_node is None or not isinstance(self, SourceFile):
+            if old not in self.content:
+                return 0
+
+            self._edit_byte_range(self.content.replace(old, new), 0, len(self.content_bytes), priority)
+            return 1
+        else:
+            return super().replace(old, new, count, is_regex, priority)
+
 
 TImport = TypeVar("TImport", bound="Import")
 TFunction = TypeVar("TFunction", bound="Function")
@@ -378,10 +448,10 @@ class SourceFile(
         try:
             self.parse(G)
         except RecursionError as e:
-            logger.error(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
+            logger.exception(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
             raise e
         except Exception as e:
-            logger.error(f"Failed to parse file {filepath}: {e}")
+            logger.exception(f"Failed to parse file {filepath}: {e}")
             raise e
 
     @property
@@ -536,7 +606,8 @@ class SourceFile(
         Graph-safe.
         """
         if filepath in G.filepath_idx:
-            raise ValueError(f"File already exists in graph: {filepath}")
+            msg = f"File already exists in graph: {filepath}"
+            raise ValueError(msg)
 
         ts_node = parse_file(filepath, "")
         if ts_node.has_error:
@@ -819,6 +890,10 @@ class SourceFile(
     @reader
     def resolve_name(self, name: str, start_byte: int | None = None) -> Symbol | Import | WildcardImport | None:
         if resolved := self.valid_symbol_names.get(name):
+            if start_byte is not None and resolved.end_byte > start_byte:
+                for symbol in self.symbols:
+                    if symbol.start_byte <= start_byte and symbol.name == name:
+                        return symbol
             return resolved
 
     @property
@@ -974,7 +1049,8 @@ class SourceFile(
         if existing_symbol is not None:
             return existing_symbol
         if not self.symbol_can_be_added(symbol):
-            raise ValueError(f"Symbol {symbol.name} cannot be added to this file type.")
+            msg = f"Symbol {symbol.name} cannot be added to this file type."
+            raise ValueError(msg)
 
         source = symbol.source
         if isinstance(symbol, TSFunction) and symbol.is_arrow:

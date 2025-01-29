@@ -9,6 +9,7 @@ from codegen.sdk.extensions.utils import find_line_start_and_end_nodes
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.typescript.assignment import TSAssignment
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 
 

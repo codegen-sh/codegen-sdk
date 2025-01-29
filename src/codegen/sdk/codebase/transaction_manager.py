@@ -3,7 +3,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from codegen.sdk.codebase.diff_lite import DiffLite
+from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 from codegen.sdk.codebase.transactions import (
     EditTransaction,
     FileAddTransaction,
@@ -144,14 +144,16 @@ class TransactionManager:
         # of the results to the user. This may result in errors that do not get covered.
         if self.max_transactions_exceeded():
             logger.info(f"Max transactions reached: {self.max_transactions}. Stopping codemod.")
-            raise MaxTransactionsExceeded(f"Max transactions reached: {self.max_transactions}", threshold=self.max_transactions)
+            msg = f"Max transactions reached: {self.max_transactions}"
+            raise MaxTransactionsExceeded(msg, threshold=self.max_transactions)
 
     def check_max_preview_time(self):
         # =====[ Max preview time ]=====
         # This is to prevent the preview from taking too long. We want to keep it at like ~5s in the frontend during debugging
         if self.is_time_exceeded():
             logger.info(f"Max preview time exceeded: {self.stopwatch_max_seconds}. Stopping codemod.")
-            raise MaxPreviewTimeExceeded(f"Max preview time exceeded: {self.is_time_exceeded()}", threshold=self.stopwatch_max_seconds)
+            msg = f"Max preview time exceeded: {self.is_time_exceeded()}"
+            raise MaxPreviewTimeExceeded(msg, threshold=self.stopwatch_max_seconds)
 
     ####################################################################################################################
     # Commit
@@ -163,16 +165,16 @@ class TransactionManager:
             return set(self.queued_transactions.keys())
         return files.intersection(self.queued_transactions)
 
-    def commit(self, files: set[Path]) -> set[DiffLite]:
+    def commit(self, files: set[Path]) -> list[DiffLite]:
         """Execute transactions in bulk for each file, in reverse order of start_byte.
-        Returns the set of diffs that were committed.
+        Returns the list of diffs that were committed.
         """
         if self._commiting:
             logger.warn("Skipping commit, already committing")
-            return set()
+            return []
         self._commiting = True
         try:
-            diffs: set[DiffLite] = set()
+            diffs: list[DiffLite] = []
             if not self.queued_transactions or len(self.queued_transactions) == 0:
                 return diffs
 
@@ -187,9 +189,16 @@ class TransactionManager:
                     logger.info(f"Committing {len(self.queued_transactions[file])} transactions for {file}")
             for file_path in files:
                 file_transactions = self.queued_transactions.pop(file_path, [])
+                modified = False
                 for transaction in file_transactions:
                     # Add diff IF the file is a source file
-                    diffs.add(transaction.get_diff())
+                    diff = transaction.get_diff()
+                    if diff.change_type == ChangeType.Modified:
+                        if not modified:
+                            modified = True
+                            diffs.append(diff)
+                    else:
+                        diffs.append(diff)
                     transaction.execute()
             return diffs
         finally:
@@ -242,8 +251,8 @@ class TransactionManager:
             # Add to priority queue and rebuild the queue
             return transaction
         except TransactionError as e:
-            logger.error(e)
-            raise TransactionError(
+            logger.exception(e)
+            msg = (
                 f"Potential conflict detected in file {transaction.file_path}!\n"
                 "Attempted to perform code modification:\n"
                 "\n"
@@ -257,6 +266,7 @@ class TransactionManager:
                 "\n"
                 f"[Conflict Detected] Potential Modification Conflict in File {transaction.file_path}!"
             )
+            raise TransactionError(msg)
 
     def get_transactions_at_range(self, file_path: Path, start_byte: int, end_byte: int, transaction_order: TransactionPriority | None = None, *, combined: bool = False) -> list[Transaction]:
         """Returns list of queued transactions that matches the given filtering criteria.

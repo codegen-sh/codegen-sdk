@@ -197,7 +197,8 @@ def safe_get_class(codebase: Codebase, class_name: str) -> Class | None:
         return None
     if len(possible_classes) == 1:
         return possible_classes[0]
-    raise ValueError(f"Found {len(possible_classes)} classes with name {class_name}")
+    msg = f"Found {len(possible_classes)} classes with name {class_name}"
+    raise ValueError(msg)
 
 
 def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict):

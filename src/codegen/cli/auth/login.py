@@ -34,7 +34,8 @@ def login_routine(token: str | None = None) -> CodegenSession:
         _token = click.prompt("Please enter your authentication token from the browser", hide_input=False)
 
     if not _token:
-        raise click.ClickException("Token must be provided via CODEGEN_USER_ACCESS_TOKEN environment variable or manual input")
+        msg = "Token must be provided via CODEGEN_USER_ACCESS_TOKEN environment variable or manual input"
+        raise click.ClickException(msg)
 
     # Validate and store token
     token_manager = TokenManager()
@@ -46,4 +47,5 @@ def login_routine(token: str | None = None) -> CodegenSession:
         rich.print(f"[green]✓ Stored token to:[/green] {token_manager.token_file}")
         return session
     except AuthError as e:
-        raise click.ClickException(f"Error: {e!s}")
+        msg = f"Error: {e!s}"
+        raise click.ClickException(msg)

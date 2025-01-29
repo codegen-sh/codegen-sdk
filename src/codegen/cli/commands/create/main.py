@@ -11,7 +11,7 @@ from codegen.cli.errors import ServerError
 from codegen.cli.rich.codeblocks import format_command, format_path
 from codegen.cli.rich.pretty_print import pretty_print_error
 from codegen.cli.rich.spinners import create_spinner
-from codegen.cli.utils.constants import ProgrammingLanguage
+from codegen.cli.utils.default_code import DEFAULT_CODEMOD
 from codegen.cli.workspace.decorators import requires_init
 
 
@@ -28,7 +28,7 @@ def get_prompts_dir() -> Path:
     return PROMPTS_DIR
 
 
-def get_target_path(name: str, path: Path) -> Path:
+def get_target_paths(name: str, path: Path) -> tuple[Path, Path]:
     """Get the target path for the new function file.
 
     Creates a directory structure like:
@@ -46,7 +46,9 @@ def get_target_path(name: str, path: Path) -> Path:
     # Create path within .codegen/codemods
     codemods_dir = base_dir / ".codegen" / "codemods"
     function_dir = codemods_dir / name_snake
-    return function_dir / f"{name_snake}.py"
+    codemod_path = function_dir / f"{name_snake}.py"
+    prompt_path = function_dir / f"{name_snake}-system-prompt.txt"
+    return codemod_path, prompt_path
 
 
 def make_relative(path: Path) -> str:
@@ -62,19 +64,6 @@ def make_relative(path: Path) -> str:
         return f"./{path.name}"
 
 
-def get_default_code(name: str) -> str:
-    """Get the default function code without using the API."""
-    return f'''import codegen
-from codegen import Codebase
-
-@codegen.function("{name}")
-def run(codebase: Codebase):
-    """Add a description of what this codemod does."""
-    # Add your code here
-    pass
-'''
-
-
 @click.command(name="create")
 @requires_init
 @click.argument("name", type=str)
@@ -88,47 +77,44 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
     PATH is where to create the function (default: current directory)
     """
     # Get the target path for the function
-    target_path = get_target_path(name, path)
+    codemod_path, prompt_path = get_target_paths(name, path)
 
     # Check if file exists
-    if target_path.exists() and not overwrite:
-        rel_path = make_relative(target_path)
+    if codemod_path.exists() and not overwrite:
+        rel_path = make_relative(codemod_path)
         pretty_print_error(f"File already exists at {format_path(rel_path)}\n\nTo overwrite the file:\n{format_command(f'codegen create {name} {rel_path} --overwrite')}")
         return
 
     rich.print("")  # Add a newline before output
-
+    response = None
     try:
         if description:
             # Use API to generate implementation
-            with create_spinner("Generating function (using LLM, this will take ~30s)") as status:
+            with create_spinner("Generating function (using LLM, this will take ~10s)") as status:
                 response = RestAPI(session.token).create(name=name, query=description)
-                code = convert_to_cli(response.code, session.config.programming_language or ProgrammingLanguage.PYTHON, name)
-
-                # Write the system prompt if provided
-                if response.context:
-                    prompt_path = get_prompts_dir() / f"{name.lower().replace(' ', '-')}-system-prompt.md"
-                    prompt_path.write_text(response.context)
+                code = convert_to_cli(response.code, session.language, name)
+                prompt_path.write_text(response.context)
         else:
             # Use default implementation
-            code = get_default_code(name)
+            code = DEFAULT_CODEMOD.format(name=name)
 
-        # Create the target directory if needed
-        target_path.parent.mkdir(parents=True, exist_ok=True)
+            # Create the target directory if needed
+            codemod_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write the function code
-        target_path.write_text(code)
+            # Write the function code
+            codemod_path.write_text(code)
+       
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))
 
     # Success message
-    rich.print(f"\n✅ {'Overwrote' if overwrite and target_path.exists() else 'Created'} function '{name}'")
+    rich.print(f"\n✅ {'Overwrote' if overwrite and codemod_path.exists() else 'Created'} function '{name}'")
     rich.print("")
     rich.print("📁 Files Created:")
-    rich.print(f"   [dim]Function:[/dim]  {make_relative(target_path)}")
-    if description and response.context:
-        rich.print(f"   [dim]Prompt:[/dim]    {make_relative(get_prompts_dir() / f'{name.lower().replace(" ", "-")}-system-prompt.md')}")
+    rich.print(f"   [dim]Function:[/dim]  {make_relative(codemod_path)}")
+    if description and response and response.context:
+        rich.print(f"   [dim]Prompt:[/dim]    {description}")
 
     # Next steps
     rich.print("\n[bold]What's next?[/bold]\n")

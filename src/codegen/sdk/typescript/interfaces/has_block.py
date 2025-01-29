@@ -15,6 +15,7 @@ from codegen.sdk.utils import find_index
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
     from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement
 
 

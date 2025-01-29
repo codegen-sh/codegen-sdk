@@ -2,13 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.autocommit import reader
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
@@ -16,6 +11,11 @@ from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentS
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 
 

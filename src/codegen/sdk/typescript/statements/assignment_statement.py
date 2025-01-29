@@ -3,17 +3,17 @@ from __future__ import annotations
 from collections import deque
 from typing import TYPE_CHECKING, Self
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.assignment_statement import AssignmentStatement
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.typescript.assignment import TSAssignment
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
 
@@ -58,7 +58,8 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
             ValueError: If the assignment_node.type is not one of the supported assignment types.
         """
         if assignment_node.type not in cls.assignment_types:
-            raise ValueError(f"Invalid assignment node type: {assignment_node.type}")
+            msg = f"Invalid assignment node type: {assignment_node.type}"
+            raise ValueError(msg)
 
         return cls(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
 
@@ -79,7 +80,8 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
         elif self.ts_node.type in ["public_field_definition", "property_signature", "enum_assignment"]:
             return MultiExpression(self.ts_node, self.file_node_id, self.G, self.parent, self._DEPRECATED_parse_attribute_assignments())
         else:
-            raise ValueError(f"Unknown assignment type: {self.ts_node.type}")
+            msg = f"Unknown assignment type: {self.ts_node.type}"
+            raise ValueError(msg)
 
     def _DEPRECATED_parse_attribute_assignments(self) -> list[TSAssignment]:
         left = self.ts_node.child_by_field_name("name")

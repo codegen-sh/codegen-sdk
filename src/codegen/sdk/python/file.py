@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from typing import TYPE_CHECKING
+
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interface import Interface
@@ -15,8 +16,11 @@ from codegen.sdk.python.import_resolution import PyImport
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.statements.attribute import PyAttribute
 from codegen.sdk.python.statements.import_statement import PyImportStatement
-from codegen.sdk.python.symbol import PySymbol
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
+
+if TYPE_CHECKING:
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.python.symbol import PySymbol
 
 
 @py_apidoc
@@ -52,7 +56,7 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     @noapidoc
     @commiter
     def _parse_imports(self) -> None:
-        for import_node in iter_all_descendants(self.ts_node, {"import_statement", "import_from_statement", "future_import_statement"}):
+        for import_node in iter_all_descendants(self.ts_node, frozenset({"import_statement", "import_from_statement", "future_import_statement"})):
             PyImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
 
     ####################################################################################################################

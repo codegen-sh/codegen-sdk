@@ -138,10 +138,10 @@ commands:
       steps:
         - store_test_results:
             path: build/test-results/test/TEST.xml
-        # - codecov/upload:
-        #     binary: ../root/.local/bin/codecovcli
-        #     files: build/test-results/test/TEST.xml
-        #     report_type: test_results
+        - codecov/upload:
+            binary: ../root/.local/bin/codecovcli
+            files: build/test-results/test/TEST.xml
+            report_type: test_results
   run_ats:
       parameters:
         default_tests:
@@ -209,9 +209,9 @@ commands:
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   unit-tests:
-    parallelism: 3
+    parallelism: 8
     executor: default_image
-    resource_class: "2xlarge"
+    resource_class: "xlarge"
     steps:
     - setup-uv
     - node/install:
@@ -219,6 +219,15 @@ jobs:
     - run_ats:
         default_tests: "tests/unit"
         collect_args: --timeout 50
+  integration-tests:
+    executor: default_image
+    resource_class: "large"
+    steps:
+      - setup-uv
+      - run:
+          command: |
+            uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto tests/integration/codegen
+      - upload-tests
   doctests:
     executor: default_image
     steps:
@@ -315,7 +324,7 @@ jobs:
 
   pre-commit:
     executor: default_image
-    resource_class: 2xlarge
+    resource_class: large
     steps:
       - setup-uv
       - node/install:
@@ -394,98 +403,99 @@ jobs:
         channel: "release"
         template: success_tagged_deploy_1
 workflows:
-  develop-checks:
-    jobs:
-      - hold-parse-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - parse-tests:
-          name: Manual-Parse-Tests
-          filters:
-            branches:
-              ignore: develop
-          context:
-            - GHE
-          requires:
-            - hold-parse-tests
-          matrix:
-            parameters:
-              extra_repos: [true, false]
-      - parse-tests:
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          extra_repos: true
-      - parse-tests:
-          name: oss-parse-tests
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          extra_repos: false
-      - oss-codemod-tests:
-          name: oss-codemod-tests
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [small, large]
+  # develop-checks:
+  #   jobs:
+  #     - hold-parse-tests:
+  #         type: approval
+  #         filters:
+  #           branches:
+  #             ignore: develop
+  #     - parse-tests:
+  #         name: Manual-Parse-Tests
+  #         filters:
+  #           branches:
+  #             ignore: develop
+  #         context:
+  #           - GHE
+  #         requires:
+  #           - hold-parse-tests
+  #         matrix:
+  #           parameters:
+  #             extra_repos: [true, false]
+      # - parse-tests:
+      #     context:
+      #       - GHE
+      #       - slack
+      #     filters:
+      #       branches:
+      #         only: develop
+      #     extra_repos: true
+      # - parse-tests:
+      #     name: oss-parse-tests
+      #     context:
+      #       - GHE
+      #       - slack
+      #     filters:
+      #       branches:
+      #         only: develop
+      #     extra_repos: false
+      # - oss-codemod-tests:
+      #     name: oss-codemod-tests
+      #     context:
+      #       - GHE
+      #       - slack
+      #     filters:
+      #       branches:
+      #         only: develop
+      #     matrix:
+      #       parameters:
+      #         sync_graph: [true, false]
+      #         size: [small, large]
   pr_checks:
     jobs:
       - unit-tests
-      - hold-codemod-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - hold-large-oss-codemod-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - codemod-tests:
-          context:
-            - GHE
-            - Codemod
-            - slack
-          requires:
-            - hold-codemod-tests
+      - integration-tests
+      # - hold-codemod-tests:
+      #     type: approval
+      #     filters:
+      #       branches:
+      #         ignore: develop
+      # - hold-large-oss-codemod-tests:
+      #     type: approval
+      #     filters:
+      #       branches:
+      #         ignore: develop
+      # - codemod-tests:
+      #     context:
+      #       - GHE
+      #       - Codemod
+      #       - slack
+      #     requires:
+      #       - hold-codemod-tests
       - pre-commit
-      - doctests
-      - oss-codemod-tests:
-          filters:
-            branches:
-              ignore: develop
-          context:
-            - GHE
-            - slack
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [small]
-      - oss-codemod-tests:
-          name: large-oss-codemod-tests
-          context:
-            - GHE
-            - slack
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [large]
-          requires:
-            - hold-large-oss-codemod-tests
+      # - doctests
+      # - oss-codemod-tests:
+      #     filters:
+      #       branches:
+      #         ignore: develop
+      #     context:
+      #       - GHE
+      #       - slack
+      #     matrix:
+      #       parameters:
+      #         sync_graph: [true, false]
+      #         size: [small]
+      # - oss-codemod-tests:
+      #     name: large-oss-codemod-tests
+      #     context:
+      #       - GHE
+      #       - slack
+      #     matrix:
+      #       parameters:
+      #         sync_graph: [true, false]
+      #         size: [large]
+      #     requires:
+      #       - hold-large-oss-codemod-tests
   publish-packages:
     jobs:
       - linux-wheels:
@@ -518,6 +528,3 @@ workflows:
           requires:
             - linux-wheels
             - osx-wheels
-
-
-

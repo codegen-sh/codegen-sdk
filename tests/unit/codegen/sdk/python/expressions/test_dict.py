@@ -1,9 +1,12 @@
 from itertools import product
+from typing import TYPE_CHECKING
 
 import pytest
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.core.symbol_groups.dict import Dict
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.symbol_groups.dict import Dict
 
 
 def test_dict_basic(tmpdir) -> None:

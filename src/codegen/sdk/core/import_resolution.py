@@ -1,14 +1,9 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from collections.abc import Generator
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
-import rich.repr
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
 from codegen.sdk.core.autocommit import commiter, reader, remover, writer
@@ -16,12 +11,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
-from codegen.sdk.core.interfaces.editable import Editable
-from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.interfaces.importable import Importable
 from codegen.sdk.core.interfaces.usable import Usable
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.core.statements.import_statement import ImportStatement
 from codegen.sdk.enums import EdgeType, ImportType, NodeType
 from codegen.sdk.extensions.utils import cached_property
@@ -30,7 +20,18 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 from codegen.visualizations.enums import VizNode
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    import rich.repr
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.file import SourceFile
+    from codegen.sdk.core.interfaces.editable import Editable
+    from codegen.sdk.core.interfaces.exportable import Exportable
+    from codegen.sdk.core.interfaces.has_name import HasName
+    from codegen.sdk.core.interfaces.importable import Importable
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.symbol import Symbol
 
 
@@ -381,6 +382,55 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
                 For symbol imports, contains only the single imported symbol.
         """
 
+    @property
+    @reader
+    def is_dynamic(self) -> bool:
+        """Determines if this import is dynamically loaded based on its parent symbol.
+
+        A dynamic import is one that appears within control flow or scope-defining statements, such as:
+        - Inside function definitions
+        - Inside class definitions
+        - Inside if/else blocks
+        - Inside try/except blocks
+        - Inside with statements
+
+        Dynamic imports are only loaded when their containing block is executed, unlike
+        top-level imports which are loaded when the module is imported.
+
+        Examples:
+            Dynamic imports:
+            ```python
+            def my_function():
+                import foo  # Dynamic - only imported when function runs
+
+
+            if condition:
+                from bar import baz  # Dynamic - only imported if condition is True
+
+            with context():
+                import qux  # Dynamic - only imported within context
+            ```
+
+            Static imports:
+            ```python
+            import foo  # Static - imported when module loads
+            from bar import baz  # Static - imported when module loads
+            ```
+
+        Returns:
+            bool: True if the import is dynamic (within a control flow or scope block),
+            False if it's a top-level import.
+        """
+        curr = self.ts_node
+
+        # always traverses upto the module level
+        while curr:
+            if curr.type in self.G.node_classes.dynamic_import_parent_types:
+                return True
+            curr = curr.parent
+
+        return False
+
     ####################################################################################################################
     # MANIPULATIONS
     ####################################################################################################################
@@ -490,7 +540,8 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
         Raises:
             ValueError: If the subclass does not implement this property.
         """
-        raise ValueError("Subclass must implement `import_specifier`")
+        msg = "Subclass must implement `import_specifier`"
+        raise ValueError(msg)
 
     @reader
     def is_reexport(self) -> bool:
@@ -624,6 +675,7 @@ class WildcardImport(Chainable, Generic[TImport]):
     def __init__(self, imp: TImport, symbol: Importable):
         self.imp = imp
         self.symbol = symbol
+        self.ts_node = imp.ts_node
 
     @reader
     @noapidoc

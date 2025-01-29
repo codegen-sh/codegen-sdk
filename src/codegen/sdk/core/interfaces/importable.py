@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING, Generic, Self, TypeVar, Union
 
 from tree_sitter import Node as TSNode
@@ -5,7 +6,6 @@ from tree_sitter import Node as TSNode
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.dataclasses.usage import UsageType
 from codegen.sdk.core.expressions.expression import Expression
-from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.enums import EdgeType
@@ -16,9 +16,12 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.import_resolution import Import
+    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.symbol import Symbol
 
 Parent = TypeVar("Parent", bound="Editable")
+
+logger = logging.getLogger(__name__)
 
 
 @apidoc
@@ -90,7 +93,11 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         """
         if incremental:
             self._remove_internal_edges(EdgeType.SYMBOL_USAGE)
-        self._compute_dependencies()
+        try:
+            self._compute_dependencies()
+        except Exception as e:
+            logger.exception(f"Error in file {self.file.path} while computing dependencies for symbol {self.name}")
+            raise e
         if incremental:
             return self.descendant_symbols + self.file.get_nodes(sort=False)
         return []

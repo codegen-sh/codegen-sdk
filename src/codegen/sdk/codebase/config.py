@@ -1,8 +1,13 @@
+import os
+from typing import Self
+
 from pydantic import BaseModel, ConfigDict, Field
 
+from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
+from codegen.sdk.utils import determine_project_language, split_git_path
 
 HARD_MAX_AI_LIMIT = 500  # Global limit for AI requests
 
@@ -37,6 +42,7 @@ class GSFeatureFlags(BaseModel):
     full_range_index: bool = False
     ignore_process_errors: bool = True  # Ignore errors from dependency manager and language engine
     import_resolution_overrides: dict[str, str] = {}  # Override import resolution for specific modules
+    disable_graph: bool = False  # Turn of graph generation entirely. Speeds up parsing but disables usages and dependencies
 
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)
@@ -54,6 +60,28 @@ class ProjectConfig(BaseModel):
     base_path: str | None = None
     subdirectories: list[str] | None = None
     programming_language: ProgrammingLanguage = ProgrammingLanguage.PYTHON
+
+    @classmethod
+    def from_path(cls, path: str, programming_language: ProgrammingLanguage | None = None) -> Self:
+        # Split repo_path into (git_root, base_path)
+        repo_path = os.path.abspath(path)
+        git_root, base_path = split_git_path(repo_path)
+        # Create main project
+        return cls(
+            repo_operator=LocalRepoOperator(repo_path=git_root),
+            programming_language=programming_language or determine_project_language(repo_path),
+            base_path=base_path,
+            subdirectories=[base_path] if base_path else None,
+        )
+
+    @classmethod
+    def from_repo_operator(cls, repo_operator: RepoOperator, programming_language: ProgrammingLanguage | None = None, base_path: str | None = None) -> Self:
+        return cls(
+            repo_operator=repo_operator,
+            programming_language=programming_language or determine_project_language(repo_operator.repo_path),
+            base_path=base_path,
+            subdirectories=[base_path] if base_path else None,
+        )
 
 
 class CodebaseConfig(BaseModel):

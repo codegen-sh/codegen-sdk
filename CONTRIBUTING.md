@@ -69,4 +69,3 @@ git push origin v0.YOUR_VERSION
 ```
 
 This will trigger a release job to build this new version.
-

@@ -67,12 +67,21 @@ class RepoOperator(ABC):
     def git_cli(self) -> GitCLI:
         """Note: this is recursive, may want to look out"""
         git_cli = GitCLI(self.repo_path)
+        has_username = False
+        has_email = False
+        with git_cli.config_reader(None) as reader:
+            if reader.has_option("user", "name"):
+                has_username = True
+            if reader.has_option("user", "email"):
+                has_email = True
         with git_cli.config_writer("repository") as writer:
-            if self.bot_commit:
+            if not has_username or not has_email or self.bot_commit:
                 if not writer.has_section("user"):
                     writer.add_section("user")
-                writer.set("user", "name", CODEGEN_BOT_NAME)
-                writer.set("user", "email", CODEGEN_BOT_EMAIL)
+                if not has_username or self.bot_commit:
+                    writer.set("user", "name", CODEGEN_BOT_NAME)
+                if not has_email or self.bot_commit:
+                    writer.set("user", "email", CODEGEN_BOT_EMAIL)
         return git_cli
 
     @property
@@ -230,7 +239,8 @@ class RepoOperator(ABC):
             logger.info(f"Branch {branch_name} does not exist locally. Skipping delete_local_branch.")
             return
         if branch_name is self.default_branch:
-            raise NotImplementedError("Deleting the default branch is not implemented yet.")
+            msg = "Deleting the default branch is not implemented yet."
+            raise NotImplementedError(msg)
 
         if self.is_branch_checked_out(branch_name):
             self.checkout_branch(self.default_branch)
@@ -308,7 +318,7 @@ class RepoOperator(ABC):
                 logger.warning(f"Branch {branch_name} was not found in remote {remote_name}. Unable to checkout.")
                 return CheckoutResult.NOT_FOUND
             else:
-                logger.error(f"Error with Git operations: {e}")
+                logger.exception(f"Error with Git operations: {e}")
                 raise
 
     def get_diff_files_from_ref(self, ref: str):

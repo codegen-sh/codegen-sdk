@@ -186,3 +186,7 @@ def generate_codegen_sdk_docs(docs_dir: str) -> None:
         json.dump(mint_data, mint_file, indent=2)
 
     print(colored("Updated mint.json with new page sets", "green"))
+
+
+if __name__ == "__main__":
+    generate()

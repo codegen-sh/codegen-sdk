@@ -1,6 +1,10 @@
 # TODO: this file needs to be broken up into API specific tests
+from typing import TYPE_CHECKING
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
-from codegen.sdk.python import PyFunction
+
+if TYPE_CHECKING:
+    from codegen.sdk.python import PyFunction
 
 
 def test_basic(tmpdir) -> None:

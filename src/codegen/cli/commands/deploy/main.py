@@ -61,17 +61,20 @@ def deploy_command(session: CodegenSession, name: str | None = None, directory: 
             functions = CodemodManager.get_decorated(search_path)
             matching = [f for f in functions if f.name == name]
             if not matching:
-                raise click.ClickException(f"No function found with name '{name}'")
+                msg = f"No function found with name '{name}'"
+                raise click.ClickException(msg)
             if len(matching) > 1:
                 # If multiple matches, show their locations
                 rich.print(f"[yellow]Multiple functions found with name '{name}':[/yellow]")
                 for func in matching:
                     rich.print(f"  • {func.filepath}")
-                raise click.ClickException("Please specify the exact directory with --directory")
+                msg = "Please specify the exact directory with --directory"
+                raise click.ClickException(msg)
             deploy_functions(session, matching, message=message)
         else:
             # Deploy all functions in the directory
             functions = CodemodManager.get_decorated(search_path)
             deploy_functions(session, functions)
     except Exception as e:
-        raise click.ClickException(f"Failed to deploy: {e!s}")
+        msg = f"Failed to deploy: {e!s}"
+        raise click.ClickException(msg)

@@ -44,15 +44,20 @@ class TypescriptDependencyManager(DependencyManager):
         logger.info(f"Initializing TypescriptDependencyManager with should_install_dependencies={should_install_dependencies}")
         # Ensure that node, npm, yarn, and pnpm are installed
         if not shutil.which("node"):
-            raise RuntimeError("NodeJS is not installed")
+            msg = "NodeJS is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("corepack"):
-            raise RuntimeError("corepack is not installed")
+            msg = "corepack is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("npm"):
-            raise RuntimeError("npm is not installed")
+            msg = "npm is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("yarn"):
-            raise RuntimeError("yarn is not installed")
+            msg = "yarn is not installed"
+            raise RuntimeError(msg)
         if not shutil.which("pnpm"):
-            raise RuntimeError("pnpm is not installed")
+            msg = "pnpm is not installed"
+            raise RuntimeError(msg)
 
         self.should_install_dependencies = should_install_dependencies
         # Detect the installer type
@@ -111,7 +116,7 @@ class TypescriptDependencyManager(DependencyManager):
                     else:
                         invalid_deps[package] = version
                 except Exception as e:
-                    logger.error(f"Error checking package {package}: {e}")
+                    logger.exception(f"Error checking package {package}: {e}")
 
         return valid_deps, invalid_deps
 
@@ -143,9 +148,9 @@ class TypescriptDependencyManager(DependencyManager):
                     self.package_json_data[package_json_path] = PackageJsonData(dependencies, dev_dependencies, package_data)
 
                 except FileNotFoundError:
-                    logger.error(f"Could not find package.json at {package_json_path}")
+                    logger.exception(f"Could not find package.json at {package_json_path}")
                 except ValueError:
-                    logger.error(f"Invalid json in package.json at {package_json_path}")
+                    logger.exception(f"Invalid json in package.json at {package_json_path}")
                 except Exception as e:
                     raise e
 
@@ -178,9 +183,9 @@ class TypescriptDependencyManager(DependencyManager):
                 logger.info(f"Running npm install with cwd {self.full_path}")
                 subprocess.run(["npm", "install"], cwd=self.full_path, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"NPM FAIL: npm install failed with exit code {e.returncode}")
-                logger.error(f"NPM FAIL stdout: {e.stdout}")
-                logger.error(f"NPM FAIL stderr: {e.stderr}")
+                logger.exception(f"NPM FAIL: npm install failed with exit code {e.returncode}")
+                logger.exception(f"NPM FAIL stdout: {e.stdout}")
+                logger.exception(f"NPM FAIL stderr: {e.stderr}")
                 raise
 
     def _install_dependencies_yarn(self):
@@ -249,9 +254,9 @@ class TypescriptDependencyManager(DependencyManager):
                         subprocess.run(["corepack", "prepare", "--activate"], cwd=self.full_path, check=True, capture_output=True, text=True)
                         subprocess.run(["yarn", "install"], cwd=self.full_path, check=True, capture_output=True, text=True, env=yarn_environ)
                     except subprocess.CalledProcessError as e:
-                        logger.error(f"Yarn FAIL: yarn install failed with exit code {e.returncode}")
-                        logger.error(f"Yarn FAIL stdout: {e.stdout}")
-                        logger.error(f"Yarn FAIL stderr: {e.stderr}")
+                        logger.exception(f"Yarn FAIL: yarn install failed with exit code {e.returncode}")
+                        logger.exception(f"Yarn FAIL stdout: {e.stdout}")
+                        logger.exception(f"Yarn FAIL stderr: {e.stderr}")
                         raise
                 finally:
                     # Clean up the temporary global directory
@@ -287,9 +292,9 @@ class TypescriptDependencyManager(DependencyManager):
                 logger.info(f"Running pnpm install with cwd {self.full_path}")
                 subprocess.run(["pnpm", "install"], cwd=self.full_path, check=True, capture_output=True, text=True)
             except subprocess.CalledProcessError as e:
-                logger.error(f"PNPM FAIL: pnpm install failed with exit code {e.returncode}")
-                logger.error(f"PNPM FAIL stdout: {e.stdout}")
-                logger.error(f"PNPM FAIL stderr: {e.stderr}")
+                logger.exception(f"PNPM FAIL: pnpm install failed with exit code {e.returncode}")
+                logger.exception(f"PNPM FAIL stdout: {e.stdout}")
+                logger.exception(f"PNPM FAIL stderr: {e.stderr}")
                 raise
 
     def _clean_package_json(self, package_json_path: str):

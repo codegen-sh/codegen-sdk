@@ -58,10 +58,12 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
-				"introduction/guiding-principles",
-				"introduction/how-it-works",
-				"introduction/community",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/work-with-ai",
+				"introduction/how-it-works",
+				"introduction/guiding-principles",
+				"introduction/community",
 				"introduction/about",
 				"introduction/faq"
 			]
@@ -71,12 +73,13 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/migrating-apis",
+				"tutorials/codebase-visualization",
+				"tutorials/training-data",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
+				"tutorials/manage-feature-flags",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
-				"tutorials/training-data",
-				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",
 				"tutorials/creating-documentation",
@@ -94,6 +97,7 @@
 				"building-with-codegen/parsing-codebases",
 				"building-with-codegen/reusable-codemods",
 				"building-with-codegen/dot-codegen",
+				"building-with-codegen/function-decorator",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
@@ -111,6 +115,7 @@
 				"building-with-codegen/local-variables",
 				"building-with-codegen/comments-and-docstrings",
 				"building-with-codegen/external-modules",
+				"building-with-codegen/type-annotations",
 				"building-with-codegen/moving-symbols",
 				"building-with-codegen/collections",
 				"building-with-codegen/traversing-the-call-graph",
@@ -128,6 +133,7 @@
 				"cli/notebook",
 				"cli/create",
 				"cli/run",
+				"cli/reset",
 				"cli/expert"
 			]
 		},

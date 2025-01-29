@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import IntEnum, auto
 from os import PathLike
 from pathlib import Path
 from typing import NamedTuple, Self
@@ -7,7 +7,7 @@ from git import Diff
 from watchfiles import Change
 
 
-class ChangeType(Enum):
+class ChangeType(IntEnum):
     Modified = auto()
     Removed = auto()
     Renamed = auto()
@@ -32,7 +32,8 @@ class ChangeType(Enum):
             return ChangeType.Renamed
         if change_type == "A":
             return ChangeType.Added
-        raise ValueError(f"Invalid change type: {change_type}")
+        msg = f"Invalid change type: {change_type}"
+        raise ValueError(msg)
 
 
 class DiffLite(NamedTuple):
@@ -40,8 +41,9 @@ class DiffLite(NamedTuple):
 
     change_type: ChangeType
     path: Path
-    rename_from: str | None = None
-    rename_to: str | None = None
+    rename_from: Path | None = None
+    rename_to: Path | None = None
+    old_content: bytes | None = None
 
     @classmethod
     def from_watch_change(cls, change: Change, path: PathLike) -> Self:
@@ -52,11 +54,15 @@ class DiffLite(NamedTuple):
 
     @classmethod
     def from_git_diff(cls, git_diff: Diff):
+        old = None
+        if git_diff.a_blob:
+            old = git_diff.a_blob.data_stream.read()
         return cls(
             change_type=ChangeType.from_git_change_type(git_diff.change_type),
-            path=Path(git_diff.a_path),
-            rename_from=git_diff.rename_from,
-            rename_to=git_diff.rename_to,
+            path=Path(git_diff.a_path) if git_diff.a_path else None,
+            rename_from=Path(git_diff.rename_from) if git_diff.rename_from else None,
+            rename_to=Path(git_diff.rename_to) if git_diff.rename_to else None,
+            old_content=old,
         )
 
     @classmethod

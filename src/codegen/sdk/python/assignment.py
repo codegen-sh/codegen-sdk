@@ -2,18 +2,18 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from tree_sitter import Node as TSNode
-
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from tree_sitter import Node as TSNode
+
+    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement
 
 
@@ -28,7 +28,8 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
     @classmethod
     def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyAssignmentStatement) -> MultiExpression[PyAssignmentStatement, PyAssignment]:
         if ts_node.type not in ["assignment", "augmented_assignment"]:
-            raise ValueError(f"Unknown assignment type: {ts_node.type}")
+            msg = f"Unknown assignment type: {ts_node.type}"
+            raise ValueError(msg)
 
         left_node = ts_node.child_by_field_name("left")
         right_node = ts_node.child_by_field_name("right")
@@ -54,7 +55,8 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
             ValueError: If the provided ts_node is not of type 'named_expression'.
         """
         if ts_node.type != "named_expression":
-            raise ValueError(f"Unknown assignment type: {ts_node.type}")
+            msg = f"Unknown assignment type: {ts_node.type}"
+            raise ValueError(msg)
 
         left_node = ts_node.child_by_field_name("name")
         right_node = ts_node.child_by_field_name("value")

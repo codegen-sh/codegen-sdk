@@ -9,5 +9,6 @@ from codegen.sdk.core.symbol_groups.dict import Dict
 from codegen.sdk.core.symbol_groups.list import List
 
 if TYPE_CHECKING:
-    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall  # noqa: TC004
+
 __all__ = ["Dict", "Expression", "FunctionCall", "List", "Name", "String", "Type", "Value"]

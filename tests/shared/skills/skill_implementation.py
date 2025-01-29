@@ -42,7 +42,8 @@ class SkillImplementation:
         self.language = language
         self.test_cases = [] if skip_test else test_cases
         if not (skip_test or from_app) and len(self.test_cases) == 0:
-            raise Exception("Skill must have at least one test case")
+            msg = "Skill must have at least one test case"
+            raise Exception(msg)
         self.repo_id = repo_id
         self._skill_func = skill_func
         self.eval_skill = eval_skill
