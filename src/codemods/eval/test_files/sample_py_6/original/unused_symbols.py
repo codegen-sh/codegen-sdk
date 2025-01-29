@@ -1,4 +1,4 @@
-def an_unused_func() -> int:
+def an_unused_func():
     return 4
 
 

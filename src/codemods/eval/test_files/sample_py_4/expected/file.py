@@ -1,8 +1,8 @@
-def bar_bar() -> int:
+def bar_bar():
     return 1
 
 
-def bar_char() -> int:
+def bar_char():
     return 2
 
 

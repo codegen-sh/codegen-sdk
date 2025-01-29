@@ -6,11 +6,11 @@ class Foo(Enum):
     CHAR = 2
 
 
-def foo_bar() -> int:
+def foo_bar():
     return 1
 
 
-def foo_char() -> int:
+def foo_char():
     return 2
 
 
