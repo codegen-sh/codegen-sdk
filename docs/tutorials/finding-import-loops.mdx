@@ -1,0 +1,109 @@
+---
+title: "Finding Import Loops"
+sidebarTitle: "Import Loops"
+description: "Learn how to detect and visualize import cycles in your codebase"
+icon: "connectdevelop"
+iconType: "solid"
+
+---
+
+Import cycles (or circular dependencies) occur when two or more modules depend on each other, either directly or indirectly. These can lead to various issues including:
+
+- Initialization order problems
+- Difficulty in testing and maintaining code
+- Potential runtime errors
+- Challenges in code refactoring
+
+This tutorial will show you how to use the codegen SDK to detect and visualize import loops in your codebase.
+
+## Basic Usage
+
+Here's a simple example of how to detect import cycles:
+
+```python
+from codegen.sdk import Codebase
+import networkx as nx
+
+# Initialize the codebase
+codebase = Codebase("./")
+# Create a directed graph for imports
+G = nx.DiGraph()
+
+# Add edges for each import relationship
+for file in codebase.files:
+    for imp in file.imports:
+        if imp.from_file and imp.to_file:
+            G.add_edge(imp.from_file.file_path, imp.to_file.file_path)
+
+# Find strongly connected components (cycles)
+cycles = [scc for scc in nx.strongly_connected_components(G) if len(scc) > 1]
+
+# Print the cycles found
+print(f"Found {len(cycles)} import cycles")
+```
+
+
+## Advanced Usage
+
+For more detailed analysis, you can create a specialized graph that only shows the cycles:
+
+```python
+import networkx as nx
+from networkx.drawing.nx_agraph import to_agraph
+from codegen.sdk.core.codebase import Codebase
+
+
+def create_cycle_graph(codebase):
+    # Create the graph
+    G = nx.DiGraph()
+    
+    # First pass: Add all edges to the graph
+    for imp in codebase.imports:
+        edge_color = 'red' if imp.is_dynamic else 'white'
+        edge_label = 'dynamic' if imp.is_dynamic else ''
+
+        G.add_edge(imp.to_file.filepath, 
+                    imp.from_file.filepath, 
+                    color=edge_color,
+                    label=edge_label)
+    
+    # Find strongly connected components
+    cycles = [scc for scc in nx.strongly_connected_components(G) if len(scc) > 1]
+        
+    # yield cycles one by one
+    for cycle in cycles:
+        cycle_graph = nx.DiGraph()
+        cycle_list = list(cycle)
+        for i in range(len(cycle_list)):
+            for j in range(len(cycle_list)):
+                if G.has_edge(cycle_list[i], cycle_list[j]):
+                    # Get edge data from original graph
+                    edge_data = G.get_edge_data(cycle_list[i], cycle_list[j])
+                    # Add edge with all its attributes to cycle graph
+                    cycle_graph.add_edge(cycle_list[i], 
+                                       cycle_list[j], 
+                                       **edge_data)
+        yield cycle_graph
+
+# Create and visualize the cycle graph
+cycle_graph = next(create_cycle_graph(codebase))
+codebase.visualize(cycle_graph)
+```
+
+### Take a look
+<Frame caption="Visualization of one import cycle in the Pytorch codebase. Red are edges are dynamic imports, and the white are static imports.">
+    <iframe
+    width="100%"
+    height="500px"
+    scrolling="no"
+    src={`https://codegen.sh/embedded/graph?id=ce2b4bee-fd40-4007-9540-f7ef18812d37&zoom=1`}
+    className="rounded-xl "
+    style={{
+        backgroundColor: "#15141b",
+    }}
+    ></iframe>
+
+    
+</Frame>
+<Info>View the [playground](https://www.codegen.sh/codemod/ce2b4bee-fd40-4007-9540-f7ef18812d37/public/diff) for the full codemod.</Info>
+
