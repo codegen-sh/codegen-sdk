@@ -138,10 +138,10 @@ commands:
       steps:
         - store_test_results:
             path: build/test-results/test/TEST.xml
-        # - codecov/upload:
-        #     binary: ../root/.local/bin/codecovcli
-        #     files: build/test-results/test/TEST.xml
-        #     report_type: test_results
+        - codecov/upload:
+            binary: ../root/.local/bin/codecovcli
+            files: build/test-results/test/TEST.xml
+            report_type: test_results
   run_ats:
       parameters:
         default_tests:
