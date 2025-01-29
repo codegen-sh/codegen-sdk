@@ -97,6 +97,7 @@
 				"building-with-codegen/parsing-codebases",
 				"building-with-codegen/reusable-codemods",
 				"building-with-codegen/dot-codegen",
+				"building-with-codegen/function-decorator",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
