@@ -211,7 +211,7 @@ jobs:
   unit-tests:
     parallelism: 8
     executor: default_image
-    resource_class: "large"
+    resource_class: "xlarge"
     steps:
     - setup-uv
     - node/install:
