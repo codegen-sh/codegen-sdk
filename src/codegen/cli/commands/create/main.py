@@ -103,7 +103,7 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
 
             # Write the function code
             codemod_path.write_text(code)
-       
+
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))
