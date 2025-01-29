@@ -81,7 +81,7 @@ repos:
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.24"
+    rev: "0.5.25"
     hooks:
       - id: uv-lock
         entry: bash -c "uv lock --frozen"
