@@ -111,7 +111,11 @@ def skip_lfs_tests(request) -> None:
     test_path = Path(request.module.__file__)
 
     # Only run for integration tests
-    if not str(test_path).startswith(str(Path.cwd() / "tests" / "integration")):
+    try:
+        cwd = Path.cwd()
+    except FileNotFoundError:
+        return
+    if not str(test_path).startswith(str(cwd / "tests" / "integration")):
         return
 
     try:
