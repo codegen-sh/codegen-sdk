@@ -403,6 +403,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
             def my_function():
                 import foo  # Dynamic - only imported when function runs
 
+
             if condition:
                 from bar import baz  # Dynamic - only imported if condition is True
 

@@ -59,8 +59,4 @@ class ExpressionGroup(SymbolGroup[TExpression, Parent], Generic[TExpression, Par
             list[FunctionCall]: A list of all function calls found in the expressions
             of this group.
         """
-        fcalls = []
-        for expr in self.expressions:
-            for call in expr.function_calls:
-                fcalls.append(call)
-        return fcalls
+        return [call for expr in self.expressions for call in expr.function_calls]

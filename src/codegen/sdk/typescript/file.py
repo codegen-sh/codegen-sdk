@@ -391,9 +391,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         valid_export_names = {}
         if len(self.default_exports) == 1:
             valid_export_names["default"] = self.default_exports[0]
-        for export in self.exports:
-            for name, dest in export.names:
-                valid_export_names[name] = dest
+        valid_export_names.update({name: dest for export in self.exports for name, dest in export.names})
         return valid_export_names
 
     ####################################################################################################################

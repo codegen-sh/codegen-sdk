@@ -216,3 +216,5 @@ extend-generics = [
 ]
 [lint.isort]
 known-first-party = ["codegen"]
+[format]
+docstring-code-format = true

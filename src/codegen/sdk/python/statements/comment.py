@@ -77,9 +77,7 @@ class PyComment(Comment):
             # Remove the triple quotes and extract the text content
             text_block = self.source[3:-3]
             # Parse the text block into lines
-            text_lines = []
-            for line in text_block.lstrip("\n").split("\n"):
-                text_lines.append(line)
+            text_lines = list(text_block.lstrip("\n").split("\n"))
             # Get indentation level
             padding = lowest_indentation(text_lines, skip_lines=skip_lines)
             # Remove indentation

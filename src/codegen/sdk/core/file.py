@@ -812,11 +812,8 @@ class SourceFile(
     def valid_symbol_names(self) -> dict[str, Symbol | TImport | WildcardImport[TImport]]:
         """Returns a dict mapping name => Symbol (or import) in this file."""
         valid_symbol_names = {}
-        for s in self.symbols:
-            valid_symbol_names[s.full_name] = s
-        for imp in self.imports:
-            for name, dest in imp.names:
-                valid_symbol_names[name] = dest
+        valid_symbol_names.update({s.full_name: s for s in self.symbols})
+        valid_symbol_names.update({name: dest for imp in self.imports for name, dest in imp.names})
         return valid_symbol_names
 
     @noapidoc

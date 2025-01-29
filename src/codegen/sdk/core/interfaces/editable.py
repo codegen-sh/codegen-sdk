@@ -1123,10 +1123,7 @@ class Editable(JSONable, Generic[Parent]):
 
     def _get_ast_children(self) -> list[tuple[str | None, AST]]:
         children = []
-        names = {}
-        for name, val in self._list_members(include_methods=True).items():
-            if isinstance(val, Editable):
-                names[val] = name
+        names = {val: name for name, val in self._list_members(include_methods=True).items()}
         for child in self.file._range_index.get_children(self):
             if self.G.config.feature_flags.debug:
                 assert child != self, child

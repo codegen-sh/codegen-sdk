@@ -42,7 +42,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     """Abstract representation of a function invocation, e.g. in Python:
     ```
     def f():
-        g() # FunctionCall
+        g()  # FunctionCall
     ```
     """
 
