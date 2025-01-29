@@ -17,7 +17,11 @@ def sample_repository(tmp_path: Path):
     subprocess.run(["git", "config", "--local", "user.name", "Test User"], check=True)
     subprocess.run(["git", "commit", "--allow-empty", "-m", "Initial commit"], check=True)
     subprocess.run(["git", "remote", "add", "origin", "https://github.com/test/test.git"], check=True)
-    return tmp_path
+    yield tmp_path
+    try:
+        shutil.rmtree(tmp_path)
+    except FileNotFoundError:
+        pass
 
 
 @pytest.fixture()
@@ -31,8 +35,4 @@ def initialized_repo(sample_repository: Path, runner: CliRunner):
     runner.invoke(init_command)
     subprocess.run(["git", "add", "."], cwd=sample_repository, check=True)
     subprocess.run(["git", "commit", "-m", "Initialize codegen"], cwd=sample_repository, check=True)
-    yield sample_repository
-    try:
-        shutil.rmtree(sample_repository)
-    except FileNotFoundError:
-        pass
+    return sample_repository
