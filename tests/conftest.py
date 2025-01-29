@@ -1,4 +1,3 @@
-import logging
 import os
 from pathlib import Path
 
@@ -17,7 +16,7 @@ def find_dirs_to_ignore(start_dir, prefix):
     return dirs_to_ignore
 
 
-def pytest_addoption(parser):
+def pytest_addoption(parser) -> None:
     parser.addoption(
         "--size",
         action="append",
@@ -68,15 +67,15 @@ def pytest_addoption(parser):
 
 
 # content of conftest.py
-def pytest_configure(config):
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER")
-    if worker_id is not None:
-        os.makedirs("build/logs", exist_ok=True)
-        logging.basicConfig(
-            format=config.getini("log_file_format"),
-            filename=f"build/logs/tests_{worker_id}.log",
-            level=config.getini("log_file_level"),
-        )
+# def pytest_configure(config) -> None:
+#     worker_id = os.environ.get("PYTEST_XDIST_WORKER")
+#     if worker_id is not None:
+#         os.makedirs("build/logs", exist_ok=True)
+#         logging.basicConfig(
+#             format=config.getini("log_file_format"),
+#             filename=f"build/logs/tests_{worker_id}.log",
+#             level=config.getini("log_file_level"),
+#         )
 
 
 def is_git_lfs_pointer(file_path: Path) -> bool:
@@ -100,18 +99,24 @@ def pytest_runtest_makereport(item, call):
             raise RuntimeError(msg)
 
 
-@pytest.fixture(autouse=True)
-def skip_lfs_tests(request):
-    """Skip tests that depend on git LFS files if they haven't been pulled"""
-    # Lets not run if we are in CI
-    if os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true":
-        return
+# Lets not run if we are in CI
 
+
+IS_CI = os.getenv("CI") == "true" or os.getenv("CIRCLECI") == "true"
+
+
+@pytest.fixture(autouse=IS_CI)
+def skip_lfs_tests(request) -> None:
+    """Skip tests that depend on git LFS files if they haven't been pulled"""
     # Get the test module path
     test_path = Path(request.module.__file__)
 
     # Only run for integration tests
-    if not str(test_path).startswith(str(Path.cwd() / "tests" / "integration")):
+    try:
+        cwd = Path.cwd()
+    except FileNotFoundError:
+        return
+    if not str(test_path).startswith(str(cwd / "tests" / "integration")):
         return
 
     try:
