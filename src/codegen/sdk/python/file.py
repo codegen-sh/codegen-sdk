@@ -56,7 +56,7 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     @noapidoc
     @commiter
     def _parse_imports(self) -> None:
-        for import_node in iter_all_descendants(self.ts_node, {"import_statement", "import_from_statement", "future_import_statement"}):
+        for import_node in iter_all_descendants(self.ts_node, frozenset({"import_statement", "import_from_statement", "future_import_statement"})):
             PyImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
 
     ####################################################################################################################
