@@ -117,7 +117,7 @@ This uses Codegen's [codebase.move_to_file(...)](https://docs.codegen.com/buildi
 - (optionally) move depenencies
 - do so very fast ⚡️
 
-While maintainin correctness.""",
+While maintaining correctness.""",
     },
     ##### [ TEST SPLITTING ] #####
     {
