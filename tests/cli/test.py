@@ -12,7 +12,7 @@ from rich import box
 import time
 import platform
 
-# NOTE: This is a test CLI for the codegen CLI to ensure it works as expected. The style-debug and run-on-pr commands are skipped.
+# NOTE: This is a test CLI for the codegen CLI to ensure it works as expected. The run-on-pr command is skipped.
 
 
 class CLITester:
