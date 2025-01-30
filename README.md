@@ -42,7 +42,14 @@ for function in codebase.functions:
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ## Installation and Usage
-This library requires **Python 3.12 – 3.13**.
+We support
+
+- Running Codegen in Python 3.12 – 3.13
+- macOS and Linux
+  - We develop on macOS but our testing and production environments are Linux
+  - Windows is not supported
+- Python, Typescript, Javascript and React codebases
+
 
 ```
 # Install inside existing project
