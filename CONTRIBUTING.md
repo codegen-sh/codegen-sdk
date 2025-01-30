@@ -55,10 +55,11 @@ uv sync --dev
 
 ### Troubleshooting
 
-- If `uv sync` fails with `missing field 'version'`, try:
+- If `uv sync` fails with `missing field 'version'`, it may be due to an older version of uv incompatible with the lock file. Try:
 
   ```bash
-  rm uv.lock && uv sync --dev
+  uv self update
+  uv sync --dev
   ```
 
 - If `uv sync` fails due to a compilation error, ensure `clang` is installed and then rerun:
