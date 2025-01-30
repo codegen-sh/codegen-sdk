@@ -9,7 +9,7 @@ import click
 from termcolor import colored
 
 from codegen.git.clients.gist_client import GistClient
-from codegen.gscli.generate.constants import SYSTEM_PROMPT_GIST_ID
+from codegen.gscli.generate.constants import SYSTEM_PROMPT_FILENAME, SYSTEM_PROMPT_GIST_ID
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
 from codegen.gscli.generate.system_prompt import get_system_prompt
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
@@ -112,33 +112,27 @@ def generate_docs(docs_dir: str) -> None:
 
 
 @generate.command()
-@click.option("--token", required=True)
-@click.option("--gist_id", default=SYSTEM_PROMPT_GIST_ID, required=False)
-@click.option("--filename", default="system-prompt.txt", required=False)
-def update_system_prompt(token: str, gist_id: str, filename: str) -> None:
-    """Update the system prompt in the gist"""
-    system_prompt = get_system_prompt()
-    description = f"System Prompt for Codegen SDK ({codegen_sdk_version})"
-    client = GistClient(token)
-    print(f"Updating system prompt in gist {gist_id} with filename {filename}...")
-    client.update_gist(gist_id, filename, system_prompt, description)
-    print(f"Successfully updated system prompt in gist {gist_id} with filename {filename}!")
-
-
-@generate.command()
-@click.option("--token", required=True)
-@click.option("--gist_id", default=SYSTEM_PROMPT_GIST_ID, required=False)
-@click.option("--filepath", default="./system-prompt.txt", required=False)
-def read_system_prompt(token: str, gist_id: str, filepath: str) -> None:
+@click.option("--token", default=None, required=False, help="The GitHub token to use for updating the gist.")
+@click.option("--update-remote", default=False, required=False, is_flag=True, help="Update the system prompt in the gist.")
+@click.option("--filepath", default="./system-prompt.txt", required=False, help="The path to the file to write the system prompt to.")
+def system_prompt(token: str | None, update_remote: bool, filepath: str) -> None:
     """Read the system prompt from the gist"""
-    client = GistClient(token)
-    print(f"Reading system prompt from gist {gist_id}...")
-    gist = client.get_gist(gist_id)
-    content = gist["files"]["system-prompt.txt"]["content"]
-    file_path = Path(filepath)
-    print(f"Writing system prompt to {filepath}...")
-    file_path.write_text(content)
-    print(f"Successfully wrote system prompt to {filepath}!")
+    with GistClient(token) as client:
+        if update_remote:
+            new_system_prompt = get_system_prompt()
+            print(f"Updating system prompt in gist {SYSTEM_PROMPT_GIST_ID} with filename {filepath}...")
+            description = f"System Prompt for Codegen SDK ({codegen_sdk_version})"
+            client.update_gist(SYSTEM_PROMPT_GIST_ID, SYSTEM_PROMPT_FILENAME, new_system_prompt, description)
+            print(f"Successfully updated system prompt in gist with filename {SYSTEM_PROMPT_FILENAME}.")
+            print(f"New description: {description}")
+        else:
+            print(f"Reading system prompt from gist {SYSTEM_PROMPT_GIST_ID}...")
+            gist = client.get_gist(SYSTEM_PROMPT_GIST_ID)
+            content = gist["files"][SYSTEM_PROMPT_FILENAME]["content"]
+            file_path = Path(filepath)
+            print(f"Writing system prompt to {filepath}...")
+            file_path.write_text(content)
+            print(f"Successfully wrote system prompt to {filepath}.")
 
 
 def get_snippet_pattern(target_name: str) -> str:
