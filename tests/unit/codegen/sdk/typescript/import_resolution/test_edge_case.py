@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
+
 if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
