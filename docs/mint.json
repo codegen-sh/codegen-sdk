@@ -21,9 +21,7 @@
 		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
 		"twitter:url": "https://codegen.com",
 		"twitter:image": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen.jpeg",
-		"twitter:site": "@codegen",
-		"og:image:width": "2400",
-		"og:image:height": "1200"
+		"twitter:site": "@codegen"
 	},
 	"favicon": "/favicon.svg",
 	"colors": {
