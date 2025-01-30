@@ -3,17 +3,14 @@ import logging
 import os
 import re
 import shutil
-from pathlib import Path
 
 import click
 from termcolor import colored
 
-from codegen.git.clients.gist_client import GistClient
-from codegen.gscli.generate.constants import SYSTEM_PROMPT_FILENAME, SYSTEM_PROMPT_GIST_ID
+import codegen.sdk as sdk
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
 from codegen.gscli.generate.system_prompt import get_system_prompt
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
-from codegen.sdk import __version__ as codegen_sdk_version
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
 from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_page_for_class
@@ -112,27 +109,13 @@ def generate_docs(docs_dir: str) -> None:
 
 
 @generate.command()
-@click.option("--token", default=None, required=False, help="The GitHub token to use for updating the gist.")
-@click.option("--update-remote", default=False, required=False, is_flag=True, help="Update the system prompt in the gist.")
-@click.option("--filepath", default="./system-prompt.txt", required=False, help="The path to the file to write the system prompt to.")
-def system_prompt(token: str | None, update_remote: bool, filepath: str) -> None:
-    """Read the system prompt from the gist"""
-    with GistClient(token) as client:
-        if update_remote:
-            new_system_prompt = get_system_prompt()
-            print(f"Updating system prompt in gist {SYSTEM_PROMPT_GIST_ID} with filename {filepath}...")
-            description = f"System Prompt for Codegen SDK ({codegen_sdk_version})"
-            client.update_gist(SYSTEM_PROMPT_GIST_ID, SYSTEM_PROMPT_FILENAME, new_system_prompt, description)
-            print(f"Successfully updated system prompt in gist with filename {SYSTEM_PROMPT_FILENAME}.")
-            print(f"New description: {description}")
-        else:
-            print(f"Reading system prompt from gist {SYSTEM_PROMPT_GIST_ID}...")
-            gist = client.get_gist(SYSTEM_PROMPT_GIST_ID)
-            content = gist["files"][SYSTEM_PROMPT_FILENAME]["content"]
-            file_path = Path(filepath)
-            print(f"Writing system prompt to {filepath}...")
-            file_path.write_text(content)
-            print(f"Successfully wrote system prompt to {filepath}.")
+@click.argument("filepath", default=sdk.__path__[0] + "/system-prompt.txt", required=False)
+def system_prompt(filepath: str) -> None:
+    print(f"Generating system prompt and writing to {filepath}...")
+    new_system_prompt = get_system_prompt()
+    with open(filepath, "w") as f:
+        f.write(new_system_prompt)
+    print(f"Successfully wrote system prompt to {filepath}.")
 
 
 def get_snippet_pattern(target_name: str) -> str:
