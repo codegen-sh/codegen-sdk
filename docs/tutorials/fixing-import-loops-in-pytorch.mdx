@@ -1,6 +1,6 @@
 ---
 title: "Fixing Import Loops"
-description: "Learn how to identify and fix problematic import loops using Codegen"
+description: "Learn how to identify and fix problematic import loops using Codegen."
 icon: "arrows-rotate"
 iconType: "solid"
 ---
@@ -9,7 +9,7 @@ iconType: "solid"
     width="100%"
     height="500px"
     scrolling="no"
-    src={`https://www.codegen.sh/embedded/graph?id=ce2b4bee-fd40-4007-9540-f7ef18812d37&zoom=0.7`}
+    src={`https://www.codegen.sh/embedded/graph/?id=8b575318-ff94-41f1-94df-6e21d9de45d1&zoom=1&targetNodeName=model`}
     className="rounded-xl"
     style={{
         backgroundColor: "#15141b",
@@ -28,7 +28,7 @@ You can find the complete example code in our [examples repository](https://gith
 
 ## Overview
 
-The steps to identify and fix import loops using Codegen are as follows:
+The steps to identify and fix import loops are as follows:
 1. Detect import loops
 2. Visualize them
 3. Identify problematic cycles with mixed static/dynamic imports
@@ -37,7 +37,7 @@ The steps to identify and fix import loops using Codegen are as follows:
 # Step 1: Detect Import Loops
 - Create a graph
 - Loop through imports in the codebase and add edges between the import files
-- Find strongly connected components using Networkx which are the import loops
+- Find strongly connected components using Networkx (the import loops)
 ```python
 G = nx.MultiDiGraph()
 
@@ -83,7 +83,7 @@ for i, cycle in enumerate(cycles, 1):
 
 ## Understanding Import Cycles
 
-Not all import cycles are problematic! Here's an example of a cycle that one may think would cause an error but it does not because due to using dynamic imports to break the cycle at runtime:
+Not all import cycles are problematic! Here's an example of a cycle that one may think would cause an error but it does not because due to using dynamic imports.
 
 ```python
 # top level import in in APoT_tensor.py
@@ -99,9 +99,9 @@ def some_func():
 
 <img src="/images/valid-import-loop.png" />
 
-A dynamic import is an import defined inside of a function, method or any executable body of code which delays the import to be executed until that function or method is called.
+A dynamic import is an import defined inside of a function, method or any executable body of code which delays the import execution until that function, method or body of code is called.
 
-You can use `imp.is_dynamic` to check if the import is dynamic which allows you to check for imports that are handled more intentionally.
+You can use `imp.is_dynamic` to check if the import is dynamic allowing you to investigate imports that are handled more intentionally.
 
 # Step 2: Visualize Import Loops
 - Create a new subgraph to visualize one cycle
@@ -130,18 +130,19 @@ cycle_graph = create_single_loop_graph(cycle)
 codebase.visualize(cycle_graph)
 ```
 
-<Frame caption="Import loop in pytorch/torchgen/model.py">
+<Frame caption="Import loops in pytorch/torchgen/model.py">
     <iframe
     width="100%"
     height="500px"
     scrolling="no"
-    src={`https://www.codegen.sh/embedded/graph?id=f3cc5dbb-c577-4c80-991b-3a27f0fe9892&zoom=1`}
-    className="rounded-xl "
+    src={`https://www.codegen.sh/embedded/graph/?id=8b575318-ff94-41f1-94df-6e21d9de45d1&zoom=1&targetNodeName=model`}
+    className="rounded-xl"
     style={{
-        backgroundColor: "#15141B",
+        backgroundColor: "#15141b",
     }}
     ></iframe>
 </Frame>
+
 
 # Step 3: Identify problematic cycles with mixed static & dynamic imports
 
@@ -167,10 +168,6 @@ It's clear that there is both a top level and a dynamic import that imports from
 <img src="/images/problematic-import-loop.png" />
 
 Let's find these problematic cycles:
-```
-import networkx as nx
-
-G = nx.MultiDiGraph()
 
 ```python
 def find_problematic_import_loops(G, sccs):
@@ -219,8 +216,8 @@ def find_problematic_import_loops(G, sccs):
 problematic_cycles = find_problematic_import_loops(G, cycles)
 ```
 
-
-One common fix to this problem to break this cycle is to move all the shared symbols to a separate `utils.py` file. We can do this using codegen `symbol.move_to_file`:
+# Step 4: Fix the loop by moving the shared symbols to a separate `utils.py` file
+One common fix to this problem to break this cycle is to move all the shared symbols to a separate `utils.py` file. We can do this using the method `symbol.move_to_file`:
 
 ```python
 # Create new utils file
@@ -259,5 +256,5 @@ codebase.commit()
 Next Steps
 Verify all tests pass after the migration and fix other problematic import loops using the suggested strategies:
     1. Move the shared symbols to a separate file
-    2. If a module needs imports only for type hints, consider using `if TYPE_CHECKING:` from the `typing` module
+    2. If a module needs imports only for type hints, consider using `if TYPE_CHECKING` from the `typing` module
     3. Use lazy imports using `importlib` to load imports dynamically
