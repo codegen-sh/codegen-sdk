@@ -670,7 +670,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         if not isinstance(self._imported_symbol(), ExternalModule):
             return None
         resolved = self.resolve_import(add_module_name=attribute)
-        if resolved and isinstance(resolved, Editable):
+        if resolved and (isinstance(resolved.symbol, Editable) or isinstance(resolved.from_file, Editable)):
             return resolved.symbol or resolved.from_file
         return None
 
