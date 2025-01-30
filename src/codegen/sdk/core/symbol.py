@@ -264,7 +264,12 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                 return first_node.insert_before(new_src, fix_indentation, newline, priority, dedupe)
         return super().insert_before(new_src, fix_indentation, newline, priority, dedupe)
 
-    def move_to_file(self, file: SourceFile, include_dependencies: bool = True, strategy: str = "update_all_imports") -> None:
+    def move_to_file(
+        self,
+        file: SourceFile,
+        include_dependencies: bool = True,
+        strategy: Literal["add_back_edge", "update_all_imports", "duplicate_dependencies"] = "update_all_imports",
+    ) -> None:
         """Moves the given symbol to a new file and updates its imports and references.
 
         This method moves a symbol to a new file and updates all references to that symbol throughout the codebase. The way imports are handled can be controlled via the strategy parameter.
@@ -286,7 +291,13 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         self._move_to_file(file, encountered_symbols, include_dependencies, strategy)
 
     @noapidoc
-    def _move_to_file(self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports") -> tuple[NodeId, NodeId]:
+    def _move_to_file(
+        self,
+        file: SourceFile,
+        encountered_symbols: set[Symbol | Import],
+        include_dependencies: bool = True,
+        strategy: Literal["add_back_edge", "update_all_imports", "duplicate_dependencies"] = "update_all_imports",
+    ) -> tuple[NodeId, NodeId]:
         """Helper recursive function for `move_to_file`"""
         from codegen.sdk.core.import_resolution import Import
 
