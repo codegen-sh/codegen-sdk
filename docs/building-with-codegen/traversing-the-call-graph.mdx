@@ -47,6 +47,10 @@ def create_call_graph(start_func, end_func, max_depth=5):
             src_func = parent_func.function_definition
             src_call = parent_func
 
+        # Skip external modules
+        if isinstance(src_func, ExternalModule):
+            return
+
         # Traverse all function calls
         for call in src_func.function_calls:
             func = call.function_definition

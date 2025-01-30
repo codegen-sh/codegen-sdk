@@ -50,6 +50,7 @@ We support
   - Windows is not supported
 - Python, Typescript, Javascript and React codebases
 
+
 ```
 # Install inside existing project
 uv pip install codegen
