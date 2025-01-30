@@ -46,8 +46,9 @@ We support
 
 - Running Codegen in Python 3.12 – 3.13
 - macOS and Linux
+  - We develop on macOS but our testing and production environments are Linux
+  - Windows is not supported
 - Python, Typescript, Javascript and React codebases
-
 
 ```
 # Install inside existing project
