@@ -409,7 +409,7 @@ class TSImport(Import["TSFile"], Exportable):
 
         #TODO: FIX THIS, is a horrible hack to avoid a crash on the next.js
         if len(module_node.named_children) == 0:
-            module_node = None
+            return []
         else:
             # Grab the first element of dynamic import call expression argument list
             module_node = module_node.named_children[0]
