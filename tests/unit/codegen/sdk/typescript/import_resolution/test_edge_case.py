@@ -6,6 +6,7 @@ from codegen.sdk.enums import ProgrammingLanguage
 if TYPE_CHECKING:
     from codegen.sdk.typescript.file import TSFile
 
+
 def test_import_edge_case(tmpdir) -> None:
     # language=typescript
     content = """

@@ -407,7 +407,7 @@ class TSImport(Import["TSFile"], Exportable):
             return []
         imports = []
 
-        #TODO: FIX THIS, is a horrible hack to avoid a crash on the next.js
+        # TODO: FIX THIS, is a horrible hack to avoid a crash on the next.js
         if len(module_node.named_children) == 0:
             return []
         else:
