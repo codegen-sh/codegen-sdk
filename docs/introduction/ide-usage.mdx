@@ -15,24 +15,26 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
 
 <AccordionGroup>
   <Accordion title="VSCode, Cursor and Windsurf" icon="window-maximize">
-    1. Open the Command Palette (Cmd/Ctrl + Shift + P)
-    2. Type "Python: Select Interpreter"
+    1. Install the VSCode Python Extensions for LSP and debugging support. We recommend Python, Pylance and Python Debugger for the best experience.
+      <img src="/images/python-extensions.png" />
+    2. Open the Command Palette (Cmd/Ctrl + Shift + P)
+    3. Type "Python: Select Interpreter"
     <img src="/images/set-interpreter.png" />
-    3. Choose "Enter interpreter path"
-    4. Navigate to and select:
+    4. Choose "Enter interpreter path"
+    5. Navigate to and select:
        ```bash
        .codegen/.venv/bin/python
        ```
     
     Alternatively, create a `.vscode/settings.json`:
-    ```json
-    {
-      "python.defaultInterpreterPath": "${workspaceFolder}/.codegen/.venv/bin/python",
-      "python.analysis.extraPaths": [
-        "${workspaceFolder}/.codegen/.venv/lib/python3.11/site-packages"
-      ]
-    }
-    ```
+        ```json
+        {
+          "python.defaultInterpreterPath": "${workspaceFolder}/.codegen/.venv/bin/python",
+          "python.analysis.extraPaths": [
+            "${workspaceFolder}/.codegen/.venv/lib/python3.12/site-packages"
+          ]
+        }
+        ```
   </Accordion>
 
   <Accordion title="PyCharm" icon="python">
@@ -44,24 +46,8 @@ Codegen creates a custom Python environment in `.codegen/.venv`. Configure your 
        ```bash
        .codegen/.venv/bin/python
        ```
-    
-    For better type hints:
-    1. Right-click on `.codegen/.venv`
-    2. Mark Directory as > Sources Root
   </Accordion>
-
-  <Accordion title="Troubleshooting" icon="wrench">
-    Common issues and solutions:
-
-    - **Missing Completions**: Make sure the interpreter is correctly set and the environment has `codegen` installed
-    - **Import Errors**: Verify the environment is activated and Python path includes the virtual environment
-    - **Wrong Python Version**: Check that you're using Python 3.11 or higher in `.codegen/.venv`
-    
-    Run this to verify your environment:
-    ```bash
-    .codegen/.venv/bin/python -c "import codegen; print(codegen.__version__)"
-    ```
-  </Accordion>
+  
 </AccordionGroup>
 
 

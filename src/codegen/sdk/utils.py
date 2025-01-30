@@ -5,6 +5,7 @@ from collections import Counter
 from collections.abc import Iterable
 from contextlib import contextmanager
 from pathlib import Path
+from typing import Literal
 from xml.dom.minidom import parseString
 
 import dicttoxml
@@ -242,7 +243,51 @@ def get_language_file_extensions(language: ProgrammingLanguage):
         return set(TSFile.get_extensions())
 
 
-def determine_project_language(folder_path: str):
+def determine_project_language(folder_path: str, strategy: Literal["most_common", "package_json"] = "package_json") -> ProgrammingLanguage:
+    """Determines the primary programming language of a project.
+
+    Args:
+        folder_path (str): Path to the folder to analyze
+        strategy (Literal["most_common", "package_json"]): Strategy to use for determining language.
+            "most_common" analyzes file extensions, "package_json" checks for package.json presence.
+
+    Returns:
+        ProgrammingLanguage: The determined programming language
+    """
+    # TODO: Create a new strategy that follows gitignore
+    if strategy == "most_common":
+        return _determine_language_by_file_count(folder_path)
+    elif strategy == "package_json":
+        return _determine_language_by_package_json(folder_path)
+
+
+def _determine_language_by_package_json(folder_path: str) -> ProgrammingLanguage:
+    """Determines project language by checking for presence of package.json.
+    Faster but less accurate than file count strategy.
+
+    Args:
+        folder_path (str): Path to the folder to analyze
+
+    Returns:
+        ProgrammingLanguage: TYPESCRIPT if package.json exists, otherwise PYTHON
+    """
+    package_json_path = Path(folder_path) / "package.json"
+    if package_json_path.exists():
+        return ProgrammingLanguage.TYPESCRIPT
+    else:
+        return ProgrammingLanguage.PYTHON
+
+
+def _determine_language_by_file_count(folder_path: str) -> ProgrammingLanguage:
+    """Analyzes a folder to determine the primary programming language based on file extensions.
+    Returns the language with the most matching files.
+
+    Args:
+        folder_path (str): Path to the folder to analyze
+
+    Returns:
+        ProgrammingLanguage: The dominant programming language, or UNSUPPORTED if no matching files found
+    """
     from codegen.sdk.python import PyFile
     from codegen.sdk.typescript.file import TSFile
 
@@ -251,16 +296,6 @@ def determine_project_language(folder_path: str):
         ProgrammingLanguage.TYPESCRIPT: TSFile.get_extensions(),
     }
 
-    """
-    Analyzes a folder to determine the primary programming language based on file extensions.
-    Returns the language with the most matching files.
-
-    Args:
-        folder_path (str): Path to the folder to analyze
-
-    Returns:
-        Optional[ProgrammingLanguage]: The dominant programming language, or None if no matching files found
-    """
     folder = Path(folder_path)
     if not folder.exists() or not folder.is_dir():
         msg = f"Invalid folder path: {folder_path}"

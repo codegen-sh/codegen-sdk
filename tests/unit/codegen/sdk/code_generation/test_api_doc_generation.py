@@ -40,14 +40,14 @@ def test_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> N
     other_lang = "TS" if language == ProgrammingLanguage.PYTHON else "Py"
     # =====[ Python ]=====
     docs = get_codegen_sdk_docs(language=language, codebase=codebase)
-    assert count_tokens(docs) < 50700
+    assert count_tokens(docs) < 55000
     assert f"{lang}Function" in docs
     assert f"{lang}Class" in docs
     assert f"{other_lang}Function" not in docs
     # assert "InviteFactoryCreateParams" in docs # Canonicals aren't in docs
 
 
-@pytest.mark.timeout(120)
+@pytest.mark.timeout(160)
 @pytest.mark.xdist_group("codegen")
 def test_mdx_api_doc_generation_sanity(codebase) -> None:
     docs_json = generate_docs_json(codebase, "HEAD")

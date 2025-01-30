@@ -11,6 +11,7 @@ iconType: "solid"
   width="100%"
   height="600px"
   scrolling="no"
+  loading="lazy"
   src={`https://codegen.sh/embedded/graph?id=347d349e-263b-481a-9601-1cd205b332b9&zoom=1&targetNodeName=export_asset`}
   className="rounded-xl "
   style={{
@@ -150,6 +151,23 @@ create_downstream_call_trace(target_method)
 codebase.visualize(G)
 ```
 
+
+### Take a look
+<iframe
+  width="100%"
+  height="600px"
+  scrolling="no"
+  loading="lazy"
+  src={`https://codegen.sh/embedded/graph?id=6a34b45d-c8ad-422e-95a8-46d4dc3ce2b0&zoom=1&targetNodeName=SharingConfigurationViewSet.patch`}
+  className="rounded-xl "
+  style={{
+    backgroundColor: "#15141b",
+  }}
+></iframe>
+<Info>
+View on [codegen.sh](https://www.codegen.sh/codemod/6a34b45d-c8ad-422e-95a8-46d4dc3ce2b0/public/diff)
+</Info>
+
 ### Common Use Cases
 The call graph visualization is particularly useful for:
  - Understanding complex codebases
@@ -157,18 +175,6 @@ The call graph visualization is particularly useful for:
  - Identifying tightly coupled components
  - Analyzing critical paths
  - Documenting system architecture
-
-### Take a look
-<iframe
-  width="100%"
-  height="600px"
-  scrolling="no"
-  src={`https://codegen.sh/embedded/graph?id=9a141c52-c0c2-4737-bdc3-5d164791d3b5&zoom=1&targetNodeName=SharingConfigurationViewSet.patch`}
-  className="rounded-xl "
-  style={{
-    backgroundColor: "#15141b",
-  }}
-></iframe>
 
 ## Function Dependency Graph
 
@@ -240,12 +246,16 @@ codebase.visualize(G)
   width="100%"
   height="600px"
   scrolling="no"
-  src={`https://codegen.sh/embedded/graph?id=bb7b227b-cc89-4e92-b71f-fb0d6265eb3d&zoom=0.8&targetNodeName=get_query_runner`}
+  loading="lazy"
+  src={`https://codegen.sh/embedded/graph?id=39a36f0c-9d35-4666-9db7-12ae7c28fc17&zoom=0.8&targetNodeName=get_query_runner`}
   className="rounded-xl "
   style={{
     backgroundColor: "#15141b",
   }}
 ></iframe>
+<Info>
+View on [codegen.sh](https://www.codegen.sh/codemod/39a36f0c-9d35-4666-9db7-12ae7c28fc17/public/diff)
+</Info>
 
 ## Blast Radius visualization
 
@@ -337,8 +347,9 @@ G.add_node(target_func, color=COLOR_PALETTE.get("StartFunction"))
 # Build the visualization
 create_blast_radius_visualization(target_func)
 
-# Render reversed graph to show impact flow
-codebase.visualize(G.reverse())
+# Render graph to show impact flow
+# Note: a -> b means changes to a will impact b
+codebase.visualize(G)
 ```
 
 ### Take a look
@@ -346,12 +357,16 @@ codebase.visualize(G.reverse())
   width="100%"
   height="600px"
   scrolling="no"
-  src={`https://codegen.sh/embedded/graph?id=347d349e-263b-481a-9601-1cd205b332b9&zoom=1&targetNodeName=export_asset`}
+  loading="lazy"
+  src={`https://codegen.sh/embedded/graph?id=d255db6c-9a86-4197-9b78-16c506858a3b&zoom=1&targetNodeName=export_asset`}
   className="rounded-xl "
   style={{
     backgroundColor: "#15141b",
   }}
 ></iframe>
+<Info>
+View on [codegen.sh](https://www.codegen.sh/codemod/d255db6c-9a86-4197-9b78-16c506858a3b/public/diff)
+</Info>
 
 ## What's Next?
 

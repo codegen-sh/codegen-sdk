@@ -10,7 +10,7 @@ from codegen.cli.config import CLIUserConfigs
 from codegen.cli.env.global_env import global_env
 
 
-class PostHogTracker:
+class MetricsClient:
     posthog: Posthog
 
     def __init__(self):
@@ -26,6 +26,7 @@ class PostHogTracker:
             "platform": platform.system(),
             "platform_release": platform.release(),
             "python_version": platform.python_version(),
+            "codegen_version": global_env.VERSION,
         }
 
     def capture_event(self, event_name: str, properties: dict[str, Any] | None = None) -> None:
@@ -46,5 +47,5 @@ class PostHogTracker:
 
 
 if __name__ == "__main__":
-    posthog = PostHogTracker()
+    posthog = MetricsClient()
     posthog.capture_event("test")
