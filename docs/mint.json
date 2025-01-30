@@ -101,6 +101,7 @@
 				"tutorials/react-modernization",
 				"tutorials/unittest-to-pytest",
 				"tutorials/sqlalchemy-1.6-to-2.0",
+				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
 				"tutorials/flask-to-fastapi"
 			]
