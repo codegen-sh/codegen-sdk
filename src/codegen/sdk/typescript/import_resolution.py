@@ -405,6 +405,10 @@ class TSImport(Import["TSFile"], Exportable):
         if module_node is None:
             # TODO: fixme
             return []
+
+        if not module_node.named_children:
+            return []
+
         imports = []
         # Grab the first element of dynamic import call expression argument list
         module_node = module_node.named_children[0]
