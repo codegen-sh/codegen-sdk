@@ -340,11 +340,20 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
             usage.file == self.file and usage.node_type == NodeType.SYMBOL and usage not in encountered_symbols and (usage.start_byte < self.start_byte or usage.end_byte > self.end_byte)  # HACK
             for usage in self.symbol_usages
         )
+
+        # ======[ Strategy: Duplicate Dependencies ]=====
+        if strategy == "duplicate_dependencies":
+            # If not used in the original file, we can just remove the original symbol
+            if not is_used_in_file:
+                self.remove()
+
         # ======[ Strategy: Add Back Edge ]=====
         # Here, we will add a "back edge" to the old file importing the symbol
-        if strategy == "add_back_edge":
+        elif strategy == "add_back_edge":
             if is_used_in_file or any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages):
                 self.file.add_import_from_import_string(import_line)
+            # Delete the original symbol
+            self.remove()
 
         # ======[ Strategy: Update All Imports ]=====
         # Update the imports in all the files which use this symbol to get it from the new file now
@@ -363,10 +372,11 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                             usage.match.edit(self.name)
                         usage.usage_symbol.file.add_import_from_import_string(import_line)
 
+            # Add the import to the original file
             if is_used_in_file:
                 self.file.add_import_from_import_string(import_line)
-        # =====[ Delete the original symbol ]=====
-        self.remove()
+            # Delete the original symbol
+            self.remove()
 
     @property
     @reader
