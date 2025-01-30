@@ -1,6 +1,6 @@
 from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, PlainValidator, WithJsonSchema
+from pydantic import BaseModel, BeforeValidator, ConfigDict, WithJsonSchema
 from pydantic.json_schema import JsonSchemaValue
 from pydantic_core.core_schema import ValidationInfo
 from tree_sitter import Point, Range
@@ -45,7 +45,7 @@ def range_json_schema() -> JsonSchemaValue:
 
 RangeAdapter = Annotated[
     Range,
-    PlainValidator(validate_range),
+    BeforeValidator(validate_range),
     WithJsonSchema(range_json_schema()),
 ]
 
@@ -56,6 +56,7 @@ class Span(BaseModel):
 
     model_config = ConfigDict(
         frozen=True,
+        arbitrary_types_allowed=True,
         json_encoders={
             Range: lambda r: {
                 "start_byte": r.start_byte,
