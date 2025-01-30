@@ -107,9 +107,9 @@ class RepoOperator(ABC):
             self._set_bot_username(git_cli)
         else:
             if not username:
-                self._unset_bot_username(git_cli)
+                self._set_bot_username(git_cli)
             if not email:
-                self._unset_bot_email(git_cli)
+                self._set_bot_email(git_cli)
             if username != CODEGEN_BOT_NAME:
                 self._unset_bot_username(git_cli)
             if email != CODEGEN_BOT_EMAIL:
