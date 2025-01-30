@@ -35,16 +35,14 @@ class ExternalModule(
     """
 
     node_type: Literal[NodeType.EXTERNAL] = NodeType.EXTERNAL
-    _import: Import | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, import_name: Name, import_node: Import | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, import_name: Name) -> None:
         self.node_id = G.add_node(self)
         super().__init__(ts_node, file_node_id, G, None)
         self._name_node = import_name
         self.return_type = StubPlaceholder(parent=self)
         assert self._idx_key not in self.G._ext_module_idx
         self.G._ext_module_idx[self._idx_key] = self.node_id
-        self._import = import_node
 
     @property
     def _idx_key(self) -> str:
@@ -70,7 +68,7 @@ class ExternalModule(
         Returns:
             ExternalModule: A new ExternalModule instance representing the external module.
         """
-        return cls(imp.ts_node, imp.file_node_id, imp.G, imp._unique_node, imp)
+        return cls(imp.ts_node, imp.file_node_id, imp.G, imp._unique_node)
 
     @property
     @reader
@@ -138,7 +136,7 @@ class ExternalModule(
     @noapidoc
     @reader
     def resolve_attribute(self, name: str) -> ExternalModule | None:
-        return self._import.resolve_attribute(name) or self
+        return self
 
     @noapidoc
     @commiter

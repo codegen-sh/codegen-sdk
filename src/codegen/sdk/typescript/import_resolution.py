@@ -197,7 +197,7 @@ class TSImport(Import["TSFile"], Exportable):
         return resolved_symbol
 
     @reader
-    def resolve_import(self, base_path: str | None = None, *, add_module_name: str | None = None) -> ImportResolution[TSFile] | None:
+    def resolve_import(self, base_path: str | None = None) -> ImportResolution[TSFile] | None:
         """Resolves an import statement to its target file and symbol.
 
         This method is used by GraphBuilder to resolve import statements to their target files and symbols. It handles both relative and absolute imports,
