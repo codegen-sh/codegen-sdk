@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import TypeVar
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic.fields import Field
 
 from codegen.cli.utils.constants import ProgrammingLanguage
 from codegen.cli.utils.schema import SafeBaseModel
@@ -64,8 +65,8 @@ class AskExpertResponse(SafeBaseModel):
 
 
 class SerializedExample(SafeBaseModel):
-    name: str | None
-    description: str | None
+    name: str | None = None
+    description: str | None = None
     source: str
     language: ProgrammingLanguage
     docstring: str = ""
@@ -123,11 +124,11 @@ class IdentifyResponse(SafeBaseModel):
         auth_user_id: str
         created_at: str
         email: str
-        is_contractor: str | None
+        is_contractor: str | None = None
         github_username: str
-        full_name: str | None
+        full_name: str | None = None
         id: int
-        last_updated_at: str | None
+        last_updated_at: str | None = None
 
     auth_context: AuthContext
     user: User
