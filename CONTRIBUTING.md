@@ -11,32 +11,61 @@ By contributing to Codegen, you agree that:
 3. You grant Codegen a perpetual, worldwide, non-exclusive, royalty-free license to use your contribution.
 
 See our [CLA](CLA.md) for more details.
+# Development Setup
 
-## Development Setup
+This guide will help you set up the development environment for this project.
 
-### Installing UV Package Manager
+## Installing UV Package Manager
 
-UV is a fast Python package installer and resolver. To install:
+UV is a fast Python package installer and resolver.
 
-**macOS**:
+### macOS
+Install UV using Homebrew:
 ```bash
 brew install uv
 ```
 
-For other platforms, see the [UV installation docs](https://github.com/astral-sh/uv).
+### Debian/Ubuntu
 
-### Setting Up the Development Environment
+#### Install Required Dependencies
+Before installing UV, ensure `clang` and `curl` are installed:
+```bash
+sudo apt-get update
+sudo apt-get install -y clang curl
+```
+> **Note**: `clang` is required for compilation steps during `uv sync`.
 
-After installing UV, set up your development environment:
+#### Install UV
+Once dependencies are installed, install UV:
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+For other platforms, refer to the [UV installation docs](https://github.com/astral-sh/uv).
+
+## Setting Up the Development Environment
+
+Once UV is installed, set up your development environment by running:
+
 ```bash
 uv venv
 source .venv/bin/activate
 uv sync --dev
 ```
 
-> [!TIP]
-> - If sync fails with `missing field 'version'`, you may need to delete lockfile and rerun `rm uv.lock && uv sync --dev`.
-> - If sync fails with failed compilation, you may need to install clang and rerun `uv sync --dev`.
+### Troubleshooting
+
+- If `uv sync` fails with `missing field 'version'`, try:
+
+  ```bash
+  rm uv.lock && uv sync --dev
+  ```
+
+- If `uv sync` fails due to a compilation error, ensure `clang` is installed and then rerun:
+
+  ```bash
+  uv sync --dev
+  ```
 
 ### Running Tests
 
