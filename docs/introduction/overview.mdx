@@ -36,18 +36,24 @@ def baz():
   pass
 `
 
-<iframe
-  width="100%"
-  height="370px"
-  scrolling="no"
-  src={`https://codegen.sh/embedded/codemod/?code=${encodeURIComponent(
-    metaCode
-  )}&input=${encodeURIComponent(code)}`}
-  style={{
-    backgroundColor: "#15141b",
-  }}
-  className="rounded-xl"
-></iframe>
+
+```python
+from codegen import Codebase
+
+# Codegen builds a complete graph connecting
+# functions, classes, imports and their relationships
+codebase = Codebase("./")
+
+# Work with code without dealing with syntax trees or parsing
+for function in codebase.functions:
+    # Comprehensive static analysis for references, dependencies, etc.
+    if not function.usages:
+        # Auto-handles references and imports to maintain correctness
+        function.remove()
+
+# Fast, in-memory code index
+codebase.commit()
+```
 
 <Note>
 Codegen handles complex refactors while maintaining correctness, enabling a broad set of advanced code manipulation programs. 
