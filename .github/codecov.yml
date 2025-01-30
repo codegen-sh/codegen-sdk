@@ -7,33 +7,28 @@ component_management:
       - type: project # in this case every component that doens't have a status defined will have a project type one
         threshold: 0 # Shouldn't remove coverage
   individual_components:
-    - component_id: graph-sitter-python  # this is an identifier that should not be changed
-      name: graph-sitter-python  # this is a display name, and can be changed freely
+    - component_id: codegen-sdk-python  # this is an identifier that should not be changed
+      name: codegen-sdk-python  # this is a display name, and can be changed freely
       paths:
-        - src/graph_sitter/python/**
+        - src/codegen/sdk/python/**
       statuses:
         - type: project # in this case every component that doens't have a status defined will have a project type one
           threshold: 0 # Shouldn't remove coverage
         - type: patch
           target: 50 # Language specific featues must be 100% covered
-    - component_id: graph-sitter-typescript
-      name: graph-sitter-typescript
+    - component_id: codegen-sdk-typescript
+      name: codegen-sdk-typescript
       paths:
-        - src/graph_sitter/typescript/**
+        - src/codegen/sdk/typescript/**
       statuses:
         - type: project # in this case every component that doens't have a status defined will have a project type one
           threshold: 0 # Shouldn't remove coverage
         - type: patch
           target: 50 # Language specific featues must be 100% covered
-    - component_id: graph-sitter-core
-      name: graph-sitter-core
+    - component_id: codegen-sdk-core
+      name: codegen-sdk-core
       paths:
-        - src/graph_sitter/**
-    - component_id: codegen-git
-      name: codegen-git
-      paths:
-        - codegen-git/**
-
+        - src/codegen/sdk/**
 
 flag_management:
   default_rules:
@@ -76,4 +71,3 @@ cli:
         - "--verbose"
         - "-n=auto"
       python_path: ".venv/bin/python"
-

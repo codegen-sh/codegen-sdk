@@ -7,14 +7,12 @@ iconType: "solid"
 
 Codegen pre-computes dependencies and usages for all symbols in the codebase, enabling constant-time queries for these relationships.
 
-This document explains how to use the dependency and usage tracking APIs in Codegen.
-
 ## Overview
 
 Codegen provides two main ways to track relationships between symbols:
 
-- [`.dependencies`](../api-reference/core/Symbol#dependencies) / [`.get_dependencies(...)`](../api-reference/core/Symbol#get_dependencies) - What symbols does this symbol depend on?
-- [`.usages`](../api-reference/core/Symbol.mdx#usages) / [`.usages(...)`](../api-reference/core/Symbol.mdx#usages) - Where is this symbol used?
+- [`.dependencies`](/api-reference/core/Symbol#dependencies) / [`.get_dependencies(...)`](/api-reference/core/Symbol#get-dependencies) - What symbols does this symbol depend on?
+- [`.usages`](/api-reference/core/Symbol#usages) / [`.usages(...)`](/api-reference/core/Symbol#usages) - Where is this symbol used?
 
 Dependencies and usages are inverses of each other. For example, given the following input code:
 
@@ -161,14 +159,14 @@ deps = my_class.get_dependencies(
 ```python
 # Check if a symbol is unused
 def is_dead_code(symbol):
-    return len(symbol.usages()) == 0
+    return not symbol.usages
 
 # Find all unused functions in a file
-dead_functions = [f for f in file.functions if is_dead_code(f)]
+dead_functions = [f for f in file.functions if not f.usages]
 ```
 
 <Tip>
-  See [Finding Unused Code](/tutorials/dead-code) to learn more about finding
+  See [Deleting Dead Code](/tutorials/deleting-dead-code) to learn more about finding
   unused code.
 </Tip>
 

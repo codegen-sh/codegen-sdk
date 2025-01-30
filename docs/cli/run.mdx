@@ -5,7 +5,7 @@ icon: "play"
 iconType: "solid"
 ---
 
-The `run` command executes a codemod and manages its output, whether viewing changes in the web UI, applying them locally, or creating pull requests.
+The `run` command executes a codemod against your local codebase, showing you the changes and applying them to your filesystem.
 
 ```bash
 codegen run rename-function
@@ -23,21 +23,14 @@ codegen run LABEL [OPTIONS]
 
 ## Options
 
-- `--web`: Automatically open the diff in the web app
-- `--apply-local`: Apply the generated changes to your local filesystem
 - `--diff-preview N`: Show a preview of the first N lines of the diff
 - `--arguments JSON`: Pass arguments to the codemod as a JSON string (required if the codemod expects arguments)
 
 ## Examples
 
-Run a codemod and view results in terminal:
+Run a codemod:
 ```bash
 codegen run rename-function
-```
-
-Run and automatically apply changes locally:
-```bash
-codegen run rename-function --apply-local
 ```
 
 Run with a diff preview limited to 50 lines:
@@ -52,53 +45,21 @@ codegen run rename-function --arguments '{"old_name": "getUserData", "new_name":
 
 ## Output
 
-The command provides:
-1. A web link to view changes in the Codegen UI
-2. Run details and logs
-3. A diff preview (if requested)
-4. Instructions for applying changes locally
+The command will:
+1. Parse your codebase
+2. Run the codemod
+3. Show a diff preview (if requested)
+4. Apply changes to your filesystem
 
-## Applying Changes
+## Execution Flow
 
-When using `--apply-local`, Codegen will:
-1. Generate a patch from the codemod's changes
-2. Apply it to your local filesystem
-3. Provide git commands to commit the changes
+When you run a codemod:
+1. Codegen parses your entire codebase into a graph representation
+2. The codemod function is executed against this graph
+3. Any changes made by the codemod are tracked
+4. Changes are automatically applied to your local files
+5. A summary of changes is displayed
 
 <Note>
-Your working directory must be clean (no uncommitted changes) when using `--apply-local`. If you have uncommitted changes, the command will provide instructions for resolving the situation.
+The codebase parsing step may take a few moments for larger codebases. Learn more in [How it Works](/introduction/how-it-works.mdx)
 </Note>
-
-## Common Issues
-
-### Uncommitted Changes
-If `--apply-local` fails due to uncommitted changes, you have two options:
-
-1. Save your changes:
-```bash
-git status          # Check working directory
-git add .           # Stage changes
-git commit -m 'msg' # Commit changes
-codegen run ...     # Run command again
-```
-
-2. Discard changes (⚠️ destructive):
-```bash
-git reset --hard HEAD  # Discard uncommitted changes
-git clean -fd         # Remove untracked files
-codegen run ...       # Run command again
-```
-
-### Multiple Codemods
-If multiple codemods share the same name, specify the exact file path:
-```bash
-codegen run ./path/to/specific/codemod.py
-```
-
-## Next Steps
-
-After running a codemod:
-1. Review the changes in the web UI or diff preview
-2. Apply changes locally with `--apply-local`
-3. Commit the changes to your repository
-4. Create a pull request if needed

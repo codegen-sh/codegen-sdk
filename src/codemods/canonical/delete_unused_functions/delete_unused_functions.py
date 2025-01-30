@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -14,7 +14,7 @@ unused functions.""",
     uid="4024ceb5-54de-49de-b8f5-122ca2d3a6ee",
 )
 @canonical
-class DeleteUnusedFunctionsCodemod(Codemod3, Skill):
+class DeleteUnusedFunctionsCodemod(Codemod, Skill):
     """This Codemod deletes all functions that are not used in the codebase (no usages).
     In general, when deleting unused things, it's good practice to check both usages and call-sites, even though
     call-sites should be basically a subset of usages (every call-site should correspond to a usage).

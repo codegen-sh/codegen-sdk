@@ -14,8 +14,8 @@
 
     Subject to the terms and conditions of this CLA, You hereby grant to Codegen, Inc. and to recipients of software distributed by Codegen, Inc.:
 
-    - A perpetual, worldwide, non-exclusive, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works
-  3. **Grant of Patent License**
+    - A perpetual, worldwide, non-exclusive, royalty-free, irrevocable copyright license to reproduce, prepare derivative works of, publicly display, publicly perform, sublicense, and distribute Your Contributions and such derivative works.
+3. **Grant of Patent License**
 
     Subject to the terms and conditions of this CLA, You hereby grant to Codegen, Inc. and to recipients of software distributed by Codegen, Inc. a perpetual, worldwide, non-exclusive, royalty-free, irrevocable (except as stated in this section) patent license to make, have made, use, offer to sell, sell, import, and otherwise transfer Your Contribution, where such license applies only to those patent claims licensable by You that are necessarily infringed by Your Contribution alone or by combination of Your Contribution with the Project to which You Submitted it.
 
@@ -32,14 +32,19 @@
 6. **Limitation of Liability**
 
     IN NO EVENT SHALL CODEGEN, INC. OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE), ARISING IN ANY WAY OUT OF OR IN CONNECTION WITH THIS AGREEMENT, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 7. **Subsequent Contributions and Updates**
 
     You agree that all current and future Contributions to the Project Submitted by You shall be subject to the terms of this CLA. Codegen, Inc. may publish updates to this CLA from time to time; in such case, You may need to agree to new terms before any subsequent Contributions.
 
-8. **Governing Law**
+8. **License Modification Rights**
+
+    You agree that Codegen, Inc. may change the license(s) applicable to the open source project(s) to which Your Contributions relate at Codegen, Inc.’s sole discretion, including without limitation by re-licensing the project(s) and Your Contributions under any other open source or “free” software license, or a commercial or proprietary license of Codegen, Inc.’s choosing.
+
+9. **Governing Law**
 
     This CLA shall be governed by and construed in accordance with the laws of the State of Delaware, without regard to its conflicts of laws provisions.
 
-9. **Signature / Electronic Consent**
+10. **Signature / Electronic Consent**
 
     By signing or otherwise indicating Your acceptance of this CLA, You acknowledge that You have read and agree to be bound by its terms. If You are signing on behalf of an entity, You represent and warrant that You have the authority to do so.

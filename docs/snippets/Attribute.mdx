@@ -1,0 +1,8 @@
+export const Attribute = ({ type, description }) => (
+  <div className="pl-4 py-6 first:pt-3 dark:border-zinc-300/[0.06] text-sm font-normal">
+    <div className="inline-grid grid-cols-[auto_auto] gap-1 font-mono py-2">
+      {type}
+    </div>
+    <p className="mt-2">{description}</p>
+  </div>
+)

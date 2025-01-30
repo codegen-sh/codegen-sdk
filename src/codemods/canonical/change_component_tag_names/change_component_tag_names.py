@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -14,7 +14,7 @@ codebase. Ensure that the new component is imported if it is not already present
     uid="ab5879e3-e3ea-4231-b928-b756473f290d",
 )
 @canonical
-class ChangeJSXElementName(Codemod3, Skill):
+class ChangeJSXElementName(Codemod, Skill):
     """This codemod updates specific JSX elements inside of React components
 
     In particular, this:
@@ -39,7 +39,8 @@ class ChangeJSXElementName(Codemod3, Skill):
         # Grab the NewName component
         PrivateRoutesContainer = codebase.get_symbol("PrivateRoutesContainer", optional=True)
         if PrivateRoutesContainer is None or not PrivateRoutesContainer.is_jsx:
-            raise ValueError("PrivateRoutesContainer component not found in codebase")
+            msg = "PrivateRoutesContainer component not found in codebase"
+            raise ValueError(msg)
 
         # Iterate over all functions in the codebase
         for file in codebase.files:

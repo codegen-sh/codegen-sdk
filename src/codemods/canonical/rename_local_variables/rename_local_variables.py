@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -14,7 +14,7 @@ within the function.""",
     uid="79c10c00-bbce-4bdb-8c39-d91586307a2b",
 )
 @canonical
-class RenameLocalVariables(Codemod3, Skill):
+class RenameLocalVariables(Codemod, Skill):
     """This codemod renames all local variables in functions that contain 'position' to 'pos'
 
     Example:

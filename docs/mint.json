@@ -8,6 +8,23 @@
 	"modeToggle": {
 		"default": "dark"
 	},
+	"metadata": {
+		"og:site_name": "Codegen",
+		"og:title": "Codegen - Manipulate code at scale",
+		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
+		"og:url": "https://codegen.com",
+		"og:image": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen.jpeg",
+		"og:locale": "en_US",
+		"og:logo": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen-thumbnail.png",
+		"article:publisher": "Codegen, Inc.",
+		"twitter:title": "Codegen - Manipulate code at scale",
+		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
+		"twitter:url": "https://codegen.com",
+		"twitter:image": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen.jpeg",
+		"twitter:site": "@codegen",
+		"og:image:width": "2400",
+		"og:image:height": "1200"
+	},
 	"favicon": "/favicon.svg",
 	"colors": {
 		"primary": "#a277ff",
@@ -44,6 +61,10 @@
 			"url": "/cli"
 		},
 		{
+			"name": "Blog",
+			"url": "/blog"
+		},
+		{
 			"name": "Changelog",
 			"url": "/changelog"
 		}
@@ -54,10 +75,12 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
-				"introduction/guiding-principles",
-				"introduction/how-it-works",
-				"introduction/community",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/work-with-ai",
+				"introduction/how-it-works",
+				"introduction/guiding-principles",
+				"introduction/community",
 				"introduction/about",
 				"introduction/faq"
 			]
@@ -67,11 +90,13 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/migrating-apis",
+				"tutorials/codebase-visualization",
+				"tutorials/training-data",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
+				"tutorials/manage-feature-flags",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
-				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",
 				"tutorials/creating-documentation",
@@ -87,6 +112,9 @@
 			"pages": [
 				"building-with-codegen/at-a-glance",
 				"building-with-codegen/parsing-codebases",
+				"building-with-codegen/reusable-codemods",
+				"building-with-codegen/dot-codegen",
+				"building-with-codegen/function-decorator",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
@@ -94,15 +122,17 @@
 				"building-with-codegen/the-editable-api",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
+				"building-with-codegen/imports",
+				"building-with-codegen/exports",
 				"building-with-codegen/inheritable-behaviors",
 				"building-with-codegen/statements-and-code-blocks",
-				"building-with-codegen/imports-and-exports",
 				"building-with-codegen/dependencies-and-usages",
 				"building-with-codegen/function-calls-and-callsites",
 				"building-with-codegen/variable-assignments",
 				"building-with-codegen/local-variables",
 				"building-with-codegen/comments-and-docstrings",
 				"building-with-codegen/external-modules",
+				"building-with-codegen/type-annotations",
 				"building-with-codegen/moving-symbols",
 				"building-with-codegen/collections",
 				"building-with-codegen/traversing-the-call-graph",
@@ -114,11 +144,23 @@
 		},
 		{
 			"group": "CLI",
-			"pages": ["cli/about", "cli/init", "cli/create", "cli/run", "cli/expert"]
+			"pages": [
+				"cli/about",
+				"cli/init",
+				"cli/notebook",
+				"cli/create",
+				"cli/run",
+				"cli/reset",
+				"cli/expert"
+			]
 		},
 		{
 			"group": "Changelog",
 			"pages": ["changelog/changelog"]
+		},
+		{
+			"group": "Blog",
+			"pages": ["blog/posts", "blog/act-via-code"]
 		},
 		{
 			"group": "API Reference",

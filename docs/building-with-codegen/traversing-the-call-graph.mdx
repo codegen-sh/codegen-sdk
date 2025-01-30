@@ -7,9 +7,9 @@ iconType: "solid"
 
 Codegen provides powerful capabilities for analyzing and visualizing function call relationships in your codebase. This guide will show you how to traverse the call graph and create visual representations of function call paths.
 
-## Understanding Call Graph Successors
+## Understanding Call Graph Traversal
 
-At the heart of call graph traversal is the `call_graph_successors()` method, which returns information about all function calls made within a function:
+At the heart of call graph traversal is the [.function_calls](/api-reference/core/Function#function-calls) property, which returns information about all function calls made within a function:
 
 ```python
 def example_function():
@@ -18,15 +18,11 @@ def example_function():
     return result
 
 # Get all calls made by example_function
-successors = example_function.call_graph_successors()
+successors = example_function.function_calls
 for successor in successors:
-    print(f"Call: {successor.call.source}")  # The actual function call
-    print(f"Called: {successor.callables[0].name}")  # The function being called
+    print(f"Call: {successor.source}")  # The actual function call
+    print(f"Called: {successor.function_definition.name}")  # The function being called
 ```
-
-Each successor contains:
-- `call`: The function call definition (location, source code, arguments)
-- `callables`: The function(s) being called
 
 ## Building a Call Graph
 
@@ -34,48 +30,47 @@ Here's how to build a directed graph of function calls using NetworkX:
 
 ```python
 import networkx as nx
-from graph_sitter.core.interfaces.callable import FunctionCallDefinition
-from graph_sitter.core.function import Function
+from codegen.sdk.core.interfaces.callable import FunctionCallDefinition
+from codegen.sdk.core.function import Function
 
 def create_call_graph(start_func, end_func, max_depth=5):
     G = nx.DiGraph()
-    
+
     def traverse_calls(parent_func, current_depth):
         if current_depth > max_depth:
             return
-            
+
         # Determine source node
         if isinstance(parent_func, Function):
             src_call = src_func = parent_func
         else:
-            src_func = parent_func.callables[0]
-            src_call = parent_func.call
-            
+            src_func = parent_func.function_definition
+            src_call = parent_func
+
         # Traverse all function calls
-        for func_call_def in src_func.call_graph_successors():
-            call = func_call_def.call
-            func = func_call_def.callables[0]
-            
+        for call in src_func.function_calls:
+            func = call.function_definition
+
             # Skip recursive calls
             if func.name == src_func.name:
                 continue
-                
+
             # Add nodes and edges
             G.add_node(call)
             G.add_edge(src_call, call)
-            
+
             # Check if we reached the target
             if func == end_func:
                 G.add_edge(call, end_func)
                 return
-                
+
             # Continue traversal
-            traverse_calls(func_call_def, current_depth + 1)
-    
+            traverse_calls(call, current_depth + 1)
+
     # Initialize graph
     G.add_node(start_func, color="blue")  # Start node
     G.add_node(end_func, color="red")     # End node
-    
+
     # Start traversal
     traverse_calls(start_func, 1)
     return G
@@ -106,18 +101,6 @@ codebase.visualize(filtered_graph)
 
 ## Advanced Usage
 
-### Controlling Traversal
-
-You can control what types of calls to include:
-
-```python
-# Get only internal function calls (exclude external modules)
-successors = function.call_graph_successors(include_external=False)
-
-# Include or exclude class instantiations
-successors = function.call_graph_successors(include_classes=False)
-```
-
 ### Example: Finding Dead Code
 
 You can use call graph analysis to find unused functions:
@@ -126,7 +109,7 @@ You can use call graph analysis to find unused functions:
 def find_dead_code(codebase):
     dead_functions = []
     for function in codebase.functions:
-        if not any(function.call_graph_predecessors()):
+        if not any(function.function_calls):
             # No other functions call this one
             dead_functions.append(function)
     return dead_functions
@@ -139,21 +122,21 @@ Find the longest call chain in your codebase:
 ```python
 def get_max_call_chain(function):
     G = nx.DiGraph()
-    
+
     def build_graph(func, depth=0):
         if depth > 10:  # Prevent infinite recursion
             return
-        for successor in func.call_graph_successors():
-            called_func = successor.callables[0]
+        for call in func.function_calls:
+            called_func = call.function_definition
             G.add_edge(func, called_func)
             build_graph(called_func, depth + 1)
-    
+
     build_graph(function)
     return nx.dag_longest_path(G)
 ```
 
 <Note>
-The `call_graph_successors()` method is optimized for performance and uses Codegen's internal graph structure to quickly traverse relationships. It's much faster than parsing the code repeatedly.
+The `.function_calls` property is optimized for performance and uses Codegen's internal graph structure to quickly traverse relationships. It's much faster than parsing the code repeatedly.
 </Note>
 
 <Warning>

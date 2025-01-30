@@ -1,10 +1,10 @@
-# Contributing to Graph Sitter
+# Contributing to Codegen
 
-Thank you for your interest in contributing to Graph Sitter! This document outlines the process and guidelines for contributing.
+Thank you for your interest in contributing to Codegen! This document outlines the process and guidelines for contributing.
 
 ## Contributor License Agreement
 
-By contributing to Graph Sitter, you agree that:
+By contributing to Codegen, you agree that:
 
 1. Your contributions will be licensed under the project's license.
 2. You have the right to license your contribution under the project's license.
@@ -34,14 +34,18 @@ source .venv/bin/activate
 uv sync --dev
 ```
 
+> [!TIP]
+> - If sync fails with `missing field 'version'`, you may need to delete lockfile and rerun `rm uv.lock && uv sync --dev`.
+> - If sync fails with failed compilation, you may need to install clang and rerun `uv sync --dev`.
+
 ### Running Tests
 
 ```bash
-# Unit tests
+# Unit tests (tests atomic functionality)
 uv run pytest tests/unit -n auto
 
-# Codemod tests
-uv run pytest tests/codemod/test_codemods.py -n auto
+# Codemod tests (tests larger programs)
+uv run pytest tests/integration/codemod/test_codemods.py -n auto
 ```
 
 ## Pull Request Process
@@ -65,4 +69,3 @@ git push origin v0.YOUR_VERSION
 ```
 
 This will trigger a release job to build this new version.
-

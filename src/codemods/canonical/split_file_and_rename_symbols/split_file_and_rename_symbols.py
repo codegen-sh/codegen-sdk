@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import CodebaseType
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import CodebaseType
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -14,7 +14,7 @@ original file's path from 'types.py' to 'schemas.py'.""",
     uid="816415d9-27e8-4228-b284-1b18b3072f0d",
 )
 @canonical
-class SplitFileAndRenameSymbols(Codemod3, Skill):
+class SplitFileAndRenameSymbols(Codemod, Skill):
     """Split file and rename moved symbols
 
     This codemod first moves several symbols to new files and then renames them.
@@ -29,7 +29,8 @@ class SplitFileAndRenameSymbols(Codemod3, Skill):
         # Get file to split up
         source_file = codebase.get_file("redash/models/types.py", optional=True)
         if source_file is None:
-            raise FileNotFoundError("[1] The file `redash/models/types.py` was not found.")
+            msg = "[1] The file `redash/models/types.py` was not found."
+            raise FileNotFoundError(msg)
 
         # Get file symbols will be moved to
         configuration_file = codebase.create_file("redash/models/configuration.py")

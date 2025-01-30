@@ -13,64 +13,85 @@ Common use cases include:
 - Checking if a generic type has a given subtype
 - Resolving a type annotation
 
+<Tip>
+    Adding type hints can improve developer experience and [significantly speed up](https://github.com/microsoft/Typescript/wiki/Performance#using-type-annotations) programs like the Typescript compiler and `mypy`.
+</Tip>
+
+<Note>See [Type Annotations](/building-with-codegen/type-annotations) for a general overview of the type maninpulation</Note>
+
+## APIs for monitoring types
+
+Codegen programs typically access type annotations through the following APIs:
+- [Parameter.type](/api-reference/core/Parameter#type)
+- [Function.return_type](/api-reference/python/PyFunction#return-type)
+- [Assignment.type](/api-reference/core/Assignment#type)
+
+Each of these has an associated setter.
+
+
 ## Finding the extent of your type coverage
 
-First, to get an indication of your progress on type coverage, count the number of function arguments that have type hints in your codebase:
+To get an indication of your progress on type coverage, analyze the percentage of typed elements across your codebase
 
-<CodeGroup>
-```python python
+```python
+# Initialize counters for parameters
 total_parameters = 0
 typed_parameters = 0
 
-# Iterate through all functions in the file
+# Initialize counters for return types
+total_functions = 0
+typed_returns = 0
+
+# Initialize counters for class attributes
+total_attributes = 0
+typed_attributes = 0
+
+# Count parameter and return type coverage
 for function in codebase.functions:
-    # Count the total number of parameters
+    # Count parameters
     total_parameters += len(function.parameters)
-    # Count the number of parameters that have type hints
     typed_parameters += sum(1 for param in function.parameters if param.is_typed)
 
-# Calculate the percentage of parameters with type hints
-if total_parameters > 0:
-    percentage_typed = (typed_parameters / total_parameters) * 100
-else:
-    percentage_typed = 0
+    # Count return types
+    total_functions += 1
+    if function.return_type and function.return_type.is_typed:
+        typed_returns += 1
 
-# Print the result
-print(f"Percentage of function arguments with type hints: {percentage_typed:.2f}%")
+# Count class attribute coverage
+for cls in codebase.classes:
+    for attr in cls.attributes:
+        total_attributes += 1
+        if attr.is_typed:
+            typed_attributes += 1
+
+# Calculate percentages
+param_percentage = (typed_parameters / total_parameters * 100) if total_parameters > 0 else 0
+return_percentage = (typed_returns / total_functions * 100) if total_functions > 0 else 0
+attr_percentage = (typed_attributes / total_attributes * 100) if total_attributes > 0 else 0
+
+# Print results
+print("\nType Coverage Analysis")
+print("---------------------")
+print(f"Parameters: {param_percentage:.1f}% ({typed_parameters}/{total_parameters} typed)")
+print(f"Return types: {return_percentage:.1f}% ({typed_returns}/{total_functions} typed)")
+print(f"Class attributes: {attr_percentage:.1f}% ({typed_attributes}/{total_attributes} typed)")
 ```
 
-```python typescript
-total_parameters = 0
-typed_parameters = 0
+This analysis gives you a breakdown of type coverage across three key areas:
+1. Function parameters - Arguments passed to functions
+2. Return types - Function return type annotations
+3. Class attributes - Type hints on class variables
 
-# Iterate through all functions in the file
-for function in codebase.functions:
-    # Count the total number of parameters
-    total_parameters += len(function.parameters)
-    # Count the number of parameters that have type hints
-    typed_parameters += sum(1 for param in function.parameters if param.is_typed)
-
-# Calculate the percentage of parameters with type hints
-if total_parameters > 0:
-    percentage_typed = (typed_parameters / total_parameters) * 100
-else:
-    percentage_typed = 0
-
-# Print the result
-print(f"Percentage of function arguments with type hints: {percentage_typed:.2f}%")
-```
-</CodeGroup>
-
-
-
-You can perform an analogous operation for return types, method parameters, and more. Note that the code presented here only analyzes non-method functions.
+<Tip>
+    Focus first on adding types to the most frequently used functions and classes, as these will have the biggest impact on type checking and IDE support.
+</Tip>
 
 ## Adding simple return type annotations
 
 To add a return type, use `function.set_return_type`. The script below will add a `-> None` return type to all functions that contain no return statements:
 
 <CodeGroup>
-```python python
+```python For Python
 for file in codebase.files:
     # Check if 'app' is in the file's filepath
     if "app" in file.filepath:
@@ -82,7 +103,7 @@ for file in codebase.files:
                 function.set_return_type("None")
 ```
 
-```python typescript
+```python For Typescript
 for file in codebase.files:
     # Check if 'app' is in the file's filepath
     if "app" in file.filepath:
@@ -96,136 +117,6 @@ for file in codebase.files:
 </CodeGroup>
 
 
-## Adding a type to a union type
+## Coming Soon: Advanced Type Inference
 
-Since a union type is a collection, you can call standard methods such as append to add new types to it.
-
-<CodeGroup>
-```python python
-target_file = codebase.get_file("path/to/file.py")
-function = target_file.get_function("function_name")
-# def function_name() -> a | b: ...
-
-# import c from module
-c = codebase.get_file("path/to/module.py").get_symbol("c")
-target_file.add_symbol_import(c)
-
-# Add a new option to the return type
-function.return_type.append("c")
-```
-
-```python typescript
-target_file = codebase.get_file("path/to/file.ts")
-function = target_file.get_function("functionName")
-# function functionName(): a | b: ...
-c = codebase.get_file("path/to/module.ts").get_symbol("c")
-target_file.add_symbol_import(c)
-
-# Add a new option to the return type
-function.return_type.append("c")
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Adding a type to a generic type
-
-You can add parameters to a generic type in a similar fashion
-
-```python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# def function_name() -> tuple[a, b]: ...
-
-# Add a new parameter to the return type
-function.return_type.parameters.append("float")
-```
-
-## Checking if a generic type contains a given type
-
-You can also check if a given type is in the list of parameters
-
-
-```python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# def function_name() -> tuple[a, b]: ...
-
-# Check if "a" is in the function's return_type's parameters
-if "a" in function.return_type.parameters:
-    # type "a" is present in the return type parameters
-    print("type 'a' is present in the return type parameters.")
-```
-## Resolving a type_annotation
-
-You can find the referenced symbol of any type
-
-<CodeGroup>
-```python python
-function = codebase.get_file("path/to/file.py").get_function("function_name")
-# from xyz import MyContainer, a, b
-# def function_name() -> MyContainer[a, b]: ...
-print(function.return_type.resolved_types)  # Resolves to MyContainer
-for parameter in function.return_type.parameters:
-    print(parameter.resolved_types)  # Resolves to a and b
-```
-
-```python typescript
-function = codebase.get_file("path/to/file.ts").get_function("functionName")
-# import { MyContainer, a, b } './types'
-# function function_name(): MyContainer<a, b> { ... }
-print(function.return_type.resolved_types)  # Resolves to MyContainer
-for parameter in function.return_type.parameters:
-    print(parameter.resolved_types)  # Resolves to a and b
-```
-</CodeGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## Resolving a type_annotation of an assignment
-You can also use resolved_type directly on assignments to get the resolved_symbol
-
-```python
-a = codebase.get_file("path/to/file.py").get_global_var("a")
-# a: MyType = ...
-print(a.type)  # Resolves to MyType
-a.type.rename("MyNewType")  # Renames the symbol `MyType` to `MyNewType` throughout the codebase
-```
+<Warning>Codegen is building out an API for direct interface with `tsc` and `mypy` for precise type inference. Interested piloting this API? Let us know!</Warning>

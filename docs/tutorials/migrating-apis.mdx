@@ -1,6 +1,6 @@
 ---
 title: "Migrating APIs"
-sidebarTitle: "API Migration"
+sidebarTitle: "API Migrations"
 icon: "arrows-rotate"
 iconType: "solid"
 ---
@@ -25,6 +25,8 @@ old_param.rename("data")
 # process_data(input="test") -> process_data(data="test")
 ```
 
+<Info>See [dependencies and usages](/building-with-codegen/dependencies-and-usages) for more on updating parameter names and types.</Info>
+
 ### Adding Required Parameters
 
 When adding a new required parameter to an API:
@@ -40,6 +42,8 @@ api_function.add_parameter("timeout: int")
 for call in call_sites:
     call.add_argument("timeout=30")  # Add with a default value
 ```
+
+<Info>See [function calls and callsites](/building-with-codegen/function-calls-and-callsites) for more on handling call sites.</Info>
 
 ### Changing Parameter Types
 
@@ -57,6 +61,8 @@ for call in api_function.call_sites:
         # Convert string to UUID
         arg.edit(f"UUID({arg.value})")
 ```
+
+<Info>See [working with type annotations](/building-with-codegen/type-annotations) for more on changing parameter types.</Info>
 
 ### Deprecating Functions
 
