@@ -82,13 +82,10 @@ class PyImport(Import["PyFile"]):
 
     @noapidoc
     @reader
-    def resolve_import(self, base_path: str | None = None, *, add_module_name: str | None = None) -> ImportResolution[PyFile] | None:
+    def resolve_import(self, base_path: str | None = None) -> ImportResolution[PyFile] | None:
         base_path = base_path or self.G.projects[0].base_path or ""
         module_source = self.module.source if self.module else ""
-        symbol_name = self.symbol_name.source if self.symbol_name else ""
-        if add_module_name:
-            module_source += f".{symbol_name}"
-            symbol_name = add_module_name
+
         # If import is relative, convert to absolute path
         if module_source.startswith("."):
             module_source = self._relative_to_absolute_import(module_source)
@@ -102,7 +99,7 @@ class PyImport(Import["PyFile"]):
             # `from a.b.c import foo`
             filepath = os.path.join(
                 base_path,
-                module_source.replace(".", "/") + "/" + symbol_name + ".py",
+                module_source.replace(".", "/") + "/" + self.symbol_name.source + ".py",
             )
         if file := self.G.get_file(filepath):
             return ImportResolution(from_file=file, symbol=None, imports_file=True)
@@ -117,22 +114,22 @@ class PyImport(Import["PyFile"]):
         filepath = module_source.replace(".", "/") + ".py"
         filepath = os.path.join(base_path, filepath)
         if file := self.G.get_file(filepath):
-            symbol = file.get_node_by_name(symbol_name)
+            symbol = file.get_node_by_name(self.symbol_name.source)
             return ImportResolution(from_file=file, symbol=symbol)
 
         # =====[ Check if `module/__init__.py` file exists in the graph ]=====
         filepath = filepath.replace(".py", "/__init__.py")
         if from_file := self.G.get_file(filepath):
-            symbol = from_file.get_node_by_name(symbol_name)
+            symbol = from_file.get_node_by_name(self.symbol_name.source)
             return ImportResolution(from_file=from_file, symbol=symbol)
 
         # =====[ Case: Can't resolve the import ]=====
         if base_path == "":
             # Try to resolve with "src" as the base path
-            return self.resolve_import(base_path="src", add_module_name=add_module_name)
+            return self.resolve_import(base_path="src")
         if base_path == "src":
             # Try "test" next
-            return self.resolve_import(base_path="test", add_module_name=add_module_name)
+            return self.resolve_import(base_path="test")
 
         # if not G_override:
         #     for resolver in G.import_resolvers:
