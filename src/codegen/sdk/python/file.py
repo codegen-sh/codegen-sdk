@@ -173,43 +173,65 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     @py_apidoc
     def remove_unused_imports(self) -> None:
         """Removes unused imports from the file.
+
         Handles different Python import styles:
         - Single imports (import x)
         - From imports (from y import z)
         - Multi-imports (from y import (a, b as c))
-        Preserves comments and whitespace where possible.
+        - Wildcard imports (from x import *)
+        - Type imports (from typing import List)
+        - Future imports (from __future__ import annotations)
+
+        Preserves:
+        - Comments and whitespace where possible
+        - Future imports even if unused
+        - Type hints and annotations
         """
+        # Track processed imports to avoid duplicates
         processed_imports = set()
 
+        # Group imports by module for more efficient processing
+        module_imports = {}
+
+        # First pass - group imports by module
         for import_stmt in self.imports:
             if import_stmt in processed_imports:
                 continue
 
-            if not import_stmt.usages:
-                processed_imports.add(import_stmt)
+            # Always preserve __future__ and star imports since we can't track their usage
+            print(f"import_stmt: {import_stmt}", import_stmt.is_future_import, import_stmt.is_star_import)
+            if import_stmt.is_future_import or import_stmt.is_star_import:
+                continue
 
-                # For from-style imports, we need to check if other imports from same module are used
-                if import_stmt.is_from_import():
-                    module_imports = {imp for imp in self.imports if imp.module_name == import_stmt.module_name}
+            module = import_stmt.module_name
+            if module not in module_imports:
+                module_imports[module] = []
+                print(f"Adding {module} to module_imports")
+            module_imports[module].append(import_stmt)
 
-                    if all(not imp.usages for imp in module_imports):
-                        # Remove entire import statement if no imports from module are used
-                        for imp in module_imports:
+        print(f"module_imports: {module_imports}")
+        # Second pass - process each module's imports
+        for module, imports in module_imports.items():
+            # Skip if any import from this module is used
+            if any(imp.usages for imp in imports):
+                # Remove individual unused imports if it's a from-style import
+                if len(imports) > 1 and imports[0].is_from_import():
+                    for imp in imports:
+                        if not imp.usages and imp not in processed_imports:
                             processed_imports.add(imp)
                             imp.remove()
-                    else:
-                        # Remove only this specific import
-                        import_stmt.remove()
-                else:
-                    # Simple import x case
-                    import_stmt.remove()
+                continue
+
+            # If no imports from module are used, remove them all
+            for imp in imports:
+                if imp not in processed_imports:
+                    processed_imports.add(imp)
+                    imp.remove()
 
         self.G.commit_transactions()
 
     @py_apidoc
     def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file. NO-OP for python"""
-        pass
         """Removes unused exports from the file.
         In Python this is equivalent to removing unused imports since Python doesn't have
         explicit export statements. Calls remove_unused_imports() internally.

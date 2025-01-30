@@ -134,6 +134,7 @@ def test_remove_unused_imports_star_imports(tmpdir) -> None:
 from os import *
 from sys import *
 from math import pi
+from math import sqrt
 
 getcwd()  # from os
 print(pi)
