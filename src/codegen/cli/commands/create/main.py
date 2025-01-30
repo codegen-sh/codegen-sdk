@@ -65,11 +65,12 @@ def make_relative(path: Path) -> str:
 
 
 @click.command(name="create")
+@requires_init
 @click.argument("name", type=str)
 @click.argument("path", type=click.Path(path_type=Path), default=Path.cwd())
 @click.option("--description", "-d", default=None, help="Description of what this codemod does.")
 @click.option("--overwrite", is_flag=True, help="Overwrites function if it already exists.")
-def create_command(name: str, path: Path, description: str | None = None, overwrite: bool = False):
+def create_command(session: CodegenSession, name: str, path: Path, description: str | None = None, overwrite: bool = False):
     """Create a new codegen function.
 
     NAME is the name/label for the function
@@ -77,7 +78,6 @@ def create_command(name: str, path: Path, description: str | None = None, overwr
     """
     # Get the target path for the function
     codemod_path, prompt_path = get_target_paths(name, path)
-    session = CodegenSession()
 
     # Check if file exists
     if codemod_path.exists() and not overwrite:
@@ -93,7 +93,6 @@ def create_command(name: str, path: Path, description: str | None = None, overwr
             with create_spinner("Generating function (using LLM, this will take ~10s)") as status:
                 response = RestAPI(session.token).create(name=name, query=description)
                 code = convert_to_cli(response.code, session.language, name)
-                prompt_path.parent.mkdir(parents=True, exist_ok=True)
                 prompt_path.write_text(response.context)
         else:
             # Use default implementation
