@@ -11,6 +11,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
+from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.usable import Usable
 from codegen.sdk.core.statements.import_statement import ImportStatement
@@ -28,7 +29,6 @@ if TYPE_CHECKING:
 
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.file import SourceFile
-    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.interfaces.importable import Importable
@@ -670,7 +670,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         if not isinstance(self._imported_symbol(), ExternalModule):
             return None
         resolved = self.resolve_import(add_module_name=attribute)
-        if resolved:
+        if resolved and isinstance(resolved, Editable):
             return resolved.symbol or resolved.from_file
         return None
 
