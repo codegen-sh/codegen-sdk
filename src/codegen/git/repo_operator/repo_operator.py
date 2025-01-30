@@ -109,14 +109,15 @@ class RepoOperator(ABC):
             # we need a username and email to commit, so if they're not set, set them to the bot's
             if not username:
                 self._set_bot_username(git_cli)
-            if not email:
-                self._set_bot_email(git_cli)
             # If they were previously set to the bot's, unset them
             # We don't want to unset them if they were set at the repository level
             # because that would mean we're not using the bot's username/email for this repo
-            if username != CODEGEN_BOT_NAME and user_level != "repository":
+            elif username != CODEGEN_BOT_NAME and user_level != "repository":
                 self._unset_bot_username(git_cli)
-            if email != CODEGEN_BOT_EMAIL and email_level != "repository":
+            if not email:
+                self._set_bot_email(git_cli)
+
+            elif email != CODEGEN_BOT_EMAIL and email_level != "repository":
                 self._unset_bot_email(git_cli)
         return git_cli
 
