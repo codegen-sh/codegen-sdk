@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import shutil
+from pathlib import Path
 
 import click
 from termcolor import colored
@@ -122,6 +123,22 @@ def update_system_prompt(token: str, gist_id: str, filename: str) -> None:
     print(f"Updating system prompt in gist {gist_id} with filename {filename}...")
     client.update_gist(gist_id, filename, system_prompt, description)
     print(f"Successfully updated system prompt in gist {gist_id} with filename {filename}!")
+
+
+@generate.command()
+@click.option("--token", required=True)
+@click.option("--gist_id", default=SYSTEM_PROMPT_GIST_ID, required=False)
+@click.option("--filepath", default="./system-prompt.txt", required=False)
+def read_system_prompt(token: str, gist_id: str, filepath: str) -> None:
+    """Read the system prompt from the gist"""
+    client = GistClient(token)
+    print(f"Reading system prompt from gist {gist_id}...")
+    gist = client.get_gist(gist_id)
+    content = gist["files"]["system-prompt.txt"]["content"]
+    file_path = Path(filepath)
+    print(f"Writing system prompt to {filepath}...")
+    file_path.write_text(content)
+    print(f"Successfully wrote system prompt to {filepath}!")
 
 
 def get_snippet_pattern(target_name: str) -> str:
