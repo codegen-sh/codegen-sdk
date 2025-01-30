@@ -1,7 +1,8 @@
 import logging
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic.fields import Field
 
 from codegen.git.models.pull_request_context import PullRequestContext
 
