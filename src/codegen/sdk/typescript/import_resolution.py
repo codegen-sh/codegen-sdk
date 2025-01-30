@@ -406,8 +406,13 @@ class TSImport(Import["TSFile"], Exportable):
             # TODO: fixme
             return []
         imports = []
-        # Grab the first element of dynamic import call expression argument list
-        module_node = module_node.named_children[0]
+
+        #TODO: FIX THIS, is a horrible hack to avoid a crash on the next.js
+        if len(module_node.named_children) == 0:
+            module_node = None
+        else:
+            # Grab the first element of dynamic import call expression argument list
+            module_node = module_node.named_children[0]
 
         # Get the top most parent of call expression node that bypasses wrappers that doesn't change the semantics
         call_node = find_first_ancestor(import_call_node, ["call_expression"])
