@@ -7,8 +7,12 @@ import shutil
 import click
 from termcolor import colored
 
+from codegen.git.clients.gist_client import GistClient
+from codegen.gscli.generate.constants import SYSTEM_PROMPT_GIST_ID
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
+from codegen.gscli.generate.system_prompt import get_system_prompt
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
+from codegen.sdk import __version__ as codegen_sdk_version
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
 from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_page_for_class
@@ -104,9 +108,20 @@ def generate_docs(docs_dir: str) -> None:
     This will generate docs using the codebase locally, including any unstaged changes
     """
     generate_codegen_sdk_docs(docs_dir)
-    # generate_canonical_codemod_docs(docs_dir, codebase)
-    # generate_skills_docs(docs_dir)
-    # generate_guides(docs_dir)
+
+
+@generate.command()
+@click.option("--token", required=True)
+@click.option("--gist_id", default=SYSTEM_PROMPT_GIST_ID, required=False)
+@click.option("--filename", default="system-prompt.txt", required=False)
+def update_system_prompt(token: str, gist_id: str, filename: str) -> None:
+    """Update the system prompt in the gist"""
+    system_prompt = get_system_prompt()
+    description = f"System Prompt for Codegen SDK ({codegen_sdk_version})"
+    client = GistClient(token)
+    print(f"Updating system prompt in gist {gist_id} with filename {filename}...")
+    client.update_gist(gist_id, filename, system_prompt, description)
+    print(f"Successfully updated system prompt in gist {gist_id} with filename {filename}!")
 
 
 def get_snippet_pattern(target_name: str) -> str:
@@ -186,7 +201,3 @@ def generate_codegen_sdk_docs(docs_dir: str) -> None:
         json.dump(mint_data, mint_file, indent=2)
 
     print(colored("Updated mint.json with new page sets", "green"))
-
-
-if __name__ == "__main__":
-    generate()
