@@ -249,3 +249,64 @@ def c_sym():
         assert "c_sym" in b_file.valid_symbol_names
         assert "a_sym" in c_file.valid_symbol_names
         assert "b_sym" in c_file.valid_symbol_names.keys()
+
+
+def test_import_resolution_nested_module(tmpdir: str) -> None:
+    """Tests import resolution works with nested module imports"""
+    # language=python
+    with get_codebase_session(
+        tmpdir,
+        files={
+            "a/b/c.py": """
+def d():
+    pass
+""",
+            "consumer.py": """
+from a import b
+
+b.c.d()
+""",
+        },
+    ) as codebase:
+        consumer_file: SourceFile = codebase.get_file("consumer.py")
+        c_file: SourceFile = codebase.get_file("a/b/c.py")
+
+        # Verify import resolution
+        assert len(consumer_file.imports) == 1
+
+        # Verify function call resolution
+        d_func = c_file.get_function("d")
+        call_sites = d_func.call_sites
+        assert len(call_sites) == 1
+        assert call_sites[0].file == consumer_file
+
+
+def test_import_resolution_nested_module_init(tmpdir: str) -> None:
+    """Tests import resolution works with nested module imports"""
+    # language=python
+    with get_codebase_session(
+        tmpdir,
+        files={
+            "a/b/c.py": """
+def d():
+    pass
+""",
+            "a/b/__init__.py": """""",
+            "consumer.py": """
+from a import b
+
+b.c.d()
+""",
+        },
+    ) as codebase:
+        consumer_file: SourceFile = codebase.get_file("consumer.py")
+        c_file: SourceFile = codebase.get_file("a/b/c.py")
+
+        # Verify import resolution
+        assert len(consumer_file.imports) == 1
+
+        # Verify function call resolution
+        d_func = c_file.get_function("d")
+        call_sites = d_func.call_sites
+        assert len(call_sites) == 1
+        assert call_sites[0].file == consumer_file
