@@ -36,6 +36,7 @@ def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark):
     benchmark.pedantic(reset_codebase, setup=setup)
 
 
+@pytest.mark.skip("Skipping this test for now")
 @pytest.mark.timeout(5, func_only=True)
 @pytest.mark.skip(reason="Test is timing out and needs investigation")  # Skip this test for now
 @pytest.mark.parametrize("extension", ["txt", "py"])

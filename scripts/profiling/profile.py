@@ -12,7 +12,7 @@ def profile(repo: str, memory: bool = False):
     output = f"{base}/raw.austin"
     compressed = f"{base}/compressed.austin"
     image = f"{base}/parse.svg"
-    test = Popen(["pytest", "tests/codemod/test_parse.py", "--extra-repos=true", "--durations=100", "-k", repo])
+    test = Popen(["pytest", "tests/integration/codemod/test_parse.py", "--extra-repos=true", "--durations=100", "-k", repo])
     try:
         command = ["sudo", "austin", "-p", str(test.pid), "-o", output]
         if memory:
