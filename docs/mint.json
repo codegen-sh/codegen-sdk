@@ -161,7 +161,7 @@
 		},
 		{
 			"group": "Blog",
-			"pages": ["blog/posts", "blog/act-via-code"]
+			"pages": ["blog/posts", "blog/act-via-code", "blog/fixing-import-loops"]
 		},
 		{
 			"group": "API Reference",
