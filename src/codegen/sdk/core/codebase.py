@@ -391,7 +391,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     # EXTERNAL API
     ####################################################################################################################
 
-    def create_file(self, filepath: str, content: str = "", sync: bool = True) -> File:
+    def create_file(self, filepath: str, content: str = "", sync: bool = True) -> TSourceFile:
         """Creates a new file in the codebase with specified content.
 
         Args:
