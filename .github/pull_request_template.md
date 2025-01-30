@@ -9,4 +9,4 @@
 
 - [ ] I have added tests for my changes
 - [ ] I have updated the documentation or added new documentation as needed
-- [ ] I have read and agree to the [Contributor License Agreement](../CLA.md)
+- [ ] I have read and agree to the [Contributor License Agreement](/codegen-sh/codegen-sdk/blob/develop/CLA.md)
