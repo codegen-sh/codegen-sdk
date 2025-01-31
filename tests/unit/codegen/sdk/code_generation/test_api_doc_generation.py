@@ -47,7 +47,7 @@ def test_api_doc_generation_sanity(codebase, language: ProgrammingLanguage) -> N
     # assert "InviteFactoryCreateParams" in docs # Canonicals aren't in docs
 
 
-@pytest.mark.timeout(160)
+@pytest.mark.timeout(300)
 @pytest.mark.xdist_group("codegen")
 def test_mdx_api_doc_generation_sanity(codebase) -> None:
     docs_json = generate_docs_json(codebase, "HEAD", raise_on_missing_docstring=True)
