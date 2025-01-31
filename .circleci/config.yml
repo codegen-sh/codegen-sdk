@@ -181,7 +181,7 @@ commands:
                     TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
                     echo $TESTS_TO_RUN
                     echo $TESTS_TO_RUN | circleci tests run --command "xargs uv run --frozen pytest --cov \
-                    -o junit_suite_name="${CIRCLE_JOB}" \
+                    -o junit_suite_name="${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}" \
                     -n auto \
                     -vv \
                     --cov \
@@ -197,7 +197,7 @@ commands:
                     cat codecov_ats/tests_to_run.txt | xargs uv run --frozen pytest \
                     --cov \
                     -vv \
-                    -o junit_suite_name="${CIRCLE_JOB}" \
+                    -o junit_suite_name="${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}" \
                     -n auto \
                     --cov-append \
                     <<parameters.collect_args>>
@@ -205,6 +205,7 @@ commands:
         - codecov/upload:
             flags: <<parameters.codecov_flags>>
             plugins: pycoverage,compress-pycoverage
+            files: coverage.codecov.json
  # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:

@@ -2,8 +2,8 @@
 	"$schema": "https://mintlify.com/schema.json",
 	"name": "Codegen",
 	"logo": {
-		"dark": "/logo/dark.svg",
-		"light": "/logo/light.svg"
+		"dark": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45a3e32761c42b324b_Codegen_Logomark_Dark.svg",
+		"light": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45bf55446746125835_Codegen_Logomark_Light.svg"
 	},
 	"modeToggle": {
 		"default": "dark"
@@ -13,17 +13,15 @@
 		"og:title": "Codegen - Manipulate Code at Scale",
 		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
 		"og:url": "https://docs.codegen.com",
-		"og:image": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen.jpeg",
+		"og:image": "https://i.imgur.com/ttPWzlG.jpeg",
 		"og:locale": "en_US",
-		"og:logo": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen-thumbnail.png",
+		"og:logo": "https://i.imgur.com/f4OVOqI.png",
 		"article:publisher": "Codegen, Inc.",
 		"twitter:title": "Codegen - Manipulate Code at Scale",
 		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
 		"twitter:url": "https://docs.codegen.com",
-		"twitter:image": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen.jpeg",
-		"twitter:site": "@codegen",
-		"og:image:width": "2400",
-		"og:image:height": "1200"
+		"twitter:image": "https://i.imgur.com/ttPWzlG.jpeg",
+		"twitter:site": "@codegen"
 	},
 	"favicon": "/favicon.svg",
 	"colors": {
