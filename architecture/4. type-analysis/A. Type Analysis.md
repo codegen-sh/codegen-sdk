@@ -2,74 +2,23 @@
 
 The type analysis system builds a complete understanding of types and symbols across the codebase.
 
-## Core Components
+## Basic flow
 
-### Type Resolution Process
+- Discover names that need to be resolved
+- Resolve names
+- Convert resolutions into graph edges
 
-- Initial type inference
-- Type propagation
-- Generic type handling
-- Union and intersection types
-- Type narrowing
+## The resolution stack
 
-### Symbol Resolution
+To accomplish this, we have an in house computation engine - the ResolutionStack. Each stack frame contains a reference to it's parent frame. However, a parent can have multiple child frames (IE: Union Types).
 
-- Scope analysis
-- Name binding
-- Symbol table construction
-- Cross-file symbol resolution
+When we resolve types on a node, we call resolved_type_frames to get the resolved types. Once we know what goes in the next frame, we call with_resolution_frame to construct the next frame. This is a generator that yields the next frame until we've resolved all the types. Resolved_type_frames is a property caches a list of the generated frames.
+Therefore, once you have computed type resolution on a node, you don't need to recompute it. That way, we can start at arbitrary nodes without performance overhead.
 
-### Type Inference Engine
+This is similar to how other's implement incremental computation engines with a few weaknesses:
 
-- Flow-based type inference
-- Context-based type inference
-- Return type inference
-- Generic type inference
-
-## Language-Specific Features
-
-### Python
-
-```python
-# Type hints
-def process_data(items: List[Dict[str, Any]]) -> Optional[Result]:
-    pass
-
-
-# Type inference
-x = 1  # Inferred as int
-y = []  # Inferred as List[Any]
-```
-
-### TypeScript
-
-```typescript
-// Interface and type definitions
-interface User {
-  id: string;
-  details?: UserDetails;
-}
-
-// Generic constraints
-function process<T extends Record<string, unknown>>(data: T): T {
-  return data;
-}
-```
-
-## Implementation Details
-
-### Type Graph Construction
-
-```python
-class TypeGraph:
-    def __init__(self):
-        self.nodes: Dict[str, TypeNode] = {}
-        self.edges: Dict[str, List[TypeEdge]] = {}
-
-    def add_type_relationship(self, source: str, target: str, kind: RelationType):
-        # Build type relationship graph
-        pass
-```
+- There is only 1 query in the query engine
+- Partial cache invalidation isn't implemented
 
 ## Next Step
 

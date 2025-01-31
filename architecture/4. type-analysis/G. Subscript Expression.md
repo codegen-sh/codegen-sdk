@@ -1,6 +1,6 @@
 # Subscript Expression
 
-Handling array indexing, dictionary access, and other subscript operations in the type system.
+TODO
 
 ## Next Step
 
