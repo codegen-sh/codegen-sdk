@@ -6,7 +6,7 @@ from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interface import Interface
 from codegen.sdk.enums import ImportType, ProgrammingLanguage
-from codegen.sdk.extensions.utils import iter_all_descendants
+from codegen.sdk.extensions.utils import cached_property, iter_all_descendants
 from codegen.sdk.python import PyAssignment
 from codegen.sdk.python.class_definition import PyClass
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
@@ -20,6 +20,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.core.import_resolution import WildcardImport
     from codegen.sdk.python.symbol import PySymbol
 
 
@@ -177,3 +178,21 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     def remove_unused_exports(self) -> None:
         """Removes unused exports from the file. NO-OP for python"""
         pass
+
+    @cached_property
+    @noapidoc
+    @reader(cache=True)
+    def valid_import_names(self) -> dict[str, PySymbol | PyImport | WildcardImport[PyImport]]:
+        """Returns a dict mapping name => Symbol (or import) in this file that can be imported from
+        another file.
+        """
+        if self.name == "__init__":
+            ret = {}
+            if self.directory:
+                for file in self.directory:
+                    if file.name == "__init__":
+                        continue
+                    if isinstance(file, PyFile):
+                        ret[file.name] = file
+            return ret
+        return super().valid_import_names
