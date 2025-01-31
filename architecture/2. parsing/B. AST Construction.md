@@ -62,7 +62,7 @@ You can see that the chain of calls is represented as a deeply nested structure.
 
 ## Pattern based parsing
 
-To do this, we need to build a mapping between the tree-sitter node types and our semantic node types. These mappings are language specific and stored in node_classes. They are processed by parser.py at runtime. We can access these via many functions - child_by_field_name, _parse_expression, etc. These methods both wrap the tree-sitter methods and parse the tree-sitter node into our semantic node.
+To do this, we need to build a mapping between the tree-sitter node types and our semantic node types. These mappings are language specific and stored in node_classes. They are processed by parser.py at runtime. We can access these via many functions - child_by_field_name, \_parse_expression, etc. These methods both wrap the tree-sitter methods and parse the tree-sitter node into our semantic node.
 
 ## Custom parsing
 

@@ -24,34 +24,17 @@ System for efficiently updating the codebase state when changes occur, avoiding 
 
 ```python
 class ChangeDetector:
-    def detect_changes(
-        self,
-        old_state: CodebaseState,
-        new_state: CodebaseState
-    ) -> Changes:
+    def detect_changes(self, old_state: CodebaseState, new_state: CodebaseState) -> Changes:
         # Detect file changes
-        file_changes = self.detect_file_changes(
-            old_state.files,
-            new_state.files
-        )
+        file_changes = self.detect_file_changes(old_state.files, new_state.files)
 
         # Compute AST differences
-        ast_changes = self.compute_ast_diff(
-            old_state.asts,
-            new_state.asts
-        )
+        ast_changes = self.compute_ast_diff(old_state.asts, new_state.asts)
 
         # Track symbol changes
-        symbol_changes = self.track_symbol_changes(
-            old_state.symbols,
-            new_state.symbols
-        )
+        symbol_changes = self.track_symbol_changes(old_state.symbols, new_state.symbols)
 
-        return Changes(
-            files=file_changes,
-            asts=ast_changes,
-            symbols=symbol_changes
-        )
+        return Changes(files=file_changes, asts=ast_changes, symbols=symbol_changes)
 ```
 
 ### Update Processing

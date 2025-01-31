@@ -2,8 +2,9 @@
 
 ```python
 class Foo:
-    def foo(self):
-        ...
+    def foo(self): ...
+
+
 a = Foo()
 a.foo()
 ```
@@ -37,17 +38,17 @@ module [0, 0] - [5, 0]
       arguments: argument_list [4, 5] - [4, 7]
 ```
 
-If we look at this parse tree - we can see that the `a.foo()` call has a name of type attribute.  The object of the call is an identifier for `a`, and the `foo` is an attribute of the identifier for `a`. Typescript has a similar structure. These are the core building blocks of chained attributes.
+If we look at this parse tree - we can see that the `a.foo()` call has a name of type attribute. The object of the call is an identifier for `a`, and the `foo` is an attribute of the identifier for `a`. Typescript has a similar structure. These are the core building blocks of chained attributes.
 Chained attributes contain 2 parts:
 
 1. The object: `a`
-2. The attribute: `foo`
+1. The attribute: `foo`
 
 All we must do to resolve the definition of `a.foo` is
 
 1. Find the definition of the object `a` (the class `Foo`)
-2. Get the attribute (`foo`) on the resolved object (`Foo`) (the function `foo`)
-3. Resolve the attribute to it's original definition (in this case, the function `foo`)
+1. Get the attribute (`foo`) on the resolved object (`Foo`) (the function `foo`)
+1. Resolve the attribute to it's original definition (in this case, the function `foo`)
 
 ## Step 1: Resolve the object
 
@@ -70,11 +71,12 @@ We can get the attribute by calling resolve_attribute on the resolved object. No
 Finally, we can resolve the attribute by calling resolved_types on the attribute. This is useful in cases, particularly for attributes of the class like the following:
 
 ```python
-def fuzz():
-    ...
+def fuzz(): ...
+
 
 class Foo:
     foo = fuzz
+
 
 a = Foo()
 a.foo()

@@ -35,6 +35,7 @@ The type analysis system builds a complete understanding of types and symbols ac
 def process_data(items: List[Dict[str, Any]]) -> Optional[Result]:
     pass
 
+
 # Type inference
 x = 1  # Inferred as int
 y = []  # Inferred as List[Any]

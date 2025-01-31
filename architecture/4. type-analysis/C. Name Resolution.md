@@ -9,6 +9,7 @@ For example, `foo` is a name.
 
 ```python
 from my_module import foo
+
 foo()
 ```
 
@@ -39,9 +40,9 @@ You'll see there are actually 3 name nodes here: `foo`, `my_module`, and `foo`.
 Name resolution is the process of resolving a name to its definition. To do this, all we need to do is
 
 1. Get the name we're looking for. (e.g. `foo`)
-2. Find the scope we're looking in. (in this case, the global file scope)
-3. Recursively search the scope for the name (which will return the node corresponding ``from my_module import foo``).
-4. Use the type engine to get the definition of the name (which will return the function definition).
+1. Find the scope we're looking in. (in this case, the global file scope)
+1. Recursively search the scope for the name (which will return the node corresponding `from my_module import foo`).
+1. Use the type engine to get the definition of the name (which will return the function definition).
 
 ## Scoping
 
@@ -49,14 +50,15 @@ Name resolution is the process of resolving a name to its definition. To do this
 # Local vs global scope
 from my_module import foo, bar, fuzz
 
+
 def outer():
-    def foo():
-        ...
+    def foo(): ...
+
     foo()
     bar()
     fuzz()
-    def fuzz():
-        ...
+
+    def fuzz(): ...
 ```
 
 If we wanted to resolve `foo` in this case, we would start at the name foo, then check it's parent recursively till we arrive at the function outer. We would then check for the name foo and find there is a nested function with that name. We would then return the function definition.

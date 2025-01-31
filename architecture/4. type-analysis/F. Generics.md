@@ -17,9 +17,10 @@ Analysis and resolution of generic types, type parameters, and constraints acros
 # Python generics
 from typing import TypeVar, Generic, List
 
-T = TypeVar('T')
-S = TypeVar('S', bound='BaseClass')
-U = TypeVar('U', str, int)  # Union constraint
+T = TypeVar("T")
+S = TypeVar("S", bound="BaseClass")
+U = TypeVar("U", str, int)  # Union constraint
+
 
 class Container(Generic[T]):
     def __init__(self, item: T):
@@ -62,12 +63,7 @@ function merge<T extends object, U extends object>(
 
 ```python
 class GenericResolver:
-    def resolve_generic_type(
-        self,
-        base_type: Type,
-        type_args: List[Type],
-        constraints: List[Constraint]
-    ) -> Type:
+    def resolve_generic_type(self, base_type: Type, type_args: List[Type], constraints: List[Constraint]) -> Type:
         # Validate constraints
         self.validate_constraints(type_args, constraints)
 

@@ -10,8 +10,8 @@ In Python, we can call a class definition as if it were a function. This is know
 
 ```python
 class Foo:
-    def __init__(self):
-        ...
+    def __init__(self): ...
+
 
 a = Foo()
 ```
@@ -32,9 +32,11 @@ In this case, we need to resolve the import statement to the module definition.
 class Foo:
     def foo(self) -> int:
         return 1
-class Bar():
-    def bar(self) -> Foo:
-        ...
+
+
+class Bar:
+    def bar(self) -> Foo: ...
+
 
 a = Bar()
 a.bar().foo()
@@ -43,15 +45,15 @@ a.bar().foo()
 In this case, we need to resolve the return type of the function to the type of the return value. However, the function definition is not the same as the return type. This means we now have 3 different things going on with function calls:
 
 1. Resolving the function definition
-2. Resolving the return type
-3. Computing what this function call depends on (both the function definition and the arguments passed to the function)
+1. Resolving the return type
+1. Computing what this function call depends on (both the function definition and the arguments passed to the function)
 
 ## Generics
 
 ```python
+def foo[T](a: list[T]) -> T: ...
 
-def foo[T](a: list[T]) -> T:
-    ...
+
 foo([1, 2, 3])
 ```
 

@@ -19,17 +19,20 @@ from enum import Enum
 from dataclasses import dataclass
 from typing import Dict, Set, List
 
+
 class ChangeType(Enum):
     CREATED = "created"
     MODIFIED = "modified"
     DELETED = "deleted"
     MOVED = "moved"
 
+
 @dataclass
 class FileChange:
     type: ChangeType
     path: str
     old_path: str = None  # For moves
+
 
 @dataclass
 class ASTChange:
@@ -45,30 +48,20 @@ class ASTChange:
 
 ```python
 class FileChangeDetector:
-    def detect_changes(
-        self,
-        old_files: Dict[str, FileInfo],
-        new_files: Dict[str, FileInfo]
-    ) -> List[FileChange]:
+    def detect_changes(self, old_files: Dict[str, FileInfo], new_files: Dict[str, FileInfo]) -> List[FileChange]:
         changes = []
 
         # Detect deletions
         for path in old_files:
             if path not in new_files:
-                changes.append(
-                    FileChange(ChangeType.DELETED, path)
-                )
+                changes.append(FileChange(ChangeType.DELETED, path))
 
         # Detect creations and modifications
         for path, new_info in new_files.items():
             if path not in old_files:
-                changes.append(
-                    FileChange(ChangeType.CREATED, path)
-                )
+                changes.append(FileChange(ChangeType.CREATED, path))
             elif self.is_modified(old_files[path], new_info):
-                changes.append(
-                    FileChange(ChangeType.MODIFIED, path)
-                )
+                changes.append(FileChange(ChangeType.MODIFIED, path))
 
         return changes
 ```

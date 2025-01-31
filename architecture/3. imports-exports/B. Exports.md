@@ -35,7 +35,7 @@ export interface MyInterface {}
 from .module import MyClass
 from .utils import utility_function
 
-__all__ = ['MyClass', 'utility_function']
+__all__ = ["MyClass", "utility_function"]
 
 # Namespace exports
 from . import submodule
@@ -79,16 +79,20 @@ Python export examples:
 
 ```python
 # __all__ specification
-__all__ = ['public_function', 'PublicClass']
+__all__ = ["public_function", "PublicClass"]
+
 
 def public_function():
     pass
 
+
 def _private_function():  # Not exported
     pass
 
+
 class PublicClass:
     pass
+
 
 # Package exports
 from .models import User

@@ -62,10 +62,7 @@ class DependencyResolver:
         self.package_index = PackageIndex()
         self.dependency_cache = {}
 
-    def resolve_dependencies(
-        self,
-        requirements: List[Requirement]
-    ) -> DependencyTree:
+    def resolve_dependencies(self, requirements: List[Requirement]) -> DependencyTree:
         """Resolve dependencies into a concrete dependency tree."""
         resolved = DependencyTree()
 

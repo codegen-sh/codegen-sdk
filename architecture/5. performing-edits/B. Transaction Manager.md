@@ -20,10 +20,7 @@ with EditTransaction() as transaction:
     # Multiple edits in one atomic operation
     transaction.rename_symbol("old_name", "new_name")
     transaction.add_import("new_module")
-    transaction.update_function_signature(
-        "func",
-        new_params=["param1: int", "param2: str"]
-    )
+    transaction.update_function_signature("func", new_params=["param1: int", "param2: str"])
 
 # Automatic rollback on error
 try:

@@ -17,10 +17,12 @@ Efficient updating of the type and dependency graphs in response to code changes
 from typing import Set, Dict, List
 from enum import Enum
 
+
 class NodeState(Enum):
     VALID = "valid"
     INVALID = "invalid"
     RECOMPUTING = "recomputing"
+
 
 class DependencyGraph:
     def __init__(self):

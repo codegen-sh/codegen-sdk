@@ -18,12 +18,14 @@ Python example using mypy:
 ```python
 from typing import TypeVar, Generic, Optional
 
-T = TypeVar('T')
+T = TypeVar("T")
+
 
 class Result(Generic[T]):
     def __init__(self, value: Optional[T] = None, error: Optional[str] = None):
         self.value = value
         self.error = error
+
 
 def process_data(data: dict) -> Result[int]:
     try:

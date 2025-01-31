@@ -7,7 +7,7 @@ Nodes are the core of the graph and represent the symbols in the codebase. Examp
 - Imports, Exports
 - Files
 - Parameters, Attributes
-Edges are between - each containes 4 elements:
+  Edges are between - each containes 4 elements:
 - Source: The node that the edge is coming from
 - Target: The node that the edge is going to
 - Type: The type of the edge
@@ -30,13 +30,13 @@ To compute the graph we follow a specific order:
 
 1. Import edges are added first
    - This is completely independent of the type engine
-2. Symbol edges are added next
-    - these may export symbols that are imported from other files.
-    - This is almost entirely independent of the type engine
-3. Subclass edges are added next
-    - these may reference symbols that are imported or exported from other files.
-    - This is fully dependent on the type engine
-4. Usage edges are added last
+1. Symbol edges are added next
+   - these may export symbols that are imported from other files.
+   - This is almost entirely independent of the type engine
+1. Subclass edges are added next
+   - these may reference symbols that are imported or exported from other files.
+   - This is fully dependent on the type engine
+1. Usage edges are added last
    - they reference symbols that are imported or exported from other files
    - This is fully dependent on the type engine
    - Subclass edges are computed beforehand as a performance optimization
@@ -50,7 +50,7 @@ SYMBOL_USAGE edges contain additional [metadata](../src/codegen/sdk/core/datacla
 - usage_type: How this symbol was used. Derived from the resolution stack
 - imported_by: The import that imported this symbol. Derived from the resolution stack
 - kind: Where this symbol was used (IE: in a type parameter or in the body of the class, etc). Derived from the compute dependencies function
-You may notice these edges are actually between the usage symbol and the match object but the match object is not on the graph. This way we have constructed triple edges.
+  You may notice these edges are actually between the usage symbol and the match object but the match object is not on the graph. This way we have constructed triple edges.
 - They are technically edges between the usage symbol and the symbol contained in the match object
 - The edge metadata contains the match object
 

@@ -18,8 +18,12 @@ Example tsconfig.json:
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@app/*": ["src/app/*"],
-      "@shared/*": ["src/shared/*"]
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ]
     },
     "moduleResolution": "node",
     "target": "es2020",
@@ -27,7 +31,9 @@ Example tsconfig.json:
   },
   "extends": "./tsconfig.base.json",
   "references": [
-    { "path": "../shared" }
+    {
+      "path": "../shared"
+    }
   ]
 }
 ```
@@ -66,8 +72,12 @@ Conditional module resolution:
   "compilerOptions": {
     "paths": {
       "@api/*": {
-        "development": ["src/api/mock/*"],
-        "production": ["src/api/real/*"]
+        "development": [
+          "src/api/mock/*"
+        ],
+        "production": [
+          "src/api/real/*"
+        ]
       }
     }
   }

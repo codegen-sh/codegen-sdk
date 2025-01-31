@@ -18,8 +18,8 @@ from . import relative_module
 from ..parent import item
 
 # Dynamic imports
-imported_module = __import__('module_name')
-module = importlib.import_module('package.module')
+imported_module = __import__("module_name")
+module = importlib.import_module("package.module")
 ```
 
 ```typescript
@@ -40,7 +40,7 @@ Example resolution process:
 # Resolution order example
 def resolve_import(import_path: str, current_file: str) -> str:
     # 1. Check if it's a relative import
-    if import_path.startswith('.'):
+    if import_path.startswith("."):
         return resolve_relative_import(import_path, current_file)
 
     # 2. Check absolute imports
@@ -64,7 +64,7 @@ from .models import User
 from .services import UserService
 from .constants import *
 
-__all__ = ['User', 'UserService', 'CONSTANT1', 'CONSTANT2']
+__all__ = ["User", "UserService", "CONSTANT1", "CONSTANT2"]
 ```
 
 TypeScript example:
@@ -137,8 +137,10 @@ class CustomImportHook:
             return self.create_module_spec(fullname, path)
         return None
 
+
 # Register the hook
 import sys
+
 sys.meta_path.append(CustomImportHook())
 ```
 

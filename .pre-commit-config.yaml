@@ -103,3 +103,13 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22  # Use the ref you want to point at
+    hooks:
+    - id: mdformat
+      # Optionally add plugins
+      additional_dependencies:
+      - mdformat-gfm
+      - mdformat-ruff
+      - mdformat-config
+      - mdformat-pyproject

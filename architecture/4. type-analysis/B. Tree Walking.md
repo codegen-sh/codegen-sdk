@@ -25,10 +25,10 @@ We will classify the usage kind of the `c` callsite differently from the return 
 ```python
 class PyFunction(...):
     ...
+
     def _compute_dependencies(self, usage_kind: UsageKind):
         self.return_type._compute_dependencies(UsageKind.RETURN_TYPE)
         self.body._compute_dependencies(UsageKind.BODY)
-
 ```
 
 By default, we just pass the usage kind to the children.

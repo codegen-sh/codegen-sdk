@@ -19,9 +19,11 @@ Safe and consistent code modifications while preserving syntax, formatting, and 
 def old_function(param):
     return param + 1
 
+
 # Edit operation: Rename function and add type hints
 def new_function(param: int) -> int:
     return param + 1
+
 
 # Edit operation: Add parameter with default
 def new_function(param: int, offset: int = 0) -> int:
