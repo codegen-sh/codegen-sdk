@@ -1,4 +1,4 @@
-# TODO: SCRUB
+# TODO: This file has been superseded by test_move.py, should be safe to delete
 import platform
 
 import pytest
@@ -311,7 +311,6 @@ export function helperFunction(x: number): number {
 
 
 # ED_TODO: Check if this test needs fixing
-@pytest.mark.skip(reason="Broken. TODO: @edward will fix")
 def test_move_to_file_backedge_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"
@@ -458,7 +457,6 @@ function baz(): string {
 
 
 # ED_TODO: Check if this test needs fixing
-@pytest.mark.skip(reason="Broken. TODO: @edward will fix")
 def test_move_to_file_update_imports_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"
@@ -590,8 +588,6 @@ def test_move_to_file_update_imports_include_deps(tmpdir) -> None:
     assert isinstance(new_symbol, Function)
 
 
-# ED_TODO: Check if this test needs fixing
-@pytest.mark.skip(reason="Not supported yet")
 def test_move_to_file_update_imports_without_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"
@@ -758,7 +754,7 @@ export function foo(): number {
 }
 """.strip()
     )
-    assert file1.content.strip() == "export { bar } from 'file2'\nexport { foo } from 'file2'"
+    assert file1.content.strip() == "export { bar } from 'file2';\nexport { foo } from 'file2';"
 
 
 @pytest.mark.skipif(condition=platform.system() != "Linux", reason="Only works on case-sensitive file systems")
@@ -796,7 +792,7 @@ export function foo(): number {
 }
 """.strip()
     )
-    assert file1.content.strip() == "export { bar } from 'File1'\nexport { foo } from 'File1'"
+    assert file1.content.strip() == "export { bar } from 'File1';\nexport { foo } from 'File1';"
 
 
 def test_function_move_to_file_no_deps(tmpdir) -> None:
@@ -824,7 +820,7 @@ export function bar(): number {
     assert (
         file1.content.strip()
         == """import { foo } from 'File2';
-export { foo }
+export { foo };
 
 export function bar(): number {
     return foo() + 1;
@@ -871,7 +867,7 @@ export function bar(): number {
     assert (
         file1.content.strip()
         == """import { foo } from 'File1';
-export { foo }
+export { foo };
 
 export function bar(): number {
     return foo() + 1;

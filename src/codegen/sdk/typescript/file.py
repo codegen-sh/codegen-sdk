@@ -389,11 +389,27 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
     def valid_import_names(self) -> dict[str, Symbol | TSImport]:
         """Returns a dict mapping name => Symbol (or import) in this file that can be imported from another file"""
         valid_export_names = {}
+
+        # Handle default exports
         if len(self.default_exports) == 1:
             valid_export_names["default"] = self.default_exports[0]
+
+        # Handle named exports and their aliases
         for export in self.exports:
             for name, dest in export.names:
+                # Track both original name and alias if present
                 valid_export_names[name] = dest
+                if hasattr(dest, "alias") and dest.alias:
+                    valid_export_names[dest.alias] = dest
+
+        # # Handle imports and their aliases
+        # for import_stmt in self.imports:
+        #     for name, symbol in import_stmt.imported_symbols.items():
+        #         valid_export_names[name] = symbol
+        #         # Also track the alias if present
+        #         if hasattr(symbol, "alias") and symbol.alias:
+        #             valid_export_names[symbol.alias] = symbol
+
         return valid_export_names
 
     ####################################################################################################################
@@ -440,3 +456,53 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
             TSNamespace | None: The namespace with the specified name if found, None otherwise.
         """
         return next((x for x in self.symbols if isinstance(x, TSNamespace) and x.name == name), None)
+
+    @writer
+    def remove_unused_imports(self, moved_symbol_names: set[str] | None = None) -> None:
+        """Removes unused imports from the file.
+
+        Args:
+            moved_symbol_names: Optional set of symbol names that were moved to another file
+        """
+        for import_statement in self.import_statements:
+            # Track which symbols in this import statement are still used
+            used_symbols = []
+            removed_symbols = []
+
+            for import_symbol in import_statement.imports:
+                # Skip side effect imports
+                if import_symbol.import_type == ImportType.SIDE_EFFECT:
+                    continue
+
+                symbol_name = import_symbol.alias.source if import_symbol.alias else import_symbol.name
+
+                # Check if this import is still used in the file
+                is_used = False
+                for usage in import_symbol.usages:
+                    # Skip usages from moved symbols if provided
+                    if moved_symbol_names and usage.usage_symbol and usage.usage_symbol.name in moved_symbol_names:
+                        continue
+                    is_used = True
+                    break
+
+                if is_used:
+                    used_symbols.append(import_symbol)
+                else:
+                    removed_symbols.append(import_symbol)
+
+            if not used_symbols and removed_symbols:
+                # If no symbols are used, remove the entire import statement
+                import_statement.remove()
+            elif removed_symbols and used_symbols:
+                # If some symbols are used but others aren't, update the import statement
+                new_imports = []
+                for symbol in used_symbols:
+                    if symbol.alias:
+                        new_imports.append(f"{symbol.name} as {symbol.alias.source}")
+                    else:
+                        new_imports.append(symbol.name)
+
+                module = import_statement.module.source
+                type_prefix = "type " if import_statement.is_type_import else ""
+                new_statement = f"import {type_prefix}{{ {', '.join(new_imports)} }} from {module};"
+                import_statement.source = new_statement

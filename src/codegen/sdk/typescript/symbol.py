@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageType
+from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
@@ -44,7 +44,9 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
     """
 
     @reader
-    def get_import_string(self, alias: str | None = None, module: str | None = None, import_type: ImportType = ImportType.UNKNOWN, is_type_import: bool = False) -> str:
+    def get_import_string(
+        self, alias: str | None = None, module: str | None = None, import_type: ImportType = ImportType.UNKNOWN, is_type_import: bool = False, include_only: list[str] | None = None
+    ) -> str:
         """Generates the appropriate import string for a symbol.
 
         Constructs and returns an import statement string based on the provided parameters, formatting it according
@@ -57,6 +59,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
             import_type (ImportType, optional): The type of import to generate (e.g., WILDCARD). Defaults to
                 ImportType.UNKNOWN.
             is_type_import (bool, optional): Whether this is a type-only import. Defaults to False.
+            include_only (list[str] | None, optional): List of specific imports to include. Defaults to None.
 
         Returns:
             str: A formatted import statement string.
@@ -67,10 +70,17 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         if import_type == ImportType.WILDCARD:
             file_as_module = self.file.name
             return f"import {type_prefix}* as {file_as_module} from {import_module};"
-        elif alias is not None and alias != self.name:
-            return f"import {type_prefix}{{ {self.name} as {alias} }} from {import_module};"
+        elif alias is not None:
+            # Only add alias if it's different from the original name
+            if alias != self.name:
+                return f"import {type_prefix}{{ {self.name} as {alias} }} from {import_module};"
+            else:
+                return f"import {type_prefix}{{ {self.name} }} from {import_module};"
         else:
-            return f"import {type_prefix}{{ {self.name} }} from {import_module};"
+            if include_only:
+                return f"import {type_prefix}{{ {', '.join(include_only)} }} from {import_module};"
+            else:
+                return f"import {type_prefix}{{ {self.name} }} from {import_module};"
 
     @property
     @reader(cache=False)
@@ -257,7 +267,6 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True
     ) -> tuple[NodeId, NodeId]:
         # TODO: Prevent creation of import loops (!) - raise a ValueError and make the agent fix it
-        # TODO: Implement `update_all_imports` strategy
         # Track original file and imports used by this symbol before moving
         symbol_imports = set()
 
@@ -338,15 +347,26 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         is_used_in_file = any(usage.file == self.file and usage.node_type == NodeType.SYMBOL and usage not in encountered_symbols for usage in self.symbol_usages)
 
         # ======[ Strategy: Add Back Edge ]=====
-        # Here, we will add a "back edge" to the old file importing the self
+        # Here, we will add a "back edge" to the old file importing and re-exporting the symbol
         if strategy == "add_back_edge":
-            if is_used_in_file:
+            # Check if symbol was previously exported
+            was_exported = self.is_exported
+
+            # Determine if we need imports/exports in original file
+            needs_import = is_used_in_file or any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages)
+
+            if needs_import:
+                # Add import if needed
                 self.file.add_import_from_import_string(import_line)
-                if self.is_exported:
-                    self.file.add_import_from_import_string(f"export {{ {self.name} }}")
-            elif self.is_exported:
-                module_name = file.name
-                self.file.add_import_from_import_string(f"export {{ {self.name} }} from '{module_name}'")
+                # If we have the import locally, we can just re-export from here
+                if was_exported:
+                    export_line = f"export {{ {self.name} }};"
+                    self.file.add_import_from_import_string(export_line)
+            elif was_exported:
+                # If we don't need the import locally but it was exported,
+                # re-export directly from the new location
+                export_line = f"export {{ {self.name} }} from {file.import_module_name};"
+                self.file.add_import_from_import_string(export_line)
 
         # ======[ Strategy: Update All Imports ]=====
         # Update the imports in all the files which use this symbol to get it from the new file now
