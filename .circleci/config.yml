@@ -84,10 +84,6 @@ commands:
             - $GITHUB_WORKSPACE
           key: v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
   build-wheels:
-    parameters:
-      base_packages:
-        type: boolean
-        default: false
     steps:
     - install-uv
     - restore_cache:
@@ -339,9 +335,6 @@ jobs:
       resource_class:
         type: string
         default: "large"
-      base_packages:
-        type: boolean
-        default: false
     working_directory: ~/linux-wheels
     machine:
       image: ubuntu-2404:2024.05.1
@@ -349,8 +342,7 @@ jobs:
     resource_class: <<parameters.resource_class>>
     steps:
       - checkout
-      - build-wheels:
-          base_packages: << parameters.base_packages >>
+      - build-wheels
       - persist_to_workspace:
           root: .
           paths:
@@ -503,10 +495,10 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-          base_packages: true
           matrix:
             parameters:
               resource_class: [large, arm.large]
+
       - osx-wheels:
           filters:
             tags:
