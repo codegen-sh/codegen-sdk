@@ -92,7 +92,7 @@ commands:
     - install-uv
     - restore_cache:
         keys:
-          - cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}
+          - cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}-{{ arch }}
     - run:
         command: |
           uv run --frozen cibuildwheel --output-dir dist
@@ -102,7 +102,7 @@ commands:
     - save_cache:
         paths:
           - /home/circleci/.cache/cibuildwheel
-        key: cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}
+        key: cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}-{{ arch }}
   setup-uv:
     steps:
     - install-lfs
@@ -504,6 +504,9 @@ workflows:
             tags:
               only: /^v.*/
           base_packages: true
+          matrix:
+            parameters:
+              resource_class: [large, arm.large]
       - osx-wheels:
           filters:
             tags:
