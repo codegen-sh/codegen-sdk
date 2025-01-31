@@ -32,6 +32,10 @@ class TypeAlias(SupportsGenerics, HasValue, HasBlock, HasAttribute[TAttribute], 
     """Abstract representation of a Type object.
 
     Only applicable for some programming languages like TypeScript.
+
+    Attributes:
+        symbol_type: The type of symbol, set to SymbolType.Interface.
+        code_block: The code block associated with this type alias.
     """
 
     symbol_type = SymbolType.Interface

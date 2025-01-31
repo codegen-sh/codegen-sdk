@@ -21,7 +21,11 @@ Parent = TypeVar("Parent", bound="Collection[Export, ExportStatement]")
 
 @apidoc
 class Export(Exportable[Parent], Generic[Parent]):
-    """Represents a single symbol being exported."""
+    """Represents a single symbol being exported.
+
+    Attributes:
+        export_statement: The statement representing the export.
+    """
 
     export_statement: ExportStatement
 

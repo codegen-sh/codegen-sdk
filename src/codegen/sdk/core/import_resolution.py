@@ -61,17 +61,14 @@ TSourceFile = TypeVar("TSourceFile", bound="SourceFile")
 class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttribute[TSourceFile]):
     """Represents a single symbol being imported.
 
-    For example, this is one `Import` in Python (and similar applies to Typescript, etc.):
-    ```
-    from a.b import c
-    ```
-
-    This is two separate `Import` in Python:
-    ```
-    from a.b import c, d  # one import for each `c` and `d`
-    ```
     Attributes:
+        to_file_id: The node ID of the file to which this import belongs.
+        module: The module from which the symbol is being imported, if applicable.
         symbol_name: The name of the symbol being imported. For instance import a as b has a symbol_name of a.
+        alias: The alias of the imported symbol, if one exists.
+        node_type: The type of node, set to NodeType.IMPORT.
+        import_type: The type of import, indicating how the symbol is imported.
+        import_statement: The statement that this import is part of.
         import_statement: the ImportStatement that this import belongs to
     """
 

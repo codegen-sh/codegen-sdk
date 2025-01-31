@@ -15,6 +15,12 @@ TType = TypeVar("TType", bound="Type")
 
 
 class SupportsGenerics(Symbol, Generic[TType]):
+    """A symbol that supports generics.
+
+    Attributes:
+        type_parameters: The type parameters of the symbol, if any.
+    """
+
     type_parameters: TypeParameters[TType, Self] | None = None
 
     @cached_property

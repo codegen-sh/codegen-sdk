@@ -25,6 +25,9 @@ class TSReadonlyType(Type[Parent], Generic[Parent]):
 
     Examples:
     readonly s
+
+    Attributes:
+        type: The underlying TypeScript type associated with this readonly type.
     """
 
     type: "TSType[Self]"

@@ -54,7 +54,12 @@ RangeAdapter = Annotated[
 
 @apidoc
 class Span(BaseModel):
-    """Range within the codebase"""
+    """Range within the codebase
+
+    Attributes:
+        range: Adapter for the range within the codebase.
+        filepath: The path to the file associated with the range.
+    """
 
     model_config = ConfigDict(
         frozen=True,

@@ -25,7 +25,11 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 @py_apidoc
 class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], PyHasBlock, PySymbol):
-    """Extends Class for Python codebases"""
+    """Extends Class for Python codebases
+
+    Attributes:
+        constructor_keyword: The keyword used to identify the constructor method in Python classes.
+    """
 
     _decorated_node: TSNode | None
     constructor_keyword = "__init__"

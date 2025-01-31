@@ -26,7 +26,11 @@ if TYPE_CHECKING:
 
 @py_apidoc
 class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[PyCodeBlock, PyAttribute, PyFunction, PyType], PyCodeBlock], PyHasBlock):
-    """SourceFile representation for Python codebase"""
+    """SourceFile representation for Python codebase
+
+    Attributes:
+        programming_language: The programming language of the file. Set to ProgrammingLanguage.PYTHON.
+    """
 
     programming_language = ProgrammingLanguage.PYTHON
 
