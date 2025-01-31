@@ -23,8 +23,13 @@ Parent = TypeVar("Parent")
 @ts_apidoc
 class TSLookupType(Type[Parent], Generic[Parent]):
     """Type lookup
+
     Examples:
         a["key"]
+
+    Attributes:
+        type: The type of the TypeScript object being looked up.
+        lookup: The expression used for the lookup operation.
     """
 
     type: "TSType[Self]"

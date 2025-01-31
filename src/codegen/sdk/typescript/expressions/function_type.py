@@ -26,16 +26,17 @@ Parent = TypeVar("Parent")
 class TSFunctionType(Type[Parent], Generic[Parent]):
     """Function type definition.
 
+    Example:
+        a: (a: number) => number
+
     Attributes:
         return_type: Return type of the function.
-
-    Examples:
-        a: (a: number) => number
+        name: This lets parameters generate their node_id properly.
     """
 
     return_type: "TSType[Self] | TSReturnTypePlaceholder[Self]"
     _parameters: Collection[TSParameter, Self]
-    name: None = None  # This lets parameters generate their node_id properly
+    name: None = None
 
     def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
         super().__init__(ts_node, file_node_id, G, parent)

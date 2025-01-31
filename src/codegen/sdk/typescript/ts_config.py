@@ -19,7 +19,13 @@ logger = logging.getLogger(__name__)
 
 @ts_apidoc
 class TSConfig:
-    """TypeScript configuration file specified in tsconfig.json, used for import resolution and computing dependencies."""
+    """TypeScript configuration file specified in tsconfig.json, used for import resolution and computing dependencies.
+
+    Attributes:
+        config_file: The configuration file object representing the tsconfig.json file.
+        config_parser: The parser used to interpret the TypeScript configuration.
+        config: A dictionary containing the parsed configuration settings.
+    """
 
     config_file: File
     config_parser: "TSConfigParser"

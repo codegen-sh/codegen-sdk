@@ -28,7 +28,13 @@ Parent = TypeVar("Parent", bound="TSHasBlock")
 
 @ts_apidoc
 class TSEnum(TSHasBlock, TSSymbol, HasAttribute[TSAttribute]):
-    """Representation of an Enum in TypeScript"""
+    """Representation of an Enum in TypeScript.
+
+    Attributes:
+        symbol_type: The type of symbol, set to SymbolType.Enum.
+        body: The expression representing the body of the enum.
+        code_block: The code block associated with the enum.
+    """
 
     symbol_type = SymbolType.Enum
     body: Expression[Self]
