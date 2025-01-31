@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <img src="https://i.imgur.com/ttPWzlG.jpeg" />
+    <img src="https://i.imgur.com/6RF9W0z.jpeg" />
   </a>
 </p>
 
@@ -43,7 +43,14 @@ Write code that transforms code. Codegen combines the parsing power of [Tree-sit
 
 ## Installation and Usage
 
-This library requires **Python 3.12 – 3.13**. Currently, Codegen only supports macOS.
+We support
+
+- Running Codegen in Python 3.12 – 3.13
+- macOS and Linux
+  - We develop on macOS but our testing and production environments are Linux
+  - Windows is not supported
+- Python, Typescript, Javascript and React codebases
+
 
 ```
 # Install inside existing project

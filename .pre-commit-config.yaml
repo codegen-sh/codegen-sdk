@@ -99,7 +99,7 @@ repos:
         files: ''  # Check all files
       - id: generate-runner-imports
         name: Generate Runner Imports
-        entry: bash -c "uv run --frozen python -m codegen.gscli.main generate runner-imports src/codegen/shared/compilation/function_imports.py"
+        entry: bash -c "uv run --frozen python -m codegen.gscli.cli generate runner-imports src/codegen/shared/compilation/function_imports.py"
         language: system
         pass_filenames: false
         always_run: true
