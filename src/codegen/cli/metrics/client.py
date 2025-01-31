@@ -1,7 +1,9 @@
 import atexit
 import platform
+import traceback
 from concurrent.futures import ThreadPoolExecutor
 from functools import cached_property
+from importlib.metadata import PackageNotFoundError, distribution, version
 from typing import Any
 
 from posthog import Posthog
@@ -19,20 +21,24 @@ class MetricsClient:
         self.posthog = Posthog(global_env.POSTHOG_PROJECT_API_KEY, host="https://us.i.posthog.com")
         self.pool = ThreadPoolExecutor()
         atexit.register(self.pool.shutdown)
+        self.posthog.disabled = not self.configs.is_metrics_enabled
 
     @cached_property
     def platform_info(self) -> dict[str, str]:
+        try:
+            version_str: str = version(distribution(__package__).metadata["Name"])
+        except PackageNotFoundError:
+            version_str = "dev"
+
         return {
             "platform": platform.system(),
             "platform_release": platform.release(),
             "python_version": platform.python_version(),
-            "codegen_version": global_env.VERSION,
+            "codegen_version": version_str,
         }
 
     def capture_event(self, event_name: str, properties: dict[str, Any] | None = None) -> None:
         """Capture an event if user has opted in."""
-        if not self.configs.is_metrics_enabled:
-            return
         properties = properties or {}
         try:
             self.pool.submit(
@@ -40,10 +46,11 @@ class MetricsClient:
                 distinct_id=self.session_id,
                 event=event_name,
                 properties={**self.platform_info, **properties},
-                groups={"codegen_app": "cli"},
+                groups={"platform": "cli"},
             )
-        except Exception as e:
-            pass
+        except Exception:
+            if global_env.DEBUG:
+                traceback.print_exc()
 
 
 if __name__ == "__main__":

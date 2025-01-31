@@ -26,6 +26,12 @@ class GlobalEnv:
         # =====[ MODAL ]=====
         self.MODAL_ENVIRONMENT = self._get_env_var("MODAL_ENVIRONMENT")
 
+        # =====[ METRICS ]=====
+        self.METRICS_ENABLED = self._get_env_var("METRICS_ENABLED") or None
+
+        # =====[ CONFIG ]=====
+        self.CONFIG_PATH = self._get_env_var("CONFIG_PATH")
+
     def _parse_env(self) -> Environment:
         env_envvar = os.environ.get("ENV")
         if not env_envvar:
