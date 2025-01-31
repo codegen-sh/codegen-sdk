@@ -12,7 +12,7 @@ from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
 ATTRIBUTES_TO_IGNORE = ["G", "node_id", "angular"]
 
 
-def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[str, Any]]:
+def generate_docs_json(codebase: Codebase, head_commit: str, raise_on_missing_docstring: bool = False) -> dict[str, dict[str, Any]]:
     """Update documentation table for classes, methods and attributes in the codebase.
 
     Args:
@@ -110,22 +110,22 @@ def generate_docs_json(codebase: Codebase, head_commit: str) -> dict[str, dict[s
             return
 
         attr_path = create_path(attr, cls)
-        original_attr_path = create_path(attr)
 
-        if original_attr_path not in attr_cache:
-            description = attr.docstring(cls)
-            attr_return_type = []
-            if r_type := get_type_str(attr):
-                if isinstance(r_type, TypePlaceholder):
-                    resolved_types = []
-                else:
-                    resolved_types = r_type.resolved_types
-                r_type_source = replace_multiple_types(codebase=codebase, input_str=r_type.source, resolved_types=resolved_types, parent_class=cls, parent_symbol=attr, types_cache=types_cache)
-                attr_return_type.append(r_type_source)
+        description = attr.docstring(attr.parent_class)
+        if raise_on_missing_docstring and not description:
+            msg = f"Attribute {attr.parent_class.name}.{attr.name} does not have a docstring"
+            raise ValueError(msg)
+        attr_return_type = []
+        if r_type := get_type_str(attr):
+            if isinstance(r_type, TypePlaceholder):
+                resolved_types = []
+            else:
+                resolved_types = r_type.resolved_types
+            r_type_source = replace_multiple_types(codebase=codebase, input_str=r_type.source, resolved_types=resolved_types, parent_class=cls, parent_symbol=attr, types_cache=types_cache)
+            attr_return_type.append(r_type_source)
 
-            attr_cache[original_attr_path] = {"description": description, "attr_return_type": attr_return_type}
+        attr_info = {"description": description, "attr_return_type": attr_return_type}
 
-        attr_info = attr_cache[original_attr_path]
         meta_data = {"parent": create_path(attr.parent_class), "path": attr.file.filepath}
 
         return MethodDoc(
