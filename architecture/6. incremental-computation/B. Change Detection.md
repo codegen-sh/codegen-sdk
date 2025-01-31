@@ -112,4 +112,4 @@ class TreeDiffer implements ASTDiffer {
 
 ## Next Step
 
-After detecting changes, the system updates its internal state through [Graph Recomputation](./graph-recomputation.md).
+After detecting changes, the system performs [Graph Recomputation](./C.%20Graph%20Recomputation.md) to update the dependency graph efficiently.

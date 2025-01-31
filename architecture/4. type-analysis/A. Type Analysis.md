@@ -72,4 +72,4 @@ class TypeGraph:
 
 ## Next Step
 
-After type analysis, the system moves on to [Name Resolution](./name-resolution.md) to handle symbol references and scoping.
+After understanding the type analysis system overview, let's look at how we [walk the syntax tree](./B.%20Tree%20Walking.md) to analyze code structure.

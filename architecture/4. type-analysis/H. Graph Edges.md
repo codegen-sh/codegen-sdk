@@ -56,4 +56,4 @@ You may notice these edges are actually between the usage symbol and the match o
 
 ## Next Step
 
-After constructing the type graph, the system moves on to [Performing Edits](../performing-edits/edit-operations.md) where it can safely modify code while preserving type relationships.
+After constructing the type graph, the system moves on to [Edit Operations](../5.%20performing-edits/A.%20Edit%20Operations.md) where it can safely modify code while preserving type relationships.

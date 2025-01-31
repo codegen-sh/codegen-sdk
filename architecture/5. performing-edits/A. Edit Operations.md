@@ -97,4 +97,4 @@ class EditFormatter implements FormatPreserver {
 
 ## Next Step
 
-After preparing edits, they are managed by the [Transaction Manager](./transaction-manager.md) to ensure consistency and atomicity.
+After preparing edits, they are managed by the [Transaction Manager](./B.%20Transaction%20Manager.md) to ensure consistency and atomicity.

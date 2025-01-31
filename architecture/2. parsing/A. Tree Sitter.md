@@ -30,4 +30,4 @@ module [0, 0] - [3, 0]
 
 ## Next Step
 
-Once the concrete syntax trees are built, they are transformed into our abstract syntax tree representation in the [AST Construction](./ast-construction.md) phase.
+Once the concrete syntax trees are built, they are transformed into our abstract syntax tree representation in the [AST Construction](./B.%20AST%20Construction.md) phase.

@@ -93,4 +93,4 @@ interface TypeInference {
 
 ## Next Step
 
-After generics analysis, the system builds [Graph Edges](./graph-edges.md) to represent relationships between types and symbols.
+After generics analysis, the system handles [Subscript Expressions](./G.%20Subscript%20Expression.md) for array and dictionary access.

@@ -37,8 +37,13 @@ By default, we just pass the usage kind to the children.
 
 At no step in this process described so far have we actually computed any dependencies. That's because there are some special nodes ("Resolvables") that do the heavy lifting. All of the tree walking is just to identify these nodes and the context they are used in. Resolvables are anything inheriting from `Resolvable`:
 
-- [Name](./name-resolution.md)
-- [ChainedAttribute](./chained-attribute.md)
-- [SubscriptExpression](./subscript-expression.md)
-- [FunctionCall](./function-call.md)
-These are all processed using the [type engine](./type-engine.md) to get the definition of the node. They are then converted into an [graph-edge](./edges.md) and added to the graph.
+- [Name Resolution](./C.%20Name%20Resolution.md)
+- [Chained Attributes](./D.%20Chained%20Attributes.md)
+- [Function Calls](./E.%20Function%20Calls.md)
+- [Subscript Expression](./G.%20Subscript%20Expression.md)
+
+These are all processed using the [Type Analysis](./A.%20Type%20Analysis.md) to get the definition of the node. They are then converted into [Graph Edges](./H.%20Graph%20Edges.md) and added to the graph.
+
+## Next Step
+
+After understanding how we walk the tree, let's look at how we [resolve names](./C.%20Name%20Resolution.md) in the code.

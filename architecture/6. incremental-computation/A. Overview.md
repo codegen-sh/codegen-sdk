@@ -79,4 +79,4 @@ class IncrementalProcessor implements UpdateProcessor {
 
 ## Next Step
 
-The change detection process is handled in detail by the [Detecting Changes](./change-detection.md) component.
+After understanding the overview of incremental computation, let's look at how we [detect changes](./B.%20Change%20Detection.md) in the codebase.

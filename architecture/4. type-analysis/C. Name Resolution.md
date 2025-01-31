@@ -40,45 +40,29 @@ Name resolution is the process of resolving a name to its definition. To do this
 
 1. Get the name we're looking for. (e.g. `foo`)
 2. Find the scope we're looking in. (in this case, the global file scope)
-3. Recursively search the scope for the name (which will return the import).
+3. Recursively search the scope for the name (which will return the node corresponding ``from my_module import foo``).
 4. Use the type engine to get the definition of the name (which will return the function definition).
 
-## Language Features
-
-### Python
+## Scoping
 
 ```python
 # Local vs global scope
-global_var = 1
+from my_module import foo, bar, fuzz
 
 def outer():
-    outer_var = 2
-    def inner():
-        nonlocal outer_var
-        local_var = 3
-        outer_var = 4  # Modifies outer_var
+    def foo():
+        ...
+    foo()
+    bar()
+    fuzz()
+    def fuzz():
+        ...
 ```
 
-### TypeScript
-
-```typescript
-// Module scope
-export const value = 'exported';
-
-// Block scope
-{
-    const blockScoped = true;
-    let mutable = 1;
-}
-
-// Class fields
-class Example {
-    private field = 'private';
-    #hardPrivate = 'truly private';
-    static shared = 'shared';
-}
-```
+If we wanted to resolve `foo` in this case, we would start at the name foo, then check it's parent recursively till we arrive at the function outer. We would then check for the name foo and find there is a nested function with that name. We would then return the function definition.
+However, if we wanted to resolve `bar`, we would then check for the name bar and find there is no nested function, variable, or parameter with that name. We would then return the import statement.
+Finally for fuzz, when we check for the name fuzz, we would find there is a nested function with that name, but it is defined after the call to `fuzz()`. We would then return the import.
 
 ## Next Step
 
-After name resolution, the system processes [Chained Attributes](./chained-attributes.md) to handle method and property access chains.
+These simple cases let us build up to more complex cases. [Chained Attributes](./D.%20Chained%20Attributes.md) covers how we handle method and property access chains.

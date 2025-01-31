@@ -65,38 +65,42 @@ At a high level our architecture is:
 
 The SDK processes code through several distinct steps:
 
-1. [File Discovery](./plumbing/file-discovery.md)
+1. [File Discovery](./1. plumbing/file-discovery.md)
    - Project structure analysis
    - File system traversal
 
-2. [Tree-sitter Parsing](./parsing/tree-sitter.md)
+2. [Tree-sitter Parsing](./2. parsing/A. Tree Sitter.md)
    - Initial syntax tree construction
    - Language-specific parsing rules
    - Error recovery
 
-3. [AST Construction](./parsing/ast-construction.md)
+3. [AST Construction](./2. parsing/B. AST Construction.md)
    - Abstract syntax tree building
    - Node type assignment
    - Syntax validation
 
-4. [Import & Export Resolution](./imports-exports/imports.md)
+4. [Import & Export Resolution](./3. imports-exports/A. Imports.md)
    - Module dependency analysis
-   - [Export Analysis](./imports-exports/exports.md)
-   - [TSConfig Support](./imports-exports/tsconfig.md)
+   - [Export Analysis](./3. imports-exports/B. Exports.md)
+   - [TSConfig Support](./3. imports-exports/C. TSConfig.md)
    - Path resolution
 
-5. [Type Analysis](./type-analysis/type-analysis.md)
-   - [Name Resolution](./type-analysis/name-resolution.md)
-   - [Chained Attributes](./type-analysis/chained-attributes.md)
-   - [Generics](./type-analysis/generics.md)
-   - [Graph Edges](./type-analysis/graph-edges.md)
+5. [Type Analysis](./4. type-analysis/A. Type Analysis.md)
+   - [Type Analysis](./4. type-analysis/A. Type Analysis.md)
+   - [Tree Walking](./4. type-analysis/B. Tree Walking.md)
+   - [Name Resolution](./4. type-analysis/C. Name Resolution.md)
+   - [Chained Attributes](./4. type-analysis/D. Chained Attributes.md)
+   - [Function Calls](./4. type-analysis/E. Function Calls.md)
+   - [Generics](./4. type-analysis/F. Generics.md)
+   - [Subscript Expression](./4. type-analysis/G. Subscript Expression.md)
+   - [Graph Edges](./4. type-analysis/H. Graph Edges.md)
 
-6. [Performing Edits](./performing-edits/edit-operations.md)
-   - [Transaction Manager](./performing-edits/transaction-manager.md)
+6. [Performing Edits](./5. performing-edits/A. Edit Operations.md)
+   - [Transaction Manager](./5. performing-edits/B. Transaction Manager.md)
    - Change validation
    - Format preservation
 
-7. [Incremental Computation](./incremental-computation/overview.md)
-   - [Detecting Changes](./incremental-computation/change-detection.md)
-   - [Recomputing Graph](./incremental-computation/graph-recomputation.md)
+7. [Incremental Computation](./6. incremental-computation/A. Overview.md)
+   - [Detecting Changes](./6. incremental-computation/B. Change Detection.md)
+   - [Recomputing Graph](./6. incremental-computation/C. Graph Recomputation.md)
    - Cache invalidation

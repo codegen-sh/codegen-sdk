@@ -84,4 +84,4 @@ class TransactionValidator implements EditValidator {
 
 ## Next Step
 
-After successful transaction completion, the system triggers [Incremental Computation](../incremental-computation/overview.md) to update the codebase state.
+After managing transactions, the system handles [Incremental Computation](../6.%20incremental-computation/A.%20Overview.md) to efficiently update the codebase graph as changes occur.
