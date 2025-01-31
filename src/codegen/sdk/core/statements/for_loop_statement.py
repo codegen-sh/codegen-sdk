@@ -26,7 +26,9 @@ class ForLoopStatement(BlockStatement[Parent], HasBlock, ABC, Generic[Parent]):
     """Abstract representation of the for loop.
 
     Attributes:
-        code_block: The code block that is executed in each iteration of the loop
+        statement_type: The type of statement, set to StatementType.FOR_LOOP_STATEMENT.
+        item: The item in the iteration, or None if not applicable.
+        iterable: The expression representing the iterable object.
     """
 
     statement_type = StatementType.FOR_LOOP_STATEMENT

@@ -25,7 +25,29 @@ if TYPE_CHECKING:
 
 @apidoc
 class StatementType(StrEnum):
-    """Enum representing the different types of statements that can be parsed."""
+    """Enum representing the different types of statements that can be parsed.
+
+    Attributes:
+        COMMENT: Represents a comment statement.
+        ASSIGNMENT: Represents an assignment expression.
+        EXPRESSION_STATEMENT: Represents an expression statement.
+        CLASS_ATTRIBUTE: Represents a class attribute.
+        RETURN_STATEMENT: Represents a return statement.
+        RAISE_STATEMENT: Represents a raise statement.
+        WITH_STATEMENT: Represents a with statement.
+        PASS_STATEMENT: Represents a pass statement.
+        BREAK_STATEMENT: Represents a break statement.
+        LABELED_STATEMENT: Represents a labeled statement.
+        TRY_CATCH_STATEMENT: Represents a try-catch statement.
+        IF_BLOCK_STATEMENT: Represents an if block statement.
+        FOR_LOOP_STATEMENT: Represents a for loop statement.
+        WHILE_STATEMENT: Represents a while loop statement.
+        SWITCH_STATEMENT: Represents a switch statement.
+        SYMBOL_STATEMENT: Represents a symbol statement.
+        UNSPECIFIED: Represents any unparsed code snippet or graph node statements.
+        EXPORT_STATEMENT: Represents an export statement.
+        IMPORT_STATEMENT: Represents an import statement.
+    """
 
     COMMENT = "comment"
     ASSIGNMENT = "assignment_expression"
@@ -54,7 +76,12 @@ Parent = TypeVar("Parent", bound="CodeBlock")
 
 @apidoc
 class Statement(Expression[Parent], Generic[Parent]):
-    """Represents a single code statement, e.g. a function definition, an assignment, an if/else statement, etc."""
+    """Represents a single code statement, e.g. a function definition, an assignment, an if/else statement, etc.
+
+    Attributes:
+        statement_type: The type of the statement, default is StatementType.UNSPECIFIED.
+        _pos: The position of the statement within its parent code block.
+    """
 
     statement_type: StatementType = StatementType.UNSPECIFIED
     _pos: int

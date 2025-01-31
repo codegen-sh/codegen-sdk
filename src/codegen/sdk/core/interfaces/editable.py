@@ -99,8 +99,14 @@ T = TypeVar("T", bound="Editable")
 class Editable(JSONable, Generic[Parent]):
     """An editable instance is an abstract text representation of any text in a file.
 
-    The editable APIs enables text search and edit within the given Editable wrapper around any
-    group of text in a file.
+    Attributes:
+        ts_node: The TreeSitter node associated with this Editable instance.
+        file_node_id: The unique identifier for the file node in the codebase graph.
+        G: The codebase graph that this Editable instance is part of.
+        parent: The parent node of this Editable instance.
+        node_type: The type of node this Editable instance represents.
+        _file: The file object that this Editable instance belongs to, or None if not set.
+        _hash: Cached hash value for this Editable instance, or None if not computed.
     """
 
     ts_node: TSNode

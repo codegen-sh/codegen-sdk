@@ -27,7 +27,11 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class GenericType(NamedType[Parent], Generic[TType, Parent]):
-    """Abstract representation of the generic types of the programming language."""
+    """Abstract representation of the generic types of the programming language.
+
+    Attributes:
+        _parameters: A collection of generic type parameters associated with this type.
+    """
 
     _parameters: Collection[TType, Self]
 

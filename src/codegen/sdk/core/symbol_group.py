@@ -26,6 +26,9 @@ Parent = TypeVar("Parent", bound="Editable")
 class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
     """These are groups of symbols that form some kind of logical grouping, like a class or module,
     that do not follow the traditional tree structure.
+
+    Attributes:
+        _symbols: A list of child symbols that belong to this group.
     """
 
     _symbols: list[Child]

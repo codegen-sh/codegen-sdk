@@ -14,7 +14,11 @@ if TYPE_CHECKING:
 
 @py_apidoc
 class PyBreakStatement(Statement["PyCodeBlock"]):
-    """An abstract representation of a python break statement."""
+    """An abstract representation of a python break statement.
+
+    Attributes:
+        statement_type: The type of the statement, set to StatementType.BREAK_STATEMENT.
+    """
 
     statement_type = StatementType.BREAK_STATEMENT
 

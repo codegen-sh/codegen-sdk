@@ -5,7 +5,11 @@ from codegen.shared.decorators.docs import apidoc
 
 @apidoc
 class HasValue:
-    """An interface for any node object that has a value."""
+    """An interface for any node object that has a value.
+
+    Attributes:
+        _value_node: The underlying Expression node that holds the value. Can be None if no value is set.
+    """
 
     _value_node: Expression | None
 

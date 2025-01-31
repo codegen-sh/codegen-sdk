@@ -32,7 +32,11 @@ logger = logging.getLogger(__name__)
 
 @py_apidoc
 class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, PyType], PyHasBlock, PySymbol):
-    """Extends Function for Python codebases."""
+    """Extends Function for Python codebases.
+
+    Attributes:
+        _decorated_node: The node representing the decorated function, if any.
+    """
 
     _decorated_node: TSNode | None
 

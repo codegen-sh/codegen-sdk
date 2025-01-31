@@ -39,11 +39,10 @@ Parent = TypeVar("Parent", bound="Expression | None")
 
 @apidoc
 class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
-    """Abstract representation of a function invocation, e.g. in Python:
-    ```
-    def f():
-        g()  # FunctionCall
-    ```
+    """Abstract representation of a function invocation.
+
+    Attributes:
+        _arg_list: A collection of arguments passed to the function call.
     """
 
     _arg_list: Collection[Argument, Self]

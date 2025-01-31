@@ -25,15 +25,10 @@ Parent = TypeVar("Parent", bound="TSCodeBlock")
 @apidoc
 class TSIfBlockStatement(IfBlockStatement[Parent, "TSIfBlockStatement"], Generic[Parent]):
     """Typescript implementation of the if/elif/else statement block.
-    For example, if there is a code block like:
-    if (condition1) {
-        block1
-    } else if (condition2) {
-        block2
-    } else {
-        block3
-    }
-    This class represents the entire block, including the conditions and nested code blocks.
+
+    Attributes:
+        statement_type: The type of statement, set to StatementType.IF_BLOCK_STATEMENT.
+        _else_clause_node: The TreeSitter node representing the else clause, if any.
     """
 
     statement_type = StatementType.IF_BLOCK_STATEMENT

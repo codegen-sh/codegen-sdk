@@ -20,7 +20,7 @@ class TryCatchStatement(BlockStatement[Parent], HasBlock, ABC, Generic[Parent]):
     """Abstract representation of the try catch statement block.
 
     Attributes:
-        code_block: The code block that may trigger an exception
+        statement_type: The type of statement, set to StatementType.TRY_CATCH_STATEMENT.
         finalizer: The code block executed regardless of if an exception is thrown or not
     """
 

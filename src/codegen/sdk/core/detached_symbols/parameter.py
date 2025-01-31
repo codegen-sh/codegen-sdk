@@ -39,7 +39,12 @@ Parent = TypeVar("Parent", bound="Collection[Parameter, Function]")
 
 @apidoc
 class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Parent], Generic[TType, Parent]):
-    """Abstract representation of a parameter in a Function definition."""
+    """Abstract representation of a parameter in a Function definition.
+
+    Attributes:
+        _pos: The 0-based index of this parameter within its parent function's parameter list.
+        _name_node: The node representing the name of the parameter, or None if not applicable.
+    """
 
     _pos: int
     _name_node: Name | None = None

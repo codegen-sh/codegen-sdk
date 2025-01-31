@@ -24,6 +24,10 @@ Parent = TypeVar("Parent", bound="Expression")
 class SubscriptExpression(Expression[Parent], Resolvable[Parent], Generic[Object, Index, Parent]):
     """Indexing onto an object (Aka using brackets on an object)
 
+    Attributes:
+        object: The object being indexed.
+        indices: A list of indices used for indexing the object.
+
     Examples:
      A[]
     """

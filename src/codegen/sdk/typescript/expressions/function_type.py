@@ -28,6 +28,8 @@ class TSFunctionType(Type[Parent], Generic[Parent]):
 
     Attributes:
         return_type: Return type of the function.
+        _parameters: Collection of parameters associated with the function type.
+        name: Placeholder for node_id generation in parameters.
 
     Examples:
         a: (a: number) => number

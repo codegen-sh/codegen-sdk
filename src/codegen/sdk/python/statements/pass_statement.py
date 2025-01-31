@@ -14,7 +14,11 @@ if TYPE_CHECKING:
 
 @py_apidoc
 class PyPassStatement(Statement["PyCodeBlock"]):
-    """An abstract representation of a python pass statement."""
+    """An abstract representation of a python pass statement.
+
+    Attributes:
+        statement_type: The type of statement, set to StatementType.PASS_STATEMENT.
+    """
 
     statement_type = StatementType.PASS_STATEMENT
 

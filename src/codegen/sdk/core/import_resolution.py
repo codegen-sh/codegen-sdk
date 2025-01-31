@@ -70,8 +70,13 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile]):
     from a.b import c, d  # one import for each `c` and `d`
     ```
     Attributes:
+        to_file_id: The node ID of the file to which this import belongs.
+        module: The module being imported, if applicable.
         symbol_name: The name of the symbol being imported. For instance import a as b has a symbol_name of a.
-        import_statement: the ImportStatement that this import belongs to
+        alias: The alias of the imported symbol, if applicable.
+        node_type: The type of node, set to NodeType.IMPORT.
+        import_type: The type of import, indicating how the symbol is imported.
+        import_statement: The ImportStatement that this import belongs to.
     """
 
     to_file_id: NodeId

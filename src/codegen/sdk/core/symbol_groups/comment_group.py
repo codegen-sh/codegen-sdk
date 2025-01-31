@@ -16,7 +16,11 @@ Parent = TypeVar("Parent")
 
 @apidoc
 class CommentGroup(SymbolGroup[Comment, Parent]):
-    """A group of comments that form a larger comment block."""
+    """A group of comments that form a larger comment block.
+
+    Attributes:
+        _indentation: Indentation level of the comment block.
+    """
 
     _indentation: int  # Indentation level of the comment block
 

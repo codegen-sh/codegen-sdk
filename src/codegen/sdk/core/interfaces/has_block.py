@@ -23,7 +23,11 @@ TDecorator = TypeVar("TDecorator", bound="Decorator")
 
 @apidoc
 class HasBlock(Expression, Generic[TCodeBlock, TDecorator]):
-    """An interface for any code object that has a block of code, e.g. a function, class, etc."""
+    """An interface for any code object that has a block of code, e.g. a function, class, etc.
+
+    Attributes:
+        code_block: The block of code associated with the code object.
+    """
 
     code_block: TCodeBlock
 

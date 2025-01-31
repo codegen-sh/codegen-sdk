@@ -10,7 +10,11 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 
 @apidoc
 class HasName:
-    """An interface for any node object that has a name."""
+    """An interface for any node object that has a name.
+
+    Attributes:
+        _name_node: The underlying name node of the object, which can be a Name, ChainedAttribute, DefinedName, or None if no name node is associated.
+    """
 
     _name_node: Name | ChainedAttribute | DefinedName | None = None
 

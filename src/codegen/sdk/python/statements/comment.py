@@ -9,7 +9,14 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 @py_apidoc
 class PyCommentType(StrEnum):
-    """Enum representing different types of comments."""
+    """Enum representing different types of comments.
+
+    Attributes:
+        SINGLE_LINE: Represents a single-line comment.
+        MULTI_LINE_QUOTE: Represents a multi-line comment using single quotes.
+        MULTI_LINE_DOUBLE_QUOTE: Represents a multi-line comment using double quotes.
+        UNKNOWN: Represents an unknown type of comment.
+    """
 
     SINGLE_LINE = "SINGLE_LINE"
     MULTI_LINE_QUOTE = "MULTI_LINE_QUOTE"

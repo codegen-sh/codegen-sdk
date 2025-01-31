@@ -23,8 +23,9 @@ Parent = TypeVar("Parent")
 class TSQueryType(Type[Parent], Generic[Parent]):
     """Type query
 
-    Examples:
-    typeof s
+
+    Attributes:
+        query: The TypeScript type query, e.g. typeof s
     """
 
     query: "TSType[Self]"

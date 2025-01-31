@@ -28,7 +28,11 @@ TParameter = TypeVar("TParameter", bound="Parameter")
 
 @apidoc
 class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter]):
-    """Represents an argument passed into a FunctionCall."""
+    """Represents an argument passed into a FunctionCall.
+
+    Attributes:
+        _pos: The zero-based index of this argument within its parent function call.
+    """
 
     _pos: int
 

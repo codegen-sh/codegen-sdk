@@ -19,7 +19,30 @@ logger = logging.getLogger(__name__)
 
 @ts_apidoc
 class TSConfig:
-    """TypeScript configuration file specified in tsconfig.json, used for import resolution and computing dependencies."""
+    """TypeScript configuration file specified in tsconfig.json, used for import resolution and computing dependencies.
+
+    Attributes:
+        config_file: The configuration file object representing the tsconfig.json file.
+        config_parser: The parser used to interpret the TypeScript configuration.
+        config: A dictionary containing the parsed configuration settings.
+        _base_config: The base TSConfig object that this config extends, if any.
+        _base_url: The base URL for module resolution, if specified.
+        _out_dir: The output directory for compiled files, if specified.
+        _root_dir: The root directory for input files, if specified.
+        _root_dirs: A list of root directories treated as one virtual directory.
+        _paths: A dictionary mapping module path patterns to target paths.
+        _references: A list of references to other projects or files.
+        _self_base_url: The base URL specific to this configuration.
+        _self_out_dir: The output directory specific to this configuration.
+        _self_root_dir: The root directory specific to this configuration.
+        _self_root_dirs: A list of root directories specific to this configuration.
+        _self_paths: A dictionary of path mappings specific to this configuration.
+        _self_references: A list of references specific to this configuration.
+        _computed_path_import_aliases: A flag indicating if path import aliases have been computed.
+        _path_import_aliases: A dictionary of formatted path import aliases.
+        _reference_import_aliases: A dictionary of formatted reference import aliases.
+        _import_optimization_enabled: A flag indicating if import optimization is enabled.
+    """
 
     config_file: File
     config_parser: "TSConfigParser"

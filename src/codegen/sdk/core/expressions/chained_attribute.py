@@ -27,8 +27,9 @@ Parent = TypeVar("Parent", bound="Expression")
 class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute, Parent]):
     """An attribute of an object. (IE a method on a class, a function from a module, etc)
 
-    Examples:
-     A.method()
+    Attributes:
+        _object: The object part of the chained attribute expression.
+        _attribute: The attribute part of the chained attribute expression.
     """
 
     _object: Object

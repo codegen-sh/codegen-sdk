@@ -26,7 +26,11 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @ts_apidoc
 class JSXElement(Expression[Parent], HasName, Generic[Parent]):
-    """Abstract representation of TSX/JSX elements, e.g. `<MyComponent />`. This allows for many React-specific modifications, like adding props, changing the name, etc."""
+    """Abstract representation of TSX/JSX elements, e.g. `<MyComponent />`. This allows for many React-specific modifications, like adding props, changing the name, etc.
+
+    Attributes:
+        _name_node: The node representing the name of the JSX element, or None if not present.
+    """
 
     _name_node: Name | None
 

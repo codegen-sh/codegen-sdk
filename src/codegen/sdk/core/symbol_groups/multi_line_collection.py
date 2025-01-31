@@ -23,6 +23,11 @@ class MultiLineCollection(Collection[Child, Parent], Generic[Child, Parent]):
 
     Example: A list of function definitions, class definitions
     You can use standard operations to operate on this list (IE len, del, append, insert, etc)
+
+    Attributes:
+        _inserts_max_size: A dictionary mapping indices to their maximum insert sizes.
+        _leading_delimiter: The delimiter used at the beginning of the collection.
+        _trailing_delimiter: The delimiter used at the end of the collection.
     """
 
     _inserts_max_size: dict[int, int]

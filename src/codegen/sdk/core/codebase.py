@@ -106,7 +106,11 @@ PyDirectory = Directory[PyFile, PySymbol, PyImportStatement, PyGlobalVar, PyClas
 class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImport, TGlobalVar, TInterface, TTypeAlias, TParameter, TCodeBlock]):
     """This class provides the main entrypoint for most programs to analyzing and manipulating codebases.
 
-    It provides a high-level interface to interact with the codebase graph, and provides methods to access and manipulate files, directories, symbols, and other entities in the codebase.
+    Attributes:
+        _op: The repository operator, which can be either a local or remote repository operator.
+        viz: The visualization manager for the codebase.
+        repo_path: The path to the repository.
+        console: The console used for logging and output.
     """
 
     _op: RepoOperator | RemoteRepoOperator

@@ -41,7 +41,11 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 @apidoc
 class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
-    """Abstract representation of comment statements."""
+    """Abstract representation of comment statements.
+
+    Attributes:
+        statement_type: The type of statement, set to StatementType.COMMENT.
+    """
 
     statement_type = StatementType.COMMENT
 

@@ -25,8 +25,9 @@ class String(Expression[Parent], Builtin, Generic[Parent]):
     """GraphSitter representation of String.
 
     Attributes:
-        content: The content of the string
-        expressions: embedded expressions in the string, only applicable for templated or formatted strings
+        content: The content of the string.
+        content_nodes: A collection of string fragments and escape sequences in TS, or a single string content in Python.
+        expressions: Embedded expressions in the string, only applicable for templated or formatted strings.
     """
 
     content: str

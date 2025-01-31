@@ -43,6 +43,10 @@ class Callable(Usable, Generic[TParameter, TType]):
     """Any symbol that can be invoked with arguments eg.
 
     Function, Class, Decorator, ExternalModule
+
+    Attributes:
+        _parameters: The parameters of the callable, stored as a SymbolGroup or a list.
+        return_type: The return type of the callable, which can be a specific type or a placeholder.
     """
 
     _parameters: SymbolGroup[TParameter, Self] | list[TParameter]

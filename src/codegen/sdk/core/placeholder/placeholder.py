@@ -15,8 +15,8 @@ Parent = TypeVar("Parent", bound="Editable")
 class Placeholder(ABC, Generic[Parent]):
     """A placeholder for a node that does not exist yet.
 
-    Use bool checks (ie is node) to check if the node exists. You can call edit to replace the
-    placeholder with a real node and it will automatically insert formatting.
+    Attributes:
+        _parent_node: The parent node associated with this placeholder.
     """
 
     _parent_node: Parent

@@ -28,6 +28,7 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 @apidoc
 class IfBlockStatement(Statement[TCodeBlock], Generic[TCodeBlock, TIfBlockStatement]):
     """Abstract representation of the if/elif/else if/else statement block.
+
     For example, if there is a code block like:
     if condition1:
         block1
@@ -38,8 +39,11 @@ class IfBlockStatement(Statement[TCodeBlock], Generic[TCodeBlock, TIfBlockStatem
     This class represents the entire block, including the conditions and nested code blocks.
 
     Attributes:
-        condition: The condition expression for the if block. None if the block is an else block.
+        statement_type: The type of statement, set to StatementType.IF_BLOCK_STATEMENT.
+        condition: The condition expression for the if block, or None if it is an else block.
         consequence_block: The code block that is executed if the condition is True.
+        _alternative_blocks: List of alternative blocks (elif/else) or None if it is an elif or else block.
+        _main_if_block: The main if block in the if/elif/else chain.
     """
 
     statement_type = StatementType.IF_BLOCK_STATEMENT

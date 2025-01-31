@@ -25,10 +25,11 @@ class Usage:
     """A reference to an exportable object in a file.
 
     Attributes:
-        match: The exact match of the usage
-        usage_symbol: The symbol this object is used in
-        usage_type: How this symbol was used
-        kind: Where this symbol was used (IE: in a type parameter or in the body of the class, etc)
+        match: The exact match of the usage.
+        usage_symbol: The symbol this object is used in.
+        imported_by: The import statement that brought this symbol into scope, or None if not applicable.
+        usage_type: How this symbol was used.
+        kind: Where this symbol was used (e.g., in a type parameter or in the body of the class).
     """
 
     match: Name | ChainedAttribute | FunctionCall
@@ -62,15 +63,17 @@ class UsageKind(IntEnum):
 
     Attributes:
         SUBCLASS: Used in symbol inheritance.
-        TYPE_ANNOTATION:  Used as a type annotation on a parameter or assignment statement.
+        TYPED_PARAMETER: Used as a typed parameter in a function/method.
+        TYPE_ANNOTATION: Used as a type annotation on a parameter or assignment statement.
         BODY: Usage within the body of a function/method.
         DECORATOR: Usage within a decorator.
-        RETURN_TYPE: Used as a return type annotation
+        RETURN_TYPE: Used as a return type annotation.
         TYPE_DEFINITION: Used in a type alias.
         EXPORTED_SYMBOL: Used in an export statement.
         EXPORTED_WILDCARD: Re-exported by a wildcard export.
         GENERIC: Used as a type parameter to another type.
         IMPORTED: Imported with an import statement.
+        IMPORTED_WILDCARD: Imported with a wildcard import statement.
         DEFAULT_VALUE: Represents a default value in a function/method parameter.
     """
 

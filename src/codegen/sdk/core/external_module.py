@@ -29,9 +29,11 @@ class ExternalModule(
 ):
     """Represents an external module, like `datetime`, that can be referenced.
 
-    These are only added to the graph during import resolution and will not exist in a local file's
-    subgraph. This is because we don't know what an import is referencing or resolves to until we
-    see the full codebase.
+    These are only added to the graph during import resolution and will not exist in a local file's subgraph. This is because we don't know what an import is referencing or resolves to until we see
+    the full codebase.
+
+    Attributes:
+        node_type: The type of the node, set to NodeType.EXTERNAL.
     """
 
     node_type: Literal[NodeType.EXTERNAL] = NodeType.EXTERNAL

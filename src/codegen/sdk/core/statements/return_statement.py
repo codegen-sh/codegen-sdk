@@ -27,13 +27,8 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 class ReturnStatement(Statement, HasValue, Generic[Parent, TCodeBlock]):
     """Abstract representation of return statements, e.g. in Python:
 
-    ```python
-    def f(x):
-        if x:
-            return x**2  # ReturnStatement
-        else:
-            return 1  # ReturnStatement
-    ```
+    Attributes:
+        statement_type: The type of statement, set to StatementType.RETURN_STATEMENT.
     """
 
     statement_type = StatementType.RETURN_STATEMENT

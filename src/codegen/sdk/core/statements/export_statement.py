@@ -29,7 +29,8 @@ class ExportStatement(Statement["TSCodeBlock"], Generic[TExport]):
     statement can export multiple symbols from a single source.
 
     Attributes:
-        exports: A list of the individual exports this statement represents
+        exports: A collection of the individual exports this statement represents.
+        statement_type: The type of statement, set to StatementType.EXPORT_STATEMENT.
     """
 
     exports: Collection[TExport, Self]

@@ -27,8 +27,10 @@ Child = TypeVar("Child", bound="Symbol")
 class SymbolStatement(Statement[Parent], Generic[Parent, Child]):
     """A statement that represents a symbol definition in a codeblock.
 
-    Examples include:
-    - a function definition, class definition, global variable assignment
+    Attributes:
+        statement_type: The type of statement, set to StatementType.SYMBOL_STATEMENT.
+        symbol: The symbol this statement defines, parsed from the code.
+
     """
 
     statement_type = StatementType.SYMBOL_STATEMENT

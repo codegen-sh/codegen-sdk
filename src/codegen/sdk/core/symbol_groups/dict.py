@@ -27,7 +27,11 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class Pair(Editable[Parent], HasValue, Generic[TExpression, Parent]):
-    """An abstract representation of a key, value pair belonging to a `Dict`"""
+    """An abstract representation of a key, value pair belonging to a `Dict`
+
+    Attributes:
+        key: The key expression of the pair, expected to be of type TExpression.
+    """
 
     key: TExpression
 
@@ -77,7 +81,10 @@ Parent = TypeVar("Parent", bound="Editable")
 class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generic[TExpression, Parent]):
     """Represents a dict (object) literal the source code.
 
-    You can use standard Python operations to operate on this dict (i.e. `len`, `del`, `set`, `get`, etc)
+    Attributes:
+        _underlying: A collection of pairs or unpacked elements representing the
+            underlying structure of the dict.
+        unpack: An optional unpacked element if present in the dict.
     """
 
     _underlying: Collection[Pair[TExpression, Self] | Unpack[Self], Parent]

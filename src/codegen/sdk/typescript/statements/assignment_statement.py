@@ -26,9 +26,10 @@ logger = logging.getLogger(__name__)
 class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
     """A class that represents a TypeScript assignment statement in a codebase, such as `const x = 1` or `const { a: b } = myFunc()`.
 
-    This includes potentially multiple Assignments via `statement.assignments`, which represent each assignment of a value to a variable within this statement.
-
-    For example, assigning to a destructured object, or assigning multiple values to multiple variables in a single statement.
+    Attributes:
+        assignment_types: A set of supported assignment node types, including
+            assignment_expression, augmented_assignment_expression,
+            variable_declarator, public_field_definition, and property_signature.
     """
 
     assignment_types = {"assignment_expression", "augmented_assignment_expression", "variable_declarator", "public_field_definition", "property_signature"}

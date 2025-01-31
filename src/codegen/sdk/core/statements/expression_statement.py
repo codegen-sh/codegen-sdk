@@ -41,6 +41,9 @@ class ExpressionStatement(Statement, HasValue, IWrapper, Generic[Parent, TCodeBl
     x = 1;
     ```
     The above code is also an expression statement, but its expression value is an assignment excluding the semicolon.
+
+    Attributes:
+        statement_type: The type of the statement, set to StatementType.EXPRESSION_STATEMENT.
     """
 
     statement_type = StatementType.EXPRESSION_STATEMENT

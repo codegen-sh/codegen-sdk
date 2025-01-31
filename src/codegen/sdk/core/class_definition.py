@@ -51,7 +51,14 @@ TType = TypeVar("TType", bound="Type")
 
 @apidoc
 class Class(Inherits[TType], HasBlock[TCodeBlock, TDecorator], Callable[TParameter, TType], HasAttribute[TFunction | Attribute], Generic[TFunction, TDecorator, TCodeBlock, TParameter, TType]):
-    """Abstract representation of a Class definition."""
+    """Abstract representation of a Class definition.
+
+    Attributes:
+        symbol_type: The type of symbol, set to SymbolType.Class.
+        constructor_keyword: The keyword used to identify the constructor method.
+        parent_classes: The parent classes of this class, if any.
+        _methods: A collection of methods defined in this class.
+    """
 
     symbol_type = SymbolType.Class
     constructor_keyword = None

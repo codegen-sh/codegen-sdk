@@ -30,6 +30,9 @@ class PyCommentGroup(CommentGroup):
     # Comment 3
     ```
     would be 3 individual comments (accessible via `symbols`), but together they form a `CommentGroup` (accessible via `self`).
+
+    Attributes:
+        _text: Actual text content of the comment
     """
 
     _text: str  # Actual text content of the comment

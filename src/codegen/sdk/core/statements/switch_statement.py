@@ -26,7 +26,9 @@ class SwitchStatement(Statement[Parent], Generic[Parent, TCodeBlock, TSwitchCase
     """Abstract representation of the switch statement.
 
     Attributes:
-        value: The value to switch on
+        statement_type: The type of statement, set to StatementType.SWITCH_STATEMENT.
+        value: The value to switch on.
+        cases: A list of switch cases associated with the switch statement.
     """
 
     statement_type = StatementType.SWITCH_STATEMENT

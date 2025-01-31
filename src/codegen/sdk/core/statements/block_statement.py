@@ -25,7 +25,11 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 @apidoc
 class BlockStatement(Statement[TCodeBlock], HasBlock, ABC, Generic[TCodeBlock]):
-    """Statement which contains a block."""
+    """Statement which contains a block.
+
+    Attributes:
+        code_block: The code block contained within the statement, if any.
+    """
 
     code_block: TCodeBlock | None
 

@@ -19,7 +19,12 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class JSXProp(Expression["Function | JSXElement | JSXProp"], HasName, HasValue):
-    """Abstract representation of TSX/JSX prop, e.g <Component prop="value" />."""
+    """Abstract representation of TSX/JSX prop, e.g <Component prop="value" />.
+
+    Attributes:
+        _name_node: The name node of the JSX prop, parsed from the TSNode.
+        _expression_node: The expression node of the JSX prop, if it exists.
+    """
 
     _name_node: Name | None
     _expression_node: JSXExpression | None

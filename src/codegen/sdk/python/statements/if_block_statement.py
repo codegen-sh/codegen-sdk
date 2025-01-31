@@ -21,6 +21,10 @@ Parent = TypeVar("Parent", bound="PyCodeBlock")
 @apidoc
 class PyIfBlockStatement(IfBlockStatement[Parent, "PyIfBlockStatement"], Generic[Parent]):
     """Pythons implementation of the if/elif/else statement block.
+
+    Attributes:
+        statement_type: The type of statement, set to StatementType.IF_BLOCK_STATEMENT.
+
     For example, if there is a code block like:
     if condition1:
         block1
