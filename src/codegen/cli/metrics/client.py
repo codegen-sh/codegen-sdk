@@ -2,7 +2,7 @@ import atexit
 import platform
 import traceback
 from concurrent.futures import ThreadPoolExecutor
-from functools import cached_property
+from functools import cached_property, lru_cache
 from importlib.metadata import PackageNotFoundError, distribution, version
 from typing import Any
 
@@ -53,6 +53,11 @@ class MetricsClient:
                 traceback.print_exc()
 
 
+@lru_cache
+def get_metrics_client() -> MetricsClient:
+    return MetricsClient()
+
+
 if __name__ == "__main__":
-    posthog = MetricsClient()
+    posthog = get_metrics_client()
     posthog.capture_event("test")
