@@ -77,7 +77,7 @@ repos:
 
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.146.1
+    rev: 39.156.0
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
