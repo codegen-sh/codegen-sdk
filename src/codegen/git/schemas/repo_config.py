@@ -21,7 +21,7 @@ class RepoConfig(BaseModel):
     id: int
     name: str
     full_name: str
-    visibility: RepoVisibility
+    visibility: RepoVisibility | None = None
 
     # Org fields
     organization_id: int
