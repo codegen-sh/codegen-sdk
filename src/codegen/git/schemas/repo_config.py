@@ -3,6 +3,8 @@ import logging
 
 from pydantic import BaseModel
 
+from codegen.git.schemas.enums import RepoVisibility
+
 logger = logging.getLogger(__name__)
 
 
@@ -19,6 +21,7 @@ class RepoConfig(BaseModel):
     id: int
     name: str
     full_name: str
+    visibility: RepoVisibility
 
     # Org fields
     organization_id: int
