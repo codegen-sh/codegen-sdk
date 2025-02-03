@@ -30,7 +30,6 @@ runs:
         GITHUB_WORKSPACE: ${{ github.workspace }}
       run: |
         uv run pytest \
-          -n auto \
           -o junit_suite_name="${{ inputs.suite_name || github.job }}" \
           --timeout=$((${{ inputs.timeout }} * 60)) \
           ${{ inputs.extra_args }} \

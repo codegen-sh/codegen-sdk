@@ -53,6 +53,7 @@ runs:
         echo $TESTS_TO_RUN | xargs uv run pytest --cov \
           -o junit_suite_name="${{ github.job }}" \
           -n auto \
+          --dist=loadgroup \
           -vv \
           --cov \
           --cov-append \
