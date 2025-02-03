@@ -57,6 +57,6 @@ runs:
           --cov-report=xml \
           ${{ inputs.collect_args }}
 
-    - uses: ./.github/actions/actions/report
+    - uses: ./.github/actions/report
       with:
         flag: ${{ inputs.codecov_flags }}
