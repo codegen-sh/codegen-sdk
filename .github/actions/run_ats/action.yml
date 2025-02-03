@@ -44,6 +44,7 @@ runs:
     - name: Run tests
       shell: bash
       run: |
+        echo "pwd: $(pwd)" # FIXME: for debugging
         TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
         echo $TESTS_TO_RUN | xargs uv run pytest --cov \
           -o junit_suite_name="${{ github.job }}" \
