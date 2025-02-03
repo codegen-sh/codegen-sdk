@@ -14,7 +14,6 @@ jobs:
   unit-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-16
-    environment: testing
     steps:
       - uses: actions/checkout@v4
         with:
@@ -28,14 +27,11 @@ jobs:
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--timeout 50"
-          base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
           job_name: ${{ github.job }}
           codecov_flags: smart-tests
-
   test_codemods:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
-    environment: testing
     strategy:
       matrix:
         sync_graph: [ true, false ]
@@ -55,55 +51,50 @@ jobs:
         uses: ./.github/actions/setup-backend
       - name: Cache oss-repos
         uses: ./.github/actions/setup-oss-repos
-        with:
-          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
       - name: Run ATS and Tests
         uses: ./.github/actions/run_ats
         with:
           default_tests: "tests/integration/codemod/test_codemods.py"
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--size=${{matrix.size}} --sync-graph=${{matrix.sync_graph}} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
-          ats_collect_args: "--size=${{matrix.size}},--sync-graph=${{matrix.sync_graph}},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
-          base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+          collect_args: "--size=${{matrix.size}} --sync-graph=${{matrix.sync_graph}}"
+          ats_collect_args: "--size=${{matrix.size}},--sync-graph=${{matrix.sync_graph}},"
           job_name: ${{ github.job }}
           codecov_flags: smart-tests-codemod-tests-${{matrix.size}}-${{matrix.sync_graph}}
         env:
-          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 
-  test_verified_codemods:
-    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
-    if: false
-    runs-on: ubuntu-latest-32
-    environment: testing
-    concurrency:
-      group: ${{ github.workflow }}-${{github.ref}}-${{github.event_name == 'push'&& github.sha}}
-      cancel-in-progress: true
-    name: "Verified Codemod tests: Sync Graph=false"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup backend
-        uses: ./.github/actions/setup-backend
-      - name: Run ATS and Tests
-        uses: ./.github/actions/run_ats
-        with:
-          default_tests: "tests/integration/codemod/test_verified_codemods.py"
-          codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-          codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--cli-api-key ${{ secrets.PROD_CLI_API_KEY }} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
-          ats_collect_args: "--cli-api-key=${{ secrets.PROD_CLI_API_KEY }},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
-          base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
-          job_name: ${{ github.job }}
-          codecov_flags: smart-tests-verified-codemod-tests
-        env:
-          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
-          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
+  # test_verified_codemods:
+  #   # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
+  #   if: false
+  #   runs-on: ubuntu-latest-32
+  #   environment: testing
+  #   concurrency:
+  #     group: ${{ github.workflow }}-${{github.ref}}-${{github.event_name == 'push'&& github.sha}}
+  #     cancel-in-progress: true
+  #   name: "Verified Codemod tests: Sync Graph=false"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup backend
+  #       uses: ./.github/actions/setup-backend
+  #     - name: Run ATS and Tests
+  #       uses: ./.github/actions/run_ats
+  #       with:
+  #         default_tests: "tests/integration/codemod/test_verified_codemods.py"
+  #         codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
+  #         codecov_token: ${{ secrets.CODECOV_TOKEN }}
+  #         collect_args: "--cli-api-key ${{ secrets.PROD_CLI_API_KEY }} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
+  #         ats_collect_args: "--cli-api-key=${{ secrets.PROD_CLI_API_KEY }},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
+  #         base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
+  #         job_name: ${{ github.job }}
+  #         codecov_flags: smart-tests-verified-codemod-tests
+  #       env:
+  #         CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+  #         GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 
   parse-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
-    environment: testing
     if: contains(github.event.pull_request.labels.*.name, 'extra-parse') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
@@ -111,10 +102,8 @@ jobs:
       - name: Setup backend
         uses: ./.github/actions/setup-backend
 
-      - name: Cache extra-repos
-        uses: ./.github/actions/setup-extra-repos
-        with:
-          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
+      - name: Cache oss-repos
+        uses: ./.github/actions/setup-oss-repos
 
       - name: Install yarn and pnpm
         run: |
@@ -124,22 +113,17 @@ jobs:
       - name: Test with pytest
         timeout-minutes: 15
         env:
-          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
         run: |
           uv run pytest \
             -n auto \
             --extra-repos true \
-            --token $CODEGEN_BOT_GHE_TOKEN \
             -o junit_suite_name="${{github.job}}" \
             tests/codemod/test_parse.py
-
-      - name: Upload test results to Codecov
-        if: ${{ !cancelled() }}
-        uses: codecov/test-results-action@v1
+      - uses: ./.github/actions/report
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/test-results/test/TEST.xml
+          flag: no-flag
+
       #  test_codemod_diffs:
       #    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
       #    runs-on: ubuntu-latest-16
@@ -189,8 +173,7 @@ jobs:
       #     codecovcli do-upload --disable-search --file empty_coverage.xml -C ${{ github.event.pull_request.head.sha }}
       #     codecovcli empty-upload --force -C ${{ github.event.pull_request.head.sha }}
   integration-tests:
-    runs-on: ubuntu-latest-32
-    environment: testing
+    runs-on: ubuntu-latest-16
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend

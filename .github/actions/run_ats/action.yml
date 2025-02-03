@@ -19,9 +19,6 @@ inputs:
     description: 'Additional arguments for ATS collection'
     required: false
     default: ''
-  base_sha:
-    description: 'Base SHA for comparison'
-    required: true
   codecov_flags:
     description: 'Flags for codecov upload'
     required: false
@@ -36,7 +33,7 @@ runs:
     - name: Run ATS
       shell: bash
       env:
-        BASE_SHA: ${{ inputs.base_sha }}
+        BASE_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
         DEFAULT_TESTS: ${{ inputs.default_tests }}
         CODECOV_STATIC_TOKEN: ${{ inputs.codecov_static_token }}
         CODECOV_TOKEN: ${{ inputs.codecov_token }}
