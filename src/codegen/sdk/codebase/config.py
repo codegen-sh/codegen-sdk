@@ -1,7 +1,9 @@
 import os
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
+from pydantic.fields import Field
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
@@ -42,6 +44,7 @@ class GSFeatureFlags(BaseModel):
     full_range_index: bool = False
     ignore_process_errors: bool = True  # Ignore errors from dependency manager and language engine
     import_resolution_overrides: dict[str, str] = {}  # Override import resolution for specific modules
+    disable_graph: bool = False  # Turn of graph generation entirely. Speeds up parsing but disables usages and dependencies
 
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)

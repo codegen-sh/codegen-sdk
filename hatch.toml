@@ -75,7 +75,7 @@ packages = ["src/codegen"]
 [metadata.hooks.vcs.urls]
 Homepage = "https://www.codegen.com/"
 Repository = "https://github.com/codegen-sh/codegen-sdk"
-download = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash}.zip"
+Download = "https://github.com/codegen-sh/codegen-sdk/archive/{commit_hash}.zip"
 Changelog = "https://docs.codegen.com/changelog/changelog"
 Releasenotes = "https://github.com/codegen-sh/codegen-sdk/releases"
 Issues = "https://github.com/codegen-sh/codegen-sdk/issues"

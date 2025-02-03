@@ -84,15 +84,11 @@ commands:
             - $GITHUB_WORKSPACE
           key: v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
   build-wheels:
-    parameters:
-      base_packages:
-        type: boolean
-        default: false
     steps:
     - install-uv
     - restore_cache:
         keys:
-          - cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}
+          - cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}-{{ arch }}
     - run:
         command: |
           uv run --frozen cibuildwheel --output-dir dist
@@ -102,7 +98,7 @@ commands:
     - save_cache:
         paths:
           - /home/circleci/.cache/cibuildwheel
-        key: cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}
+        key: cibuildwheel-cache-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_JOB }}-{{ checksum "uv.lock" }}--{{ checksum "pyproject.toml" }}-{{ arch }}
   setup-uv:
     steps:
     - install-lfs
@@ -121,27 +117,14 @@ commands:
           - ~/.cache/uv
         key: uv-cache-1-<<pipeline.parameters.python_version>>-{{ .Environment.CIRCLE_WORKING_DIRECTORY }}-{{ arch }}-{{ checksum "uv.lock" }}
     - setup-lfs
-  setup-pre-commit:
-    steps:
-      - restore_cache:
-          keys:
-            - pre-commit-cache-<<pipeline.parameters.python_version>>-{{ checksum ".pre-commit-config.yaml" }}
-      - run:
-          command: uv run --frozen pre-commit install-hooks
-          name: Install pre-commit hooks
-      - save_cache:
-          paths:
-            - ~/.cache/pre-commit
-            - ~/.cache/uv
-          key: pre-commit-cache-<<pipeline.parameters.python_version>>-{{ checksum ".pre-commit-config.yaml" }}
   upload-tests:
       steps:
         - store_test_results:
             path: build/test-results/test/TEST.xml
-        # - codecov/upload:
-        #     binary: ../root/.local/bin/codecovcli
-        #     files: build/test-results/test/TEST.xml
-        #     report_type: test_results
+        - codecov/upload:
+            binary: ../root/.local/bin/codecovcli
+            files: build/test-results/test/TEST.xml
+            report_type: test_results
   run_ats:
       parameters:
         default_tests:
@@ -181,7 +164,7 @@ commands:
                     TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
                     echo $TESTS_TO_RUN
                     echo $TESTS_TO_RUN | circleci tests run --command "xargs uv run --frozen pytest --cov \
-                    -o junit_suite_name="${CIRCLE_JOB}" \
+                    -o junit_suite_name="${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}" \
                     -n auto \
                     -vv \
                     --cov \
@@ -197,7 +180,7 @@ commands:
                     cat codecov_ats/tests_to_run.txt | xargs uv run --frozen pytest \
                     --cov \
                     -vv \
-                    -o junit_suite_name="${CIRCLE_JOB}" \
+                    -o junit_suite_name="${CIRCLE_JOB}-${CIRCLE_NODE_INDEX}" \
                     -n auto \
                     --cov-append \
                     <<parameters.collect_args>>
@@ -205,13 +188,14 @@ commands:
         - codecov/upload:
             flags: <<parameters.codecov_flags>>
             plugins: pycoverage,compress-pycoverage
+            files: coverage.codecov.json
  # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
   unit-tests:
-    parallelism: 3
+    parallelism: 8
     executor: default_image
-    resource_class: "2xlarge"
+    resource_class: "xlarge"
     steps:
     - setup-uv
     - node/install:
@@ -322,25 +306,11 @@ jobs:
               channel: "alerts-parse-tests"
               template: basic_fail_1
 
-  pre-commit:
-    executor: default_image
-    resource_class: 2xlarge
-    steps:
-      - setup-uv
-      - node/install:
-          use-nvm-cache: true
-      - setup-pre-commit
-      - run:
-          command: uv run --frozen pre-commit run --all-files --show-diff-on-failure --color=always
-          name: run pre-commit
   linux-wheels:
     parameters:
       resource_class:
         type: string
         default: "large"
-      base_packages:
-        type: boolean
-        default: false
     working_directory: ~/linux-wheels
     machine:
       image: ubuntu-2404:2024.05.1
@@ -348,8 +318,7 @@ jobs:
     resource_class: <<parameters.resource_class>>
     steps:
       - checkout
-      - build-wheels:
-          base_packages: << parameters.base_packages >>
+      - build-wheels
       - persist_to_workspace:
           root: .
           paths:
@@ -403,106 +372,20 @@ jobs:
         channel: "release"
         template: success_tagged_deploy_1
 workflows:
-  develop-checks:
-    jobs:
-      - hold-parse-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - parse-tests:
-          name: Manual-Parse-Tests
-          filters:
-            branches:
-              ignore: develop
-          context:
-            - GHE
-          requires:
-            - hold-parse-tests
-          matrix:
-            parameters:
-              extra_repos: [true, false]
-      # - parse-tests:
-      #     context:
-      #       - GHE
-      #       - slack
-      #     filters:
-      #       branches:
-      #         only: develop
-      #     extra_repos: true
-      - parse-tests:
-          name: oss-parse-tests
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          extra_repos: false
-      - oss-codemod-tests:
-          name: oss-codemod-tests
-          context:
-            - GHE
-            - slack
-          filters:
-            branches:
-              only: develop
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [small, large]
   pr_checks:
     jobs:
       - unit-tests
       - integration-tests
-      - hold-codemod-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - hold-large-oss-codemod-tests:
-          type: approval
-          filters:
-            branches:
-              ignore: develop
-      - codemod-tests:
-          context:
-            - GHE
-            - Codemod
-            - slack
-          requires:
-            - hold-codemod-tests
-      - pre-commit
-      - doctests
-      # - oss-codemod-tests:
-      #     filters:
-      #       branches:
-      #         ignore: develop
-      #     context:
-      #       - GHE
-      #       - slack
-      #     matrix:
-      #       parameters:
-      #         sync_graph: [true, false]
-      #         size: [small]
-      - oss-codemod-tests:
-          name: large-oss-codemod-tests
-          context:
-            - GHE
-            - slack
-          matrix:
-            parameters:
-              sync_graph: [true, false]
-              size: [large]
-          requires:
-            - hold-large-oss-codemod-tests
   publish-packages:
     jobs:
       - linux-wheels:
           filters:
             tags:
               only: /^v.*/
-          base_packages: true
+          matrix:
+            parameters:
+              resource_class: [large, arm.large]
+
       - osx-wheels:
           filters:
             tags:

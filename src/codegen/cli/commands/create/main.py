@@ -86,23 +86,24 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
         return
 
     rich.print("")  # Add a newline before output
-
+    response = None
     try:
         if description:
             # Use API to generate implementation
             with create_spinner("Generating function (using LLM, this will take ~10s)") as status:
                 response = RestAPI(session.token).create(name=name, query=description)
                 code = convert_to_cli(response.code, session.language, name)
+                prompt_path.parent.mkdir(parents=True, exist_ok=True)
+                prompt_path.write_text(response.context)
         else:
             # Use default implementation
             code = DEFAULT_CODEMOD.format(name=name)
 
-        # Create the target directory if needed
-        codemod_path.parent.mkdir(parents=True, exist_ok=True)
+            # Create the target directory if needed
+            codemod_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write the function code
-        codemod_path.write_text(code)
-        prompt_path.write_text(response.context)
+            # Write the function code
+            codemod_path.write_text(code)
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))
@@ -112,8 +113,8 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
     rich.print("")
     rich.print("📁 Files Created:")
     rich.print(f"   [dim]Function:[/dim]  {make_relative(codemod_path)}")
-    if description and response.context:
-        rich.print(f"   [dim]Prompt:[/dim]    {make_relative(prompt_path)}")
+    if description and response and response.context:
+        rich.print(f"   [dim]Prompt:[/dim]    {description}")
 
     # Next steps
     rich.print("\n[bold]What's next?[/bold]\n")

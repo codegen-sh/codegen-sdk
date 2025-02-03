@@ -36,6 +36,9 @@ class TSLabeledStatement(Statement[Parent], HasName, Generic[Parent]):
     ```
     emptyStatement: { pass }
     ```
+
+    Attributes:
+        body: The body of the labeled statement, which can be an Expression or None.
     """
 
     statement_type = StatementType.LABELED_STATEMENT

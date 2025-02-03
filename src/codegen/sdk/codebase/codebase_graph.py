@@ -457,35 +457,40 @@ class CodebaseGraph:
         # Step 8: Add internal import resolution edges for new and updated files
         if not skip_uncache:
             uncache_all()
-        self._computing = True
-        try:
-            logger.info(f"> Computing import resolution edges for {counter[NodeType.IMPORT]} imports")
-            for node in to_resolve:
-                if node.node_type == NodeType.IMPORT:
-                    node._remove_internal_edges(EdgeType.IMPORT_SYMBOL_RESOLUTION)
-                    node.add_symbol_resolution_edge()
-                    to_resolve.extend(node.symbol_usages)
-            if counter[NodeType.EXPORT] > 0:
-                logger.info(f"> Computing export dependencies for {counter[NodeType.EXPORT]} exports")
-                for node in to_resolve:
-                    if node.node_type == NodeType.EXPORT:
-                        node._remove_internal_edges(EdgeType.EXPORT)
-                        node.compute_export_dependencies()
-                        to_resolve.extend(node.symbol_usages)
-            if counter[NodeType.SYMBOL] > 0:
-                from codegen.sdk.core.interfaces.inherits import Inherits
 
-                logger.info("> Computing superclass dependencies")
-                for symbol in to_resolve:
-                    if isinstance(symbol, Inherits):
-                        symbol._remove_internal_edges(EdgeType.SUBCLASS)
-                        symbol.compute_superclass_dependencies()
-
-            if not skip_uncache:
-                uncache_all()
-            self._compute_dependencies(to_resolve, incremental)
-        finally:
+        if self.config.feature_flags.disable_graph:
+            logger.warning("Graph generation is disabled. Skipping import and symbol resolution")
             self._computing = False
+        else:
+            self._computing = True
+            try:
+                logger.info(f"> Computing import resolution edges for {counter[NodeType.IMPORT]} imports")
+                for node in to_resolve:
+                    if node.node_type == NodeType.IMPORT:
+                        node._remove_internal_edges(EdgeType.IMPORT_SYMBOL_RESOLUTION)
+                        node.add_symbol_resolution_edge()
+                        to_resolve.extend(node.symbol_usages)
+                if counter[NodeType.EXPORT] > 0:
+                    logger.info(f"> Computing export dependencies for {counter[NodeType.EXPORT]} exports")
+                    for node in to_resolve:
+                        if node.node_type == NodeType.EXPORT:
+                            node._remove_internal_edges(EdgeType.EXPORT)
+                            node.compute_export_dependencies()
+                            to_resolve.extend(node.symbol_usages)
+                if counter[NodeType.SYMBOL] > 0:
+                    from codegen.sdk.core.interfaces.inherits import Inherits
+
+                    logger.info("> Computing superclass dependencies")
+                    for symbol in to_resolve:
+                        if isinstance(symbol, Inherits):
+                            symbol._remove_internal_edges(EdgeType.SUBCLASS)
+                            symbol.compute_superclass_dependencies()
+
+                if not skip_uncache:
+                    uncache_all()
+                self._compute_dependencies(to_resolve, incremental)
+            finally:
+                self._computing = False
 
     def _compute_dependencies(self, to_update: list[Importable], incremental: bool):
         seen = set()

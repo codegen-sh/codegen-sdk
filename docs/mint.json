@@ -2,11 +2,26 @@
 	"$schema": "https://mintlify.com/schema.json",
 	"name": "Codegen",
 	"logo": {
-		"dark": "/logo/dark.svg",
-		"light": "/logo/light.svg"
+		"dark": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45a3e32761c42b324b_Codegen_Logomark_Dark.svg",
+		"light": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45bf55446746125835_Codegen_Logomark_Light.svg"
 	},
 	"modeToggle": {
 		"default": "dark"
+	},
+	"metadata": {
+		"og:site_name": "Codegen",
+		"og:title": "Codegen - Manipulate Code at Scale",
+		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
+		"og:url": "https://docs.codegen.com",
+		"og:image": "https://i.imgur.com/ttPWzlG.jpeg",
+		"og:locale": "en_US",
+		"og:logo": "https://i.imgur.com/f4OVOqI.png",
+		"article:publisher": "Codegen, Inc.",
+		"twitter:title": "Codegen - Manipulate Code at Scale",
+		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
+		"twitter:url": "https://docs.codegen.com",
+		"twitter:image": "https://i.imgur.com/ttPWzlG.jpeg",
+		"twitter:site": "@codegen"
 	},
 	"favicon": "/favicon.svg",
 	"colors": {
@@ -58,10 +73,12 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
-				"introduction/guiding-principles",
-				"introduction/how-it-works",
-				"introduction/community",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/work-with-ai",
+				"introduction/how-it-works",
+				"introduction/guiding-principles",
+				"introduction/community",
 				"introduction/about",
 				"introduction/faq"
 			]
@@ -71,18 +88,20 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/migrating-apis",
+				"tutorials/codebase-visualization",
+				"tutorials/training-data",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
+				"tutorials/manage-feature-flags",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
-				"tutorials/training-data",
-				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",
 				"tutorials/creating-documentation",
 				"tutorials/react-modernization",
 				"tutorials/unittest-to-pytest",
 				"tutorials/sqlalchemy-1.6-to-2.0",
+				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
 				"tutorials/flask-to-fastapi"
 			]
@@ -94,6 +113,7 @@
 				"building-with-codegen/parsing-codebases",
 				"building-with-codegen/reusable-codemods",
 				"building-with-codegen/dot-codegen",
+				"building-with-codegen/function-decorator",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
@@ -129,6 +149,7 @@
 				"cli/notebook",
 				"cli/create",
 				"cli/run",
+				"cli/reset",
 				"cli/expert"
 			]
 		},

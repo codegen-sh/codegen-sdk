@@ -45,15 +45,14 @@ Parent = TypeVar("Parent", bound="AssignmentStatement | ExportStatement")
 class Assignment(Symbol[Parent, ...], Typeable[Parent, ...], HasValue, Generic[Parent]):
     """Represents an assignment for a single variable within an assignment statement.
 
-    Attributes:
-        left: The left side of the assignment
-        right: The right side of the assignment
-
     Example:
         ```typescript
         var z
         var z = 5
         ```
+
+    Attributes:
+        symbol_type: The type of symbol, set to SymbolType.GlobalVar.
     """
 
     _left: Expression[Self]

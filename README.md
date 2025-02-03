@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <img src="https://github.com/user-attachments/assets/fdb2cd83-9967-41c2-a93d-cddff267ac79" />
+    <img src="https://i.imgur.com/6RF9W0z.jpeg" />
   </a>
 </p>
 
@@ -12,18 +12,17 @@
 
 <div align="center">
 
-[![PyPI](https://img.shields.io/pypi/v/codegen?style=flat-square&color=blue)](https://pypi.org/project/codegen/)
-[![Documentation](https://img.shields.io/badge/docs-docs.codegen.com-purple?style=flat-square)](https://docs.codegen.com)
-[![Slack Community](https://img.shields.io/badge/slack-community-4A154B?logo=slack&style=flat-square)](https://community.codegen.com)
+[![PyPI](https://img.shields.io/badge/PyPi-codegen-gray?style=flat-square&color=blue)](https://pypi.org/project/codegen/)
+[![Documentation](https://img.shields.io/badge/Docs-docs.codegen.com-purple?style=flat-square)](https://docs.codegen.com)
+[![Slack Community](https://img.shields.io/badge/Slack-Join-4A154B?logo=slack&style=flat-square)](https://community.codegen.com)
 [![License](https://img.shields.io/badge/Code%20License-Apache%202.0-gray?&color=gray)](https://github.com/codegen-sh/codegen-sdk/tree/develop?tab=Apache-2.0-1-ov-file)
-[![Follow on X](https://img.shields.io/twitter/follow/codegen?style=social)](https://x.com/codegen) 
+[![Follow on X](https://img.shields.io/twitter/follow/codegen?style=social)](https://x.com/codegen)
 
 </div>
 
 <br />
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
-
 
 ```python
 from codegen import Codebase
@@ -37,12 +36,21 @@ for function in codebase.functions:
     # Comprehensive static analysis for references, dependencies, etc.
     if not function.usages:
         # Auto-handles references and imports to maintain correctness
-        function.move_to_file('deprecated.py')
+        function.move_to_file("deprecated.py")
 ```
+
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ## Installation and Usage
-This library requires **Python 3.12 – 3.13**. Currently, Codegen only supports macOS.
+
+We support
+
+- Running Codegen in Python 3.12 – 3.13
+- macOS and Linux
+  - macOS is supported on Apple Silicon
+  - Linux is supported on x86_64 and aarch64 with glibc 2.34+
+  - Windows is not supported
+- Python, Typescript, Javascript and React codebases
 
 ```
 # Install inside existing project
@@ -76,6 +84,7 @@ from codegen import Codebase
 - [Docs](https://docs.codegen.com)
 - [Getting Started](https://docs.codegen.com/introduction/getting-started)
 - [Contributing](CONTRIBUTING.md)
+- [Contact Us](https://codegen.com/contact)
 
 ## Why Codegen?
 
@@ -92,3 +101,7 @@ We built Codegen backwards from real-world refactors performed on enterprise cod
 ## Contributing
 
 Please see our [Contributing Guide](CONTRIBUTING.md) for instructions on how to set up the development environment and submit contributions.
+
+## Enterprise
+
+For more information on enterprise engagements, please [contact us](https://codegen.com/contact) or [request a demo](https://codegen.com/request-demo).

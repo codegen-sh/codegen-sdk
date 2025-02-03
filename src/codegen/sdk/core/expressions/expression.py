@@ -13,7 +13,11 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class Expression(Editable[Parent], Generic[Parent]):
-    """Represents an arbitrary Expression, such as List, Dict, Binary Expression, String."""
+    """Represents an arbitrary Expression, such as List, Dict, Binary Expression, String.
+
+    Attributes:
+        node_type: The type of the node, set to NodeType.EXPRESSION.
+    """
 
     node_type: NodeType = NodeType.EXPRESSION
 
