@@ -3,6 +3,7 @@
 ## Development
 
 From within the `docs/` subdirectory:
+
 ```bash
 npm i -g mintlify
 mintlify dev --port 3333
