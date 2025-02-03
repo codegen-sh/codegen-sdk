@@ -44,6 +44,7 @@ runs:
           --benchmark-json build/test-results/test/benchmark-data.json
           ${{ inputs.extra_args }}
           --benchmark-only
+          --dist=no
         codecov_token: ${{ inputs.codecov_token }}
 
     - uses: actions/cache@v4

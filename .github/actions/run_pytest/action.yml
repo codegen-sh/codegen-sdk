@@ -31,6 +31,7 @@ runs:
       run: |
         uv run pytest \
           -o junit_suite_name="${{ inputs.suite_name || github.job }}" \
+          -n=auto \
           --timeout=$((${{ inputs.timeout }} * 60)) \
           ${{ inputs.extra_args }} \
           ${{ inputs.test_path }}
