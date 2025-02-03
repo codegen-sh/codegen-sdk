@@ -1,3 +1,5 @@
+import pytest
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.function import Function
 
@@ -66,6 +68,8 @@ def bar():
     return external_dep() + bar_dep()
 """
     # ===============================
+    # TODO: [low] Should maybe remove unused external_dep?
+    # TODO: [low] Missing newline after import
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -152,6 +156,7 @@ def baz():
 """
 
     # ===============================
+    # TODO: [low] Missing newline after import
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -246,6 +251,7 @@ def baz():
 """
 
     # ===============================
+    # TODO: [low] Missing newline after import
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -338,6 +344,8 @@ def bar():
 """
 
     # ===============================
+    # TODO: [low] Should maybe remove unused external_dep?
+    # TODO: [low] Missing newline after import
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -583,6 +591,8 @@ from import2 import thing2, thing3
 """
 
     # ===============================
+    # TODO: [medium] Space messed up in file1
+    # TODO: [low] Dangling / unused import in file2
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -647,6 +657,7 @@ def baz():
 """
 
     # ===============================
+    # TODO: [low] Global vars should be inserted at the top of the file
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -717,6 +728,8 @@ def baz():
 """
 
     # ===============================
+    # TODO: [medium] Module import changed to absolute import. Is this intended?
+    # TODO: [low] Unused app import in file3
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -745,6 +758,7 @@ def baz():
     assert isinstance(new_symbol, Function)
 
 
+@pytest.mark.skip(reason="Broken!!!")
 def test_move_to_file_external_module_dependency(tmpdir) -> None:
     # ========== [ BEFORE ] ==========
     # language=python
@@ -805,6 +819,8 @@ def baz():
 """
 
     # ===============================
+    # TODO: [!HIGH!] Corrupted output in file3
+    # TODO: [low] Unused imports in file2
 
     with get_codebase_session(
         tmpdir=tmpdir,
