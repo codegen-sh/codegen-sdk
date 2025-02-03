@@ -9,7 +9,7 @@ from codegen.sdk.core.interfaces.has_block import HasBlock
 from codegen.sdk.core.interfaces.inherits import Inherits
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.autocommit import commiter
-from codegen.shared.decorators.docs import noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.class_definition import Class
@@ -26,6 +26,7 @@ TFunction = TypeVar("TFunction", bound="Function")
 TType = TypeVar("TType", bound="Type")
 
 
+@apidoc
 class Interface(Inherits, HasBlock, HasAttribute[TAttribute], Generic[TCodeBlock, TAttribute, TFunction, TType]):
     """Abstract representation of an Interface class.
 
