@@ -9,17 +9,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install LFS
-      shell: bash
-      run: |
-        apt update && apt install -y git-lfs
-        git lfs install
-
-    - name: Setup LFS
-      shell: bash
-      run: |
-        ./scripts/setup-lfs.sh
-
     - name: Install UV
       uses: astral-sh/setup-uv@v5.2
       id: setup-uv
@@ -28,11 +17,13 @@ runs:
         prune-cache: false
         python-version: ${{ inputs.python-version }}
         version: '0.5.20'
-        cache-suffix: ${{inputs.python-version}}
+        cache-suffix: ${{ inputs.python-version }}
+
     - name: Install dependencies
       shell: bash
       run: |
         uv sync --frozen --all-extras
+
     - name: Install codecov
       shell: bash
       run: |
