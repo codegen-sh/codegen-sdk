@@ -59,4 +59,4 @@ runs:
         alert-threshold: ${{ inputs.alert_threshold }}
         comment-on-alert: true
         fail-on-alert: true
-        github-stoken: ${{ inputs.github_token }}
+        github-token: ${{ inputs.github_token }}
