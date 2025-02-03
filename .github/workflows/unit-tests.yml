@@ -146,4 +146,4 @@ jobs:
           test_path: tests/integration/codegen
           timeout: 5
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--dist=loadgroup -n auto"
+          extra_args: "--dist=loadgroup -n auto"
