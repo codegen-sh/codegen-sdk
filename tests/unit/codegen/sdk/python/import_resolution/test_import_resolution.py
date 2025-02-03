@@ -310,3 +310,34 @@ b.c.d()
         call_sites = d_func.call_sites
         assert len(call_sites) == 1
         assert call_sites[0].file == consumer_file
+
+
+def test_import_resolution_module_attribute_access(tmpdir: str) -> None:
+    """Tests that function usages are detected when accessed via module attribute notation"""
+    # language=python
+    with get_codebase_session(
+        tmpdir,
+        files={
+            "a/b/module.py": """
+def some_func():
+    pass
+""",
+            "consumer.py": """
+from a.b import module
+
+module.some_func()
+""",
+        },
+    ) as codebase:
+        module_file: SourceFile = codebase.get_file("a/b/module.py")
+        consumer_file: SourceFile = codebase.get_file("consumer.py")
+
+        # Verify function call resolution
+        some_func = module_file.get_function("some_func")
+        call_sites = some_func.call_sites
+        assert len(call_sites) == 1
+        assert call_sites[0].file == consumer_file
+
+        # Verify usages are detected
+        assert len(some_func.usages) > 0
+        assert len(some_func.symbol_usages) > 0
