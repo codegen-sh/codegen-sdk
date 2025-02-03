@@ -39,13 +39,13 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 def external_dep():
     return 42
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from file1 import external_dep
 
 def foo():
@@ -56,7 +56,7 @@ def foo_dep():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file1 import external_dep
 def baz():
     return bar() + 1
@@ -86,9 +86,9 @@ def bar():
         bar = file2.get_function("bar")
         bar.move_to_file(file3, include_dependencies=True, strategy="update_all_imports")
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
 
 def test_move_to_file_update_all_imports_include_dependencies(tmpdir) -> None:
@@ -126,7 +126,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 def foo():
     return 1
 
@@ -141,14 +141,14 @@ def bar():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 def xyz():
     '''should stay'''
     return 3
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file1 import bar
 def baz():
     '''uses bar'''
@@ -173,9 +173,9 @@ def baz():
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar")
@@ -219,7 +219,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 from file2 import abc
 
 def foo():
@@ -232,7 +232,7 @@ def bar():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 def abc():
     '''dependency, DOES NOT GET MOVED'''
     return 'abc'
@@ -243,7 +243,7 @@ def xyz():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file1 import bar
 def baz():
     '''uses bar'''
@@ -268,9 +268,9 @@ def baz():
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=False)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar")
@@ -314,13 +314,13 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 def external_dep():
     return 42
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from file1 import external_dep
 
 def foo():
@@ -331,7 +331,7 @@ def foo_dep():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file1 import external_dep
 def baz():
     return bar() + 1
@@ -362,9 +362,9 @@ def bar():
         bar = file2.get_function("bar")
         bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
 
 def test_move_to_file_add_back_edge_including_dependencies(tmpdir) -> None:
@@ -402,7 +402,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 def foo():
     return 1
 
@@ -417,7 +417,7 @@ def bar():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from file1 import bar
 
 def xyz():
@@ -426,7 +426,7 @@ def xyz():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file2 import bar
 
 def baz():
@@ -451,9 +451,9 @@ def baz():
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar")
@@ -497,7 +497,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 from file2 import abc
 
 def foo():
@@ -510,7 +510,7 @@ def bar():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from file1 import bar
 
 def abc():
@@ -523,7 +523,7 @@ def xyz():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 from file2 import bar
 
 def baz():
@@ -548,9 +548,9 @@ def baz():
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar")
@@ -575,7 +575,7 @@ GLOBAL = thing1(thing2, arg=thing3)
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 from import1 import thing1
 from import2 import thing2, thing3
 
@@ -585,7 +585,7 @@ GLOBAL = thing1(thing2, arg=thing3)
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from import1 import thing1
 from import2 import thing2, thing3
 """
@@ -607,8 +607,8 @@ from import2 import thing2, thing3
         global_symbol = file2.get_symbol("GLOBAL")
         global_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
 
 
 def test_move_to_file_with_imports(tmpdir) -> None:
@@ -635,7 +635,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 from import1 import thing1
 
 def foo():
@@ -648,7 +648,7 @@ def bar():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from import1 import thing1
 from import2 import thing2
 
@@ -672,8 +672,8 @@ def baz():
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
 
 
 def test_move_to_file_module_import(tmpdir) -> None:
@@ -703,7 +703,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 def foo_func():
     return 1
 
@@ -713,11 +713,11 @@ def bar_func():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 # module import of symbol to move
 from app.file1 import bar_func
 from app import file2
@@ -747,9 +747,9 @@ def baz():
         assert bar_func_symbol
         bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar_func")
@@ -790,7 +790,7 @@ def baz():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 from app.file1 import foo_func
 
 def foo_func():
@@ -803,13 +803,13 @@ def bar_func():
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from app.file1 import foo_func
 from typing import Optional
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 # module import of symbol to movefrom app.file1 import bar_func
 
 
@@ -838,9 +838,9 @@ def baz():
         assert bar_func_symbol
         bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
 
     # Check new symbol
     new_symbol = file1.get_symbol("bar_func")
@@ -862,11 +862,11 @@ def bar():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 def bar():
     return foo() + 1
 
@@ -889,8 +889,8 @@ def foo():
         file2 = codebase.create_file("file2.py", "")
         foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge")
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
 
 
 def test_move_to_file_update_all_imports_multi(tmpdir) -> None:
@@ -931,11 +931,11 @@ def bar_dep():
 
     # ========== [ AFTER ] ==========
     # language=python
-    FILE_1_CONTENT_AFTER = """
+    EXPECTED_FILE_1_CONTENT = """
 """
 
     # language=python
-    FILE_2_CONTENT_AFTER = """
+    EXPECTED_FILE_2_CONTENT = """
 from file3 import external_dep
 from file4 import external_dep2
 def foo():
@@ -952,7 +952,7 @@ def bar_dep():
 """
 
     # language=python
-    FILE_3_CONTENT_AFTER = """
+    EXPECTED_FILE_3_CONTENT = """
 def external_dep():
     return 42
 """
@@ -984,7 +984,7 @@ def external_dep2():
         d1.move_to_file(file3, include_dependencies=True, strategy="update_all_imports")
         d2.move_to_file(file4, include_dependencies=True, strategy="update_all_imports")
 
-    assert file1.content.strip() == FILE_1_CONTENT_AFTER.strip()
-    assert file2.content.strip() == FILE_2_CONTENT_AFTER.strip()
-    assert file3.content.strip() == FILE_3_CONTENT_AFTER.strip()
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
     assert file4.content.strip() == FILE_4_CONTENT_AFTER.strip()
