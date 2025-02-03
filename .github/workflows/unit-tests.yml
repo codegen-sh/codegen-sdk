@@ -116,7 +116,7 @@ jobs:
           uv run pytest \
             -n auto \
             -o junit_suite_name="${{github.job}}" \
-            tests/codemod/test_parse.py
+            tests/integration/codemod/test_parse.py
       - uses: ./.github/actions/report
         with:
           flag: no-flag
@@ -188,3 +188,8 @@ jobs:
         with:
           flag: integration-tests
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
+
+
+
+
+
