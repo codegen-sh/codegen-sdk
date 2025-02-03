@@ -11,6 +11,19 @@ on:
   workflow_dispatch:
 
 jobs:
+  benchmark-tests:
+    runs-on: ubuntu-latest-16
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+      - name: Run benchmark tests
+        uses: ./.github/actions/run_benchmark
+        with:
+          test_path: tests/benchmark
+          timeout: 5
+          codecov_token: ${{ secrets.CODECOV_TOKEN }}
+
   unit-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
@@ -28,6 +41,7 @@ jobs:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--timeout 5"
           codecov_flags: unit-tests
+
   codemod-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
@@ -62,34 +76,6 @@ jobs:
         env:
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 
-  # test_verified_codemods:
-  #   # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
-  #   if: false
-  #   runs-on: ubuntu-latest-32
-  #   environment: testing
-  #   concurrency:
-  #     group: ${{ github.workflow }}-${{github.ref}}-${{github.event_name == 'push'&& github.sha}}
-  #     cancel-in-progress: true
-  #   name: "Verified Codemod tests: Sync Graph=false"
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Setup backend
-  #       uses: ./.github/actions/setup-backend
-  #     - name: Run ATS and Tests
-  #       uses: ./.github/actions/run_ats
-  #       with:
-  #         default_tests: "tests/integration/codemod/test_verified_codemods.py"
-  #         codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-  #         codecov_token: ${{ secrets.CODECOV_TOKEN }}
-  #         collect_args: "--cli-api-key ${{ secrets.PROD_CLI_API_KEY }} --token ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}"
-  #         ats_collect_args: "--cli-api-key=${{ secrets.PROD_CLI_API_KEY }},--token=${{ secrets.CODEGEN_BOT_GHE_TOKEN }},"
-  #         base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
-  #         job_name: ${{ github.job }}
-  #         codecov_flags: smart-tests-verified-codemod-tests
-  #       env:
-  #         CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
-  #         GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-
   parse-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
@@ -99,44 +85,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-
       - name: Cache oss-repos
         uses: ./.github/actions/setup-oss-repos
-
       - name: Install yarn and pnpm
         run: |
           npm install -g yarn &
           npm install -g pnpm
-
-      - name: Test with pytest
-        timeout-minutes: 15
-        env:
-          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-        run: |
-          uv run pytest \
-            -n auto \
-            -o junit_suite_name="${{github.job}}" \
-            --benchmark-json build/test-results/test/benchmark-data.json \
-            tests/integration/codemod/test_parse.py
-            - name: Store benchmark result
-            - name: Download previous benchmark data
-      - uses: actions/cache@v4
+      - name: Run benchmark tests
+        uses: ./.github/actions/run_benchmark
         with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark
-
-      - uses: benchmark-action/github-action-benchmark@v1
-        with:
-          name: Python Benchmark with pytest-benchmark
-          tool: 'pytest'
-          output-file-path: build/test-results/test/benchmark-data.json
-          external-data-json-path: ./cache/benchmark-data.json
-          alert-threshold: '101%'
-          comment-on-alert: true
-          fail-on-alert: true
-      - uses: ./.github/actions/report
-        with:
-          flag: no-flag
+          test_path: tests/integration/codemod/test_parse.py
+          timeout: 15
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
       - name: Notify parse tests failure
         uses: slackapi/slack-github-action@v2.0.0
@@ -173,70 +132,16 @@ jobs:
                 }
               ]
             }
-      #  test_codemod_diffs:
-      #    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
-      #    runs-on: ubuntu-latest-16
-      #
-      #    steps:
-      #      - uses: actions/checkout@v4
-      #      - name: Setup backend
-      #        uses: ./.github/actions/setup-backend
-      #      - name: Cache oss-repos
-      #        uses: ./.github/actions/setup-oss-repos
-      #        with:
-      #          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
-      #      - name: Test with pytest
-      #        timeout-minutes: 10
-      #        run: |
-      #          ENV=local \
-      #          uv run pytest \
-      #            -n auto \
-      #            -vv \
-      #            --token $CODEGEN_BOT_GHE_TOKEN \
-      #            tests/codemod/test_diffs.py
-      #        env:
-      #          CODEGEN_BOT_GHE_TOKEN: ${{ secrets.CODEGEN_BOT_GHE_TOKEN }}
-      #          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-      #
-      #      - name: Publish Test Report (Verify diffs)
-      #        uses: mikepenz/action-junit-report@v4
-      #        if: (success() || failure()) # always publish report even if the tests fail
-      #        continue-on-error: true
-      #        with:
-      #          report_paths: "**/build/test-results/test/TEST.xml"
-      #          detailed_summary: true
-      #          annotate_only: true
 
-      # # Codecov is a required check but won't pass without a coverage report
-      # # Wwhen there are no changes in the backend (ex: frontend only change) we do an empty upload to force the check to pass
-      # - name: Upload empty coverage report to Codecov
-      #   if: env.skip == '0'
-      #   continue-on-error: true
-      #   env:
-      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      #   run: |
-      #     cd codegen-backend
-      #     pip install codecov-cli
-      #     codecovcli create-commit -C ${{ github.event.pull_request.head.sha }}
-      #     codecovcli create-report -C ${{ github.event.pull_request.head.sha }}
-      #     codecovcli do-upload --disable-search --file empty_coverage.xml -C ${{ github.event.pull_request.head.sha }}
-      #     codecovcli empty-upload --force -C ${{ github.event.pull_request.head.sha }}
   integration-tests:
     runs-on: ubuntu-latest-16
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-      - name: Test with pytest
-        timeout-minutes: 5
-        env:
-          GITHUB_WORKSPACE: $GITHUB_WORKSPACE
-        run: |
-          uv run pytest \
-            -n auto \
-            -o junit_suite_name="${{github.job}}" \
-            tests/integration/codegen
-      - uses: ./.github/actions/report
+      - name: Run pytest
+        uses: ./.github/actions/run_pytest
         with:
-          flag: integration-tests
+          test_path: tests/integration/codegen
+          timeout: 5
           codecov_token: ${{ secrets.CODECOV_TOKEN }}

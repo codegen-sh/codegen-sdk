@@ -1,0 +1,54 @@
+name: 'Run Benchmark'
+description: 'Run pytest with benchmarking and process results'
+
+inputs:
+  test_path:
+    description: 'Path to test files to run'
+    required: true
+  timeout:
+    description: 'Timeout in minutes'
+    required: false
+    default: '10'
+  suite_name:
+    description: 'Name of the test suite'
+    required: false
+    default: ${{ github.job }}
+  extra_args:
+    description: 'Additional pytest arguments'
+    required: false
+    default: ''
+  alert_threshold:
+    description: 'Alert threshold percentage'
+    required: false
+    default: '101%'
+  codecov_token:
+    description: 'Token for uploading to codecov'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: ./.github/actions/run_pytest
+      with:
+        test_path: ${{ inputs.test_path }}
+        timeout: ${{ inputs.timeout }}
+        suite_name: ${{ inputs.suite_name }}
+        extra_args: >-
+          --benchmark-json build/test-results/test/benchmark-data.json
+          ${{ inputs.extra_args }}
+        codecov_token: ${{ inputs.codecov_token }}
+
+    - uses: actions/cache@v4
+      with:
+        path: ./cache
+        key: ${{ runner.os }}-benchmark
+
+    - uses: benchmark-action/github-action-benchmark@v1
+      with:
+        name: Python Benchmark with pytest-benchmark
+        tool: pytest
+        output-file-path: build/test-results/test/benchmark-data.json
+        external-data-json-path: ./cache/benchmark-data.json
+        alert-threshold: ${{ inputs.alert_threshold }}
+        comment-on-alert: true
+        fail-on-alert: true

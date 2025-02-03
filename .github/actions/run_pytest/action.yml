@@ -1,0 +1,43 @@
+name: 'Run Pytest'
+description: 'Run pytest with configurable parameters'
+
+inputs:
+  test_path:
+    description: 'Path to test files to run'
+    required: true
+  timeout:
+    description: 'Timeout in minutes'
+    required: false
+    default: '10'
+  suite_name:
+    description: 'Name of the test suite'
+    required: false
+    default: ${{ github.job }}
+  extra_args:
+    description: 'Additional pytest arguments'
+    required: false
+    default: ''
+  codecov_token:
+    description: 'Token for uploading to codecov'
+    required: false
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Test with pytest
+      shell: bash
+      env:
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+      run: |
+        uv run pytest \
+          -n auto \
+          -o junit_suite_name="${{ inputs.suite_name || github.job }}" \
+          --timeout=$((${{ inputs.timeout }} * 60)) \
+          ${{ inputs.extra_args }} \
+          ${{ inputs.test_path }}
+
+    - uses: ./.github/actions/report
+      if: inputs.codecov_token != ''
+      with:
+        flag: no-flag
+        codecov_token: ${{ inputs.codecov_token }}
