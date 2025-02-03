@@ -27,7 +27,6 @@ jobs:
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--timeout 50"
-          job_name: ${{ github.job }}
           codecov_flags: smart-tests
   test_codemods:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
@@ -59,7 +58,6 @@ jobs:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--size=${{matrix.size}} --sync-graph=${{matrix.sync_graph}}"
           ats_collect_args: "--size=${{matrix.size}},--sync-graph=${{matrix.sync_graph}},"
-          job_name: ${{ github.job }}
           codecov_flags: smart-tests-codemod-tests-${{matrix.size}}-${{matrix.sync_graph}}
         env:
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
@@ -185,6 +183,4 @@ jobs:
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--timeout 50"
-          base_sha: ${{github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before}}
-          job_name: ${{ github.job }}
           codecov_flags: smart-tests-integration-tests

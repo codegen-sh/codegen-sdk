@@ -23,9 +23,6 @@ inputs:
     description: 'Flags for codecov upload'
     required: false
     default: 'smart-tests'
-  job_name:
-    description: 'Name of the job for junit reporting'
-    required: true
 
 runs:
   using: "composite"
@@ -49,7 +46,7 @@ runs:
       run: |
         TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
         echo $TESTS_TO_RUN | xargs uv run pytest --cov \
-          -o junit_suite_name="${{ inputs.job_name }}" \
+          -o junit_suite_name="${{ github.job }}" \
           -n auto \
           -vv \
           --cov \
