@@ -55,6 +55,12 @@ flag_management:
       statuses:
         - type: 'project'
         - type: 'patch'
+    - name: smart-tests-integration-tests
+      carryforward: true
+      carryforward_mode: 'labels'
+      statuses:
+        - type: 'project'
+        - type: 'patch'
 comment:
   layout: "condensed_header, condensed_files"
   hide_project_coverage: true

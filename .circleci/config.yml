@@ -66,23 +66,6 @@ commands:
           paths:
             - $GITHUB_WORKSPACE
           key: repos-<<parameters.extra_repos>>
-  fetch-verified-codemods:
-    steps:
-      - run:
-          command: |
-            uv run --frozen python -m tests.shared.codemod.commands fetch-verified-codemods --cli-api-key ${PROD_CLI_API_KEY}
-  cache-verified-codemod-repos:
-    steps:
-      - restore_cache:
-          keys:
-            - v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
-      - run:
-          command: |
-            uv run --frozen python -m tests.shared.codemod.commands clone-repos --verified-codemod-repos --token ${CODEGEN_BOT_GHE_TOKEN}
-      - save_cache:
-          paths:
-            - $GITHUB_WORKSPACE
-          key: v1-verified-codemod-repos-{{ checksum "tests/integration/verified_codemods/codemod_data/repo_commits.json" }}-{{.Environment.CIRCLE_NODE_INDEX}}-{{.Environment.CIRCLE_NODE_TOTAL}}
   build-wheels:
     steps:
     - install-uv
@@ -192,54 +175,6 @@ commands:
  # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/jobs-steps/#jobs-overview & https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  unit-tests:
-    parallelism: 8
-    executor: default_image
-    resource_class: "xlarge"
-    steps:
-    - setup-uv
-    - node/install:
-        use-nvm-cache: true
-    - run_ats:
-        default_tests: "tests/unit"
-        collect_args: --timeout 50
-  integration-tests:
-    executor: default_image
-    resource_class: "large"
-    steps:
-      - setup-uv
-      - run:
-          command: |
-            uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto tests/integration/codegen
-      - upload-tests
-  doctests:
-    executor: default_image
-    steps:
-    - setup-uv
-    - run:
-        command: |
-          uv run --frozen pytest -o junit_suite_name="${CIRCLE_JOB}" -n auto docs
-    - upload-tests
-  codemod-tests:
-    parallelism: 8
-    executor: default_vm
-    resource_class: "2xlarge+"
-    steps:
-    - install-uv
-    - setup-uv
-    - fetch-verified-codemods
-    - cache-verified-codemod-repos
-    - run_ats:
-        default_tests: "tests/integration/codemod/test_verified_codemods.py"
-        codecov_flags: "smart-tests-codemod"
-        collect_args: --cli-api-key ${PROD_CLI_API_KEY} --token ${CODEGEN_BOT_GHE_TOKEN}
-        ats_collect_args: --cli-api-key=${PROD_CLI_API_KEY},--token=${CODEGEN_BOT_GHE_TOKEN},
-        split_tests: false
-    - slack/notify:
-        event: fail
-        branch_pattern: "develop"
-        channel: "alerts-codemod-tests"
-        template: basic_fail_1
   oss-codemod-tests:
     parameters:
       sync_graph:
@@ -372,10 +307,6 @@ jobs:
         channel: "release"
         template: success_tagged_deploy_1
 workflows:
-  pr_checks:
-    jobs:
-      - unit-tests
-      - integration-tests
   publish-packages:
     jobs:
       - linux-wheels:

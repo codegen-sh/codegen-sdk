@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - "develop"
+  push:
+    branches:
+      - "develop"
 
 jobs:
   pre-commit:
@@ -23,10 +26,8 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
-
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-
       - name: Setup-pre-commit
         run: uv tool install pre-commit --with pre-commit-uv --force-reinstall
 
@@ -34,15 +35,14 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-
-      - run: uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }} --show-diff-on-failure --color=always
+          restore-keys: pre-commit
+      - run: uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }}
         shell: bash
         env:
-          SKIP: disallowed-words-check
+          SKIP: disallowed-words-check,circleci_validate
 
-    # TODO: add back in
-    #   - uses: stefanzweifel/git-auto-commit-action@v5
-    #     # Always commit changes even if pre-commit failed
-    #     if: always()
-    #     with:
-    #       commit_message: "Automated pre-commit update"
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        # Always commit changes even if pre-commit failed
+        if: always()
+        with:
+          commit_message: "Automated pre-commit update"
