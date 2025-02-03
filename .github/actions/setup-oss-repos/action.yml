@@ -15,7 +15,7 @@ runs:
       if: steps.cache-oss-repos.outputs.cache-hit != 'true'
       shell: bash
       run: |
-        uv run gs codemod clone-repos --clean-cache
+        uv run --frozen python -m tests.shared.codemod.commands clone-repos --clean-cache
       env:
         GITHUB_WORKSPACE: $GITHUB_WORKSPACE
     - name: Verify cache contents
