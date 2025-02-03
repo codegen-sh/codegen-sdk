@@ -12,10 +12,6 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
 
     steps:
       - name: Check out the repo
@@ -24,6 +20,7 @@ jobs:
           fetch-depth: 0
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.REPO_SCOPED_TOKEN }}
 
       - name: Setup backend
         uses: ./.github/actions/setup-backend
