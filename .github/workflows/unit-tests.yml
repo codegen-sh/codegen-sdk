@@ -94,7 +94,7 @@ jobs:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
     if: contains(github.event.pull_request.labels.*.name, 'parse-tests') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-
+    environment: parse-tests
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend
@@ -121,6 +121,41 @@ jobs:
         with:
           flag: no-flag
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Notify parse tests failure
+        uses: slackapi/slack-github-action@v2.0.0
+        if: failure() && github.event_name == 'push'
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "❌ Parse Tests Failed",
+                    "emoji": true
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Branch:* ${{ github.ref_name }}\n*Triggered by:* <${{ github.server_url }}/${{ github.actor }}|@${{ github.actor }}>\n\n*Details:*\n• <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
+                  }
+                },
+                {
+                  "type": "context",
+                  "elements": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "Failed at <!date^${{ github.event.head_commit.timestamp }}^{date_num} {time}|just now>"
+                    }
+                  ]
+                }
+              ]
+            }
       #  test_codemod_diffs:
       #    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
       #    runs-on: ubuntu-latest-16
