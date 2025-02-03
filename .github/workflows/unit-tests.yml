@@ -26,7 +26,7 @@ jobs:
           default_tests: "tests/unit"
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--timeout 50"
+          collect_args: "--timeout 5"
           codecov_flags: smart-tests
   test_codemods:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
