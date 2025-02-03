@@ -42,6 +42,7 @@ def test_codemods_parse(repo: Repo, op: RepoOperator, request, benchmark) -> Non
     codebase = benchmark.pedantic(Codebase, kwargs=dict(projects=projects, config=config), rounds=1)
     process = psutil.Process(os.getpid())
     memory_used = process.memory_info().rss
+    benchmark.extra_info["memory_used"] = memory_used
     logger.info(f"Using {memory_used / BYTES_IN_GIGABYTE} GB of memory.")
     assert memory_used <= BYTES_IN_GIGABYTE * MAX_ALLOWED_GIGABYTES, "Graph is using too much memory!"
     validation_res = post_init_validation(codebase)
