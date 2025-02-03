@@ -35,7 +35,7 @@ jobs:
         with:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
-
+          restore-keys: pre-commit
       - run: uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }}
         shell: bash
         env:
