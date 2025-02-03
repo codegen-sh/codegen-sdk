@@ -40,7 +40,8 @@ jobs:
         shell: bash
         env:
           SKIP: disallowed-words-check,circleci_validate
-
+      - run: git lfs uninstall
+        shell: bash
       - uses: stefanzweifel/git-auto-commit-action@v5
         # Always commit changes even if pre-commit failed
         if: always()
