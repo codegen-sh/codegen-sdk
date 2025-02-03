@@ -41,9 +41,8 @@ jobs:
         env:
           SKIP: disallowed-words-check
 
-    # TODO: add back in
-    #   - uses: stefanzweifel/git-auto-commit-action@v5
-    #     # Always commit changes even if pre-commit failed
-    #     if: always()
-    #     with:
-    #       commit_message: "Automated pre-commit update"
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        # Always commit changes even if pre-commit failed
+        if: always()
+        with:
+          commit_message: "Automated pre-commit update"
