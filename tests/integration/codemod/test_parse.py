@@ -4,6 +4,7 @@ import os
 
 import psutil
 import pytest
+from pytest_codspeed import BenchmarkFixture
 
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultFlags, ProjectConfig
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.timeout(60 * 12, func_only=True)
-def test_codemods_parse(repo: Repo, op: RepoOperator, request, benchmark) -> None:
+def test_codemods_parse(repo: Repo, op: RepoOperator, request, codspeed_benchmark: BenchmarkFixture) -> None:
     # Setup Feature Flags
     if repo.feature_flags is not None:
         feature_flags = repo.feature_flags
@@ -39,9 +40,9 @@ def test_codemods_parse(repo: Repo, op: RepoOperator, request, benchmark) -> Non
     # Setup Codebase
     config = CodebaseConfig(feature_flags=feature_flags)
     projects = [ProjectConfig(repo_operator=op, programming_language=repo.language, subdirectories=repo.subdirectories)]
-    codebase = benchmark(lambda: Codebase(projects=projects, config=config))
-    process = psutil.Process(os.getpid())
-    memory_used = process.memory_info().rss
+    codebase = codspeed_benchmark(lambda: Codebase(projects=projects, config=config))
+    memory_used = psutil.Process(os.getpid()).memory_info().rss
+    codspeed_benchmark.extra_info["memory_used"] = memory_used
     logger.info(f"Using {memory_used / BYTES_IN_GIGABYTE} GB of memory.")
     assert memory_used <= BYTES_IN_GIGABYTE * MAX_ALLOWED_GIGABYTES, "Graph is using too much memory!"
     validation_res = post_init_validation(codebase)

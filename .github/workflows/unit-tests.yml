@@ -96,6 +96,7 @@ jobs:
         uses: ./.github/actions/run_benchmark
         with:
           test_path: tests/integration/codemod/test_parse.py
+          extra_args: "--codspeed-max-rounds=1"
           timeout: 15
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           codspeed_token: ${{ secrets.CODSPEED_TOKEN }}
