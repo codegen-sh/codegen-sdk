@@ -24,7 +24,6 @@ jobs:
           fetch-depth: 0
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
-          token: ${{ secrets.REPO_SCOPED_TOKEN }}
 
       - name: Setup backend
         uses: ./.github/actions/setup-backend
