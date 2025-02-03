@@ -57,3 +57,4 @@ runs:
     - uses: ./.github/actions/report
       with:
         flag: ${{ inputs.codecov_flags }}
+        codecov_token: ${{ inputs.codecov_token }}

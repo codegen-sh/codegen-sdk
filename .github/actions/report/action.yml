@@ -4,6 +4,9 @@ inputs:
   flag:
     required: true
     description: "Relevant codecov flag"
+  codecov_token:
+    required: true
+    description: "Codecov token"
 runs:
   using: "composite"
   steps:
@@ -11,14 +14,14 @@ runs:
         if: ${{ !cancelled() }}
         uses: codecov/test-results-action@v1
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ inputs.codecov_token }}
           files: build/test-results/test/TEST.xml
       - name: Upload coverage reports to Codecov
         if: (success() || failure()) # always upload coverage reports even if the tests fail
         continue-on-error: true
         uses: codecov/codecov-action@v5.1.2
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ inputs.codecov_token }}
           files: coverage.xml
           flags: ${{ inputs.flag }}
           plugins: pycoverage,compress-pycoverage

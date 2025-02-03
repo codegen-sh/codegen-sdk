@@ -115,13 +115,12 @@ jobs:
         run: |
           uv run pytest \
             -n auto \
-            --extra-repos true \
             -o junit_suite_name="${{github.job}}" \
             tests/codemod/test_parse.py
       - uses: ./.github/actions/report
         with:
           flag: no-flag
-
+          codecov_token: ${{ secrets.CODECOV_TOKEN }}
       #  test_codemod_diffs:
       #    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
       #    runs-on: ubuntu-latest-16
