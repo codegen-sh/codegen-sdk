@@ -2,11 +2,11 @@ default_language_version:
   python: python3.12
 fail_fast: true
 repos:
-
   - repo: https://github.com/ComPWA/taplo-pre-commit
     rev: v0.9.3
     hooks:
       - id: taplo-format
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.4
     hooks:
@@ -25,6 +25,7 @@ repos:
       - id: biome-check
         additional_dependencies: ["@biomejs/biome@1.9.4"]
         exclude: (src/codemods/eval)|(tests/unit/skills/snapshots)|(tests/unit/codegen/sdk/output)|(tests/integration/verified_codemods)|(docs/samples)
+
   - repo: https://github.com/MarcoGorelli/cython-lint
     rev: v0.16.6
     hooks:
@@ -80,16 +81,13 @@ repos:
     rev: 39.158.1
     hooks:
       - id: renovate-config-validator
+
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: "0.5.26"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
 
-  - repo: https://github.com/zahorniak/pre-commit-circleci.git
-    rev: v1.1.0
-    hooks:
-      - id: circleci_validate
   - repo: "local"
     hooks:
       - id: disallowed-words-check
@@ -97,6 +95,7 @@ repos:
         entry: scripts/disallowed-words-check.sh
         language: script
         files: ''  # Check all files
+
       - id: generate-runner-imports
         name: Generate Runner Imports
         entry: bash -c "uv run --frozen python -m codegen.gscli.cli generate runner-imports src/codegen/shared/compilation/function_imports.py"
