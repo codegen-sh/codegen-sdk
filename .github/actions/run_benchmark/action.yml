@@ -24,6 +24,9 @@ inputs:
   codecov_token:
     description: 'Token for uploading to codecov'
     required: false
+  github_token:
+    description: 'GitHub token'
+    required: false
 
 runs:
   using: 'composite'
@@ -56,4 +59,4 @@ runs:
         alert-threshold: ${{ inputs.alert_threshold }}
         comment-on-alert: true
         fail-on-alert: true
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ inputs.github_token }}

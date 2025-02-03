@@ -23,7 +23,7 @@ jobs:
           test_path: tests/benchmark
           timeout: 5
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
-
+          github_token: ${{ secrets.GITHUB_TOKEN }}
   unit-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
@@ -97,6 +97,7 @@ jobs:
           test_path: tests/integration/codemod/test_parse.py
           timeout: 15
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Notify parse tests failure
         uses: slackapi/slack-github-action@v2.0.0
         if: failure() && github.event_name == 'push' && false
