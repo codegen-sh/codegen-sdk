@@ -27,8 +27,8 @@ jobs:
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--timeout 5"
-          codecov_flags: smart-tests
-  test_codemods:
+          codecov_flags: unit-tests
+  codemod-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
     strategy:
@@ -58,7 +58,7 @@ jobs:
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
           collect_args: "--size=${{matrix.size}} --sync-graph=${{matrix.sync_graph}}"
           ats_collect_args: "--size=${{matrix.size}},--sync-graph=${{matrix.sync_graph}},"
-          codecov_flags: smart-tests-codemod-tests-${{matrix.size}}-${{matrix.sync_graph}}
+          codecov_flags: codemod-tests-${{matrix.size}}-${{matrix.sync_graph}}
         env:
           GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 
@@ -186,5 +186,5 @@ jobs:
             tests/integration/codegen
       - uses: ./.github/actions/report
         with:
-          flag: smart-tests-integration-tests
+          flag: integration-tests
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
