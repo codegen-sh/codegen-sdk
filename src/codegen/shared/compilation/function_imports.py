@@ -66,6 +66,7 @@ from codegen.sdk.core.file import File
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.function import Function
 from codegen.sdk.core.import_resolution import Import
+from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.exportable import Exportable
