@@ -28,6 +28,10 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Make benchmark directory
+      shell: bash
+      run: mkdir -p build/test-results/test
+
     - uses: ./.github/actions/run_pytest
       with:
         test_path: ${{ inputs.test_path }}
