@@ -137,6 +137,7 @@ extend-generics = [
   "codegen.sdk.core.symbol_groups.multi_line_collection.MultiLineCollection",
   "codegen.sdk.core.symbol_groups.tuple.Tuple",
   "codegen.sdk.core.type_alias.TypeAlias",
+  "codegen.sdk.enums.ImportType",
   "codegen.sdk.python.statements.if_block_statement.PyIfBlockStatement",
   "codegen.sdk.python.statements.with_statement.WithStatement",
   "codegen.sdk.typescript.statements.block_statement.TSBlockStatement",

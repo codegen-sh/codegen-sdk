@@ -108,6 +108,7 @@ from codegen.sdk.core.symbol_groups.list import List
 from codegen.sdk.core.symbol_groups.multi_line_collection import MultiLineCollection
 from codegen.sdk.core.symbol_groups.tuple import Tuple
 from codegen.sdk.core.type_alias import TypeAlias
+from codegen.sdk.enums import ImportType
 from codegen.sdk.python.assignment import PyAssignment
 from codegen.sdk.python.class_definition import PyClass
 from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock

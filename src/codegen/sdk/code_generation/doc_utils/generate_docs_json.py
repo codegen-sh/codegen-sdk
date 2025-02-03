@@ -1,10 +1,8 @@
-from typing import Any
-
 from tqdm import tqdm
 
 from codegen.sdk.code_generation.doc_utils.parse_docstring import parse_docstring
 from codegen.sdk.code_generation.doc_utils.schemas import ClassDoc, GSDocs, MethodDoc
-from codegen.sdk.code_generation.doc_utils.utils import create_path, get_langauge, get_type, get_type_str, has_documentation, is_settter, replace_multiple_types
+from codegen.sdk.code_generation.doc_utils.utils import create_path, extract_class_description, get_langauge, get_type, get_type_str, has_documentation, is_settter, replace_multiple_types
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
@@ -27,7 +25,7 @@ ATTRIBUTES_TO_IGNORE = [
 ]
 
 
-def generate_docs_json(codebase: Codebase, head_commit: str, raise_on_missing_docstring: bool = False) -> dict[str, dict[str, Any]]:
+def generate_docs_json(codebase: Codebase, head_commit: str, raise_on_missing_docstring: bool = False) -> GSDocs:
     """Update documentation table for classes, methods and attributes in the codebase.
 
     Args:
@@ -46,7 +44,7 @@ def generate_docs_json(codebase: Codebase, head_commit: str, raise_on_missing_do
 
         cls_doc = ClassDoc(
             title=cls.name,
-            description=description,
+            description=extract_class_description(description),
             content=" ",
             path=create_path(cls),
             inherits_from=parent_classes,
