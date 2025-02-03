@@ -958,7 +958,7 @@ def external_dep():
 """
 
     # language=python
-    FILE_4_CONTENT_AFTER = """
+    EXPECTED_FILE_4_CONTENT = """
 def external_dep2():
     return 42
 """
@@ -987,4 +987,4 @@ def external_dep2():
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
     assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
-    assert file4.content.strip() == FILE_4_CONTENT_AFTER.strip()
+    assert file4.content.strip() == EXPECTED_FILE_4_CONTENT.strip()
