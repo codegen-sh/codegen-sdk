@@ -93,7 +93,7 @@ jobs:
   parse-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
-    if: contains(github.event.pull_request.labels.*.name, 'extra-parse') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: contains(github.event.pull_request.labels.*.name, 'parse-tests') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
 
     steps:
       - uses: actions/checkout@v4
@@ -116,7 +116,7 @@ jobs:
           uv run pytest \
             -n auto \
             -o junit_suite_name="${{github.job}}" \
-            tests/codemod/test_parse.py
+            tests/integration/codemod/test_parse.py
       - uses: ./.github/actions/report
         with:
           flag: no-flag
