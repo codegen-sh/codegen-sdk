@@ -10,13 +10,8 @@ on:
 
 jobs:
   pre-commit:
-    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
-    runs-on: ubuntu-latest-8
+    runs-on: ubuntu-latest
     timeout-minutes: 10
-    permissions:
-      # Give the default GITHUB_TOKEN write permission to commit and push the
-      # added or changed files to the repository.
-      contents: write
 
     steps:
       - name: Check out the repo
@@ -26,8 +21,10 @@ jobs:
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
+
       - name: Setup backend
         uses: ./.github/actions/setup-backend
+
       - name: Setup-pre-commit
         run: uv tool install pre-commit --with pre-commit-uv --force-reinstall
 
@@ -36,13 +33,15 @@ jobs:
           path: ~/.cache/pre-commit
           key: pre-commit|${{ env.pythonLocation }}|${{ hashFiles('.pre-commit-config.yaml') }}
           restore-keys: pre-commit
+
       - run: uv run --frozen pre-commit run --show-diff-on-failure --color=always --all-files --source ${{ github.event.pull_request.base.sha }} --origin ${{github.event.pull_request.head.sha }}
         shell: bash
         env:
           SKIP: disallowed-words-check,circleci_validate
+
       - uses: stefanzweifel/git-auto-commit-action@v5
         # Always commit changes even if pre-commit failed
-        if: always()
+        if: always() && github.event_name == 'pull_request'
         with:
           commit_message: "Automated pre-commit update"
           push_options: "--no-verify"
