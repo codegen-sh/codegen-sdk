@@ -17,15 +17,11 @@ inputs:
     description: 'Additional pytest arguments'
     required: false
     default: ''
-  alert_threshold:
-    description: 'Alert threshold percentage'
-    required: false
-    default: '101%'
   codecov_token:
     description: 'Token for uploading to codecov'
     required: false
-  github_token:
-    description: 'GitHub token'
+  codspeed_token:
+    description: 'Token for uploading to codspeed'
     required: false
 
 runs:
@@ -34,31 +30,12 @@ runs:
     - name: Make benchmark directory
       shell: bash
       run: mkdir -p build/test-results/test
-
-    - uses: ./.github/actions/run_pytest
+    - name: Run benchmarks
+      uses: CodSpeedHQ/action@v3
       with:
-        test_path: ${{ inputs.test_path }}
-        timeout: ${{ inputs.timeout }}
-        suite_name: ${{ inputs.suite_name }}
-        extra_args: >-
-          --benchmark-json build/test-results/test/benchmark-data.json
-          ${{ inputs.extra_args }}
-          --benchmark-only
-          --dist=no
+        token: ${{ inputs.codspeed_token }}
+        run: uv run pytest ${{ inputs.test_path }} ${{ inputs.extra_args }} -o junit_suite_name=${{ inputs.suite_name }}
+    - uses: ./.github/actions/report
+      with:
+        flag: no-flag
         codecov_token: ${{ inputs.codecov_token }}
-
-    - uses: actions/cache@v4
-      with:
-        path: ./cache
-        key: ${{ runner.os }}-benchmark
-
-    - uses: benchmark-action/github-action-benchmark@v1
-      with:
-        name: Python Benchmark with pytest-benchmark
-        tool: pytest
-        output-file-path: build/test-results/test/benchmark-data.json
-        external-data-json-path: ./cache/benchmark-data.json
-        alert-threshold: ${{ inputs.alert_threshold }}
-        comment-on-alert: true
-        fail-on-alert: true
-        github-token: ${{ inputs.github_token }}

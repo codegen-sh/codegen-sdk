@@ -31,9 +31,9 @@ def reset_codebase(codebase: Codebase):
 def test_codebase_reset_stress_test(extension: str, tmp_path, benchmark):
     def setup():
         codebase, _ = setup_codebase(NUM_FILES, extension, tmp_path)
-        return ((codebase,), {})
+        return codebase
 
-    benchmark.pedantic(reset_codebase, setup=setup)
+    benchmark(lambda: reset_codebase(setup()))
 
 
 @pytest.mark.skip("Skipping this test for now")
