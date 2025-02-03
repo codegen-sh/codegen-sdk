@@ -65,3 +65,4 @@ graph-sitter-types/typings/**
 coverage.json
 tests/integration/verified_codemods/codemod_data/repo_commits.json
 .benchmarks/*
+.codspeed/*

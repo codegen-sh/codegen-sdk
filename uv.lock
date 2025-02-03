@@ -367,7 +367,6 @@ wheels = [
 
 [[package]]
 name = "codegen"
-version = "0.5.20.dev18+gea00790.d20250203"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
@@ -399,7 +398,6 @@ dependencies = [
     { name = "pyinstrument" },
     { name = "pyjson5" },
     { name = "pyright" },
-    { name = "pytest-codspeed" },
     { name = "pytest-snapshot" },
     { name = "python-dotenv" },
     { name = "python-levenshtein" },
@@ -498,7 +496,6 @@ requires-dist = [
     { name = "pyinstrument", specifier = ">=5.0.0" },
     { name = "pyjson5", specifier = "==1.6.8" },
     { name = "pyright", specifier = ">=1.1.372,<2.0.0" },
-    { name = "pytest-codspeed", specifier = ">=3.2.0" },
     { name = "pytest-snapshot", specifier = ">=0.9.0" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
     { name = "python-levenshtein", specifier = ">=0.25.1,<1.0.0" },
