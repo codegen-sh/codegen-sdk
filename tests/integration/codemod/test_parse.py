@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.mark.timeout(60 * 12, func_only=True)
-def test_codemods_parse(repo: Repo, op: RepoOperator, request) -> None:
+def test_codemods_parse(repo: Repo, op: RepoOperator, request, benchmark) -> None:
     # Setup Feature Flags
     if repo.feature_flags is not None:
         feature_flags = repo.feature_flags
@@ -39,7 +39,7 @@ def test_codemods_parse(repo: Repo, op: RepoOperator, request) -> None:
     # Setup Codebase
     config = CodebaseConfig(feature_flags=feature_flags)
     projects = [ProjectConfig(repo_operator=op, programming_language=repo.language, subdirectories=repo.subdirectories)]
-    codebase = Codebase(projects=projects, config=config)
+    codebase = benchmark.pedantic(Codebase, kwargs=dict(projects=projects, config=config), rounds=1)
     process = psutil.Process(os.getpid())
     memory_used = process.memory_info().rss
     logger.info(f"Using {memory_used / BYTES_IN_GIGABYTE} GB of memory.")
