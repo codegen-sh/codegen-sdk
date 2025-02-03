@@ -34,7 +34,7 @@ runs:
       uses: CodSpeedHQ/action@v3
       with:
         token: ${{ inputs.codspeed_token }}
-        run: uv run pytest ${{ inputs.test_path }} ${{ inputs.extra_args }} -o junit_suite_name=${{ inputs.suite_name }}
+        run: uv run --frozen pytest ${{ inputs.test_path }} ${{ inputs.extra_args }} -o junit_suite_name=${{ inputs.suite_name }} --codspeed
     - uses: ./.github/actions/report
       with:
         flag: no-flag
