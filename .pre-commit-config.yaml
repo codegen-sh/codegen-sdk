@@ -53,6 +53,7 @@ repos:
       - id: check-github-workflows
       - id: check-github-actions
         args: ["--verbose"]
+      - id: check-circle-ci
 
   - repo: https://github.com/mxr/sync-pre-commit-deps
     rev: v0.0.3
@@ -86,10 +87,6 @@ repos:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
 
-  - repo: https://github.com/zahorniak/pre-commit-circleci.git
-    rev: v1.1.0
-    hooks:
-      - id: circleci_validate
   - repo: "local"
     hooks:
       - id: disallowed-words-check
