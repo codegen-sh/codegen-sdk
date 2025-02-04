@@ -7,7 +7,6 @@ from datetime import datetime
 import psutil
 from fastapi import FastAPI
 
-from codegen.runner.constants.envvars import CUSTOMER_REPO_ID
 from codegen.runner.enums.warmup_state import WarmupState
 from codegen.runner.models.apis import (
     BRANCH_ENDPOINT,
@@ -38,10 +37,11 @@ async def lifespan(server: FastAPI):
     global runner
 
     try:
-        server_info = ServerInfo(repo_id=int(os.getenv(CUSTOMER_REPO_ID)), container_id=os.getenv("MODAL_TASK_ID"))
+        repo_config = get_repo_config()
+        server_info = ServerInfo(repo_name=repo_config.full_name)
         logger.info(f"Starting up sandbox fastapi server for repo_id={server_info.repo_id} in container ID={server_info.container_id}")
 
-        runner = SandboxRunner(container_id=server_info.container_id, repo_config=get_repo_config())
+        runner = SandboxRunner(container_id=server_info.container_id, repo_config=repo_config)
         server_info.warmup_state = WarmupState.PENDING
         await runner.warmup()
         server_info.warmup_state = WarmupState.COMPLETED

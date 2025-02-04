@@ -4,12 +4,6 @@ on:
   push:
     tags:
       - v*.**
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
-      - legacy/.*
   workflow_dispatch:
 
 permissions:
@@ -39,15 +33,16 @@ jobs:
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.22.0
+      - name: Build release distributions
+        run: |
+          uv build --wheel
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
 
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
-          path: ./wheelhouse/*.whl
+          path: dist/
 
   release:
     needs: build_wheels
@@ -57,29 +52,24 @@ jobs:
     environment: release
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup backend
         uses: ./.github/actions/setup-backend
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-west-1
+
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
           pattern: wheels-*
-      - name: Release to AWS codeartifact
-        run: |
-          export UV_PUBLISH_PASSWORD="$(aws codeartifact get-authorization-token --domain codegen --domain-owner 922078275900 --region us-east-1 --query authorizationToken --output text)"
-          export UV_PUBLISH_USERNAME=aws
-          uv publish
-      # - name: Release to pypi
-      #   if: startsWith(github.ref, 'refs/tags/')
-      #   run: |
-      #     uv publish --trusted-publishing always --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled
+
       - name: Make github release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
@@ -87,6 +77,7 @@ jobs:
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
+
       - name: Publish message to slack
         uses: slackapi/slack-github-action@v2.0.0
         if: success() && startsWith(github.ref, 'refs/tags/')
@@ -122,6 +113,7 @@ jobs:
                 }
               ]
             }
+
       - name: Publish failed message to slack
         uses: slackapi/slack-github-action@v2.0.0
         if: failure() && startsWith(github.ref, 'refs/tags/')
