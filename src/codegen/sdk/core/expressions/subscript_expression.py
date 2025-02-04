@@ -26,6 +26,11 @@ class SubscriptExpression(Expression[Parent], Resolvable[Parent], Generic[Object
 
     Examples:
      A[]
+
+    Attributes:
+        object: The object being indexed.
+        indices: A list of indices used for indexing the object.
+
     """
 
     object: Object

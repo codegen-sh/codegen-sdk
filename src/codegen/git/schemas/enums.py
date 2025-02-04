@@ -27,3 +27,9 @@ class DiffChangeType(StrEnum):
     DELETED = "D"
     RENAMED = "R"
     MODIFIED = "M"
+
+
+class RepoVisibility(StrEnum):
+    PRIVATE = auto()
+    PUBLIC = auto()
+    INTERNAL = auto()

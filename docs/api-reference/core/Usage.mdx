@@ -2,14 +2,7 @@
 title: "Usage"
 sidebarTitle: "Usage"
 icon: ""
-description: "A reference to an exportable object in a file.
-
-Attributes:
-match: The exact match of the usage
-usage_symbol: The symbol this object is used in
-usage_type: How this symbol was used
-kind: Where this symbol was used (IE: in a type parameter or in the body of the class, etc)
-"
+description: "A reference to an exportable object in a file."
 ---
 import {Parameter} from '/snippets/Parameter.mdx';
 import {ParameterWrapper} from '/snippets/ParameterWrapper.mdx';
@@ -18,15 +11,14 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/dataclasses/usage.py#L24-L38" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/dataclasses/usage.py#L24-L39" />
 
 
 ## Attributes
 <HorizontalDivider />
 ### <span className="text-primary">imported_by</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>| None</span></> } description="
-" />
+<Attribute type={ <><a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>| None</span></> } description="The import statement that brought this symbol into scope, or None if not imported" />
 
 ### <span className="text-primary">kind</span>
 <HorizontalDivider light={true} />
@@ -38,7 +30,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">usage_symbol</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>|</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span>|</span> <a href="/api-reference/core/Export" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Export</a> <span>|</span> <a href="/api-reference/core/SourceFile" style={ {fontWeight: "inherit", fontSize: "inherit"} }>SourceFile</a></> } description="The symbol this object is used in" />
+<Attribute type={ <><a href="/api-reference/core/Import" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Import</a> <span>|</span> <a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span>|</span> <a href="/api-reference/typescript/TSExport" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSExport</a> <span>|</span> <a href="/api-reference/core/SourceFile" style={ {fontWeight: "inherit", fontSize: "inherit"} }>SourceFile</a></> } description="The symbol this object is used in" />
 
 ### <span className="text-primary">usage_type</span>
 <HorizontalDivider light={true} />

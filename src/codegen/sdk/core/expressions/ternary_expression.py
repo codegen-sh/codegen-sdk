@@ -19,7 +19,13 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class TernaryExpression(Expression[Parent], Chainable, Generic[Parent]):
-    """Any ternary expression in the code where a condition will determine branched execution."""
+    """Any ternary expression in the code where a condition will determine branched execution.
+
+    Attributes:
+        condition: The condition expression that determines which branch to execute.
+        consequence: The expression to execute if the condition is true.
+        alternative: The expression to execute if the condition is false.
+    """
 
     condition: Expression[Self] | None
     consequence: Expression[Self] | None

@@ -21,7 +21,11 @@ TExpression = TypeVar("TExpression", bound="Expression")
 
 @apidoc
 class MultiExpression(Expression[Parent], Generic[Parent, TExpression]):
-    """Represents an group of Expressions, such as List, Dict, Binary Expression, String."""
+    """Represents an group of Expressions, such as List, Dict, Binary Expression, String.
+
+    Attributes:
+        expressions: A list of expressions contained within the MultiExpression.
+    """
 
     expressions: list[TExpression]
 

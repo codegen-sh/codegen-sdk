@@ -33,7 +33,12 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface, TSCodeBlock], TSHasBlock, Exportable):
-    """Extends the SourceFile class to provide TypeScript-specific functionality."""
+    """Extends the SourceFile class to provide TypeScript-specific functionality.
+
+    Attributes:
+        programming_language: The programming language of the file. Set to ProgrammingLanguage.TYPESCRIPT.
+        ts_config: The ts_config file nearest to this file.
+    """
 
     programming_language = ProgrammingLanguage.TYPESCRIPT
     ts_config: TSConfig | None = None

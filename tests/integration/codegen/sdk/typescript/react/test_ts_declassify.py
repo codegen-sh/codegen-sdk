@@ -1,3 +1,4 @@
+import os
 from typing import TYPE_CHECKING
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
@@ -48,6 +49,8 @@ export class C extends React.Component<Props, State> {
   }
 }
     """
+    os.chdir(tmpdir)  # TODO: CG-10643
+
     with get_codebase_session(tmpdir=tmpdir, files={"dir/file1.tsx": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
         file: TSFile = codebase.get_file("dir/file1.tsx")
         component = file.get_class("C")

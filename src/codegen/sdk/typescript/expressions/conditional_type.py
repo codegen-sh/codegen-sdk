@@ -25,6 +25,12 @@ class TSConditionalType(Type[Parent], Generic[Parent]):
 
     Examples:
     typeof s
+
+    Attributes:
+        left: The left-hand side type of the conditional type.
+        right: The right-hand side type of the conditional type.
+        consequence: The type if the condition is true.
+        alternative: The type if the condition is false.
     """
 
     left: "TSType[Self]"

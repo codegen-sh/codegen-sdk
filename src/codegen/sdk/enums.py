@@ -2,6 +2,7 @@ from enum import IntEnum, StrEnum, auto
 from typing import NamedTuple
 
 from codegen.sdk.core.dataclasses.usage import Usage
+from codegen.shared.decorators.docs import apidoc
 
 
 class NodeType(IntEnum):
@@ -51,8 +52,18 @@ class SymbolType(IntEnum):
     Namespace = auto()
 
 
+@apidoc
 class ImportType(IntEnum):
-    """Import types for each import object. Determines what the import resolves to, and what symbols are imported."""
+    """Import types for each import object. Determines what the import resolves to, and what symbols are imported.
+
+    Attributes:
+        DEFAULT_EXPORT: Imports all default exports. Resolves to the file.
+        NAMED_EXPORT: Imports a named export. Resolves to the symbol export.
+        WILDCARD: Imports all named exports, and default exports as `default`. Resolves to the file.
+        MODULE: Imports the module, not doesn't actually allow access to any of the exports
+        SIDE_EFFECT: Imports the module, not doesn't actually allow access to any of the exports
+        UNKNOWN: Unknown import type.
+    """
 
     # Imports all default exports. Resolves to the file.
     DEFAULT_EXPORT = auto()

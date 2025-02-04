@@ -1,3 +1,5 @@
+import os
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
@@ -50,6 +52,7 @@ function getSquareArea(size: number) {
     return calculateArea(size, size);
 }
 """
+    os.chdir(tmpdir)  # TODO: CG-10643
     with get_codebase_session(tmpdir=tmpdir, files={"tsconfig.json": ts_config, "file1.ts": content1}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
         file = codebase.get_file("file1.ts")
 

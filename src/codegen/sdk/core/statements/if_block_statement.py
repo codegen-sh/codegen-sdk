@@ -28,6 +28,7 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 @apidoc
 class IfBlockStatement(Statement[TCodeBlock], Generic[TCodeBlock, TIfBlockStatement]):
     """Abstract representation of the if/elif/else if/else statement block.
+
     For example, if there is a code block like:
     if condition1:
         block1

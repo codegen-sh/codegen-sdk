@@ -29,6 +29,9 @@ class SymbolStatement(Statement[Parent], Generic[Parent, Child]):
 
     Examples include:
     - a function definition, class definition, global variable assignment
+
+    Attributes:
+        symbol: The symbol associated with this statement, representing a code element.
     """
 
     statement_type = StatementType.SYMBOL_STATEMENT
