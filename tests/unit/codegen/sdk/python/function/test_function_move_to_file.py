@@ -462,7 +462,7 @@ def baz():
     assert isinstance(new_symbol, Function)
 
 
-def test_move_to_file_add_back_edge_without_including_dependencies(tmpdir) -> None:
+def test_move_to_file_add_back_edge_without_include_dependencies(tmpdir) -> None:
     # ========== [ BEFORE ] ==========
     # language=python
     FILE_1_CONTENT = """
@@ -547,6 +547,293 @@ def baz():
 
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False)
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+    # Check new symbol
+    new_symbol = file1.get_symbol("bar")
+    assert new_symbol.file == file1
+    assert new_symbol.name == "bar"
+    assert isinstance(new_symbol, Function)
+
+
+def test_move_to_file_duplicate_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=python
+    FILE_1_CONTENT = """
+def external_dep():
+    return 42
+"""
+
+    # language=python
+    FILE_2_CONTENT = """
+from file1 import external_dep
+
+def foo():
+    return foo_dep() + 1
+
+def foo_dep():
+    return 24
+
+def bar():
+    return external_dep() + bar_dep()
+
+def bar_dep():
+    return 2
+"""
+
+    # language=python
+    FILE_3_CONTENT = """
+from file2 import bar
+
+def baz():
+    return bar() + 1
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=python
+    EXPECTED_FILE_1_CONTENT = """
+def external_dep():
+    return 42
+"""
+
+    # language=python
+    EXPECTED_FILE_2_CONTENT = """
+from file1 import external_dep
+
+def foo():
+    return foo_dep() + 1
+
+def foo_dep():
+    return 24
+"""
+
+    # language=python
+    EXPECTED_FILE_3_CONTENT = """
+from file1 import external_dep
+def baz():
+    return bar() + 1
+
+def bar_dep():
+    return 2
+
+def bar():
+    return external_dep() + bar_dep()
+"""
+    # ===============================
+    # TODO: [low] Missing newline after import
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        files={
+            "file1.py": FILE_1_CONTENT,
+            "file2.py": FILE_2_CONTENT,
+            "file3.py": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.py")
+        file2 = codebase.get_file("file2.py")
+        file3 = codebase.get_file("file3.py")
+
+        bar = file2.get_function("bar")
+        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies")
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+
+def test_move_to_file_duplicate_dependencies_include_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=python
+    FILE_1_CONTENT = """
+def foo():
+    return 1
+"""
+
+    # language=python
+    FILE_2_CONTENT = """
+def abc():
+    '''dependency, gets duplicated'''
+    return 'abc'
+
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+
+def xyz():
+    '''should stay'''
+    return 3
+"""
+
+    # language=python
+    FILE_3_CONTENT = """
+from file2 import bar
+
+def baz():
+    '''uses bar'''
+    return bar()
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=python
+    EXPECTED_FILE_1_CONTENT = """
+def foo():
+    return 1
+
+def abc():
+    '''dependency, gets duplicated'''
+    return 'abc'
+
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+"""
+
+    # language=python
+    EXPECTED_FILE_2_CONTENT = """
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+
+def xyz():
+    '''should stay'''
+    return 3
+"""
+
+    # language=python
+    EXPECTED_FILE_3_CONTENT = """
+from file2 import bar
+
+def baz():
+    '''uses bar'''
+    return bar()
+"""
+
+    # ===============================
+    # TODO: [!HIGH!] Incorrectly deletes abc dependency
+    # TODO: [low] Missing newline after import
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        files={
+            "file1.py": FILE_1_CONTENT,
+            "file2.py": FILE_2_CONTENT,
+            "file3.py": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.py")
+        file2 = codebase.get_file("file2.py")
+        file3 = codebase.get_file("file3.py")
+
+        bar_symbol = file2.get_symbol("bar")
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True)
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+    # Check new symbol
+    new_symbol = file1.get_symbol("bar")
+    assert new_symbol.file == file1
+    assert new_symbol.name == "bar"
+    assert isinstance(new_symbol, Function)
+
+
+def test_move_to_file_duplicate_dependencies_without_include_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=python
+    FILE_1_CONTENT = """
+def foo():
+    return 1
+"""
+
+    # language=python
+    FILE_2_CONTENT = """
+def abc():
+    '''dependency, DOES NOT GET MOVED'''
+    return 'abc'
+
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+
+def xyz():
+    '''should stay'''
+    return 3
+"""
+
+    # language=python
+    FILE_3_CONTENT = """
+from file2 import bar
+
+def baz():
+    '''uses bar'''
+    return bar()
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=python
+    EXPECTED_FILE_1_CONTENT = """
+from file2 import abc
+
+def foo():
+    return 1
+
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+"""
+
+    # language=python
+    EXPECTED_FILE_2_CONTENT = """
+def abc():
+    '''dependency, DOES NOT GET MOVED'''
+    return 'abc'
+
+@my_decorator
+def bar():
+    '''gets duplicated'''
+    return abc()
+
+def xyz():
+    '''should stay'''
+    return 3
+"""
+
+    # language=python
+    EXPECTED_FILE_3_CONTENT = """
+from file2 import bar
+
+def baz():
+    '''uses bar'''
+    return bar()
+"""
+
+    # ===============================
+    # TODO: [low] Missing newline after import
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        files={
+            "file1.py": FILE_1_CONTENT,
+            "file2.py": FILE_2_CONTENT,
+            "file3.py": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.py")
+        file2 = codebase.get_file("file2.py")
+        file3 = codebase.get_file("file3.py")
+
+        bar_symbol = file2.get_symbol("bar")
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
