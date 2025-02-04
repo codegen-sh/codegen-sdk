@@ -22,7 +22,7 @@ jobs:
         uses: ./.github/actions/setup-backend
       - name: Run ATS and Tests
         uses: ./.github/actions/run_ats
-        timeout-minutes: 5
+        timeout-minutes: 10
         with:
           default_tests: "tests/unit"
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
