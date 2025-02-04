@@ -1,0 +1,14 @@
+---
+title: "Codegen Updates"
+icon: "clock"
+iconType: "solid"
+---
+
+{% for version in versions %}
+<Update label="{{ version.date }}" description="v{{ version.version }}">
+  {% for commit in version.elements %}
+  {% if commit.type %}{{ commit.type }}{% if commit.scope %}({{ commit.scope }}){% endif %}: {% endif %}{{ commit.subject }} ({{ commit.short_hash }})
+  {% endfor %}
+</Update>
+
+{% endfor %}
