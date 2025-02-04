@@ -6,10 +6,6 @@ on:
       - v*.**
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
-      - legacy/.*
   workflow_dispatch:
 
 permissions:
