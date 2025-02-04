@@ -21,7 +21,8 @@ class GlobalEnv:
         self.ALGOLIA_SEARCH_KEY = self._get_env_var("ALGOLIA_SEARCH_KEY")
 
         # =====[ POSTHOG ]=====
-        self.POSTHOG_PROJECT_API_KEY = self._get_env_var("POSTHOG_PROJECT_API_KEY")
+        # Write only public posthog project api key
+        self.POSTHOG_PROJECT_API_KEY = "phc_GLxaINoQJnuyCyxDmTciQqzdKBYFVDkY7bRBO4bDdso"
 
         # =====[ MODAL ]=====
         self.MODAL_ENVIRONMENT = self._get_env_var("MODAL_ENVIRONMENT")
