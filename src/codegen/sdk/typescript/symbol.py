@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Unpack, Self
+
+from typing import TYPE_CHECKING, Literal, Unpack, Self
 
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageType
+from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
@@ -255,9 +256,14 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         return self.semicolon_node is not None
 
     @noapidoc
-    def _move_to_file(self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports") -> tuple[NodeId, NodeId]:
+    def _move_to_file(
+        self,
+        file: SourceFile,
+        encountered_symbols: set[Symbol | Import],
+        include_dependencies: bool = True,
+        strategy: Literal["add_back_edge", "update_all_imports", "duplicate_dependencies"] = "update_all_imports",
+    ) -> tuple[NodeId, NodeId]:
         # TODO: Prevent creation of import loops (!) - raise a ValueError and make the agent fix it
-        # TODO: Implement `update_all_imports` strategy
         # =====[ Arg checking ]=====
         if file == self.file:
             return file.file_node_id, self.node_id
@@ -320,9 +326,16 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         # =====[ Checks if symbol is used in original file ]=====
         # Takes into account that it's dependencies will be moved
         is_used_in_file = any(usage.file == self.file and usage.node_type == NodeType.SYMBOL and usage not in encountered_symbols for usage in self.symbol_usages)
+
+        # ======[ Strategy: Duplicate Dependencies ]=====
+        if strategy == "duplicate_dependencies":
+            # If not used in the original file. or if not imported from elsewhere, we can just remove the original symbol
+            if not is_used_in_file and not any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages):
+                self.remove()
+
         # ======[ Strategy: Add Back Edge ]=====
         # Here, we will add a "back edge" to the old file importing the self
-        if strategy == "add_back_edge":
+        elif strategy == "add_back_edge":
             if is_used_in_file:
                 self.file.add_import_from_import_string(import_line)
                 if self.is_exported:
@@ -330,6 +343,8 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
             elif self.is_exported:
                 module_name = file.name
                 self.file.add_import_from_import_string(f"export {{ {self.name} }} from '{module_name}'")
+            # Delete the original symbol
+            self.remove()
 
         # ======[ Strategy: Update All Imports ]=====
         # Update the imports in all the files which use this symbol to get it from the new file now
@@ -350,8 +365,8 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                         usage.usage_symbol.file.add_import_from_import_string(import_line)
             if is_used_in_file:
                 self.file.add_import_from_import_string(import_line)
-        # =====[ Delete the original symbol ]=====
-        self.remove()
+            # Delete the original symbol
+            self.remove()
 
     def _convert_proptype_to_typescript(self, prop_type: Editable, param: Parameter | None, level: int) -> str:
         """Converts a PropType definition to its TypeScript equivalent."""
