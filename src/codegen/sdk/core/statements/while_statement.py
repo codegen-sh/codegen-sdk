@@ -26,7 +26,12 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 @apidoc
 class WhileStatement(Statement[TCodeBlock], HasBlock, ABC, Generic[TCodeBlock]):
-    """Abstract representation of the while statement block."""
+    """Abstract representation of the while statement block.
+
+    Attributes:
+        condition: The condition expression of the while statement.
+        code_block: The code block that represents the body of the while statement.
+    """
 
     statement_type = StatementType.WHILE_STATEMENT
     condition: Expression[Self]

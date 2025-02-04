@@ -39,8 +39,8 @@ class WithStatement(Statement["PyCodeBlock"], PyHasBlock):
         # code block
 
     Attributes:
-        code_block: (PyCodeBlock) the code block of the with statement
-        clause: the expression of the with clause
+        code_block: The code block of the with statement.
+        clause: The expression of the with clause.
     """
 
     statement_type = StatementType.WITH_STATEMENT

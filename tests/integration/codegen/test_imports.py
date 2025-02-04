@@ -1,5 +1,8 @@
+import os
+
 import codegen
 from codegen import Codebase
+from codegen.sdk.code_generation.current_code_codebase import get_graphsitter_repo_path
 
 
 def test_codegen_imports():
@@ -11,6 +14,6 @@ def test_codegen_imports():
     # Test class
     cls = codegen.Function
     assert cls is not None
-
+    os.chdir(get_graphsitter_repo_path())  # TODO: CG-10643
     codebase = Codebase("./")
     assert codebase is not None

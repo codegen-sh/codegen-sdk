@@ -23,7 +23,12 @@ Parent = TypeVar("Parent", bound="Editable")
 
 @apidoc
 class BinaryExpression(Expression[Parent], Chainable, Generic[Parent]):
-    """Represents binary expressions, e.g. all of +,-,*,/, as well as booleaneoperations (and, or) etc."""
+    """Represents binary expressions, e.g. all of +,-,*,/, as well as boolean operations (and, or) etc.
+
+    Attributes:
+        left: The left operand of the binary expression.
+        right: The right operand of the binary expression.
+    """
 
     left: Expression[Self] | None
     right: Expression[Self] | None
