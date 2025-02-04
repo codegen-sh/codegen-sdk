@@ -1,0 +1,63 @@
+name: Generate Changelog
+
+on:
+    push:
+  # pull_request:
+    # types:
+    #   - closed
+      branches:
+        - changelong-generation
+      paths-ignore:
+        - 'docs/changelog/changelog.mdx'  # Prevent recursive triggers
+
+jobs:
+  generate-changelog:
+    runs-on: ubuntu-latest
+    # if: github.event.pull_request.merged == true
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Important: This fetches all history for all branches and tags
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install conventional-changelog-cli
+        run: npm install -g conventional-changelog-cli
+
+      - name: Generate Changelog
+        run: |
+          # Ensure the changelog directory exists
+          mkdir -p docs/changelog
+
+          # Create or update the frontmatter if file doesn't exist
+          if [ ! -f docs/changelog/changelog.mdx ]; then
+            echo "---" > docs/changelog/changelog.mdx
+            echo "title: 'Changelog'" >> docs/changelog/changelog.mdx
+            echo "description: 'Track all notable changes to our project'" >> docs/changelog/changelog.mdx
+            echo "---" >> docs/changelog/changelog.mdx
+            echo "" >> docs/changelog/changelog.mdx
+            echo "# Changelog" >> docs/changelog/changelog.mdx
+            echo "" >> docs/changelog/changelog.mdx
+          fi
+
+          # Generate the changelog
+          conventional-changelog -p angular -i docs/changelog/changelog.mdx -s
+
+      - name: Commit and push if changed
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+          git add docs/changelog/changelog.mdx
+
+          # Only commit and push if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs(changelog): update changelog [skip ci]"
+            git push
+          fi
