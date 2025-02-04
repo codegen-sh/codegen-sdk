@@ -3,7 +3,7 @@ name: Upload Python Package
 on:
   push:
     tags:
-      - v*.**
+      - v*
     branches:
       - develop
   pull_request:
@@ -57,8 +57,7 @@ jobs:
   release-pypi:
     needs: build-wheels
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+    environment: release-pypi
     steps:
       - uses: actions/checkout@v4
 
@@ -83,7 +82,9 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build-wheels
     runs-on: ubuntu-latest
-    environment: release
+    environment: release-github
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
 
