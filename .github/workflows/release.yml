@@ -59,7 +59,6 @@ jobs:
     runs-on: ubuntu-latest-8
     permissions:
       contents: write
-    environment: release
     steps:
       - uses: actions/checkout@v4
 
@@ -72,6 +71,12 @@ jobs:
           path: dist
           merge-multiple: true
           pattern: wheels-*
+
+      - name: Release PyPI
+        run: |
+          export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
+          export UV_PUBLISH_USERNAME="__token__"
+          uv publish --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled
 
       - name: Make github release
         uses: softprops/action-gh-release@v2
