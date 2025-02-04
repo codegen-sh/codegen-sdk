@@ -19,10 +19,7 @@ app = FastAPI()
 
 @app.post(RUN_ON_STRING_ENDPOINT)
 async def run_on_string(request: GetRunOnStringRequest) -> GetRunOnStringResult:
-    logger.info(f"====[ run_on_string ]====\n"
-                f"> Codemod source: {request.codemod_source}\n"
-                f"> Input: {request.files}\n"
-                f"> Language: {request.language}\n")
+    logger.info(f"====[ run_on_string ]====\n> Codemod source: {request.codemod_source}\n> Input: {request.files}\n> Language: {request.language}\n")
     language = ProgrammingLanguage(request.language.upper())
     with get_codebase_session(tmpdir=tempfile.mkdtemp(), files=request.files, programming_language=language) as codebase:
         executor = SandboxExecutor(codebase)
