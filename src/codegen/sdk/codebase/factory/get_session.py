@@ -18,6 +18,22 @@ from codegen.sdk.tree_sitter_parser import print_errors
 @overload
 def get_codebase_session(
     tmpdir: str | os.PathLike[str],
+    programming_language: None = None,
+    files: dict[str, str] = {},
+    commit: bool = True,
+    sync_graph: bool = True,
+    verify_input: bool = True,
+    verify_output: bool = True,
+    repo_config: BaseRepoConfig | None = None,
+    feature_flags: GSFeatureFlags = TestFlags,
+    session_options: SessionOptions = SessionOptions(),
+    secrets: Secrets = Secrets(),
+) -> AbstractContextManager[PyCodebaseType]: ...
+
+
+@overload
+def get_codebase_session(
+    tmpdir: str | os.PathLike[str],
     programming_language: Literal[ProgrammingLanguage.PYTHON],
     files: dict[str, str] = {},
     commit: bool = True,
