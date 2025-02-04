@@ -44,7 +44,7 @@ class CLIUserConfigs(BaseModel, validate_assignment=True):
 
     @model_validator(mode="after")
     def save_changes(self, info: ValidationInfo) -> None:
-        if not info.context.get("no-save"):
+        if info.context and not info.context.get("no-save"):
             self.save()
         return self
 
