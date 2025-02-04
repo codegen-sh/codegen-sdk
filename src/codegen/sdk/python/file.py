@@ -199,17 +199,14 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
                 continue
 
             # Always preserve __future__ and star imports since we can't track their usage
-            print(f"import_stmt: {import_stmt}", import_stmt.is_future_import, import_stmt.is_star_import)
             if import_stmt.is_future_import or import_stmt.is_star_import:
                 continue
 
             module = import_stmt.module_name
             if module not in module_imports:
                 module_imports[module] = []
-                print(f"Adding {module} to module_imports")
             module_imports[module].append(import_stmt)
 
-        print(f"module_imports: {module_imports}")
         # Second pass - process each module's imports
         for module, imports in module_imports.items():
             # Skip if any import from this module is used
