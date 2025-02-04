@@ -15,12 +15,12 @@ permissions:
   contents: read
 
 jobs:
-  build_wheels:
+  build-wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest-8, macos-latest]
+        os: [ubuntu-latest, macos-latest]
 
     steps:
       - name: Dump GitHub context
@@ -54,9 +54,9 @@ jobs:
           name: wheels-${{ matrix.os }}
           path: dist/
 
-  release:
-    needs: build_wheels
-    runs-on: ubuntu-latest-8
+  release-pypi:
+    needs: build-wheels
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -78,9 +78,24 @@ jobs:
           export UV_PUBLISH_USERNAME="__token__"
           uv publish --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled
 
+
+  release-github:
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+          pattern: wheels-*
+
       - name: Make github release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/*
           fail_on_unmatched_files: true
