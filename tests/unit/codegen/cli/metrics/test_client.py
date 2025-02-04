@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.codegen.cli.metrics.client import MetricsClient, get_metrics_client
+from codegen.cli.metrics.client import MetricsClient, get_metrics_client
 
 
 @pytest.fixture

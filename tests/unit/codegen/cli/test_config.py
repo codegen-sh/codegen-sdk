@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.codegen.cli.config import CLIUserConfigs
+from codegen.cli.config import CLIUserConfigs
 
 
 @pytest.fixture(autouse=True)

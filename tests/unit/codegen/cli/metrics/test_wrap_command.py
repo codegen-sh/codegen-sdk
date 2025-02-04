@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from rich_click import RichCommand
 
-from src.codegen.cli.metrics.wrap_command import metrics_wrapper
+from codegen.cli.metrics.wrap_command import metrics_wrapper
 
 
 def test_metrics_wrapper_success(mock_metrics_client):
