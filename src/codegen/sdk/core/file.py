@@ -54,6 +54,12 @@ class File(Editable[None]):
     """Represents a generic file.
 
     Could represent a source file or a non-code file such as a markdown file or image file.
+
+    Attributes:
+        name: The name of the file.
+        file_path: The relative file path as a string.
+        path: The absolute path of the file as a Path object.
+        node_type: The type of node, set to NodeType.FILE.
     """
 
     name: str
@@ -432,6 +438,9 @@ class SourceFile(
 
     Enables creating, reading, updating, and deleting files and searching through their contents,
     etc.
+
+    Attributes:
+        code_block: Represents the block of code contained in the file.
     """
 
     code_block: TCodeBlock

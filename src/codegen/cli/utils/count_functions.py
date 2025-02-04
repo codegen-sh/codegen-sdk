@@ -1,4 +1,5 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic.fields import Field
 
 import codegen.cli.sdk.decorator
 from codegen.cli.utils.count_functions_2 import NumberType

@@ -45,6 +45,10 @@ class CodeBlock(Expression[Parent], Generic[Parent, TAssignment]):
     function body or class body.
 
     Enables various types of queries and operations on the code block.
+
+    Attributes:
+        level: The indentation level of the code block.
+        parent_block: The parent code block containing this block, or None if it is a top-level block.
     """
 
     level: int

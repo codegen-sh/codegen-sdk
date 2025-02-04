@@ -7,7 +7,9 @@ import shutil
 import click
 from termcolor import colored
 
+import codegen.sdk as sdk
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
+from codegen.gscli.generate.system_prompt import get_system_prompt
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
@@ -104,9 +106,16 @@ def generate_docs(docs_dir: str) -> None:
     This will generate docs using the codebase locally, including any unstaged changes
     """
     generate_codegen_sdk_docs(docs_dir)
-    # generate_canonical_codemod_docs(docs_dir, codebase)
-    # generate_skills_docs(docs_dir)
-    # generate_guides(docs_dir)
+
+
+@generate.command()
+@click.argument("filepath", default=sdk.__path__[0] + "/system-prompt.txt", required=False)
+def system_prompt(filepath: str) -> None:
+    print(f"Generating system prompt and writing to {filepath}...")
+    new_system_prompt = get_system_prompt()
+    with open(filepath, "w") as f:
+        f.write(new_system_prompt)
+    print(f"Successfully wrote system prompt to {filepath}.")
 
 
 def get_snippet_pattern(target_name: str) -> str:
@@ -186,7 +195,3 @@ def generate_codegen_sdk_docs(docs_dir: str) -> None:
         json.dump(mint_data, mint_file, indent=2)
 
     print(colored("Updated mint.json with new page sets", "green"))
-
-
-if __name__ == "__main__":
-    generate()

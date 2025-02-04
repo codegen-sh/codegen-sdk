@@ -2,13 +2,7 @@
 title: "Unpack"
 sidebarTitle: "Unpack"
 icon: ""
-description: "Unpacking of an iterable.
-
-Example:
-```python
-[a, *b]
-```
-"
+description: "Unpacking of an iterable. Example: ```python [a, *b] ```"
 ---
 import {Parameter} from '/snippets/Parameter.mdx';
 import {ParameterWrapper} from '/snippets/ParameterWrapper.mdx';
@@ -17,7 +11,7 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/expressions/unpack.py#L14-L61" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/expressions/unpack.py#L16-L63" />
 
 ### Inherits from
 [HasValue](/api-reference/core/HasValue), [Unwrappable](/api-reference/core/Unwrappable), [Expression](/api-reference/core/Expression), [Editable](/api-reference/core/Editable)
@@ -36,11 +30,6 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider light={true} />
 <Attribute type={ <><a href="/api-reference/core/SourceFile" style={ {fontWeight: "inherit", fontSize: "inherit"} }>SourceFile</a></> } description="The file object that this Editable instance belongs to." />
 
-### <span className="text-primary">file_node_id</span>
-<HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">NodeId</code> } description="
-" />
-
 ### <span className="text-primary">filepath</span>
 <HorizontalDivider light={true} />
 <Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="The file path of the file that this Editable instance belongs to." />
@@ -49,15 +38,9 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider light={true} />
 <Attribute type={ <><span>list[</span> <a href="/api-reference/core/FunctionCall" style={ {fontWeight: "inherit", fontSize: "inherit"} }>FunctionCall</a> <span>]</span></> } description="Returns a list of all function calls contained within this expression." />
 
-### <span className="text-primary">node_type</span>
-<HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">NodeType</code> } description="
-" />
-
 ### <span className="text-primary">parent</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a></> } description="
-" />
+<Attribute type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a></> } description="The parent node of this Editable instance." />
 
 ### <span className="text-primary">parent_class</span>
 <HorizontalDivider light={true} />
@@ -79,11 +62,6 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider light={true} />
 <Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="Text representation of the Editable instance." />
 
-### <span className="text-primary">ts_node</span>
-<HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">TSNode</code> } description="
-" />
-
 ### <span className="text-primary">value</span>
 <HorizontalDivider light={true} />
 <Attribute type={ <><a href="/api-reference/core/Expression" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Expression</a> <span>| None</span></> } description="Gets the value node of the object." />
@@ -97,7 +75,7 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider />
 ### <span className="text-primary">ancestors</span>
 Find all ancestors of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1082-L1090" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1088-L1096" />
 
 
 <Return return_type={ <><span>list[</span> <a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>]</span></> } description=""/>
@@ -105,7 +83,7 @@ Find all ancestors of the node of the given type. Does not return itself
 
 ### <span className="text-primary">edit</span>
 Replace the source of this `Editable` with `new_src`.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L626-L654" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L632-L660" />
 
 <ParameterWrapper>
 <Parameter
@@ -140,7 +118,7 @@ Replace the source of this `Editable` with `new_src`.
 
 ### <span className="text-primary">find</span>
 Find and return matching nodes or substrings within an Editable instance.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L476-L493" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L482-L499" />
 
 <ParameterWrapper>
 <Parameter
@@ -163,7 +141,7 @@ Find and return matching nodes or substrings within an Editable instance.
 
 ### <span className="text-primary">find_string_literals</span>
 Returns a list of string literals within this node's source that match any of the given
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L388-L402" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L394-L408" />
 
 <ParameterWrapper>
 <Parameter
@@ -186,7 +164,7 @@ Returns a list of string literals within this node's source that match any of th
 
 ### <span className="text-primary">flag</span>
 Adds a visual flag comment to the end of this Editable's source text.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L920-L931" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L926-L937" />
 
 
 <Return return_type={ <><span>CodeFlag[</span> <a href="/api-reference/core/Unpack" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Unpack</a> <span>]</span></> } description=""/>
@@ -194,7 +172,7 @@ Adds a visual flag comment to the end of this Editable's source text.
 
 ### <span className="text-primary">get_variable_usages</span>
 Returns Editables for all TreeSitter nodes corresponding to instances of variable usage
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L896-L912" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L902-L918" />
 
 <ParameterWrapper>
 <Parameter
@@ -217,7 +195,7 @@ Returns Editables for all TreeSitter nodes corresponding to instances of variabl
 
 ### <span className="text-primary">insert_after</span>
 Inserts code after this node.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L597-L623" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L603-L629" />
 
 <ParameterWrapper>
 <Parameter
@@ -258,7 +236,7 @@ Inserts code after this node.
 
 ### <span className="text-primary">insert_before</span>
 Inserts text before this node's source with optional indentation and newline handling.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L564-L594" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L570-L600" />
 
 <ParameterWrapper>
 <Parameter
@@ -299,7 +277,7 @@ Inserts text before this node's source with optional indentation and newline han
 
 ### <span className="text-primary">is_wrapped_in</span>
 Check if this node is contained another node of the given class
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1068-L1070" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1074-L1076" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">bool</code> } description=""/>
@@ -307,7 +285,7 @@ Check if this node is contained another node of the given class
 
 ### <span className="text-primary">parent_of_type</span>
 Find the first ancestor of the node of the given type. Does not return itself
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1073-L1079" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1079-L1085" />
 
 
 <Return return_type={ <><a href="/api-reference/core/Editable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Editable</a> <span>| None</span></> } description=""/>
@@ -315,7 +293,7 @@ Find the first ancestor of the node of the given type. Does not return itself
 
 ### <span className="text-primary">reduce_condition</span>
 Reduces an editable to the following condition
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1024-L1029" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L1030-L1035" />
 
 
 <Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
@@ -323,7 +301,7 @@ Reduces an editable to the following condition
 
 ### <span className="text-primary">remove</span>
 Deletes this Node and its related extended nodes (e.g. decorators, comments).
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L676-L691" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L682-L697" />
 
 <ParameterWrapper>
 <Parameter
@@ -352,7 +330,7 @@ Deletes this Node and its related extended nodes (e.g. decorators, comments).
 
 ### <span className="text-primary">replace</span>
 Search and replace occurrences of text within this node's source and its extended nodes.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L421-L445" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L427-L451" />
 
 <ParameterWrapper>
 <Parameter
@@ -401,7 +379,7 @@ Resolves the wrapper expression and returns the first concrete expression.
 
 ### <span className="text-primary">search</span>
 Returns a list of all regex match of `regex_pattern`, similar to python's re.search().
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L509-L525" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/editable.py#L515-L531" />
 
 <ParameterWrapper>
 <Parameter
@@ -447,7 +425,7 @@ Sets the value of the node's value Expression.
 
 ### <span className="text-primary">unwrap</span>
 Unwraps a node's content into its parent node.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/expressions/unpack.py#L27-L61" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/expressions/unpack.py#L29-L63" />
 
 <ParameterWrapper>
 <Parameter

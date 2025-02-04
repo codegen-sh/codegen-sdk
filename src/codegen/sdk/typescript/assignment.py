@@ -24,9 +24,6 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
     Handles various types of TypeScript assignments including variable declarators, assignment expressions,
     augmented assignments, property signatures, and public field definitions. It provides functionality
     for manipulating assignments and managing their associated types and comments.
-
-    Attributes:
-        assignment_types (list[str]): List of valid TypeScript assignment node types that this class can handle.
     """
 
     assignment_types: list[str] = ["variable_declarator", "assignment_expression", "augmented_assignment_expression", "property_signature", "public_field_definition"]

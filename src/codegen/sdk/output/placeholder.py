@@ -1,4 +1,5 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
 
 from codegen.sdk.codebase.span import Span
 

@@ -39,7 +39,14 @@ TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
 @apidoc
 class Directory(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Directory representation for codebase.
+
     GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory.
+
+    Attributes:
+        path: Absolute path of the directory.
+        dirpath: Relative path of the directory.
+        parent: The parent directory, if any.
+        items: A dictionary containing files and subdirectories within the directory.
     """
 
     path: Path  # Absolute Path

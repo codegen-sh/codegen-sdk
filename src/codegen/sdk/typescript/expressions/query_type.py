@@ -24,7 +24,10 @@ class TSQueryType(Type[Parent], Generic[Parent]):
     """Type query
 
     Examples:
-    typeof s
+        typeof s
+
+    Attributes:
+        query: The TypeScript type associated with the query.
     """
 
     query: "TSType[Self]"

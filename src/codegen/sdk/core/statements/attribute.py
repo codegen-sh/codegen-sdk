@@ -30,7 +30,11 @@ TAssignment = TypeVar("TAssignment", bound="Assignment")
 
 @apidoc
 class Attribute(AssignmentStatement[TCodeBlock, TAssignment], Usable, Chainable, Generic[TCodeBlock, TAssignment]):
-    """Abstract representation of an attribute on a class definition."""
+    """Abstract representation of an attribute on a class definition.
+
+    Attributes:
+        assignment: The assignment associated with the attribute.
+    """
 
     statement_type = StatementType.CLASS_ATTRIBUTE
     assignment: TAssignment
