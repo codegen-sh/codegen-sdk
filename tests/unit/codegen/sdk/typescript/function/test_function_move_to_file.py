@@ -252,7 +252,7 @@ function foo(): number {
     # language=typescript
     FILE_2_CONTENT = """
 function abc(): string {
-    // dependency, gets moved
+    // dependency, DOES NOT GET MOVED
     return 'abc';
 }
 
@@ -295,7 +295,7 @@ export function bar(): string {
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
 export function abc(): string {
-    // dependency, gets moved
+    // dependency, DOES NOT GET MOVED
     return 'abc';
 }
 
@@ -555,7 +555,7 @@ function baz(): string {
     assert isinstance(new_symbol, Function)
 
 
-def test_move_to_file_add_back_edge_without_including_dependencies(tmpdir) -> None:
+def test_move_to_file_add_back_edge_without_include_dependencies(tmpdir) -> None:
     # ========== [ BEFORE ] ==========
     # language=typescript
     FILE_1_CONTENT = """
@@ -567,7 +567,7 @@ function foo(): number {
     # language=typescript
     FILE_2_CONTENT = """
 function abc(): string {
-    // dependency, gets moved
+    // dependency, DOES NOT GET MOVED
     return 'abc';
 }
 
@@ -612,7 +612,7 @@ export function bar(): string {
 export { bar } from 'file1'
 
 export function abc(): string {
-    // dependency, gets moved
+    // dependency, DOES NOT GET MOVED
     return 'abc';
 }
 
@@ -650,6 +650,332 @@ function baz(): string {
 
         bar_symbol = file2.get_symbol("bar")
         bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False)
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+    # Check new symbol
+    new_symbol = file1.get_symbol("bar")
+    assert new_symbol.file == file1
+    assert new_symbol.name == "bar"
+    assert isinstance(new_symbol, Function)
+
+
+def test_move_to_file_duplicate_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    FILE_1_CONTENT = """
+export function externalDep() {
+    return 42;
+}
+"""
+
+    # language=typescript
+    FILE_2_CONTENT = """
+import { externalDep } from 'file1';
+
+function foo() {
+    return fooDep() + 1;
+}
+
+function fooDep() {
+    return 24;
+}
+
+export function bar() {
+    return externalDep() + barDep();
+}
+
+function barDep() {
+    return 2;
+}
+"""
+
+    # language=typescript
+    FILE_3_CONTENT = """
+import { bar } from 'file2';
+
+export function baz() {
+    return bar() + 1;
+}
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_FILE_1_CONTENT = """
+export function externalDep() {
+    return 42;
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_2_CONTENT = """
+import { externalDep } from 'file1';
+
+function foo() {
+    return fooDep() + 1;
+}
+
+function fooDep() {
+    return 24;
+}
+
+export function bar() {
+    return externalDep() + barDep();
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_3_CONTENT = """
+import { externalDep } from 'file1';
+import { bar } from 'file2';
+
+export function baz() {
+    return bar() + 1;
+}
+
+export function barDep() {
+    return 2;
+}
+
+export function bar() {
+    return externalDep() + barDep();
+}
+"""
+
+    # ===============================
+    # TODO: [!HIGH!] Incorrect deletion of bar's import and dependency
+    # TODO: [medium] Why is barDep exported?
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={
+            "file1.ts": FILE_1_CONTENT,
+            "file2.ts": FILE_2_CONTENT,
+            "file3.ts": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.ts")
+        file2 = codebase.get_file("file2.ts")
+        file3 = codebase.get_file("file3.ts")
+
+        bar = file2.get_function("bar")
+        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies")
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+
+def test_move_to_file_duplicate_dependencies_include_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    FILE_1_CONTENT = """
+function foo(): number {
+    return 1;
+}
+"""
+
+    # language=typescript
+    FILE_2_CONTENT = """
+function abc(): string {
+    // dependency, gets duplicated
+    return 'abc';
+}
+
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+
+function xyz(): number {
+    // should stay
+    return 3;
+}
+"""
+
+    # language=typescript
+    FILE_3_CONTENT = """
+import { bar } from 'file2';
+
+function baz(): string {
+    // uses bar
+    return bar();
+}
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_FILE_1_CONTENT = """
+function foo(): number {
+    return 1;
+}
+
+export function abc(): string {
+    // dependency, gets duplicated
+    return 'abc';
+}
+
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_2_CONTENT = """
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+
+function xyz(): number {
+    // should stay
+    return 3;
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_3_CONTENT = """
+import { bar } from 'file2';
+
+function baz(): string {
+    // uses bar
+    return bar();
+}
+"""
+
+    # ===============================
+    # TODO: [!HIGH!] Incorrect deletion of bar's import and dependency
+    # TODO: [medium] Why is abc exported?
+    # TODO: [low] Missing newline after import
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={
+            "file1.ts": FILE_1_CONTENT,
+            "file2.ts": FILE_2_CONTENT,
+            "file3.ts": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.ts")
+        file2 = codebase.get_file("file2.ts")
+        file3 = codebase.get_file("file3.ts")
+
+        bar_symbol = file2.get_symbol("bar")
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True)
+
+    assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
+    assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
+    assert file3.content.strip() == EXPECTED_FILE_3_CONTENT.strip()
+
+    # Check new symbol
+    new_symbol = file1.get_symbol("bar")
+    assert new_symbol.file == file1
+    assert new_symbol.name == "bar"
+    assert isinstance(new_symbol, Function)
+
+
+def test_move_to_file_duplicate_dependencies_without_include_dependencies(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    FILE_1_CONTENT = """
+function foo(): number {
+    return 1;
+}
+"""
+
+    # language=typescript
+    FILE_2_CONTENT = """
+function abc(): string {
+    // dependency, DOES NOT GET MOVED
+    return 'abc';
+}
+
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+
+function xyz(): number {
+    // should stay
+    return 3;
+}
+"""
+
+    # language=typescript
+    FILE_3_CONTENT = """
+import { bar } from 'file2';
+
+function baz(): string {
+    // uses bar
+    return bar();
+}
+"""
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_FILE_1_CONTENT = """
+import { abc } from 'file2';
+
+function foo(): number {
+    return 1;
+}
+
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_2_CONTENT = """
+export function abc(): string {
+    // dependency, DOES NOT GET MOVED
+    return 'abc';
+}
+
+export function bar(): string {
+    // gets duplicated
+    return abc();
+}
+
+function xyz(): number {
+    // should stay
+    return 3;
+}
+"""
+
+    # language=typescript
+    EXPECTED_FILE_3_CONTENT = """
+import { bar } from 'file2';
+
+function baz(): string {
+    // uses bar
+    return bar();
+}
+"""
+
+    # ===============================
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={
+            "file1.ts": FILE_1_CONTENT,
+            "file2.ts": FILE_2_CONTENT,
+            "file3.ts": FILE_3_CONTENT,
+        },
+    ) as codebase:
+        file1 = codebase.get_file("file1.ts")
+        file2 = codebase.get_file("file2.ts")
+        file3 = codebase.get_file("file3.ts")
+
+        bar_symbol = file2.get_symbol("bar")
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
