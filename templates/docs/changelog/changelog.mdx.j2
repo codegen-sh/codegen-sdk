@@ -3,6 +3,16 @@ title: "Codegen Updates"
 icon: "clock"
 iconType: "solid"
 ---
+CopyNumber of versions: {{ versions | length }}
+
+{# Debug output #}
+{% for version in versions %}
+DEBUG Version object:
+{{ version | tojson }}
+---
+{% endfor %}
+
+{# Original template content #}
 
 {% for version in versions %}
 <Update label="{{ version.date }}" description="v{{ version.version }}">
