@@ -2,7 +2,7 @@ import os
 import sys
 from collections.abc import Generator
 from contextlib import AbstractContextManager, contextmanager
-from typing import Any, Literal, overload
+from typing import Literal, overload
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import BaseRepoConfig
@@ -65,7 +65,7 @@ def get_codebase_session(
 
 @contextmanager
 def get_codebase_session(
-    tmpdir: Any,
+    tmpdir: str | os.PathLike[str],
     programming_language: ProgrammingLanguage = ProgrammingLanguage.PYTHON,
     files: dict[str, str] = {},
     commit: bool = True,
