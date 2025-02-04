@@ -37,15 +37,13 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
+        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content == content1
     # language=python
     assert (
         file2.content
         == """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1
 
@@ -113,8 +111,6 @@ def baz():
     assert (
         file2.content
         == """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1
 
@@ -405,7 +401,7 @@ def test_move_global_var(tmpdir) -> None:
         bar_file = codebase.get_file(BAR_FILENAME)
 
         global_symbol = bar_file.get_symbol("GLOBAL")
-        global_symbol.move_to_file(foo_file, strategy="add_back_edge", include_dependencies=True)
+        global_symbol.move_to_file(foo_file, strategy="add_back_edge", include_dependencies=True, remove_unused_imports=False)
 
     # Check foo_test_move_to_file
     assert "from import2 import thing2, thing3" in foo_file.content

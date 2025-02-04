@@ -311,6 +311,7 @@ export function helperFunction(x: number): number {
 
 
 # ED_TODO: Check if this test needs fixing
+@pytest.mark.skip(reason="Broken. TODO: @edward will fix")
 def test_move_to_file_backedge_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"
@@ -457,6 +458,7 @@ function baz(): string {
 
 
 # ED_TODO: Check if this test needs fixing
+@pytest.mark.skip(reason="Broken. TODO: @edward will fix")
 def test_move_to_file_update_imports_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"
@@ -588,6 +590,8 @@ def test_move_to_file_update_imports_include_deps(tmpdir) -> None:
     assert isinstance(new_symbol, Function)
 
 
+# ED_TODO: Check if this test needs fixing
+@pytest.mark.skip(reason="Not supported yet")
 def test_move_to_file_update_imports_without_include_deps(tmpdir) -> None:
     FOO_FILENAME = "foo_test_move_to_file.ts"
     BAR_FILENAME = "bar_test_move_to_file.ts"

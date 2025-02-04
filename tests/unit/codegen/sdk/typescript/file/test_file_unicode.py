@@ -54,7 +54,7 @@ function baz(): string {
     assert (
         file2.content
         == """
-export { bar } from 'file3'
+export { bar } from 'file3';
 import { externalDep } from "./file1";
 
 function foo(): string {

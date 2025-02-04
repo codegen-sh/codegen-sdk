@@ -39,15 +39,13 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
+        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content == content1
     # language=python
     assert (
         file2.content
         == """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1 + "🐍"
 
