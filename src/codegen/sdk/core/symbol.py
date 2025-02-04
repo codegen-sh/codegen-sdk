@@ -356,8 +356,8 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
 
         # ======[ Strategy: Duplicate Dependencies ]=====
         if strategy == "duplicate_dependencies":
-            # If not used in the original file, we can just remove the original symbol
-            if not is_used_in_file:
+            # If not used in the original file. or if not imported from elsewhere, we can just remove the original symbol
+            if not is_used_in_file and not any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages):
                 self.remove()
 
         # ======[ Strategy: Add Back Edge ]=====
