@@ -217,7 +217,7 @@ class PySymbol(Symbol["PyHasBlock", "PyCodeBlock"]):
         code_flag = super().flag(**kwargs)
 
         # Add a Python comment to visually mark the flag
-        message = kwargs.get('message', '')
+        message = kwargs.get("message", "")
         if message:
             self.set_inline_comment(f"🚩 {message}")
 

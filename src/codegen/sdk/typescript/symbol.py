@@ -489,6 +489,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                 if imp.module.source.strip("'").strip('"') in ("react", "prop-types"):
                     imp.remove_if_unused()
             return interface_name + generic_name
+
     @writer
     def flag(self, **kwargs: Unpack[FlagKwargs]) -> CodeFlag[Self]:
         """Flags a TypeScript symbol by adding a flag comment and returning a CodeFlag.
@@ -506,7 +507,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         code_flag = super().flag(**kwargs)
 
         # Add a TypeScript comment to visually mark the flag
-        message = kwargs.get('message', '')
+        message = kwargs.get("message", "")
         if message:
             self.set_inline_comment(f"🚩 {message}")
 

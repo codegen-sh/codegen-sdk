@@ -20,4 +20,3 @@ def foo():
     pass  # 🚩 This is a test
 """
         assert file.content == expected
-
