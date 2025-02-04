@@ -63,25 +63,64 @@ class RepoOperator(ABC):
     def viz_file_path(self) -> str:
         return os.path.join(self.viz_path, "graph.json")
 
+    def _set_bot_email(self, git_cli: GitCLI) -> None:
+        with git_cli.config_writer("repository") as writer:
+            if not writer.has_section("user"):
+                writer.add_section("user")
+            writer.set("user", "email", CODEGEN_BOT_EMAIL)
+
+    def _set_bot_username(self, git_cli: GitCLI) -> None:
+        with git_cli.config_writer("repository") as writer:
+            if not writer.has_section("user"):
+                writer.add_section("user")
+            writer.set("user", "name", CODEGEN_BOT_NAME)
+
+    def _unset_bot_email(self, git_cli: GitCLI) -> None:
+        with git_cli.config_writer("repository") as writer:
+            if writer.has_option("user", "email"):
+                writer.remove_option("user", "email")
+
+    def _unset_bot_username(self, git_cli: GitCLI) -> None:
+        with git_cli.config_writer("repository") as writer:
+            if writer.has_option("user", "name"):
+                writer.remove_option("user", "name")
+
     @cached_property
     def git_cli(self) -> GitCLI:
-        """Note: this is recursive, may want to look out"""
         git_cli = GitCLI(self.repo_path)
-        has_username = False
-        has_email = False
-        with git_cli.config_reader(None) as reader:
-            if reader.has_option("user", "name"):
-                has_username = True
-            if reader.has_option("user", "email"):
-                has_email = True
-        with git_cli.config_writer("repository") as writer:
-            if not has_username or not has_email or self.bot_commit:
-                if not writer.has_section("user"):
-                    writer.add_section("user")
-                if not has_username or self.bot_commit:
-                    writer.set("user", "name", CODEGEN_BOT_NAME)
-                if not has_email or self.bot_commit:
-                    writer.set("user", "email", CODEGEN_BOT_EMAIL)
+        username = None
+        user_level = None
+        email = None
+        email_level = None
+        levels = ["system", "global", "user", "repository"]
+        for level in levels:
+            with git_cli.config_reader(level) as reader:
+                if reader.has_option("user", "name") and not username:
+                    username = reader.get("user", "name")
+                    user_level = level
+                if reader.has_option("user", "email") and not email:
+                    email = reader.get("user", "email")
+                    email_level = level
+        if self.bot_commit:
+            self._set_bot_email(git_cli)
+            self._set_bot_username(git_cli)
+        else:
+            # we need a username and email to commit, so if they're not set, set them to the bot's
+            # Case 1: username is not set: set it to the bot's
+            if not username:
+                self._set_bot_username(git_cli)
+            # Case 2: username is set to the bot's at the repo level, but something else is set at the user level: unset it
+            elif username != CODEGEN_BOT_NAME and user_level != "repository":
+                self._unset_bot_username(git_cli)
+            # Case 3: username is only set at the repo level: do nothing
+            else:
+                pass  # no-op to make the logic clearer
+            # Repeat for email
+            if not email:
+                self._set_bot_email(git_cli)
+
+            elif email != CODEGEN_BOT_EMAIL and email_level != "repository":
+                self._unset_bot_email(git_cli)
         return git_cli
 
     @property

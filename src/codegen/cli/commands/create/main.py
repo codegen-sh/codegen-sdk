@@ -93,6 +93,7 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
             with create_spinner("Generating function (using LLM, this will take ~10s)") as status:
                 response = RestAPI(session.token).create(name=name, query=description)
                 code = convert_to_cli(response.code, session.language, name)
+                prompt_path.parent.mkdir(parents=True, exist_ok=True)
                 prompt_path.write_text(response.context)
         else:
             # Use default implementation
@@ -103,7 +104,6 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
 
             # Write the function code
             codemod_path.write_text(code)
-       
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))

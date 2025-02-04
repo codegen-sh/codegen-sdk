@@ -40,9 +40,11 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 @apidoc
 class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeBlock]):
-    """Abstract representation of a Symbol in a Codebase. A Symbol is a top-level entity in a file,
-    e.g. a Function, Class, GlobalVariable, etc.
+    """Abstract representation of a Symbol in a Codebase. A Symbol is a top-level entity in a file, e.g. a Function, Class, GlobalVariable, etc.
 
+    Attributes:
+        symbol_type: The type of the symbol.
+        node_type: The type of the node, set to NodeType.SYMBOL.
     """
 
     symbol_type: SymbolType

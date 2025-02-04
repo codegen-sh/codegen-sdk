@@ -1,7 +1,8 @@
 import logging
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic.fields import Field
 
 from codegen.git.models.pull_request_context import PullRequestContext
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class CodemodContext(BaseModel):
+    # TODO: add back CODEGEN_VESRION
     CODEMOD_ID: int | None = None
     CODEMOD_LINK: str | None = None
     CODEMOD_AUTHOR: str | None = None

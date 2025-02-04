@@ -6,7 +6,6 @@ on:
 
 jobs:
   cleanup:
-    # changing the following value will significantly affect github's billing. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest
     steps:
       - name: Cleanup

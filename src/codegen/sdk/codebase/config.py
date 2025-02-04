@@ -1,7 +1,9 @@
 import os
 from typing import Self
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
+from pydantic.fields import Field
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator

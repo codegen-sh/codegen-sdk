@@ -29,7 +29,12 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class TSNamespace(TSSymbol, TSHasBlock, HasName):
-    """Representation of a namespace module in TypeScript"""
+    """Representation of a namespace module in TypeScript.
+
+    Attributes:
+        symbol_type: The type of the symbol, set to SymbolType.Namespace.
+        code_block: The code block associated with this namespace.
+    """
 
     symbol_type = SymbolType.Namespace
     code_block: TSCodeBlock

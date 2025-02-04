@@ -27,9 +27,3 @@ def render_groups(group_names: list[str]) -> str:
 def get_system_prompt() -> str:
     """Generates a string system prompt based on the docs"""
     return render_groups(["Introduction", "Building with Codegen", "Tutorials"])
-
-
-if __name__ == "__main__":
-    system_prompt = get_system_prompt()
-    open("/tmp/system-prompt.txt", "w").write(system_prompt)
-    print("Wrote to /tmp/system-prompt.txt")

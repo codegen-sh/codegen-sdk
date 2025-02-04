@@ -1,14 +1,14 @@
 # Contributing to Codegen
 
-Thank you for your interest in contributing to Codegen! This document outlines the process and guidelines for contributing.
+Thank you for your interest in contributing to Codegen! This document outlines the process and guidelines for contributing. If you have any questions, please join our [Slack Community](https://community.codegen.com) 😀.
 
 ## Contributor License Agreement
 
 By contributing to Codegen, you agree that:
 
 1. Your contributions will be licensed under the project's license.
-2. You have the right to license your contribution under the project's license.
-3. You grant Codegen a perpetual, worldwide, non-exclusive, royalty-free license to use your contribution.
+1. You have the right to license your contribution under the project's license.
+1. You grant Codegen a perpetual, worldwide, non-exclusive, royalty-free license to use your contribution.
 
 See our [CLA](CLA.md) for more details.
 
@@ -19,6 +19,7 @@ See our [CLA](CLA.md) for more details.
 UV is a fast Python package installer and resolver. To install:
 
 **macOS**:
+
 ```bash
 brew install uv
 ```
@@ -28,6 +29,7 @@ For other platforms, see the [UV installation docs](https://github.com/astral-sh
 ### Setting Up the Development Environment
 
 After installing UV, set up your development environment:
+
 ```bash
 uv venv
 source .venv/bin/activate
@@ -35,6 +37,7 @@ uv sync --dev
 ```
 
 > [!TIP]
+>
 > - If sync fails with `missing field 'version'`, you may need to delete lockfile and rerun `rm uv.lock && uv sync --dev`.
 > - If sync fails with failed compilation, you may need to install clang and rerun `uv sync --dev`.
 
@@ -51,10 +54,10 @@ uv run pytest tests/integration/codemod/test_codemods.py -n auto
 ## Pull Request Process
 
 1. Fork the repository and create your branch from `develop`.
-2. Ensure your code passes all tests.
-3. Update documentation as needed.
-4. Submit a pull request to the `develop` branch.
-5. Include a clear description of your changes in the PR.
+1. Ensure your code passes all tests.
+1. Update documentation as needed.
+1. Submit a pull request to the `develop` branch.
+1. Include a clear description of your changes in the PR.
 
 ## Release Process
 

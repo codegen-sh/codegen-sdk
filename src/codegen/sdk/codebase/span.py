@@ -1,6 +1,9 @@
 from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, PlainSerializer, PlainValidator, WithJsonSchema
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
+from pydantic.functional_validators import BeforeValidator
+from pydantic.json_schema import JsonSchemaValue, WithJsonSchema
 from pydantic_core.core_schema import ValidationInfo
 from tree_sitter import Point, Range
 
@@ -21,50 +24,60 @@ def validate_range(value: Any, info: ValidationInfo) -> Range:
     return value
 
 
-RangeAdapter = Annotated[
-    Range,
-    PlainValidator(validate_range),
-    PlainSerializer(
-        lambda range: {
-            "start_byte": range.start_byte,
-            "end_byte": range.end_byte,
+def range_json_schema() -> JsonSchemaValue:
+    return {
+        "type": "object",
+        "properties": {
+            "start_byte": {"type": "integer"},
+            "end_byte": {"type": "integer"},
             "start_point": {
-                "row": range.start_point.row,
-                "column": range.start_point.column,
+                "type": "object",
+                "properties": {
+                    "row": {"type": "integer"},
+                    "column": {"type": "integer"},
+                },
             },
             "end_point": {
-                "row": range.end_point.row,
-                "column": range.end_point.column,
+                "type": "object",
+                "properties": {"row": {"type": "integer"}, "column": {"type": "integer"}},
             },
-        }
-    ),
-    WithJsonSchema(
-        {
-            "type": "object",
-            "properties": {
-                "start_byte": {"type": "integer"},
-                "end_byte": {"type": "integer"},
-                "start_point": {
-                    "type": "object",
-                    "properties": {
-                        "row": {"type": "integer"},
-                        "column": {"type": "integer"},
-                    },
-                },
-                "end_point": {
-                    "type": "object",
-                    "properties": {"row": {"type": "integer"}, "column": {"type": "integer"}},
-                },
-            },
-        }
-    ),
+        },
+    }
+
+
+RangeAdapter = Annotated[
+    Range,
+    BeforeValidator(validate_range),
+    WithJsonSchema(range_json_schema()),
 ]
 
 
 @apidoc
 class Span(BaseModel):
-    """Range within the codebase"""
+    """Range within the codebase
 
-    model_config = ConfigDict(frozen=True)
+    Attributes:
+        range: Adapter for the range within the codebase.
+        filepath: The path to the file associated with the range.
+    """
+
+    model_config = ConfigDict(
+        frozen=True,
+        arbitrary_types_allowed=True,
+        json_encoders={
+            Range: lambda r: {
+                "start_byte": r.start_byte,
+                "end_byte": r.end_byte,
+                "start_point": {
+                    "row": r.start_point.row,
+                    "column": r.start_point.column,
+                },
+                "end_point": {
+                    "row": r.end_point.row,
+                    "column": r.end_point.column,
+                },
+            }
+        },
+    )
     range: RangeAdapter
     filepath: str

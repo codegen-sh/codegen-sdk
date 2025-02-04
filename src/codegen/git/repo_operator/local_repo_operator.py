@@ -34,7 +34,7 @@ class LocalRepoOperator(RepoOperator):
         self,
         repo_path: str,  # full path to the repo
         repo_config: BaseRepoConfig | None = None,
-        bot_commit: bool = True,
+        bot_commit: bool = False,
     ) -> None:
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
