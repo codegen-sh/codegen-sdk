@@ -25,7 +25,6 @@ class ServerInfo(BaseModel):
 
 
 class UtilizationMetrics(BaseModel):
-    container_id: str
     timestamp: str
     memory_rss_gb: float
     memory_vms_gb: float
