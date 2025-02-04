@@ -23,7 +23,7 @@ class CLIUserConfigs(BaseModel, validate_assignment=True):
     def __init__(self, /, **kwargs):
         self.__pydantic_validator__.validate_python(kwargs, self_instance=self, context={"no-save": False})
 
-    @field_validator("is_metrics_enabled", mode="before")
+    @classmethod
     def prompt(cls, v: Any, info: ValidationInfo) -> Any:
         field_info = cls.model_fields[info.field_name]
         if v is None:
@@ -36,7 +36,9 @@ class CLIUserConfigs(BaseModel, validate_assignment=True):
         return v
 
     @field_validator("is_metrics_enabled", mode="before")
-    def validate_boolean_input(cls, v: Any) -> bool:
+    @classmethod
+    def validate_boolean_input(cls, v: Any, info: ValidationInfo) -> bool:
+        v = cls.prompt(v, info)
         if isinstance(v, str):
             v = v.strip().lower()
             return v == "y"
@@ -49,7 +51,7 @@ class CLIUserConfigs(BaseModel, validate_assignment=True):
         return self
 
     def save(self):
-        with open(CONFIG_PATH, "w") as f:
+        with CONFIG_PATH.open("w") as f:
             f.write(self.model_dump_json(indent=2))
 
     @classmethod
@@ -58,5 +60,5 @@ class CLIUserConfigs(BaseModel, validate_assignment=True):
         if not CONFIG_PATH.exists():
             return CLIUserConfigs()
         else:
-            with open(CONFIG_PATH) as f:
+            with CONFIG_PATH.open("r") as f:
                 return cls.model_validate_json(f.read(), context={"no-save": True})
