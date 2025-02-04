@@ -23,6 +23,11 @@ jobs:
         os: [ubuntu-latest-8, macos-latest]
 
     steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -40,9 +45,7 @@ jobs:
 
       # TODO: add cbuildwheel cache
       - name: Build release distributions
-        run: |
-          uv run --frozen cibuildwheel --output-dir dist
-          rm dist/.gitignore || true
+        run: uv build --wheel
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
 
