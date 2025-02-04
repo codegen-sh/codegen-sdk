@@ -18,12 +18,10 @@ RUN_ON_STRING_ENDPOINT = "/run_on_string"
 
 
 class ServerInfo(BaseModel):
-    repo_id: int = 0
-    container_id: str = ""
+    repo_name: str | None = None
     is_running_codemod: bool = False
     is_shutting_down: bool = False
     warmup_state: WarmupState = WarmupState.PENDING
-    label: str | None = ""
 
 
 class UtilizationMetrics(BaseModel):

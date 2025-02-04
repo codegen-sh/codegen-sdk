@@ -60,6 +60,7 @@ dependencies = [
   "starlette<1.0.0,>=0.16.0",
   "tqdm>=4.67.1",
   "tomlkit>=0.13.2",
+  "uvicorn[standard]>=0.30.0",
 ]
 
 license = { text = "Apache-2.0" }
@@ -138,7 +139,7 @@ dev-dependencies = [
   "pytest-benchmark[histogram]>=5.1.0",
   "loguru>=0.7.3",
 ]
-#skeyring-provider = "subprocess"
+
 
 [tool.uv.workspace]
 members = []
