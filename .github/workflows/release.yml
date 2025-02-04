@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - v*.**
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:
 
 permissions:
@@ -33,9 +38,11 @@ jobs:
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
+      # TODO: add cbuildwheel cache
       - name: Build release distributions
         run: |
-          uv build --wheel
+          uv run --frozen cibuildwheel --output-dir dist
+          rm dist/.gitignore || true
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
 
@@ -78,6 +85,7 @@ jobs:
           fail_on_unmatched_files: true
           generate_release_notes: true
 
+      # TODO: clean-up these publish messages
       - name: Publish message to slack
         uses: slackapi/slack-github-action@v2.0.0
         if: success() && startsWith(github.ref, 'refs/tags/')
