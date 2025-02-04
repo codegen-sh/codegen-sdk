@@ -10,7 +10,7 @@ from codegen.cli.config import CLIUserConfigs
 
 @pytest.fixture(autouse=True)
 def mock_input():
-    with patch("src.codegen.cli.config.input") as mock_input:
+    with patch("codegen.cli.config.input") as mock_input:
         yield mock_input
 
 
@@ -18,7 +18,7 @@ def mock_input():
 def mock_config_file():
     with tempfile.NamedTemporaryFile() as temp_file:
         path = Path(temp_file.name)
-        with patch("src.codegen.cli.config.CONFIG_PATH", path):
+        with patch("codegen.cli.config.CONFIG_PATH", path):
             yield path
 
 

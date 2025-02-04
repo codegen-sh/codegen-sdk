@@ -16,7 +16,7 @@ def mock_metrics_client():
 
 @pytest.fixture(autouse=True)
 def mock_cli_user_configs():
-    with patch("src.codegen.cli.config.CONFIG_PATH") as mock:
+    with patch("codegen.cli.config.CONFIG_PATH") as mock:
         configs = CLIUserConfigs(is_metrics_enabled=False)
         with patch.object(CLIUserConfigs, "load", return_value=configs):
             yield configs

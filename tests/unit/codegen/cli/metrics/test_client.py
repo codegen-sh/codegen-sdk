@@ -7,14 +7,14 @@ from codegen.cli.metrics.client import MetricsClient, get_metrics_client
 
 @pytest.fixture
 def atexit_mock():
-    with patch("src.codegen.cli.metrics.client.atexit.register") as mock:
+    with patch("codegen.cli.metrics.client.atexit.register") as mock:
         yield mock
 
 
 @pytest.fixture
 def mock_posthog():
     mock_posthog = MagicMock()
-    with patch("src.codegen.cli.metrics.client.Posthog", return_value=mock_posthog):
+    with patch("codegen.cli.metrics.client.Posthog", return_value=mock_posthog):
         yield mock_posthog
 
 
@@ -22,7 +22,7 @@ def mock_posthog():
 def mock_metrics_client(mock_cli_user_configs, atexit_mock, mock_posthog):
     # Disables conftest metrics client mock by replacing it
     mock_cli_user_configs.is_metrics_enabled = False
-    with patch("src.codegen.cli.metrics.client.ThreadPoolExecutor"):
+    with patch("codegen.cli.metrics.client.ThreadPoolExecutor"):
         yield MetricsClient()
 
 
@@ -62,7 +62,7 @@ def test_capture_event(mock_metrics_client, mock_posthog):
 
 def test_capture_event_exception(mock_metrics_client, mock_posthog):
     mock_metrics_client.pool.submit.side_effect = Exception("test exception")
-    with patch("src.codegen.cli.metrics.client.global_env.DEBUG", True):
-        with patch("src.codegen.cli.metrics.client.traceback.print_exc") as mock_print_exc:
+    with patch("codegen.cli.metrics.client.global_env.DEBUG", True):
+        with patch("codegen.cli.metrics.client.traceback.print_exc") as mock_print_exc:
             mock_metrics_client.capture_event("test_event", {"key": "value"})
             mock_print_exc.assert_called_once()
