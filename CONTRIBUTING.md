@@ -11,6 +11,7 @@ By contributing to Codegen, you agree that:
 1. You grant Codegen a perpetual, worldwide, non-exclusive, royalty-free license to use your contribution.
 
 See our [CLA](CLA.md) for more details.
+
 # Development Setup
 
 This guide will help you set up the development environment for this project.
@@ -20,7 +21,9 @@ This guide will help you set up the development environment for this project.
 UV is a fast Python package installer and resolver.
 
 ### macOS
+
 Install UV using Homebrew:
+
 ```bash
 brew install uv
 ```
@@ -28,15 +31,20 @@ brew install uv
 ### Debian/Ubuntu
 
 #### Install Required Dependencies
+
 Before installing UV, ensure `clang` and `curl` are installed:
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y clang curl
 ```
+
 > **Note**: `clang` is required for compilation steps during `uv sync`.
 
 #### Install UV
+
 Once dependencies are installed, install UV:
+
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
@@ -67,7 +75,6 @@ uv sync --dev
   ```bash
   uv sync --dev
   ```
-
 
 ### Running Tests
 
