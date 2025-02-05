@@ -122,8 +122,6 @@ from codegen.sdk.python.expressions.named_type import PyNamedType
 from codegen.sdk.python.expressions.string import PyString
 from codegen.sdk.python.expressions.union_type import PyUnionType
 from codegen.sdk.python.file import PyFile
-from codegen.sdk.python.file import remove_unused_exports
-from codegen.sdk.python.file import remove_unused_imports
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
 from codegen.sdk.python.import_resolution import is_from_import

@@ -159,8 +159,6 @@ extend-generics = [
   "codegen.sdk.python.expressions.named_type.PyNamedType",
   "codegen.sdk.python.expressions.string.PyString",
   "codegen.sdk.python.expressions.union_type.PyUnionType",
-  "codegen.sdk.python.file.remove_unused_imports",
-  "codegen.sdk.python.file.remove_unused_exports",
   "codegen.sdk.python.file.PyFile",
   "codegen.sdk.python.function.PyFunction",
   "codegen.sdk.python.import_resolution.is_from_import",

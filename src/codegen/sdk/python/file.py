@@ -174,7 +174,6 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
         else:
             self.insert_before(import_string, priority=1)
 
-    @py_apidoc
     def remove_unused_imports(self) -> None:
         """Removes unused imports from the file.
 
@@ -231,7 +230,6 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
 
         self.G.commit_transactions()
 
-    @py_apidoc
     def remove_unused_exports(self) -> None:
         """Removes unused exports from the file.
         In Python this is equivalent to removing unused imports since Python doesn't have
