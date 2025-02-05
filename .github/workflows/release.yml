@@ -19,6 +19,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
 
@@ -43,8 +44,12 @@ jobs:
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
+      # TODO: add cbuildwheel cache
       - name: Build wheels
-        run: uv run --frozen cibuildwheel --output-dir dist
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_SKIP: cp313-macosx_*,*i686*
 
       - uses: actions/upload-artifact@v4
         with:
