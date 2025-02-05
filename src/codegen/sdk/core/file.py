@@ -587,7 +587,7 @@ class SourceFile(
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str, content: str, G: CodebaseGraph, sync: bool = True, verify_syntax: bool = True) -> Self | None:
+    def from_content(cls, filepath: str | PathLike, content: str, G: CodebaseGraph, sync: bool = True, verify_syntax: bool = True) -> Self | None:
         """Creates a new file from content and adds it to the graph."""
         path = G.to_absolute(filepath)
         ts_node = parse_file(path, content)
