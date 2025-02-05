@@ -43,7 +43,7 @@ jobs:
           ref: v0.5.22
 
       - name: Setup environment
-        uses: ./.github/actions/setup-environment
+        uses: ./.github/actions/setup-backend
         with:
           python-version: 3.${{ matrix.python }}
 
