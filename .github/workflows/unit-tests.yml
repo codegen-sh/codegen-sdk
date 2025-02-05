@@ -12,7 +12,6 @@ on:
 
 jobs:
   unit-tests:
-    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-16
     steps:
       - uses: actions/checkout@v4
@@ -20,17 +19,19 @@ jobs:
           fetch-depth: 0
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-      - name: Run ATS and Tests
-        uses: ./.github/actions/run_ats
-        timeout-minutes: 15
-        with:
-          default_tests: "tests/unit"
-          codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-          codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--timeout 15"
-          codecov_flags: unit-tests
+      - name: Test with pytest
+        timeout-minutes: 6
+        run: |
+          uv run pytest --cov \
+            -o junit_suite_name="${{github.job}}" \
+            -n auto \
+            -vv \
+            --cov \
+            --cov-append \
+            --timeout 50 \
+            --cov-report=xml \
+            tests/unit
   codemod-tests:
-    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
     strategy:
       matrix:
@@ -93,7 +94,6 @@ jobs:
   #         GITHUB_WORKSPACE: $GITHUB_WORKSPACE
 
   parse-tests:
-    # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
     runs-on: ubuntu-latest-32
     if: contains(github.event.pull_request.labels.*.name, 'parse-tests') || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     environment: parse-tests
