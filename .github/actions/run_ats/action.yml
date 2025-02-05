@@ -43,7 +43,6 @@ runs:
     - name: Run tests
       shell: bash
       run: |
-        echo "pwd: $(pwd)" # FIXME: for debugging
         TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
         if [ -z "$TESTS_TO_RUN" ]; then
           echo "No tests to run, skipping..."
