@@ -184,7 +184,7 @@ pythonpath = "."
 norecursedirs = "repos expected"
 # addopts = -v --cov=app --cov-report=term
 
-addopts = "--dist=loadgroup --junitxml=build/test-results/test/TEST.xml --strict-config --import-mode=importlib --cov-context=test --cov-report=json --cov-config=pyproject.toml -p no:doctest"
+addopts = "--dist=loadgroup --junitxml=build/test-results/test/TEST.xml --strict-config --import-mode=importlib --cov-context=test --cov-config=pyproject.toml -p no:doctest"
 filterwarnings = """
     ignore::DeprecationWarning:botocore.*:
     ignore::DeprecationWarning:sqlalchemy.*:
