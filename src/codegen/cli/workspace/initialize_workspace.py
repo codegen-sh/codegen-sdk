@@ -1,6 +1,7 @@
 import shutil
 from contextlib import nullcontext
 from pathlib import Path
+from typing import Optional
 
 import requests
 import rich
@@ -17,12 +18,13 @@ from codegen.cli.utils.notebooks import create_notebook
 from codegen.cli.workspace.docs_workspace import populate_api_docs
 from codegen.cli.workspace.examples_workspace import populate_examples
 from codegen.cli.workspace.venv_manager import VenvManager
-
+from codegen.cli.utils.constants import ProgrammingLanguage
 
 def initialize_codegen(
     status: Status | str = "Initializing",
     session: CodegenSession | None = None,
     fetch_docs: bool = False,
+    programming_language: Optional[ProgrammingLanguage] = None
 ) -> tuple[Path, Path, Path]:
     """Initialize or update the codegen directory structure and content.
 
@@ -30,6 +32,7 @@ def initialize_codegen(
         status: Either a Status object to update, or a string action being performed ("Initializing" or "Updating")
         session: Optional CodegenSession for fetching docs and examples
         fetch_docs: Whether to fetch docs and examples (requires auth)
+        programming_language: Optional override for the programming language
 
     Returns:
         Tuple of (codegen_folder, docs_folder, examples_folder)
@@ -111,7 +114,11 @@ def initialize_codegen(
             populate_examples(session, EXAMPLES_FOLDER, response.examples, status_obj)
 
             # Set programming language
-            session.config.programming_language = str(response.language)
+            if programming_language:
+                session.config.programming_language = programming_language
+            else:
+                session.config.programming_language = str(response.language)
+
             session.write_config()
 
     return CODEGEN_FOLDER, DOCS_FOLDER, EXAMPLES_FOLDER
