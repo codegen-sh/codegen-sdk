@@ -22,10 +22,7 @@ from codegen.cli.workspace.venv_manager import VenvManager
 
 
 def initialize_codegen(
-    status: Status | str = "Initializing",
-    session: CodegenSession | None = None,
-    fetch_docs: bool = False,
-    programming_language: Optional[ProgrammingLanguage] = None
+    status: Status | str = "Initializing", session: CodegenSession | None = None, fetch_docs: bool = False, programming_language: Optional[ProgrammingLanguage] = None
 ) -> tuple[Path, Path, Path]:
     """Initialize or update the codegen directory structure and content.
 

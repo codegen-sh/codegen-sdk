@@ -18,17 +18,8 @@ from codegen.cli.workspace.initialize_workspace import initialize_codegen
 @click.option("--repo-name", type=str, help="The name of the repository")
 @click.option("--organization-name", type=str, help="The name of the organization")
 @click.option("--fetch-docs", is_flag=True, help="Fetch docs and examples (requires auth)")
-@click.option(
-    "--language",
-    type=click.Choice(["python", "typescript"], case_sensitive=False),
-    help="Override automatic language detection"
-)
-def init_command(
-    repo_name: str | None = None,
-    organization_name: str | None = None,
-    fetch_docs: bool = False,
-    language: str | None = None
-):
+@click.option("--language", type=click.Choice(["python", "typescript"], case_sensitive=False), help="Override automatic language detection")
+def init_command(repo_name: str | None = None, organization_name: str | None = None, fetch_docs: bool = False, language: str | None = None):
     """Initialize or update the Codegen folder."""
     # Print a message if not in a git repo
     try:
@@ -68,12 +59,7 @@ def init_command(
 
     action = "Updating" if is_update else "Initializing"
     rich.print("")
-    codegen_dir, docs_dir, examples_dir = initialize_codegen(
-        action,
-        session=session,
-        fetch_docs=fetch_docs,
-        programming_language=programming_language
-    )
+    codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs, programming_language=programming_language)
 
     # Print success message
     rich.print(f"✅ {action} complete\n")
