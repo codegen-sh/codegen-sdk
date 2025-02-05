@@ -18,7 +18,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
       - name: Run ATS and Tests
         uses: ./.github/actions/run_ats
         timeout-minutes: 15
@@ -49,7 +49,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
       - name: Cache oss-repos
         uses: ./.github/actions/setup-oss-repos
       - name: Run ATS and Tests
@@ -72,7 +72,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
 
       - name: Cache oss-repos
         uses: ./.github/actions/setup-oss-repos
@@ -136,7 +136,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
       - name: Test with pytest
         timeout-minutes: 5
         env:
