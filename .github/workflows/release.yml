@@ -51,7 +51,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
-          CIBW_BEFORE_BUILD: python -m pip install build
+          CIBW_BEFORE_BUILD: python -m ensurepip && python -m pip install build
           CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
