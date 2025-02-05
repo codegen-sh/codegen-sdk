@@ -20,9 +20,6 @@ matrix.tool.scripts = [
 [version]
 source = "vcs"
 
-[envs.hatch-build.env-vars]
-UV_EXTRA_INDEX_URL = "https://aws@codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/simple/"
-
 [build.targets.wheel.hooks.cython]
 dependencies = [
   "hatch-cython @ git+https://github.com/codegen-sh/hatch-cython.git",

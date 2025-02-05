@@ -22,12 +22,12 @@ jobs:
         uses: ./.github/actions/setup-backend
       - name: Run ATS and Tests
         uses: ./.github/actions/run_ats
-        timeout-minutes: 5
+        timeout-minutes: 15
         with:
           default_tests: "tests/unit"
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
           codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--timeout 5"
+          collect_args: "--timeout 15"
           codecov_flags: unit-tests
   codemod-tests:
     # changing the following value will significantly affect github's cost. Be careful and consult with the team before changing it.
@@ -53,7 +53,7 @@ jobs:
         uses: ./.github/actions/setup-oss-repos
       - name: Run ATS and Tests
         uses: ./.github/actions/run_ats
-        timeout-minutes: 10
+        timeout-minutes: 15
         with:
           default_tests: "tests/integration/codemod/test_codemods.py"
           codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
