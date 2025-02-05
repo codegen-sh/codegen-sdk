@@ -42,7 +42,7 @@ class Chainable(Editable[Parent], Generic[Parent]):
     ) -> Generator[ResolutionStack["Self"], None, None]:
         from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
 
-        assert resolution.top.node is not self
+        assert resolution is not self
         generics = generics or resolution.generics
         if generic_parameters:
             if isinstance(resolution.top.node, SupportsGenerics) and self.G.config.feature_flags.generics:
