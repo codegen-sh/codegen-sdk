@@ -21,20 +21,16 @@ runs:
         enable-cache: true
         prune-cache: false
         python-version: ${{ inputs.python-version }}
-        version: '0.5.20'
+        version: '0.5.24'
         cache-suffix: ${{inputs.python-version}}
+
     - name: Install dependencies
       shell: bash
       run: |
         uv sync --frozen --all-extras
+
     - name: Install codecov
       shell: bash
       run: |
         uv tool install codecov-cli --python 3.10
-    # - name: Configure AWS Credentials
-    #   if: env.skip == '1'
-    #   uses: aws-actions/configure-aws-credentials@v2
-    #   with:
-    #     aws-access-key-id: ${{ inputs.aws-access-key-id }}
-    #     aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-    #     aws-region: us-west-1
+        uv tool update-shell

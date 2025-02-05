@@ -44,7 +44,13 @@ if TYPE_CHECKING:
 
 @ts_apidoc
 class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasValue, Chainable):
-    """Represents a single exported symbol. There is a 1:M relationship between an ExportStatement and an Export"""
+    """Represents a single exported symbol.
+
+    There is a 1:M relationship between an ExportStatement and an Export
+
+    Attributes:
+        node_type: The type of the node, set to NodeType.EXPORT.
+    """
 
     _declared_symbol: TSSymbol | TSImport | None
     _exported_symbol: Name | None

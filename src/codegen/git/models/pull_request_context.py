@@ -19,11 +19,11 @@ class PullRequestContext(BaseModel):
     draft: bool
     head: PRPartContext
     base: PRPartContext
-    merged: bool | None
-    merged_by: dict | None
-    additions: int | None
-    deletions: int | None
-    changed_files: int | None
+    merged: bool | None = None
+    merged_by: dict | None = None
+    additions: int | None = None
+    deletions: int | None = None
+    changed_files: int | None = None
     github_type: GithubType | None = None
     webhook_data: dict | None = None
 

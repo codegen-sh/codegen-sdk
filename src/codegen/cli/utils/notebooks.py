@@ -20,7 +20,7 @@ print(f"🔄 Total Imports: {len(codebase.imports)}")""".strip(),
 ]
 
 DEMO_CELLS = [
-    ##### [ CODGEN DEMO ] #####
+    ##### [ CODEGEN DEMO ] #####
     {
         "cell_type": "markdown",
         "source": """# Codegen Demo: FastAPI

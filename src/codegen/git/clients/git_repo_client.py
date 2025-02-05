@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class GitRepoClient:
     """Wrapper around PyGithub's Remote Repository."""
 
-    repo: RepoConfig
+    repo_config: RepoConfig
     github_type: GithubType = GithubType.GithubEnterprise
     gh_client: GithubClientType
     read_client: Repository
@@ -34,17 +34,17 @@ class GitRepoClient:
     __write_client: Repository | None  # Will not be initialized if access scope is read-only
 
     def __init__(self, repo_config: RepoConfig, github_type: GithubType = GithubType.GithubEnterprise, access_scope: GithubScope = GithubScope.READ) -> None:
-        self.repo = repo_config
+        self.repo_config = repo_config
         self.github_type = github_type
-        self.gh_client = GithubClientFactory.create_from_repo(self.repo, github_type)
+        self.gh_client = GithubClientFactory.create_from_repo(self.repo_config, github_type)
         self.read_client = self._create_client(GithubScope.READ)
         self.__write_client = self._create_client(GithubScope.WRITE) if access_scope == GithubScope.WRITE else None
         self.access_scope = access_scope
 
     def _create_client(self, github_scope: GithubScope = GithubScope.READ) -> Repository:
-        client = self.gh_client.get_repo_by_full_name(self.repo.full_name, github_scope=github_scope)
+        client = self.gh_client.get_repo_by_full_name(self.repo_config.full_name, github_scope=github_scope)
         if not client:
-            msg = f"Repo {self.repo.full_name} not found in {self.github_type.value}!"
+            msg = f"Repo {self.repo_config.full_name} not found in {self.github_type.value}!"
             raise ValueError(msg)
         return client
 
@@ -61,7 +61,7 @@ class GitRepoClient:
 
     @property
     def id(self) -> int:
-        return self.repo.id
+        return self.repo_config.id
 
     @property
     def default_branch(self) -> str:
@@ -160,7 +160,7 @@ class GitRepoClient:
         if not base_branch_name:
             base_branch_name = self.default_branch
 
-        head_branch_name = f"{self.repo.organization_name}:{head_branch_name}"
+        head_branch_name = f"{self.repo_config.organization_name}:{head_branch_name}"
 
         # retrieve all pulls ordered by created descending
         prs = self.read_client.get_pulls(base=base_branch_name, head=head_branch_name, state=state, sort="created", direction="desc")

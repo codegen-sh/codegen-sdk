@@ -35,6 +35,11 @@ class AssignmentStatement(Statement[TCodeBlock], HasValue, Generic[TCodeBlock, T
     This includes potentially multiple Assignments via `statement.assignments`, which represent each assignment of a value to a variable within this statement.
 
     For example, assigning to a destructured object, or assigning multiple values to multiple variables in a single statement.
+
+    Attributes:
+        assignments: A list of assignments within the statement.
+        left: The left-hand side expression of the first assignment.
+        right: The right-hand side expression of the first assignment, or None if not applicable.
     """
 
     statement_type = StatementType.ASSIGNMENT

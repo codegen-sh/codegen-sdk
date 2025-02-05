@@ -40,9 +40,11 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 @apidoc
 class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeBlock]):
-    """Abstract representation of a Symbol in a Codebase. A Symbol is a top-level entity in a file,
-    e.g. a Function, Class, GlobalVariable, etc.
+    """Abstract representation of a Symbol in a Codebase. A Symbol is a top-level entity in a file, e.g. a Function, Class, GlobalVariable, etc.
 
+    Attributes:
+        symbol_type: The type of the symbol.
+        node_type: The type of the node, set to NodeType.SYMBOL.
     """
 
     symbol_type: SymbolType
@@ -264,7 +266,13 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                 return first_node.insert_before(new_src, fix_indentation, newline, priority, dedupe)
         return super().insert_before(new_src, fix_indentation, newline, priority, dedupe)
 
-    def move_to_file(self, file: SourceFile, include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True) -> None:
+    def move_to_file(
+        self,
+        file: SourceFile,
+        include_dependencies: bool = True,
+        strategy: Literal["add_back_edge", "update_all_imports", "duplicate_dependencies"] = "update_all_imports",
+        remove_unused_imports: bool = True,
+    ) -> None:
         """Moves the given symbol to a new file and updates its imports and references.
 
         This method moves a symbol to a new file and updates all references to that symbol throughout the codebase. The way imports are handled can be controlled via the strategy parameter.
@@ -288,7 +296,12 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
 
     @noapidoc
     def _move_to_file(
-        self, file: SourceFile, encountered_symbols: set[Symbol | Import], include_dependencies: bool = True, strategy: str = "update_all_imports", remove_unused_imports: bool = True
+        self,
+        file: SourceFile,
+        encountered_symbols: set[Symbol | Import],
+        include_dependencies: bool = True,
+        strategy: Literal["add_back_edge", "update_all_imports", "duplicate_dependencies"] = "update_all_imports",
+        remove_unused_imports: bool = True,
     ) -> tuple[NodeId, NodeId]:
         """Helper recursive function for `move_to_file`"""
         from codegen.sdk.core.import_resolution import Import
@@ -347,11 +360,20 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
             usage.file == self.file and usage.node_type == NodeType.SYMBOL and usage not in encountered_symbols and (usage.start_byte < self.start_byte or usage.end_byte > self.end_byte)  # HACK
             for usage in self.symbol_usages
         )
+
+        # ======[ Strategy: Duplicate Dependencies ]=====
+        if strategy == "duplicate_dependencies":
+            # If not used in the original file. or if not imported from elsewhere, we can just remove the original symbol
+            if not is_used_in_file and not any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages):
+                self.remove()
+
         # ======[ Strategy: Add Back Edge ]=====
         # Here, we will add a "back edge" to the old file importing the symbol
-        if strategy == "add_back_edge":
+        elif strategy == "add_back_edge":
             if is_used_in_file or any(usage.kind is UsageKind.IMPORTED and usage.usage_symbol not in encountered_symbols for usage in self.usages):
                 self.file.add_import_from_import_string(import_line)
+            # Delete the original symbol
+            self.remove()
 
         # ======[ Strategy: Update All Imports ]=====
         # Update the imports in all the files which use this symbol to get it from the new file now
@@ -370,10 +392,11 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                             usage.match.edit(self.name)
                         usage.usage_symbol.file.add_import_from_import_string(import_line)
 
+            # Add the import to the original file
             if is_used_in_file:
                 self.file.add_import_from_import_string(import_line)
-        # =====[ Delete the original symbol ]=====
-        self.remove()
+            # Delete the original symbol
+            self.remove()
 
         # After moving a symbol (function or class) out of a file, if there are imports that are now unused because that was the only thing using them, remove those as well
         if remove_unused_imports:

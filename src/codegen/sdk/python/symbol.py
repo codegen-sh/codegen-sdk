@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self, Unpack
 
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.symbol import Symbol
@@ -13,6 +13,8 @@ if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+    from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.core.interfaces.has_block import HasBlock
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
@@ -197,3 +199,26 @@ class PySymbol(Symbol["PyHasBlock", "PyCodeBlock"]):
             if auto_format:
                 comment = "  " + PyComment.generate_comment(comment, PyCommentType.SINGLE_LINE)
             self.insert_after(comment, fix_indentation=False, newline=False)
+
+    @writer
+    def flag(self, **kwargs: Unpack[FlagKwargs]) -> CodeFlag[Self]:
+        """Flags a Python symbol by adding a flag comment and returning a CodeFlag.
+
+        This implementation first creates the CodeFlag through the standard flagging system,
+        then adds a Python-specific comment to visually mark the flagged code.
+
+        Args:
+            **kwargs: Flag keyword arguments including optional 'message'
+
+        Returns:
+            CodeFlag[Self]: The code flag object for tracking purposes
+        """
+        # First create the standard CodeFlag through the base implementation
+        code_flag = super().flag(**kwargs)
+
+        # Add a Python comment to visually mark the flag
+        message = kwargs.get("message", "")
+        if message:
+            self.set_inline_comment(f"🚩 {message}")
+
+        return code_flag

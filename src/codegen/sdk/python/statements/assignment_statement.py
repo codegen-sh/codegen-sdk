@@ -26,8 +26,6 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
     """A class that represents a Python assignment statement in a codebase, such as `x = 1` or `a, b = 1, 2`.
 
     This includes potentially multiple Assignments via `statement.assignments`, which represent each assignment of a value to a variable within this statement.
-
-    For example, assigning to a list, or assigning multiple values to multiple variables in a single statement.
     """
 
     assignment_types = {"assignment", "augmented_assignment", "named_expression"}

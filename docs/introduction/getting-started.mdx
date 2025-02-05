@@ -17,7 +17,7 @@ uv tool install codegen
 
 ## Quick Start with Jupyter
 
-The [codgen notebook](/cli/notebook) command creates a virtual environment and opens a Jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
+The [codegen notebook](/cli/notebook) command creates a virtual environment and opens a Jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
 
 ```bash
 # Launch Jupyter with a demo notebook
@@ -245,7 +245,7 @@ Codegen's graph structure makes it easy to analyze relationships between code el
 ```python
 # Find dead code
 for func in codebase.functions:
-    if len(function.usages) == 0:
+    if len(func.usages) == 0:
         print(f'🗑️ Dead code: {func.name}')
         func.remove()
 

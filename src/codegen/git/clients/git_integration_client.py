@@ -51,6 +51,6 @@ class GitIntegrationClient:
             logger.warning(f"Error getting app installation with installation_id: {installation_id}\n\t{e}")
             return None
 
-    def get_access_token(self, installation_id: int, permissions: dict[str, str]) -> InstallationAuthorization:
+    def get_access_token(self, installation_id: int, permissions: dict[str, str] | None = None) -> InstallationAuthorization:
         # TODO: add try/catch error handling around this
         return self.client.get_access_token(installation_id=installation_id, permissions=permissions)
