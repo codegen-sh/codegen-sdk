@@ -21,7 +21,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04-arm,
+          macos-latest,
+        ]
 
     steps:
       - name: Dump GitHub context
