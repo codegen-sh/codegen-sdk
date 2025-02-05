@@ -1,5 +1,6 @@
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnTypePlaceholder
 
 
 def test_function_is_async_basic(tmpdir):
@@ -233,3 +234,149 @@ async function barAsync<T>(arg: T): Promise<T> {
 }
     """
     )
+
+
+def test_asyncify_wraps_non_promise_return_type(tmpdir) -> None:
+    # ========= = [ BEFORE ] ==========
+    # language=typescript
+    BEFORE_CONTENT = """
+function getData(): string {
+    return "hello";
+}
+"""
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_CONTENT = """
+async function getData(): Promise<string> {
+    return "hello";
+}
+"""
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={"test.ts": BEFORE_CONTENT},
+    ) as codebase:
+        file = codebase.get_file("test.ts")
+        func = file.get_function("getData")
+
+        # Initial state should be non-async
+        assert not func.is_async
+        assert func.return_type.source == "string"
+
+        # After asyncify, should be async and return type wrapped in Promise
+        func.asyncify()
+        codebase.commit()
+
+        # Check file content directly instead of func.is_async
+        assert file.content.strip() == EXPECTED_CONTENT.strip()
+
+
+def test_asyncify_already_promise_return_type(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    BEFORE_CONTENT = """
+    function getData(): Promise<string> {
+        return Promise.resolve("hello");
+    }
+    """
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_CONTENT = """
+    async function getData(): Promise<string> {
+        return Promise.resolve("hello");
+    }
+    """
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={"test.ts": BEFORE_CONTENT},
+    ) as codebase:
+        file = codebase.get_file("test.ts")
+        func = file.get_function("getData")
+
+        # Initial state should be non-async but already have Promise return type
+        assert not func.is_async
+        assert func.return_type.source == "Promise<string>"
+
+        # After asyncify, should be async but return type should remain unchanged
+        func.asyncify()
+        codebase.commit()
+
+        # Check file content directly instead of func.is_async
+        print(file.content)
+        assert file.content.strip() == EXPECTED_CONTENT.strip()
+
+
+def test_asyncify_void_return_type(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    BEFORE_CONTENT = """
+    function processData(): void {
+        console.log("processing");
+    }
+    """
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_CONTENT = """
+    async function processData(): Promise<void> {
+        console.log("processing");
+    }
+    """
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={"test.ts": BEFORE_CONTENT},
+    ) as codebase:
+        file = codebase.get_file("test.ts")
+        func = file.get_function("processData")
+
+        # Initial state should be non-async with void return type
+        assert not func.is_async
+        assert func.return_type.source == "void"
+
+        # After asyncify, should be async and return Promise<void>
+        func.asyncify()
+        codebase.commit()
+        # Check file content directly instead of func.is_async
+        assert file.content.strip() == EXPECTED_CONTENT.strip()
+
+
+def test_asyncify_no_return_type(tmpdir) -> None:
+    # ========== [ BEFORE ] ==========
+    # language=typescript
+    BEFORE_CONTENT = """
+    function processData() {
+        console.log("processing");
+    }
+    """
+
+    # ========== [ AFTER ] ==========
+    # language=typescript
+    EXPECTED_CONTENT = """
+    async function processData() {
+        console.log("processing");
+    }
+    """
+
+    with get_codebase_session(
+        tmpdir=tmpdir,
+        programming_language=ProgrammingLanguage.TYPESCRIPT,
+        files={"test.ts": BEFORE_CONTENT},
+    ) as codebase:
+        file = codebase.get_file("test.ts")
+        func = file.get_function("processData")
+
+        # Initial state should be non-async with no return type
+        assert not func.is_async
+        assert isinstance(func.return_type, TSReturnTypePlaceholder)
+
+        # After asyncify, should be async but no return type added
+        func.asyncify()
+        codebase.commit()
+        # Check file content directly instead of func.is_async
+        assert file.content.strip() == EXPECTED_CONTENT.strip()
