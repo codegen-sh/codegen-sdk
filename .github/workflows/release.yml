@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.os }} 3.${{ matrix.python }}
+    name: Build 3.${{ matrix.python }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
