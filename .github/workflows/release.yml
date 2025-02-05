@@ -44,8 +44,8 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       # TODO: add cbuildwheel cache
-      - name: Build release distributions
-        run: uv build --wheel
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
 
