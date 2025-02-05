@@ -119,7 +119,6 @@
 				"building-with-codegen/git-operations",
 				"building-with-codegen/files-and-directories",
 				"building-with-codegen/the-editable-api",
-				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
 				"building-with-codegen/imports",
@@ -138,6 +137,7 @@
 				"building-with-codegen/traversing-the-call-graph",
 				"building-with-codegen/react-and-jsx",
 				"building-with-codegen/codebase-visualization",
+				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
 				"building-with-codegen/reducing-conditions"
 			]
