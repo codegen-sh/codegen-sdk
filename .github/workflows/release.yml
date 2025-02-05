@@ -1,4 +1,4 @@
-name: Upload Python Package
+name: Release
 
 on:
   push:
@@ -76,7 +76,7 @@ jobs:
         run: |
           export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
           export UV_PUBLISH_USERNAME="__token__"
-          uv publish --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled
+          uv publish --publish-url https://upload.pypi.org/legacy/
 
       - name: Make github release
         uses: softprops/action-gh-release@v2
