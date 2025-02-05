@@ -199,6 +199,9 @@ tmp_path_retention_policy = "failed"
 requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"
 
+[dependency-groups]
+types = ["types-requests>=2.32.0.20241016", "types-toml>=0.10.8.20240310"]
+
 [tool.deptry]
 extend_exclude = [".*/eval/test_files/.*.py", ".*conftest.py"]
 pep621_dev_dependency_groups = ["types"]
