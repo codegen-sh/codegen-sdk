@@ -51,7 +51,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-GLOBAL_FILE_IGNORE_LIST = [".git/*", ".yarn/releases/*", ".*/tests/static/chunk-.*.js"]
+GLOBAL_FILE_IGNORE_LIST = [".git/*", ".yarn/releases/*", ".*/tests/static/chunk-.*.js", ".*/ace/.*.js"]
 
 
 @unique
