@@ -1,0 +1,48 @@
+name: Mypy Checks
+
+on:
+  pull_request:
+    branches:
+      - "develop"
+
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mypy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup backend
+        uses: ./.github/actions/setup-backend
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v45.0.7
+
+      - name: Filter Python files
+        id: filter-python
+        run: |
+          python_files=()
+          for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+            if [[ $file == *.py ]]; then
+              python_files+=("${file}")
+            fi
+          done
+          echo "python_files=${python_files[*]}" >> $GITHUB_ENV
+
+      - name: Add MyPy annotator
+        uses: pr-annotators/mypy-pr-annotator@v1.0.0
+
+      - name: Run mypy
+        if: ${{ env.python_files != '' }}
+        run: |
+          echo "Running mypy on changed files: ${{ env.python_files }}"
+          uv run mypy --no-pretty --show-absolute-path ${{ env.python_files }}

@@ -36,7 +36,7 @@ def runner(codebase: Codebase, tmpdir):
             mock_init_codebase.return_value = codebase
             mock_op.return_value = codebase.op
 
-            yield SandboxRunner(container_id="ta-123", repo_config=codebase.op.repo_config)
+            yield SandboxRunner(repo_config=codebase.op.repo_config)
 
 
 @pytest.fixture(autouse=True)

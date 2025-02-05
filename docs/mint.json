@@ -137,6 +137,7 @@
 				"building-with-codegen/traversing-the-call-graph",
 				"building-with-codegen/react-and-jsx",
 				"building-with-codegen/codebase-visualization",
+				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
 				"building-with-codegen/reducing-conditions"
 			]
@@ -159,7 +160,7 @@
 		},
 		{
 			"group": "Blog",
-			"pages": ["blog/posts", "blog/act-via-code"]
+			"pages": ["blog/posts", "blog/act-via-code", "blog/fixing-import-loops"]
 		},
 		{
 			"group": "API Reference",
@@ -209,7 +210,9 @@
 						"api-reference/core/IfBlockStatement",
 						"api-reference/core/Import",
 						"api-reference/core/ImportStatement",
+						"api-reference/core/ImportType",
 						"api-reference/core/Importable",
+						"api-reference/core/Interface",
 						"api-reference/core/List",
 						"api-reference/core/MessageType",
 						"api-reference/core/MultiExpression",

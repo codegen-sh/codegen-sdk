@@ -7,7 +7,6 @@ from datetime import datetime
 import psutil
 from fastapi import FastAPI
 
-from codegen.runner.constants.envvars import CUSTOMER_REPO_ID
 from codegen.runner.enums.warmup_state import WarmupState
 from codegen.runner.models.apis import (
     BRANCH_ENDPOINT,
@@ -38,10 +37,11 @@ async def lifespan(server: FastAPI):
     global runner
 
     try:
-        server_info = ServerInfo(repo_id=int(os.getenv(CUSTOMER_REPO_ID)), container_id=os.getenv("MODAL_TASK_ID"))
-        logger.info(f"Starting up sandbox fastapi server for repo_id={server_info.repo_id} in container ID={server_info.container_id}")
+        repo_config = get_repo_config()
+        server_info = ServerInfo(repo_name=repo_config.full_name)
+        logger.info(f"Starting up sandbox fastapi server for repo_name={server_info.repo_name}")
 
-        runner = SandboxRunner(container_id=server_info.container_id, repo_config=get_repo_config())
+        runner = SandboxRunner(repo_config=repo_config)
         server_info.warmup_state = WarmupState.PENDING
         await runner.warmup()
         server_info.warmup_state = WarmupState.COMPLETED
@@ -82,7 +82,6 @@ async def utilization_metrics() -> UtilizationMetrics:
     memory_stats = get_memory_stats()
 
     return UtilizationMetrics(
-        container_id=os.getenv("MODAL_TASK_ID"),
         timestamp=datetime.now(dt.UTC).isoformat(),
         memory_rss_gb=memory_stats.memory_rss_gb,
         memory_vms_gb=memory_stats.memory_vms_gb,
@@ -94,7 +93,7 @@ async def utilization_metrics() -> UtilizationMetrics:
 
 @app.post(SIGNAL_SHUTDOWN_ENDPOINT)
 async def signal_shutdown() -> SignalShutdownResponse:
-    logger.info(f"repo_id={server_info.repo_id} container ID={server_info.container_id} received signal_shutdown")
+    logger.info(f"repo_name={server_info.repo_name} received signal_shutdown")
     server_info.is_shutting_down = True
     return SignalShutdownResponse(is_ready_to_shutdown=not server_info.is_running_codemod)
 

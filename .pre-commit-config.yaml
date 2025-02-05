@@ -1,5 +1,5 @@
 default_language_version:
-  python: python3.12
+  python: python3.13
 fail_fast: true
 repos:
 
@@ -77,11 +77,11 @@ repos:
 
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.156.1
+    rev: 39.161.0
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.26"
+    rev: "0.5.28"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
@@ -103,3 +103,13 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+  - repo: https://github.com/hukkin/mdformat
+    rev: 0.7.22  # Use the ref you want to point at
+    hooks:
+    - id: mdformat
+      # Optionally add plugins
+      additional_dependencies:
+      - mdformat-gfm
+      - mdformat-ruff
+      - mdformat-config
+      - mdformat-pyproject

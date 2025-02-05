@@ -245,7 +245,7 @@ Codegen's graph structure makes it easy to analyze relationships between code el
 ```python
 # Find dead code
 for func in codebase.functions:
-    if len(function.usages) == 0:
+    if len(func.usages) == 0:
         print(f'🗑️ Dead code: {func.name}')
         func.remove()
 

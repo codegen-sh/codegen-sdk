@@ -2,21 +2,7 @@
 title: "UsageKind"
 sidebarTitle: "UsageKind"
 icon: ""
-description: "SymbolUsageType is an enumeration class that defines different types of symbol usage within Python code.
-
-Attributes:
-SUBCLASS: Used in symbol inheritance.
-TYPE_ANNOTATION:  Used as a type annotation on a parameter or assignment statement.
-BODY: Usage within the body of a function/method.
-DECORATOR: Usage within a decorator.
-RETURN_TYPE: Used as a return type annotation
-TYPE_DEFINITION: Used in a type alias.
-EXPORTED_SYMBOL: Used in an export statement.
-EXPORTED_WILDCARD: Re-exported by a wildcard export.
-GENERIC: Used as a type parameter to another type.
-IMPORTED: Imported with an import statement.
-DEFAULT_VALUE: Represents a default value in a function/method parameter.
-"
+description: "SymbolUsageType is an enumeration class that defines different types of symbol usage within Python code."
 ---
 import {Parameter} from '/snippets/Parameter.mdx';
 import {ParameterWrapper} from '/snippets/ParameterWrapper.mdx';
@@ -25,7 +11,7 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/dataclasses/usage.py#L60-L89" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/dataclasses/usage.py#L61-L92" />
 
 
 ## Attributes
@@ -60,12 +46,11 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">IMPORTED_WILDCARD</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <span></span> } description="
-" />
+<Attribute type={ <span></span> } description="Imported with a wildcard import statement." />
 
 ### <span className="text-primary">RETURN_TYPE</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <span></span> } description="Used as a return type annotation" />
+<Attribute type={ <span></span> } description="Used as a return type annotation." />
 
 ### <span className="text-primary">SUBCLASS</span>
 <HorizontalDivider light={true} />
@@ -73,12 +58,11 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">TYPED_PARAMETER</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <span></span> } description="
-" />
+<Attribute type={ <span></span> } description="Used as a typed parameter in a function/method." />
 
 ### <span className="text-primary">TYPE_ANNOTATION</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <span></span> } description=" Used as a type annotation on a parameter or assignment statement." />
+<Attribute type={ <span></span> } description="Used as a type annotation on a parameter or assignment statement." />
 
 ### <span className="text-primary">TYPE_DEFINITION</span>
 <HorizontalDivider light={true} />

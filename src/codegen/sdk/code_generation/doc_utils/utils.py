@@ -14,6 +14,9 @@ from codegen.sdk.python.statements.attribute import PyAttribute
 
 logger = logging.getLogger(__name__)
 
+# These are the classes that are not language specific, but have language specific subclasses with different names
+SPECIAL_BASE_CLASSES = {"SourceFile": "File"}
+
 
 def sanitize_docstring_for_markdown(docstring: str | None) -> str:
     """Sanitize the docstring for MDX"""
@@ -82,6 +85,9 @@ def is_language_base_class(cls_obj: Class):
     Returns:
         bool: if `cls_obj` is a language base class
     """
+    if cls_obj.name in SPECIAL_BASE_CLASSES:
+        return True
+
     sub_classes = cls_obj.subclasses(max_depth=1)
     base_name = cls_obj.name.lower()
     return any(sub_class.name.lower() in [f"py{base_name}", f"ts{base_name}"] for sub_class in sub_classes)
@@ -184,24 +190,53 @@ def has_documentation(c: Class):
     return any([dec.name == "ts_apidoc" or dec.name == "py_apidoc" or dec.name == "apidoc" for dec in c.decorators])
 
 
-def safe_get_class(codebase: Codebase, class_name: str) -> Class | None:
-    symbols = codebase.get_symbols(class_name)
-    if not symbols:
-        return None
+def safe_get_class(codebase: Codebase, class_name: str, language: str | None = None) -> Class | None:
+    """Find the class in the codebase.
 
-    if len(symbols) == 1 and isinstance(symbols[0], Class):
-        return symbols[0]
+    Args:
+        codebase (Codebase): the codebase to search in
+        class_name (str): the name of the class to resolve
+        language (str | None): the language of the class to resolve
+    Returns:
+        Class | None: the class if found, None otherwise
+    """
+    if '"' in class_name:
+        class_name = class_name.strip('"')
+    if "'" in class_name:
+        class_name = class_name.strip("'")
 
-    possible_classes = [s for s in symbols if isinstance(s, Class) and has_documentation(s)]
-    if not possible_classes:
-        return None
-    if len(possible_classes) == 1:
-        return possible_classes[0]
-    msg = f"Found {len(possible_classes)} classes with name {class_name}"
-    raise ValueError(msg)
+    symbols = []
+    try:
+        class_obj = codebase.get_class(class_name, optional=True)
+        if not class_obj:
+            return None
+
+    except Exception:
+        symbols = codebase.get_symbols(class_name)
+        possible_classes = [s for s in symbols if isinstance(s, Class) and has_documentation(s)]
+        if not possible_classes:
+            return None
+        if len(possible_classes) > 1:
+            msg = f"Found {len(possible_classes)} classes with name {class_name}"
+            raise ValueError(msg)
+        class_obj = possible_classes[0]
+
+    if language and is_language_base_class(class_obj):
+        sub_classes = class_obj.subclasses(max_depth=1)
+
+        if class_name in SPECIAL_BASE_CLASSES:
+            class_name = SPECIAL_BASE_CLASSES[class_name]
+
+        if language == ProgrammingLanguage.PYTHON.value:
+            sub_classes = [s for s in sub_classes if s.name == f"Py{class_name}"]
+        elif language == ProgrammingLanguage.TYPESCRIPT.value:
+            sub_classes = [s for s in sub_classes if s.name == f"TS{class_name}"]
+        if len(sub_classes) == 1:
+            class_obj = sub_classes[0]
+    return class_obj
 
 
-def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict):
+def resolve_type_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type], parent_class: Class, parent_symbol: Symbol, types_cache: dict):
     """Find the symbol in the codebase.
 
     Args:
@@ -217,11 +252,13 @@ def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type]
         return symbol_name
     if symbol_name.lower() == "self":
         return f"<{create_path(parent_class)}>"
-    if symbol_name in types_cache:
-        return types_cache[symbol_name]
+
+    language = get_langauge(parent_class)
+    if (symbol_name, language) in types_cache:
+        return types_cache[(symbol_name, language)]
 
     trgt_symbol = None
-    cls_obj = safe_get_class(codebase, symbol_name)
+    cls_obj = safe_get_class(codebase=codebase, class_name=symbol_name, language=language)
     if cls_obj:
         trgt_symbol = cls_obj
 
@@ -230,8 +267,8 @@ def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type]
             for resolved_type in symbol.resolved_types:
                 if isinstance(resolved_type, FunctionCall) and len(resolved_type.args) >= 2:
                     bound_arg = resolved_type.args[1]
-                    bound_name = bound_arg.value
-                    if cls_obj := safe_get_class(codebase, bound_name):
+                    bound_name = bound_arg.value.source
+                    if cls_obj := safe_get_class(codebase, bound_name, language=get_langauge(parent_class)):
                         trgt_symbol = cls_obj
                         break
 
@@ -241,7 +278,7 @@ def find_symbol(codebase: Codebase, symbol_name: str, resolved_types: list[Type]
 
     if trgt_symbol and isinstance(trgt_symbol, Callable) and has_documentation(trgt_symbol):
         trgt_path = f"<{create_path(trgt_symbol)}>"
-        types_cache[symbol_name] = trgt_path
+        types_cache[(symbol_name, language)] = trgt_path
         return trgt_path
 
     return symbol_name
@@ -318,10 +355,12 @@ def replace_multiple_types(codebase: Codebase, input_str: str, resolved_types: l
                 base_type = part[: part.index("[")]
                 bracket_content = part[part.index("[") :].strip("[]")
                 processed_bracket = process_parts(bracket_content)
-                replacement = find_symbol(codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+                replacement = resolve_type_symbol(
+                    codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache
+                )
                 processed_part = replacement + "[" + processed_bracket + "]"
             else:
-                replacement = find_symbol(codebase=codebase, symbol_name=part, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+                replacement = resolve_type_symbol(codebase=codebase, symbol_name=part, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
                 processed_part = replacement
             processed_parts.append(processed_part)
 
@@ -340,9 +379,30 @@ def replace_multiple_types(codebase: Codebase, input_str: str, resolved_types: l
         base_type = input_str[: input_str.index("[")]
         bracket_content = input_str[input_str.index("[") :].strip("[]")
         processed_content = process_parts(bracket_content)
-        replacement = find_symbol(codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+        replacement = resolve_type_symbol(codebase=codebase, symbol_name=base_type, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
         return replacement + "[" + processed_content + "]"
     # Handle simple input
     else:
-        replacement = find_symbol(codebase=codebase, symbol_name=input_str, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
+        replacement = resolve_type_symbol(codebase=codebase, symbol_name=input_str, resolved_types=resolved_types, parent_class=parent_class, parent_symbol=parent_symbol, types_cache=types_cache)
         return replacement
+
+
+def extract_class_description(docstring):
+    """Extract the class description from a docstring, excluding the attributes section.
+
+    Args:
+        docstring (str): The class docstring to parse
+
+    Returns:
+        str: The class description with whitespace normalized
+    """
+    if not docstring:
+        return ""
+
+    # Split by "Attributes:" and take only the first part
+    parts = docstring.split("Attributes:")
+    description = parts[0]
+
+    # Normalize whitespace
+    lines = [line.strip() for line in description.strip().splitlines()]
+    return " ".join(filter(None, lines))
