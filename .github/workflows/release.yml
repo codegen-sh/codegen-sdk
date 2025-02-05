@@ -1,4 +1,4 @@
-name: Release
+name: Build & Release
 
 on:
   push:
@@ -40,8 +40,6 @@ jobs:
 
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-        with:
-          python-version: "3.13"
 
       - name: Get history and tags for SCM versioning to work
         run: |
@@ -53,7 +51,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
-          CIBW_SKIP: '{cp312-macosx_*,*i686*,*musllinux*}'
+          CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
         with:
