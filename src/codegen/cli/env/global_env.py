@@ -28,7 +28,7 @@ class GlobalEnv:
         self.MODAL_ENVIRONMENT = self._get_env_var("MODAL_ENVIRONMENT")
 
         # =====[ METRICS ]=====
-        self.METRICS_ENABLED = self._get_env_var("METRICS_ENABLED") or None
+        self.METRICS_ENABLED = self._get_env_var("METRICS_ENABLED")
 
         # =====[ CONFIG ]=====
         self.CONFIG_PATH = self._get_env_var("CONFIG_PATH")

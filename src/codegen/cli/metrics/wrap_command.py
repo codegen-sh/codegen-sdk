@@ -1,13 +1,18 @@
 import functools
 import time
 
-from rich_click import RichCommand
+from click import Command
 
 from codegen.cli.metrics.client import get_metrics_client
 
 
-def metrics_wrapper(f: RichCommand) -> RichCommand:
+def metrics_wrapper(f: Command) -> Command:
     metrics_client = get_metrics_client()
+
+    if f.callback is None:
+        msg = "Command callback is not set. Wrapper must be used with a command that has a function"
+        raise ValueError(msg)
+
     command_fn = f.callback
 
     @functools.wraps(command_fn)
