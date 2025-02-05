@@ -300,7 +300,6 @@ class PyImport(Import["PyFile"]):
             return module_node.text.decode("utf-8") if module_node else ""
         return self.ts_node.child_by_field_name("name").text.decode("utf-8")
 
-    @py_apidoc
     def is_from_import(self) -> bool:
         """Determines if this is a from-style import statement.
 

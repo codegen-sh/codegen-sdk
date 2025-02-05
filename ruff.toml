@@ -161,7 +161,6 @@ extend-generics = [
   "codegen.sdk.python.expressions.union_type.PyUnionType",
   "codegen.sdk.python.file.PyFile",
   "codegen.sdk.python.function.PyFunction",
-  "codegen.sdk.python.import_resolution.is_from_import",
   "codegen.sdk.python.import_resolution.PyImport",
   "codegen.sdk.python.interfaces.has_block.PyHasBlock",
   "codegen.sdk.python.placeholder.placeholder_return_type.PyReturnTypePlaceholder",

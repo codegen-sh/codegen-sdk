@@ -124,7 +124,6 @@ from codegen.sdk.python.expressions.union_type import PyUnionType
 from codegen.sdk.python.file import PyFile
 from codegen.sdk.python.function import PyFunction
 from codegen.sdk.python.import_resolution import PyImport
-from codegen.sdk.python.import_resolution import is_from_import
 from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.placeholder.placeholder_return_type import PyReturnTypePlaceholder
 from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement
