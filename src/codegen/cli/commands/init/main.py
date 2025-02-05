@@ -1,7 +1,6 @@
 import subprocess
 import sys
 from pathlib import Path
-from typing import Optional
 
 import rich
 import rich_click as click
@@ -11,8 +10,8 @@ from codegen.cli.auth.session import CodegenSession
 from codegen.cli.commands.init.render import get_success_message
 from codegen.cli.git.url import get_git_organization_and_repo
 from codegen.cli.rich.codeblocks import format_command
-from codegen.cli.workspace.initialize_workspace import initialize_codegen
 from codegen.cli.utils.constants import ProgrammingLanguage
+from codegen.cli.workspace.initialize_workspace import initialize_codegen
 
 
 @click.command(name="init")
@@ -68,7 +67,7 @@ def init_command(
         session.write_config()
 
     action = "Updating" if is_update else "Initializing"
-    rich.print("")  
+    rich.print("")
     codegen_dir, docs_dir, examples_dir = initialize_codegen(
         action,
         session=session,

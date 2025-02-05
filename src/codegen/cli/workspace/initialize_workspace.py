@@ -14,11 +14,12 @@ from codegen.cli.auth.session import CodegenSession
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.git.url import get_git_organization_and_repo
 from codegen.cli.rich.spinners import create_spinner
+from codegen.cli.utils.constants import ProgrammingLanguage
 from codegen.cli.utils.notebooks import create_notebook
 from codegen.cli.workspace.docs_workspace import populate_api_docs
 from codegen.cli.workspace.examples_workspace import populate_examples
 from codegen.cli.workspace.venv_manager import VenvManager
-from codegen.cli.utils.constants import ProgrammingLanguage
+
 
 def initialize_codegen(
     status: Status | str = "Initializing",
