@@ -23,7 +23,7 @@ jobs:
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
 
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
 
       - name: Setup-pre-commit
         run: uv tool install pre-commit --with pre-commit-uv --force-reinstall
