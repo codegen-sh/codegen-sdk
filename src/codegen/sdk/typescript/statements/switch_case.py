@@ -10,7 +10,7 @@ from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-    from codegen.sdk.typescript.statements.switch_statement import TSSwitchStatement
+    from src.codegen.sdk.typescript.statements.switch_statement import TSSwitchStatement
 
 
 @ts_apidoc
