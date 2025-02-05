@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING, Literal, Self, Unpack
 
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.autocommit import reader, writer
@@ -21,6 +21,8 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
+    from codegen.sdk.codebase.flagging.code_flag import CodeFlag
+    from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.import_resolution import Import
@@ -487,3 +489,26 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
                 if imp.module.source.strip("'").strip('"') in ("react", "prop-types"):
                     imp.remove_if_unused()
             return interface_name + generic_name
+
+    @writer
+    def flag(self, **kwargs: Unpack[FlagKwargs]) -> CodeFlag[Self]:
+        """Flags a TypeScript symbol by adding a flag comment and returning a CodeFlag.
+
+        This implementation first creates the CodeFlag through the standard flagging system,
+        then adds a TypeScript-specific comment to visually mark the flagged code.
+
+        Args:
+            **kwargs: Flag keyword arguments including optional 'message'
+
+        Returns:
+            CodeFlag[Self]: The code flag object for tracking purposes
+        """
+        # First create the standard CodeFlag through the base implementation
+        code_flag = super().flag(**kwargs)
+
+        # Add a TypeScript comment to visually mark the flag
+        message = kwargs.get("message", "")
+        if message:
+            self.set_inline_comment(f"🚩 {message}")
+
+        return code_flag

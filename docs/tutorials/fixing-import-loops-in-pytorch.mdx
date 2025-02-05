@@ -101,12 +101,14 @@ def some_func():
 
 A dynamic import is an import defined inside of a function, method or any executable body of code which delays the import execution until that function, method or body of code is called.
 
-You can use `imp.is_dynamic` to check if the import is dynamic allowing you to investigate imports that are handled more intentionally.
+You can use [Import.is_dynamic](/api-reference/core/Import#is-dynamic) to check if the import is dynamic allowing you to investigate imports that are handled more intentionally.
 
 # Step 2: Visualize Import Loops
 - Create a new subgraph to visualize one cycle
 - color and label the edges based on their type (dynamic/static)
-- visualize the cycle graph using `codebase.visualize(graph)`
+- visualize the cycle graph using [codebase.visualize(graph)](/api-reference/core/Codebase#visualize)
+
+<Tip>Learn more about codebase visualization [here](/building-with-codegen/codebase-visualization)</Tip>
 
 ```python
 cycle = cycles[0]
@@ -217,7 +219,9 @@ problematic_cycles = find_problematic_import_loops(G, cycles)
 ```
 
 # Step 4: Fix the loop by moving the shared symbols to a separate `utils.py` file
-One common fix to this problem to break this cycle is to move all the shared symbols to a separate `utils.py` file. We can do this using the method `symbol.move_to_file`:
+One common fix to this problem to break this cycle is to move all the shared symbols to a separate `utils.py` file. We can do this using the method [symbol.move_to_file](/api-reference/core/Symbol#move-to-file):
+
+<Tip>Learn more about moving symbols [here](/building-with-codegen/moving-symbols)</Tip>
 
 ```python
 # Create new utils file
@@ -246,15 +250,27 @@ for symbol in symbols_to_move:
 print(f"🔄 Moved {len(symbols_to_move)} symbols to flex_utils.py")
 for symbol in symbols_to_move:
     print(symbol.name)
-```
 
-```python
-# run this command to have the changes take effect in the codebase
+# Commit changes
 codebase.commit()
 ```
 
-Next Steps
-Verify all tests pass after the migration and fix other problematic import loops using the suggested strategies:
-    1. Move the shared symbols to a separate file
-    2. If a module needs imports only for type hints, consider using `if TYPE_CHECKING` from the `typing` module
-    3. Use lazy imports using `importlib` to load imports dynamically
+# Conclusions & Next Steps
+
+Import loops can be tricky to identify and fix, but Codegen provides powerful tools to help manage them:
+
+- Use `codebase.imports` to analyze import relationships across your project
+- Visualize import cycles to better understand dependencies
+- Distinguish between static and dynamic imports using `Import.is_dynamic`
+- Move shared symbols to break cycles using `symbol.move_to_file`
+
+Here are some next steps you can take:
+
+1. **Analyze Your Codebase**: Run similar analysis on your own codebase to identify potential import cycles
+2. **Create Import Guidelines**: Establish best practices for your team around when to use static vs dynamic imports
+3. **Automate Fixes**: Create scripts to automatically detect and fix problematic import patterns
+4. **Monitor Changes**: Set up CI checks to prevent new problematic import cycles from being introduced
+
+<Info>
+For more examples of codebase analysis and refactoring, check out our other [tutorials](/tutorials/at-a-glance).
+</Info>
