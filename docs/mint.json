@@ -119,6 +119,7 @@
 				"building-with-codegen/git-operations",
 				"building-with-codegen/files-and-directories",
 				"building-with-codegen/the-editable-api",
+				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
 				"building-with-codegen/imports",
