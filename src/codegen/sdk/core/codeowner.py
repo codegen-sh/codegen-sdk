@@ -1,4 +1,5 @@
 from collections.abc import Iterable, Iterator
+from itertools import chain
 from typing import TYPE_CHECKING, Callable, Generic, Literal, ParamSpec, TypeVar
 
 from codeowners import CodeOwners as CodeOwnersParser
@@ -8,7 +9,7 @@ from codegen.shared.decorators.docs import apidoc
 
 if TYPE_CHECKING:
     from codegen.sdk.core.file import SourceFile
-
+    from codegen.sdk.core.symbol import Symbol
 import logging
 
 logger = logging.getLogger(__name__)
@@ -16,6 +17,7 @@ logger = logging.getLogger(__name__)
 
 TSourceFile = TypeVar("TSourceFile", bound="SourceFile")
 SourceParam = ParamSpec("SourceParam")
+TSymbol = TypeVar("TSymbol", bound="Symbol")
 
 
 @apidoc
@@ -63,6 +65,11 @@ class CodeOwner(Generic[TSourceFile]):
             # Filter files by owner value
             if self.owner_value in source_file.owners:
                 yield source_file
+
+    @property
+    def symbols(self) -> list[TSymbol]:
+        """Get a recursive list of all symbols in the directory and its subdirectories."""
+        return list(chain.from_iterable(f.symbols for f in self.files))
 
     @property
     def name(self) -> str:
