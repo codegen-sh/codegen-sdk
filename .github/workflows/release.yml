@@ -43,11 +43,11 @@ jobs:
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      # TODO: add cbuildwheel cache
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_SKIP: cp313-macosx_*
 
       - uses: actions/upload-artifact@v4
         with:
