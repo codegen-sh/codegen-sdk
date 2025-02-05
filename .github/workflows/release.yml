@@ -55,7 +55,6 @@ jobs:
           HATCH_BUILD_HOOKS_ENABLE: true
           CIBW_SKIP: '{cp312-macosx_*,*i686*,*musllinux*}'
 
-
       - uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
