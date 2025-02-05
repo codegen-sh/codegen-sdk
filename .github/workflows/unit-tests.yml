@@ -20,15 +20,18 @@ jobs:
           fetch-depth: 0
       - name: Setup backend
         uses: ./.github/actions/setup-backend
-      - name: Run ATS and Tests
-        uses: ./.github/actions/run_ats
-        timeout-minutes: 15
-        with:
-          default_tests: "tests/unit"
-          codecov_static_token: ${{ secrets.CODECOV_STATIC_TOKEN }}
-          codecov_token: ${{ secrets.CODECOV_TOKEN }}
-          collect_args: "--timeout 15"
-          codecov_flags: unit-tests
+      - name: Test with pytest
+        timeout-minutes: 6
+        run: |
+          uv run pytest --cov \
+            -o junit_suite_name="${{github.job}}" \
+            -n auto \
+            -vv \
+            --cov \
+            --cov-append \
+            --timeout 50 \
+            --cov-report=xml \
+            tests/unit
   codemod-tests:
     # TODO: re-enable when this check is a develop required check
     if: false
