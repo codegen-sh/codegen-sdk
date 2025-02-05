@@ -196,12 +196,7 @@ junit_duration_report = "call"
 junit_logging = "all"
 tmp_path_retention_policy = "failed"
 [build-system]
-requires = [
-  "hatchling>=1.26.3",
-  "hatch-vcs>=0.4.0",
-  "setuptools-scm>=8.0.0",
-  "build>=1.0.0",
-]
+requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"
 
 [tool.deptry]
