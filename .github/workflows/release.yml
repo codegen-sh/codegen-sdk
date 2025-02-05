@@ -26,6 +26,10 @@ jobs:
           ubuntu-24.04-arm,
           macos-latest,
         ]
+        python: [
+          12,
+          13,
+        ]
 
     steps:
       - name: Github context
@@ -40,11 +44,8 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
-
-      - name: Setup python
-        uses: actions/setup-python@v5
         with:
-          python-version: 3.12
+          python-version: 3.${{ matrix.python }}
 
       - name: Fetch tags
         run: |
@@ -56,6 +57,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_BUILD: "*cp3${{ matrix.python }}*"
           CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
