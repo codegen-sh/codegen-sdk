@@ -54,7 +54,6 @@ runs:
           -vv \
           --cov \
           --cov-append \
-          --cov-report=xml \
           ${{ inputs.collect_args }}
 
     - uses: ./.github/actions/report
