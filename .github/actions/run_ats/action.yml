@@ -21,8 +21,7 @@ inputs:
     default: ''
   codecov_flags:
     description: 'Flags for codecov upload'
-    required: false
-    default: 'smart-tests'
+    required: true
 
 runs:
   using: "composite"
