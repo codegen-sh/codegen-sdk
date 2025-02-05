@@ -504,7 +504,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
                     yield from self.with_resolution_frame(next(iter(resolution.generics.values())), direct=resolution.direct)
                     resolved = True
                 elif len(resolution.generics) > 1:
-                    yield from self.with_resolution_frame(self.get_name())
+                    yield from self.with_resolution(resolution)
                     resolved = True
             if not resolved:
                 yield ResolutionStack(self)  # This let's us still calculate dependencies even if we can't resolve a function call's definition
