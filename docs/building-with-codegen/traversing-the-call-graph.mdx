@@ -32,6 +32,7 @@ Here's how to build a directed graph of function calls using NetworkX:
 import networkx as nx
 from codegen.sdk.core.interfaces.callable import FunctionCallDefinition
 from codegen.sdk.core.function import Function
+from codegen.sdk.core.external_module import ExternalModule
 
 def create_call_graph(start_func, end_func, max_depth=5):
     G = nx.DiGraph()

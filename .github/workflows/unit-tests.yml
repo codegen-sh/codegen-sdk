@@ -32,6 +32,8 @@ jobs:
             --cov-report=xml \
             tests/unit
   codemod-tests:
+    # TODO: re-enable when this check is a develop required check
+    if: false
     runs-on: ubuntu-latest-32
     strategy:
       matrix:

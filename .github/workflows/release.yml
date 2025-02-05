@@ -15,13 +15,17 @@ permissions:
   contents: read
 
 jobs:
-  build-wheels:
-    name: Build wheels on ${{ matrix.os }}
+  build:
+    name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04-arm,
+          macos-latest,
+        ]
 
     steps:
       - name: Dump GitHub context
@@ -45,7 +49,7 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       # TODO: add cbuildwheel cache
-      - name: Build wheels
+      - name: Build wheel
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
@@ -59,7 +63,7 @@ jobs:
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
-    needs: build-wheels
+    needs: build
     runs-on: ubuntu-latest
     environment: release
     steps:
