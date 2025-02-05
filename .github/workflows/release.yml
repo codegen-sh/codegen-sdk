@@ -41,7 +41,7 @@ jobs:
       - name: Setup backend
         uses: ./.github/actions/setup-backend
 
-      - name: Get history and tags for SCM versioning to work
+      - name: Fetch tags
         run: |
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
@@ -51,6 +51,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_BEFORE_BUILD: pip install build
           CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
