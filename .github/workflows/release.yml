@@ -1,4 +1,4 @@
-name: Upload Python Package
+name: Release
 
 on:
   push:
@@ -19,6 +19,7 @@ jobs:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
 
@@ -44,10 +45,12 @@ jobs:
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
       # TODO: add cbuildwheel cache
-      - name: Build release distributions
-        run: uv build --wheel
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_SKIP: '{cp313-macosx_*,*i686*,*musllinux*}'
+
 
       - uses: actions/upload-artifact@v4
         with:
@@ -76,7 +79,7 @@ jobs:
         run: |
           export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
           export UV_PUBLISH_USERNAME="__token__"
-          uv publish --publish-url https://upload.pypi.org/legacy/ --keyring-provider disabled
+          uv publish --publish-url https://upload.pypi.org/legacy/
 
       - name: Make github release
         uses: softprops/action-gh-release@v2
