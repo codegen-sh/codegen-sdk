@@ -39,7 +39,7 @@ runs:
       run: |
         uv run codecovcli create-commit -t ${{ inputs.codecov_token }}
         uv run codecovcli create-report -t ${{ inputs.codecov_token }}
-        bash ./.circleci/ats.sh
+        bash .github/actions/run_ats/ats.sh
 
     - name: Run tests
       shell: bash
