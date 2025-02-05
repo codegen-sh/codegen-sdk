@@ -43,13 +43,13 @@ def test_default_is_metrics_enabled(mock_input):
 
 def test_is_metrics_enabled_prompt(mock_input):
     mock_input.return_value = "n"
-    config = CLIUserConfigs(is_metrics_enabled=None)
+    config = CLIUserConfigs()
     assert config.is_metrics_enabled is False
 
 
 def test_is_metrics_enabled_invalid_input(mock_input):
     mock_input.return_value = "invalid"
-    config = CLIUserConfigs(is_metrics_enabled=None)
+    config = CLIUserConfigs()
     assert config.is_metrics_enabled is False
 
 
