@@ -38,8 +38,8 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Setup backend
-        uses: ./.github/actions/setup-environment
+      - name: Setup python
+        uses: actions/setup-python@v5
 
       - name: Fetch tags
         run: |
