@@ -1,24 +1,83 @@
----
+{%    from 'macros.md.j2' import apply_alphabetical_ordering_by_brk_descriptions
+%}{%  from 'macros.md.j2' import apply_alphabetical_ordering_by_descriptions
+%}{%  from 'macros.md.j2' import apply_alphabetical_ordering_by_release_notices
+%}{%  from 'macros.md.j2' import format_breaking_changes_description, format_commit_summary_line
+%}{%  from 'macros.md.j2' import format_release_notice
+%}---
 title: "Codegen Updates"
 icon: "clock"
 iconType: "solid"
 ---
-CopyNumber of versions: {{ versions | length }}
+{%  set insertion_flag = ctx.changelog_insertion_flag %}
+{%  set unreleased_commits = ctx.history.unreleased | dictsort %}
+{%  set releases = ctx.history.released.values() | list %}
 
-{# Debug output #}
-{% for version in versions %}
-DEBUG Version object:
-{{ version | tojson }}
----
-{% endfor %}
-
-{# Original template content #}
-
-{% for version in versions %}
-<Update label="{{ version.date }}" description="v{{ version.version }}">
-  {% for commit in version.elements %}
-  {% if commit.type %}{{ commit.type }}{% if commit.scope %}({{ commit.scope }}){% endif %}: {% endif %}{{ commit.subject }} ({{ commit.short_hash }})
-  {% endfor %}
+{% for release in releases %}
+<Update label="{{ release.tagged_date.strftime('%B %d, %Y') }}" description="v{{ release.version | string }}">
+{%  set commit_objects = release["elements"] %}
+{%  set max_line_width = max_line_width | default(100)
+%}{%  set hanging_indent = hanging_indent | default(2)
+%}{#
+#}{%  for type_, commits in commit_objects.items()
+%}{#    PREPROCESS COMMITS (order by description & format description line)
+#}{%    set ns = namespace(commits=commits)
+%}{{    apply_alphabetical_ordering_by_descriptions(ns) | default("", true)
+}}{#
+#}{%    set commit_descriptions = []
+%}{#
+#}{%    for commit in ns.commits
+%}{#      # Update the first line with reference links and if commit description
+          # has more than one line, add the rest of the lines
+          # NOTE: This is specifically to make sure to not hide contents
+          # of squash commits (until parse support is added)
+#}{%      set description = "- %s" | format(format_commit_summary_line(commit))
+%}{%      set description = description | autofit_text_width(max_line_width, hanging_indent)
+%}{{      commit_descriptions.append(description) | default("", true)
+}}{%    endfor
+%}{#
+   #    # PRINT SECTION (header & commits)
+#}
+{%    if commit_descriptions | length > 0
+%}{{      "\n"
+}}{{      "### %s\n" | format(type_ | title)
+}}{{      "\n"
+}}{{      "%s\n" | format(commit_descriptions[0])
+}}{%    endif
+%}{%  endfor
+%}{#
+      # Determine if there are any breaking change commits by filtering the list by breaking descriptions
+      # commit_objects is a list of tuples [("Features", [ParsedCommit(), ...]), ("Bug Fixes", [ParsedCommit(), ...])]
+      # HOW: Filter out breaking change commits that have no breaking descriptions
+      #  1. Re-map the list to only the list of commits under the breaking category from the list of tuples
+      #  2. Peel off the outer list to get a list of ParsedCommit objects
+      #  3. Filter the list of ParsedCommits to only those with a breaking description
+#}{%  set breaking_commits = commit_objects.items() | map(attribute="1.0")
+%}{%  set breaking_commits = breaking_commits | rejectattr("error", "defined") | selectattr("breaking_descriptions.0") | list
+%}{#
+#}{%  if breaking_commits | length > 0
+%}{#    PREPROCESS COMMITS
+#}{%    set brk_ns = namespace(commits=breaking_commits)
+%}{{    apply_alphabetical_ordering_by_brk_descriptions(brk_ns) | default("", true)
+}}{#
+#}{%    set brking_descriptions = []
+%}{#
+#}{%    for commit in brk_ns.commits
+%}{%      set full_description = "- %s" | format(
+            format_breaking_changes_description(commit).split("\n\n") | join("\n\n- ")
+          )
+%}{{      brking_descriptions.append(
+            full_description | autofit_text_width(max_line_width, hanging_indent)
+          ) | default("", true)
+}}{%    endfor
+%}{#
+   #    # PRINT BREAKING CHANGE DESCRIPTIONS (header & descriptions)
+#}{{    "\n"
+}}{{    "### BREAKING CHANGES\n"
+}}{{
+        "\n%s\n" | format(brking_descriptions | unique | join("\n\n"))
+}}{#
+#}{%  endif
+%}
 </Update>
 
 {% endfor %}
