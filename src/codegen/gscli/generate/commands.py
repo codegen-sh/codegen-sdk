@@ -11,6 +11,8 @@ import codegen.sdk as sdk
 from codegen.gscli.generate.runner_imports import _generate_runner_imports
 from codegen.gscli.generate.system_prompt import get_system_prompt
 from codegen.gscli.generate.utils import LanguageType, generate_builtins_file
+from codegen.sdk.ai.helpers import AnthropicHelper
+from codegen.sdk.code_generation.changelog_generation import generate_changelog
 from codegen.sdk.code_generation.codegen_sdk_codebase import get_codegen_sdk_codebase
 from codegen.sdk.code_generation.doc_utils.generate_docs_json import generate_docs_json
 from codegen.sdk.code_generation.mdx_docs_generation import render_mdx_page_for_class
@@ -195,3 +197,33 @@ def generate_codegen_sdk_docs(docs_dir: str) -> None:
         json.dump(mint_data, mint_file, indent=2)
 
     print(colored("Updated mint.json with new page sets", "green"))
+
+
+@generate.command()
+@click.option("--docs-dir", default="docs", required=False)
+@click.option("--anthropic-key", required=True)
+@click.option("--complete", is_flag=True, help="Generate a complete changelog for the codegen_sdk API")
+def changelog(docs_dir: str, anthropic_key: str, complete: bool = False) -> None:
+    """Generate the changelog for the codegen_sdk API and update the changelog.mdx file"""
+    print(colored("Generating changelog", "green"))
+    header = """---
+title: "Codegen Updates"
+icon: "clock"
+iconType: "solid"
+---
+"""
+    # Generate the changelog for the codegen_sdk API and update the changelog.mdx file
+    client = AnthropicHelper(anthropic_key=anthropic_key, cache=True, openai_anthropic_translation=False)
+    new_releases = generate_changelog(client, complete)
+    if complete:
+        new_changelog = header + new_releases
+    else:
+        # Read existing changelog and append new releases
+        with open(os.path.join(docs_dir, "changelog/changelog.mdx")) as f:
+            existing_changelog = f.read()
+            # Remove header from existing changelog
+            existing_changelog = existing_changelog.split(header)[1]
+        new_changelog = header + new_releases + existing_changelog
+
+    with open(os.path.join(docs_dir, "changelog/changelog.mdx"), "w") as f:
+        f.write(new_changelog)
