@@ -72,7 +72,6 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
 
         if node is None:
             node = self
-        print(self.parent.ts_node_type)
         if isinstance(self.parent, JSXProp):
             return
         if isinstance(node, JSXExpression | JSXElement | JSXProp):
