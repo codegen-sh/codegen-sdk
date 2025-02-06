@@ -60,10 +60,6 @@ jobs:
       # TODO: add cbuildwheel cache
       - name: Build wheel
         uses: pypa/cibuildwheel@v2.22.0
-        env:
-          HATCH_BUILD_HOOKS_ENABLE: true
-          CIBW_BUILD_FRONTEND: build[uv]
-          CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
         with:

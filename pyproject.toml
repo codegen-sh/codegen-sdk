@@ -224,14 +224,10 @@ DEP004 = "pytest"
 [tool.deptry.package_module_name_map]
 python-levenshtein = ["Levenshtein"]
 PyGithub = ["github"]
+
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
-skip = [
-  "*-musllinux_i686",
-  "*-manylinux_i686",
-  "*-musllinux_x86_64",
-  "*-musllinux_aarch64",
-]
+skip = ["*musllinux*", "*i686*"]
 environment = { "HATCH_BUILD_HOOKS_ENABLE" = "true" }
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_34_x86_64"
 manylinux-aarch64-image = "quay.io/pypa/manylinux_2_34_aarch64"
