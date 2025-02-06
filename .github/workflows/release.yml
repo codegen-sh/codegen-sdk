@@ -116,7 +116,7 @@ jobs:
           uv publish --publish-url https://upload.pypi.org/legacy/
 
       - uses: slackapi/slack-github-action@v2.0.0
-        if: always() && steps.semantic.outputs.new-release-published == 'true'
+        if: always()
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
