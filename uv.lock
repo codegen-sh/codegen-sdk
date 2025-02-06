@@ -339,7 +339,6 @@ wheels = [
 
 [[package]]
 name = "codegen"
-version = "0.5.24.dev24+gd3fac2a"
 source = { editable = "." }
 dependencies = [
     { name = "anthropic" },
@@ -402,7 +401,9 @@ dependencies = [
 [package.optional-dependencies]
 types = [
     { name = "types-networkx" },
+    { name = "types-requests" },
     { name = "types-tabulate" },
+    { name = "types-toml" },
 ]
 
 [package.dev-dependencies]
@@ -436,10 +437,6 @@ dev = [
     { name = "sybil", extra = ["pytest"] },
     { name = "typer" },
     { name = "uv" },
-]
-types = [
-    { name = "types-requests" },
-    { name = "types-toml" },
 ]
 
 [package.metadata]
@@ -494,7 +491,9 @@ requires-dist = [
     { name = "tree-sitter-python", specifier = ">=0.23.4" },
     { name = "tree-sitter-typescript", specifier = ">=0.23.2" },
     { name = "types-networkx", marker = "extra == 'types'", specifier = ">=3.2.1.20240918" },
+    { name = "types-requests", marker = "extra == 'types'", specifier = ">=2.32.0.20241016" },
     { name = "types-tabulate", marker = "extra == 'types'", specifier = ">=0.9.0.20240106" },
+    { name = "types-toml", marker = "extra == 'types'", specifier = ">=0.10.8.20240310" },
     { name = "typing-extensions", specifier = ">=4.12.2" },
     { name = "unidiff", specifier = ">=0.7.5" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.30.0" },
@@ -534,10 +533,6 @@ dev = [
     { name = "sybil", extras = ["pytest"], specifier = ">=9.0.0" },
     { name = "typer", specifier = ">=0.12.5" },
     { name = "uv", specifier = ">=0.4.25" },
-]
-types = [
-    { name = "types-requests", specifier = ">=2.32.0.20241016" },
-    { name = "types-toml", specifier = ">=0.10.8.20240310" },
 ]
 
 [[package]]
