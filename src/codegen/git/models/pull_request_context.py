@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 from codegen.git.models.github_named_user_context import GithubNamedUserContext
 from codegen.git.models.pr_part_context import PRPartContext
-from codegen.git.schemas.github import GithubType
 
 
 class PullRequestContext(BaseModel):
@@ -24,7 +23,6 @@ class PullRequestContext(BaseModel):
     additions: int | None = None
     deletions: int | None = None
     changed_files: int | None = None
-    github_type: GithubType | None = None
     webhook_data: dict | None = None
 
     @classmethod
@@ -47,6 +45,5 @@ class PullRequestContext(BaseModel):
             additions=webhook_data.get("additions"),
             deletions=webhook_data.get("deletions"),
             changed_files=webhook_data.get("changed_files"),
-            github_type=GithubType.from_url(webhook_data.get("html_url")),
             webhook_data=webhook_data,
         )

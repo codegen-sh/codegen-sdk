@@ -14,9 +14,7 @@ from github.Repository import Repository
 from github.Tag import Tag
 from github.Workflow import Workflow
 
-from codegen.git.clients.github_client_factory import GithubClientFactory
-from codegen.git.clients.types import GithubClientType
-from codegen.git.schemas.github import GithubScope, GithubType
+from codegen.git.clients.github_client import GithubClient
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.format import format_comparison
 
@@ -27,33 +25,27 @@ class GitRepoClient:
     """Wrapper around PyGithub's Remote Repository."""
 
     repo_config: RepoConfig
-    github_type: GithubType = GithubType.GithubEnterprise
-    gh_client: GithubClientType
-    read_client: Repository
-    access_scope: GithubScope
-    __write_client: Repository | None  # Will not be initialized if access scope is read-only
+    gh_client: GithubClient
+    _repo: Repository
 
-    def __init__(self, repo_config: RepoConfig, github_type: GithubType = GithubType.GithubEnterprise, access_scope: GithubScope = GithubScope.READ) -> None:
+    def __init__(self, repo_config: RepoConfig) -> None:
         self.repo_config = repo_config
-        self.github_type = github_type
-        self.gh_client = GithubClientFactory.create_from_repo(self.repo_config, github_type)
-        self.read_client = self._create_client(GithubScope.READ)
-        self.__write_client = self._create_client(GithubScope.WRITE) if access_scope == GithubScope.WRITE else None
-        self.access_scope = access_scope
+        self.gh_client = self._create_github_client()
+        self._repo = self._create_client()
 
-    def _create_client(self, github_scope: GithubScope = GithubScope.READ) -> Repository:
-        client = self.gh_client.get_repo_by_full_name(self.repo_config.full_name, github_scope=github_scope)
+    def _create_github_client(self) -> GithubClient:
+        return GithubClient()
+
+    def _create_client(self) -> Repository:
+        client = self.gh_client.get_repo_by_full_name(self.repo_config.full_name)
         if not client:
-            msg = f"Repo {self.repo_config.full_name} not found in {self.github_type.value}!"
+            msg = f"Repo {self.repo_config.full_name} not found!"
             raise ValueError(msg)
         return client
 
     @property
-    def _write_client(self) -> Repository:
-        if self.__write_client is None:
-            msg = "Cannot perform write operations with read-only client! Try setting github_scope to GithubScope.WRITE."
-            raise ValueError(msg)
-        return self.__write_client
+    def repo(self) -> Repository:
+        return self._repo
 
     ####################################################################################################################
     # PROPERTIES
@@ -65,7 +57,7 @@ class GitRepoClient:
 
     @property
     def default_branch(self) -> str:
-        return self.read_client.default_branch
+        return self.repo.default_branch
 
     ####################################################################################################################
     # CONTENTS
@@ -76,7 +68,7 @@ class GitRepoClient:
         if not ref:
             ref = self.default_branch
         try:
-            file = self.read_client.get_contents(file_path, ref=ref)
+            file = self.repo.get_contents(file_path, ref=ref)
             file_contents = file.decoded_content.decode("utf-8")  # type: ignore[union-attr]
             return file_contents
         except UnknownObjectException:
@@ -100,7 +92,7 @@ class GitRepoClient:
             str: The last modified date of the directory in ISO format (YYYY-MM-DDTHH:MM:SSZ).
 
         """
-        commits = self.read_client.get_commits(path=path)
+        commits = self.repo.get_commits(path=path)
         if commits.totalCount > 0:
             # Get the date of the latest commit
             last_modified_date = commits[0].commit.committer.date
@@ -124,7 +116,7 @@ class GitRepoClient:
         start_line: Opt[int] = NotSet,
     ) -> None:
         # TODO: add protections (ex: can write to PR)
-        writeable_pr = self._write_client.get_pull(pull.number)
+        writeable_pr = self.repo.get_pull(pull.number)
         writeable_pr.create_review_comment(
             body=body,
             commit=commit,
@@ -140,7 +132,7 @@ class GitRepoClient:
         body: str,
     ) -> None:
         # TODO: add protections (ex: can write to PR)
-        writeable_pr = self._write_client.get_pull(pull.number)
+        writeable_pr = self.repo.get_pull(pull.number)
         writeable_pr.create_issue_comment(body=body)
 
     ####################################################################################################################
@@ -163,7 +155,7 @@ class GitRepoClient:
         head_branch_name = f"{self.repo_config.organization_name}:{head_branch_name}"
 
         # retrieve all pulls ordered by created descending
-        prs = self.read_client.get_pulls(base=base_branch_name, head=head_branch_name, state=state, sort="created", direction="desc")
+        prs = self.repo.get_pulls(base=base_branch_name, head=head_branch_name, state=state, sort="created", direction="desc")
         if prs.totalCount > 0:
             return prs[0]
         else:
@@ -174,7 +166,7 @@ class GitRepoClient:
         TODO: catching UnknownObjectException is common enough to create a decorator
         """
         try:
-            pr = self.read_client.get_pull(number)
+            pr = self.repo.get_pull(number)
             return pr
         except UnknownObjectException as e:
             return None
@@ -209,10 +201,10 @@ class GitRepoClient:
         if base_branch_name is None:
             base_branch_name = self.default_branch
         try:
-            pr = self._write_client.create_pull(title=title or f"Draft PR for {head_branch_name}", body=body or "", head=head_branch_name, base=base_branch_name, draft=draft)
+            pr = self.repo.create_pull(title=title or f"Draft PR for {head_branch_name}", body=body or "", head=head_branch_name, base=base_branch_name, draft=draft)
             logger.info(f"Created pull request for head branch: {head_branch_name} at {pr.html_url}")
             # NOTE: return a read-only copy to prevent people from editing it
-            return self.read_client.get_pull(pr.number)
+            return self.repo.get_pull(pr.number)
         except GithubException as ge:
             logger.warning(f"Failed to create PR got GithubException\n\t{ge}")
         except Exception as e:
@@ -235,15 +227,15 @@ class GitRepoClient:
         merge = squash_pr.merge(commit_message=squash_commit_msg, commit_title=squash_commit_title, merge_method="squash")  # type: ignore[arg-type]
 
     def edit_pull(self, pull: PullRequest, title: Opt[str] = NotSet, body: Opt[str] = NotSet, state: Opt[str] = NotSet) -> None:
-        writable_pr = self._write_client.get_pull(pull.number)
+        writable_pr = self.repo.get_pull(pull.number)
         writable_pr.edit(title=title, body=body, state=state)
 
     def add_label_to_pull(self, pull: PullRequest, label: Label) -> None:
-        writeable_pr = self._write_client.get_pull(pull.number)
+        writeable_pr = self.repo.get_pull(pull.number)
         writeable_pr.add_to_labels(label)
 
     def remove_label_from_pull(self, pull: PullRequest, label: Label) -> None:
-        writeable_pr = self._write_client.get_pull(pull.number)
+        writeable_pr = self.repo.get_pull(pull.number)
         writeable_pr.remove_from_labels(label)
 
     ####################################################################################################################
@@ -264,7 +256,7 @@ class GitRepoClient:
     def get_branch_safe(self, branch_name: str, attempts: int = 1, wait_seconds: int = 1) -> Branch | None:
         for i in range(attempts):
             try:
-                return self.read_client.get_branch(branch_name)
+                return self.repo.get_branch(branch_name)
             except GithubException as e:
                 if e.status == 404 and i < attempts - 1:
                     time.sleep(wait_seconds)
@@ -276,14 +268,14 @@ class GitRepoClient:
         if base_branch_name is None:
             base_branch_name = self.default_branch
 
-        base_branch = self.read_client.get_branch(base_branch_name)
+        base_branch = self.repo.get_branch(base_branch_name)
         # TODO: also wrap git ref. low pri b/c the only write operation on refs is creating one
-        self._write_client.create_git_ref(sha=base_branch.commit.sha, ref=f"refs/heads/{new_branch_name}")
+        self.repo.create_git_ref(sha=base_branch.commit.sha, ref=f"refs/heads/{new_branch_name}")
         branch = self.get_branch_safe(new_branch_name)
         return branch
 
     def create_branch_from_sha(self, new_branch_name: str, base_sha: str) -> Branch | None:
-        self._write_client.create_git_ref(ref=f"refs/heads/{new_branch_name}", sha=base_sha)
+        self.repo.create_git_ref(ref=f"refs/heads/{new_branch_name}", sha=base_sha)
         branch = self.get_branch_safe(new_branch_name)
         return branch
 
@@ -295,7 +287,7 @@ class GitRepoClient:
 
         branch_to_delete = self.get_branch_safe(branch_name)
         if branch_to_delete:
-            ref_to_delete = self._write_client.get_git_ref(f"heads/{branch_name}")
+            ref_to_delete = self.repo.get_git_ref(f"heads/{branch_name}")
             ref_to_delete.delete()
             logger.info(f"Branch: {branch_name} deleted successfully!")
         else:
@@ -307,7 +299,7 @@ class GitRepoClient:
 
     def get_commit_safe(self, commit_sha: str) -> Commit | None:
         try:
-            return self.read_client.get_commit(commit_sha)
+            return self.repo.get_commit(commit_sha)
         except UnknownObjectException as e:
             logger.warning(f"Commit {commit_sha} not found:\n\t{e}")
             return None
@@ -338,7 +330,7 @@ class GitRepoClient:
 
     # NOTE: base utility that other compare functions should try to use
     def compare(self, base: str, head: str, show_commits: bool = False) -> str:
-        comparison = self.read_client.compare(base, head)
+        comparison = self.repo.compare(base, head)
         return format_comparison(comparison, show_commits=show_commits)
 
     ####################################################################################################################
@@ -349,7 +341,7 @@ class GitRepoClient:
     def get_label_safe(self, label_name: str) -> Label | None:
         try:
             label_name = label_name.strip()
-            label = self.read_client.get_label(label_name)
+            label = self.repo.get_label(label_name)
             return label
         except UnknownObjectException as e:
             return None
@@ -360,10 +352,10 @@ class GitRepoClient:
     def create_label(self, label_name: str, color: str) -> Label:
         # TODO: also offer description field
         label_name = label_name.strip()
-        self._write_client.create_label(label_name, color)
+        self.repo.create_label(label_name, color)
         # TODO: is there a way to convert new_label to a read-only label without making another API call?
         # NOTE: return a read-only label to prevent people from editing it
-        return self.read_client.get_label(label_name)
+        return self.repo.get_label(label_name)
 
     def get_or_create_label(self, label_name: str, color: str) -> Label:
         existing_label = self.get_label_safe(label_name)
@@ -377,7 +369,7 @@ class GitRepoClient:
 
     def get_check_suite_safe(self, check_suite_id: int) -> CheckSuite | None:
         try:
-            return self.read_client.get_check_suite(check_suite_id)
+            return self.repo.get_check_suite(check_suite_id)
         except UnknownObjectException as e:
             return None
         except Exception as e:
@@ -390,7 +382,7 @@ class GitRepoClient:
 
     def get_check_run_safe(self, check_run_id: int) -> CheckRun | None:
         try:
-            return self.read_client.get_check_run(check_run_id)
+            return self.repo.get_check_run(check_run_id)
         except UnknownObjectException as e:
             return None
         except Exception as e:
@@ -406,8 +398,8 @@ class GitRepoClient:
         conclusion: Opt[str] = NotSet,
         output: Opt[dict[str, str | list[dict[str, str | int]]]] = NotSet,
     ) -> CheckRun:
-        new_check_run = self._write_client.create_check_run(name=name, head_sha=head_sha, details_url=details_url, status=status, conclusion=conclusion, output=output)
-        return self.read_client.get_check_run(new_check_run.id)
+        new_check_run = self.repo.create_check_run(name=name, head_sha=head_sha, details_url=details_url, status=status, conclusion=conclusion, output=output)
+        return self.repo.get_check_run(new_check_run.id)
 
     ####################################################################################################################
     # WORKFLOW
@@ -415,7 +407,7 @@ class GitRepoClient:
 
     def get_workflow_safe(self, file_name: str) -> Workflow | None:
         try:
-            return self.read_client.get_workflow(file_name)
+            return self.repo.get_workflow(file_name)
         except UnknownObjectException as e:
             return None
         except Exception as e:
@@ -423,7 +415,7 @@ class GitRepoClient:
             return None
 
     def create_workflow_dispatch(self, workflow: Workflow, ref: Branch | Tag | Commit | str, inputs: Opt[dict] = NotSet):
-        writeable_workflow = self._write_client.get_workflow(workflow.id)
+        writeable_workflow = self.repo.get_workflow(workflow.id)
         writeable_workflow.create_dispatch(ref=ref, inputs=inputs)
 
     ####################################################################################################################
@@ -439,5 +431,5 @@ class GitRepoClient:
         """
         assert isinstance(branch_name, str), branch_name
         post_parameters = {"branch": branch_name}
-        status, _, _ = self._write_client._requester.requestJson("POST", f"{self._write_client.url}/merge-upstream", input=post_parameters)
+        status, _, _ = self.repo._requester.requestJson("POST", f"{self.repo.url}/merge-upstream", input=post_parameters)
         return status == 200

@@ -28,20 +28,23 @@ class RepoOperator(ABC):
 
     repo_config: BaseRepoConfig
     base_dir: str
+    bot_commit: bool = True
+    access_token: str | None = None
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
-    bot_commit: bool = True
 
     def __init__(
         self,
         repo_config: BaseRepoConfig,
         base_dir: str = "/tmp",
         bot_commit: bool = True,
+        access_token: str | None = None,
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
         self.base_dir = base_dir
         self.bot_commit = bot_commit
+        self.access_token = access_token
 
     ####################################################################################################################
     # PROPERTIES
@@ -54,6 +57,10 @@ class RepoOperator(ABC):
     @property
     def repo_path(self) -> str:
         return os.path.join(self.base_dir, self.repo_name)
+
+    @property
+    def clone_url(self) -> str:
+        return f"https://github.com/{self.repo_config.full_name}.git"
 
     @property
     def viz_path(self) -> str:

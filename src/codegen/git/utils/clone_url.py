@@ -1,7 +1,5 @@
 from urllib.parse import urlparse
 
-from codegen.git.configs.token import get_token_for_repo_config
-from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import RepoConfig
 
 
@@ -11,19 +9,12 @@ def url_to_github(url: str, branch: str) -> str:
     return f"{clone_url}/blob/{branch}"
 
 
-def get_clone_url_for_repo_config(repo_config: RepoConfig, github_type: GithubType = GithubType.GithubEnterprise) -> str:
-    if github_type is GithubType.GithubEnterprise:
-        return f"https://github.codegen.app/{repo_config.full_name}.git"
-    elif github_type is GithubType.Github:
-        return f"https://github.com/{repo_config.full_name}.git"
+def get_clone_url_for_repo_config(repo_config: RepoConfig) -> str:
+    return f"https://github.com/{repo_config.full_name}.git"
 
 
-def get_authenticated_clone_url_for_repo_config(
-    repo: RepoConfig,
-    github_type: GithubType = GithubType.GithubEnterprise,
-) -> str:
-    git_url = get_clone_url_for_repo_config(repo, github_type)
-    token = get_token_for_repo_config(repo_config=repo, github_type=github_type)
+def get_authenticated_clone_url_for_repo_config(repo: RepoConfig, token: str) -> str:
+    git_url = get_clone_url_for_repo_config(repo)
     return add_access_token_to_url(git_url, token)
 
 
