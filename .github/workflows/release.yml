@@ -15,15 +15,64 @@ permissions:
   contents: read
 
 jobs:
+  build:
+    name: Build 3.${{ matrix.python }} ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04-arm,
+          macos-latest,
+        ]
+        python: [
+          12,
+          13,
+        ]
+
+    steps:
+      - name: Github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: v0.5.24
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+        with:
+          python-version: 3.${{ matrix.python }}
+
+      - name: Fetch tags
+        run: |
+          git branch
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+
+      # TODO: add cbuildwheel cache
+      - name: Build wheel
+        uses: pypa/cibuildwheel@v2.22.0
+        env:
+          HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_BUILD: "*cp3${{ matrix.python }}*"
+          CIBW_SKIP: '{*i686*,*musllinux*}'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}-3.${{ matrix.python }}
+          path: ./wheelhouse/*.whl
+
   release:
+    needs: build
     runs-on: ubuntu-latest
     environment: release
     permissions:
       contents: write # grants permission to create a release on github
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: v0.5.24
 
       - name: Setup backend
         uses: ./.github/actions/setup-environment
@@ -45,7 +94,6 @@ jobs:
         id: github-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v0.5.24
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
@@ -57,7 +105,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             username: ${{ job.status == 'success' && format('Released <{0}|{1}>', steps.github-release.outputs.url, github.ref_name) || format('Failed to release {0}', github.ref_name) }}
-            channel: "#christine-test"
+            channel: "#release"
             icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
             text: |
               Actor: `${{ github.triggering_actor }}`
