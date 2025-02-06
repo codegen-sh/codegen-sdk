@@ -112,7 +112,8 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         # For example, let's remove all occurrences of the value instead of just the first one
         if value is None:
             super().remove(*args, **kwargs)
-        value.remove(*args, **kwargs)
+        else:
+            value.remove(*args, **kwargs)
 
     def _inserts_till(self, max_idx: int | None = None) -> int:
         """Find the number of pending inserts until max_idx."""
