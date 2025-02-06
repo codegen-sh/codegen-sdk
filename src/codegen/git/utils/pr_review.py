@@ -8,10 +8,9 @@ from unidiff import PatchSet
 from codegen.git.models.pull_request_context import PullRequestContext
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.sdk.core.codebase import Editable, File, Symbol
 
 if TYPE_CHECKING:
-    from codegen.sdk.core.codebase import Codebase
+    from codegen.sdk.core.codebase import Codebase, Editable, File, Symbol
 
 
 def get_merge_base(git_repo_client: Repository, pull: PullRequest | PullRequestContext) -> str:
@@ -99,11 +98,11 @@ class CodegenPR:
         return self._modified_file_ranges
 
     @property
-    def modified_files(self) -> list[File]:
+    def modified_files(self) -> list["File"]:
         filenames = self.modified_file_ranges.keys()
         return [self._codebase.get_file(f, optional=True) for f in filenames]
 
-    def is_modified(self, editable: Editable) -> bool:
+    def is_modified(self, editable: "Editable") -> bool:
         """Returns True if the Editable's range contains any modified lines"""
         filepath = editable.filepath
         changed_ranges = self._modified_file_ranges.get(filepath, [])
@@ -113,7 +112,7 @@ class CodegenPR:
         return False
 
     @property
-    def modified_symbols(self) -> list[Symbol]:
+    def modified_symbols(self) -> list["Symbol"]:
         # Import SourceFile locally to avoid circular dependencies
         from codegen.sdk.core.file import SourceFile
 
