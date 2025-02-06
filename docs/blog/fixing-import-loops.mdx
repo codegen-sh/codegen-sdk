@@ -1,50 +1,61 @@
 ---
-title: "Import Loops in PyTorch"
-icon: "arrows-rotate"
+title: "The Hidden Topology of PyTorch's Imports"
+sidebarTitle: "Import Topology"
+icon: "diagram-project"
 iconType: "solid"
-description: "Identifying and visualizing import loops in the PyTorch codebase"
 ---
 
-In this post, we will visualize all import loops in the [PyTorch](https://github.com/pytorch/pytorch) codebase, propose a fix for one potentially unstable case, and use Codegen to refactor that fix.
+Every large codebase tells a story through its architecture. In this post, we'll explore one of the most interesting patterns in PyTorch's codebase: the topology of its imports and the cycles they create.
+
+Using Codegen, we'll explore how PyTorch's modules interconnect, visualize its dependency patterns, and demonstrate how to safely refactor problematic import cycles. This isn't just about fixing bugs – it's about understanding how one of the world's most popular deep learning frameworks is structured, and how we can use modern tools to reason about and modify complex codebases.
 
 <Info>
 You can find the complete jupyter notebook in our [examples repository](https://github.com/codegen-sh/codegen-examples/tree/main/examples/removing_import_loops_in_pytorch).
 </Info>
 
-Import loops (or circular dependencies) occur when two or more Python modules depend on each other, creating a cycle. For example:
+## Understanding Import Topology
+
+At its core, a Python codebase is a directed graph. Each file is a node, and imports create edges between these nodes. When these edges form cycles, we get what's known as import loops or circular dependencies.
+
+Python's [import machinery](https://docs.python.org/3/reference/import.html) is surprisingly sophisticated – it can handle many types of circular imports through its module caching system. For example, this common pattern works just fine:
 
 ```python
 # module_a.py
-from module_b import function_b
+def function_a():
+    from module_b import function_b  # Dynamic import inside function
+    return function_b()
 
 # module_b.py
-from module_a import function_a
+from module_a import function_a  # Static import at module level
 ```
 
-While Python can handle some import cycles through its import machinery, they can lead to runtime errors, import deadlocks, or initialization order problems.
+But this flexibility is a double-edged sword. While Python can resolve many import cycles at runtime, they can create subtle performance issues and maintenance headaches. Each new import in a cycle adds complexity to the module initialization sequence, and a single poorly placed import can transform a "working" cycle into an unresolvable deadlock.
 
-Debugging import cycle errors can be a challenge, especially when they occur in large codebases. However, Codegen allows us to identify these loops through our visualization tools and fix them very deterministically and at scale. 
+What makes PyTorch particularly interesting is how it manages this complexity at scale. Let's visualize its import topology and see what patterns emerge.
 
-<Frame caption="Import loop in pytorch/torchgen/model.py">
-    <iframe
-    width="100%"
-    height="500px"
-    scrolling="no"
-    src={`https://www.codegen.sh/embedded/graph/?id=8b575318-ff94-41f1-94df-6e21d9de45d1&zoom=1&targetNodeName=model`}
-    className="rounded-xl"
-    style={{
-        backgroundColor: "#15141b",
-    }}
-    ></iframe>
-</Frame>
+## Visualizing PyTorch's Import Graph with Codegen
 
+[Codegen](/introduction/overview) is a Python library for programmatic codebase manipulation. We can use it to compute PyTorch's import graph as a [networkx](https://networkx.org/) graph then detect and visualize patterns, including loops.
 
+The interesting thing about import cycles is that they often form clusters – groups of files that all depend on each other through various import chains. Using [Imports](/building-with-codegen/imports) and `networkx`'s [strongly_connected_components](https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.components.strongly_connected_components.html), we can identify and analyze these clusters:
 
-## Visualize Import Loops in PyTorch
-
-Using Codegen, we discovered several import cycles in PyTorch's codebase. The code to gather and visualize these loops is as follows:
-
-```python
+<Tabs>
+  <Tab title="Output">
+    <Frame caption="Import loop in pytorch/torchgen/model.py">
+        <iframe
+        width="100%"
+        height="500px"
+        scrolling="no"
+        src={`https://www.codegen.sh/embedded/graph/?id=8b575318-ff94-41f1-94df-6e21d9de45d1&zoom=1&targetNodeName=model`}
+        className="rounded-xl"
+        style={{
+            backgroundColor: "#15141b",
+        }}
+        ></iframe>
+    </Frame>
+  </Tab>
+  <Tab title="Code">
+  ```python
 G = nx.MultiDiGraph()
 
 # Add all edges to the graph
@@ -86,20 +97,10 @@ for i, cycle in enumerate(cycles, 1):
     print(f"Number of static imports: {static_imports}")
 ```
 
-Here is one example visualized ⤵️
+  </Tab>
+</Tabs>
 
-<Frame caption="Import loops in pytorch/torchgen/model.py">
-    <iframe
-    width="100%"
-    height="500px"
-    scrolling="no"
-    src={`https://www.codegen.sh/embedded/graph/?id=8b575318-ff94-41f1-94df-6e21d9de45d1&zoom=1&targetNodeName=model`}
-    className="rounded-xl"
-    style={{
-        backgroundColor: "#15141b",
-    }}
-    ></iframe>
-</Frame>
+## Detecting Dynamic Imports
 
 Not all import cycles are problematic! Some cycles using dynamic imports can work perfectly fine:
 
@@ -107,53 +108,29 @@ Not all import cycles are problematic! Some cycles using dynamic imports can wor
   <img src="/images/valid-import-loop.png" alt="Valid import loop example" />
 </Frame>
 
-
 PyTorch prevents most circular import issues through dynamic imports which can be seen through the `import_symbol.is_dynamic` property. If any edge in a strongly connected component is dynamic, runtime conflicts are typically resolved.
 
-However, we discovered an import loop worth investigating between [`flex_decoding.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_decoding.py) and [`flex_attention.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_attention.py):
+However, we discovered an interesting import pattern between [`flex_decoding.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_decoding.py) and [`flex_attention.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_attention.py):
 
-<img src="/images/problematic-import-loop.png" alt="Invalid import loop example" />
+<img src="/images/problematic-import-loop.png" alt="Import pattern example" />
 
-`flex_decoding.py` imports `flex_attention.py` *twice* — once dynamically and once at top-level. This mixed static/dynamic import pattern from the same module creates potential runtime instability.
-
-*Thus, we propose the following refactoring using Codegen*:
-
-## Move Shared Code to a Separate `utils.py` File
-
+At first glance, it might seem odd that `flex_decoding.py` imports from `flex_attention.py` in two different ways:
 ```python
-# Create new utils file
-utils_file = codebase.create_file("torch/_inductor/kernel/flex_utils.py")
+# Top-level imports for utility functions
+from .flex_attention import (
+    compute_forward_block_mn,
+    compute_forward_inner,
+    # ... more utility functions
+)
 
-# Get the two files involved in the import cycle
-decoding_file = codebase.get_file("torch/_inductor/kernel/flex_decoding.py")
-attention_file = codebase.get_file("torch/_inductor/kernel/flex_attention.py")
-attention_file_path = "torch/_inductor/kernel/flex_attention.py"
-decoding_file_path = "torch/_inductor/kernel/flex_decoding.py"
-
-# Track symbols to move
-symbols_to_move = set()
-
-# Find imports from flex_attention in flex_decoding
-for imp in decoding_file.imports:
-    if imp.from_file and imp.from_file.filepath == attention_file_path:
-        # Get the actual symbol from flex_attention
-        if imp.imported_symbol:
-            symbols_to_move.add(imp.imported_symbol)
-
-# Move identified symbols to utils file
-for symbol in symbols_to_move:
-    symbol.move_to_file(utils_file)
-
-print(f" Moved {len(symbols_to_move)} symbols to flex_utils.py")
-for symbol in symbols_to_move:
-    print(symbol.name)
+def create_flex_decoding_kernel(*args, **kwargs):
+    # Dynamic import for runtime-specific functionality
+    from .flex_attention import set_head_dim_values
+    # ... rest of function
 ```
 
-Running this codemod will move all the shared symbols to a separate `utils.py` as well as resolve the imports from both files to point to the newly created file solving this potential unpredictable error that could lead issues later on. 
+But this pattern is actually quite thoughtful. The top-level imports are utility functions needed throughout the module, while `set_head_dim_values` is dynamically imported because it's only needed during kernel creation and might have its own complex dependencies. This separation helps manage initialization order and keeps the module's dependency graph cleaner.
 
+Let's see how we can use Codegen to analyze more patterns like this across PyTorch's codebase:
 
-## Conclusion
-
-Import loops are a common challenge in large Python codebases. Using Codegen, no matter the repo size, you will gain some new insights into your codebase's import structure and be able to perform deterministic manipulations saving developer hours and future runtime errors.
-
-Want to try it yourself? Check out our [complete example](https://github.com/codegen-sh/codegen-examples/tree/main/examples/removing_import_loops_in_pytorch) of fixing import loops using Codegen.
+## Move Shared Code to a Separate `utils.py`
