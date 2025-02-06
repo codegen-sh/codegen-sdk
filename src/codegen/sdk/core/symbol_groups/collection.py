@@ -112,6 +112,7 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         # For example, let's remove all occurrences of the value instead of just the first one
         if value is None:
             super().remove(*args, **kwargs)
+            Editable.remove(self, *args, **kwargs)
         else:
             value.remove(*args, **kwargs)
 
