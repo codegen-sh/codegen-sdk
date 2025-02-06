@@ -102,6 +102,7 @@ jobs:
           fail_on_unmatched_files: true
           generate_release_notes: true
 
+      # TODO: use python exec instead
       - uses: slackapi/slack-github-action@v2.0.0
         if: always()
         with:
@@ -115,5 +116,4 @@ jobs:
               Actor: `${{ github.triggering_actor }}`
               Author: `${{ github.event.head_commit.author.username }}`
               ${{ format('Commit: <{0}/{1}/commit/{2}|{1}@{2}>', github.server_url, github.repository, github.sha) || ''}}
-              ${{ format('Description: `{0}`', github.event.head_commit.message) || ''}}
               View <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|GHA logs>
