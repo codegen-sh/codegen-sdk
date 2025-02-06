@@ -1,4 +1,4 @@
-use std::{collections::HashMap, iter::Map};
+use std::collections::HashMap;
 
 use codegen_sdk_cst_generator::generate_cst;
 use tree_sitter_python;
@@ -17,7 +17,6 @@ fn get_node_types() -> HashMap<String, String> {
 }
 fn main() {
     for (language, node_types) in get_node_types() {
-        let cst = generate_cst(&node_types, &language).unwrap();
-        // println!("{}", cst);
+        generate_cst(&node_types, &language).unwrap();
     }
 }
