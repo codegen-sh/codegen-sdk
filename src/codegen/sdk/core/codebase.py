@@ -113,7 +113,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         console: Manages console output for the codebase.
     """
 
-    _op: RepoOperator | RemoteRepoOperator
+    _op: RepoOperator | RemoteRepoOperator | LocalRepoOperator
     viz: VisualizationManager
     repo_path: Path
     console: Console
