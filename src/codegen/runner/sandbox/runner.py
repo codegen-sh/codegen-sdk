@@ -1,11 +1,10 @@
 import logging
 import sys
 
-import sentry_sdk
 from git import Commit as GitCommit
 
+from codegen.git.configs.config import config
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
 from codegen.runner.models.configs import get_codebase_config
@@ -37,7 +36,7 @@ class SandboxRunner:
         repo_config: RepoConfig,
     ) -> None:
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config, base_dir=repo_config.base_dir, github_type=GithubType.Github)
+        self.op = RemoteRepoOperator(repo_config=repo_config, base_dir=repo_config.base_dir, access_token=config.GITHUB_TOKEN)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:
@@ -50,7 +49,7 @@ class SandboxRunner:
 
     async def _build_graph(self) -> Codebase:
         logger.info("> Building graph...")
-        programming_language = ProgrammingLanguage[self.op.repo_config.language.upper()]
+        programming_language = ProgrammingLanguage(self.op.repo_config.language.upper())
         projects = [ProjectConfig(programming_language=programming_language, repo_operator=self.op, base_path=self.op.repo_config.base_path, subdirectories=self.op.repo_config.subdirectories)]
         return Codebase(projects=projects, config=get_codebase_config())
 
@@ -73,14 +72,7 @@ class SandboxRunner:
         self.codebase.clean_repo()
         self.codebase.checkout(branch=self.codebase.default_branch, create_if_missing=True)
 
-    @staticmethod
-    def _set_sentry_tags(epic_id: int, is_admin: bool) -> None:
-        """Set the sentry tags for a CodemodRun"""
-        sentry_sdk.set_tag("epic_id", epic_id)  # To easily get to the epic in the UI
-        sentry_sdk.set_tag("is_admin", is_admin)  # To filter "prod" level errors, ex if customer hits an error vs an admin
-
     async def get_diff(self, request: GetDiffRequest) -> GetDiffResponse:
-        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_admin=request.codemod.is_admin)
         custom_scope = {"context": request.codemod.codemod_context} if request.codemod.codemod_context else {}
         code_to_exec = create_execute_function_from_codeblock(codeblock=request.codemod.user_code, custom_scope=custom_scope)
         session_options = SessionOptions(max_transactions=request.max_transactions, max_seconds=request.max_seconds)
@@ -90,13 +82,12 @@ class SandboxRunner:
         return GetDiffResponse(result=res)
 
     async def create_branch(self, request: CreateBranchRequest) -> CreateBranchResponse:
-        self._set_sentry_tags(epic_id=request.codemod.epic_id, is_admin=request.codemod.is_admin)
         custom_scope = {"context": request.codemod.codemod_context} if request.codemod.codemod_context else {}
         code_to_exec = create_execute_function_from_codeblock(codeblock=request.codemod.user_code, custom_scope=custom_scope)
         branch_config = request.branch_config
 
-        branch_config.base_branch = branch_config.base_branch or self.codebase.default_branch
-        self.executor.remote_repo.set_up_base_branch(branch_config.base_branch)
+        branch_config.custom_base_branch = branch_config.custom_base_branch or self.codebase.default_branch
+        self.executor.remote_repo.set_up_base_branch(branch_config.custom_base_branch)
         self.executor.remote_repo.set_up_head_branch(branch_config.custom_head_branch, branch_config.force_push_head_branch)
 
         response = CreateBranchResponse()
@@ -117,7 +108,7 @@ class SandboxRunner:
             logger.info(f"Max PRs limit reached: {max_prs}. Skipping remaining groups.")
             flag_groups = flag_groups[:max_prs]
 
-        run_results, branches = await self.executor.execute_flag_groups(request.codemod, code_to_exec, flag_groups, branch_config)
+        run_results, branches = await self.executor.execute_flag_groups(request.commit_msg, code_to_exec, flag_groups, branch_config)
         response.results = run_results
         response.branches = branches
 

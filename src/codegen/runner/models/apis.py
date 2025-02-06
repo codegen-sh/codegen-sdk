@@ -49,6 +49,7 @@ class GetDiffResponse(BaseModel):
 
 class CreateBranchRequest(BaseModel):
     codemod: Codemod
+    commit_msg: str
     grouping_config: GroupingConfig
     branch_config: BranchConfig
 

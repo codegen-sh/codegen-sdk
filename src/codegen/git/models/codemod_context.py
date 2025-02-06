@@ -1,4 +1,5 @@
 import logging
+from importlib.metadata import version
 from typing import Any
 
 from pydantic import BaseModel
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 class CodemodContext(BaseModel):
-    # TODO: add back CODEGEN_VESRION
+    CODEGEN_VERSION: str = version("codegen")
     CODEMOD_ID: int | None = None
     CODEMOD_LINK: str | None = None
     CODEMOD_AUTHOR: str | None = None
