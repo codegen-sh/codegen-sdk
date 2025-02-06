@@ -1,6 +1,5 @@
 default_language_version:
   python: python3.13
-fail_fast: true
 repos:
 
   - repo: https://github.com/ComPWA/taplo-pre-commit
