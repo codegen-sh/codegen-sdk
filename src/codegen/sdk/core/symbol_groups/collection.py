@@ -94,7 +94,7 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         return self._elements + self._inserts_till()
 
     @writer
-    def remove(self, value: Child | None, *args, **kwargs) -> None:
+    def remove(self, value: Child | None = None, *args, **kwargs) -> None:
         """Removes an element from a Collection.
 
         Deletes the specified element from the Collection by calling its remove method. If no value is specified,
