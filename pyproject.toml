@@ -256,7 +256,7 @@ repo_dir = "."
 no_git_verify = false
 tag_format = "v{version}"
 
-[tool.semantic_release.branches.changelog-generation]
-match = "changelog-generation"
+[tool.semantic_release.branches.develop]
+match = "develop"
 prerelease_token = "rc"
 prerelease = false
