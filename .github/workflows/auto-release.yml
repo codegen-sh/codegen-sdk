@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -20,6 +21,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          lfs: true
 
       - uses: codfish/semantic-release-action@v3
         id: semantic
