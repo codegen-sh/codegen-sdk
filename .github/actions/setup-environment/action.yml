@@ -1,0 +1,30 @@
+name: "Setup Environment"
+description: "Setup Environment"
+inputs:
+  python-version:
+    required: false
+    description: "Python version to use"
+    default: "3.13"
+runs:
+  using: "composite"
+  steps:
+    - name: Install UV
+      uses: astral-sh/setup-uv@v5.2
+      id: setup-uv
+      with:
+        enable-cache: true
+        prune-cache: false
+        python-version: ${{ inputs.python-version }}
+        version: '0.5.24'
+        cache-suffix: ${{inputs.python-version}}
+
+    - name: Install dependencies
+      shell: bash
+      run: |
+        uv sync --frozen --all-extras
+
+    - name: Install codecov
+      shell: bash
+      run: |
+        uv tool install codecov-cli --python 3.10
+        uv tool update-shell

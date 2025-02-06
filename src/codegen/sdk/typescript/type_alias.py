@@ -12,7 +12,11 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 @ts_apidoc
 class TSTypeAlias(TypeAlias[TSCodeBlock, TSAttribute], TSSymbol, TSHasBlock):
-    """Representation of an Interface in TypeScript"""
+    """Representation of an Interface in TypeScript.
+
+    Attributes:
+        symbol_type: The type of symbol, set to SymbolType.Type.
+    """
 
     symbol_type = SymbolType.Type
 

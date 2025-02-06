@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://docs.codegen.com">
-    <img src="https://i.imgur.com/ttPWzlG.jpeg" />
+    <img src="https://i.imgur.com/6RF9W0z.jpeg" />
   </a>
 </p>
 
@@ -24,7 +24,6 @@
 
 [Codegen](https://docs.codegen.com) is a python library for manipulating codebases.
 
-
 ```python
 from codegen import Codebase
 
@@ -37,12 +36,21 @@ for function in codebase.functions:
     # Comprehensive static analysis for references, dependencies, etc.
     if not function.usages:
         # Auto-handles references and imports to maintain correctness
-        function.move_to_file('deprecated.py')
+        function.move_to_file("deprecated.py")
 ```
+
 Write code that transforms code. Codegen combines the parsing power of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) with the graph algorithms of [rustworkx](https://github.com/Qiskit/rustworkx) to enable scriptable, multi-language code manipulation at scale.
 
 ## Installation and Usage
-This library requires **Python 3.12 – 3.13**. Currently, Codegen only supports macOS.
+
+We support
+
+- Running Codegen in Python 3.12 – 3.13 (recommended: Python 3.13)
+- macOS and Linux
+  - macOS is supported on Apple Silicon
+  - Linux is supported on x86_64 and aarch64 with glibc 2.34+
+  - Windows is not supported
+- Python, Typescript, Javascript and React codebases
 
 ```
 # Install inside existing project

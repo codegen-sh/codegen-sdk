@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
+from typing import TYPE_CHECKING, ClassVar, Generic, Literal, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
@@ -11,6 +11,7 @@ from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
+from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_attribute import HasAttribute
 from codegen.sdk.core.interfaces.usable import Usable
 from codegen.sdk.core.statements.import_statement import ImportStatement
@@ -28,7 +29,6 @@ if TYPE_CHECKING:
 
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
     from codegen.sdk.core.file import SourceFile
-    from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.interfaces.importable import Importable
@@ -61,17 +61,14 @@ TSourceFile = TypeVar("TSourceFile", bound="SourceFile")
 class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttribute[TSourceFile]):
     """Represents a single symbol being imported.
 
-    For example, this is one `Import` in Python (and similar applies to Typescript, etc.):
-    ```
-    from a.b import c
-    ```
-
-    This is two separate `Import` in Python:
-    ```
-    from a.b import c, d  # one import for each `c` and `d`
-    ```
     Attributes:
+        to_file_id: The node ID of the file to which this import belongs.
+        module: The module from which the symbol is being imported, if applicable.
         symbol_name: The name of the symbol being imported. For instance import a as b has a symbol_name of a.
+        alias: The alias of the imported symbol, if one exists.
+        node_type: The type of node, set to NodeType.IMPORT.
+        import_type: The type of import, indicating how the symbol is imported.
+        import_statement: The statement that this import is part of.
         import_statement: the ImportStatement that this import belongs to
     """
 
@@ -79,7 +76,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
     module: Editable | None
     symbol_name: Editable | None
     alias: Editable | None
-    node_type: Literal[NodeType.IMPORT] = NodeType.IMPORT
+    node_type: ClassVar[Literal[NodeType.IMPORT]] = NodeType.IMPORT
     import_type: ImportType
     import_statement: ImportStatement
 
@@ -670,7 +667,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         if not isinstance(self._imported_symbol(), ExternalModule):
             return None
         resolved = self.resolve_import(add_module_name=attribute)
-        if resolved:
+        if resolved and (isinstance(resolved.symbol, Editable) or isinstance(resolved.from_file, Editable)):
             return resolved.symbol or resolved.from_file
         return None
 

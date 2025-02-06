@@ -1,8 +1,9 @@
 from typing import Annotated, Any
 
-from pydantic import BaseModel, ConfigDict, WithJsonSchema
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
 from pydantic.functional_validators import BeforeValidator
-from pydantic.json_schema import JsonSchemaValue
+from pydantic.json_schema import JsonSchemaValue, WithJsonSchema
 from pydantic_core.core_schema import ValidationInfo
 from tree_sitter import Point, Range
 
@@ -53,7 +54,12 @@ RangeAdapter = Annotated[
 
 @apidoc
 class Span(BaseModel):
-    """Range within the codebase"""
+    """Range within the codebase
+
+    Attributes:
+        range: Adapter for the range within the codebase.
+        filepath: The path to the file associated with the range.
+    """
 
     model_config = ConfigDict(
         frozen=True,

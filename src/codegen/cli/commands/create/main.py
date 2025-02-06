@@ -87,6 +87,7 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
 
     rich.print("")  # Add a newline before output
     response = None
+    code = None
     try:
         if description:
             # Use API to generate implementation
@@ -99,11 +100,11 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
             # Use default implementation
             code = DEFAULT_CODEMOD.format(name=name)
 
-            # Create the target directory if needed
-            codemod_path.parent.mkdir(parents=True, exist_ok=True)
+        # Create the target directory if needed
+        codemod_path.parent.mkdir(parents=True, exist_ok=True)
 
-            # Write the function code
-            codemod_path.write_text(code)
+        # Write the function code
+        codemod_path.write_text(code)
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))

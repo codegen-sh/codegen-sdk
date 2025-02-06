@@ -266,3 +266,63 @@ function foo(): { a: number } {
 }
 """
     )
+
+
+def test_reduce_ternary_condition_with_empty_arrays(tmpdir):
+    # language=typescript
+    content = """
+function foo(): string[] {
+    let result = condition ? [] : ['value'];
+    let result2 = condition ? ['value'] : [];
+    return result.concat(result2);
+}
+"""
+    with get_codebase_session(tmpdir=tmpdir, files={"dir/file1.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file: TSFile = codebase.get_file("dir/file1.ts")
+        foo = file.get_function("foo")
+        ternary1 = foo.code_block.statements[0].value
+        ternary2 = foo.code_block.statements[1].value
+        ternary1.reduce_condition(True)
+        ternary2.reduce_condition(False)
+    # language=typescript
+    assert (
+        file.content
+        == """
+function foo(): string[] {
+    let result = [];
+    let result2 = [];
+    return result.concat(result2);
+}
+"""
+    )
+
+
+def test_reduce_ternary_condition_with_jsx_prop(tmpdir):
+    # language=typescript jsx
+    content = """
+function foo(): JSX.Element {
+    return (
+        <Container
+            content={condition ? <ComponentA title="hello" /> : undefined}
+        />
+    );
+}
+"""
+    with get_codebase_session(tmpdir=tmpdir, files={"dir/file1.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file: TSFile = codebase.get_file("dir/file1.ts")
+        foo = file.get_function("foo")
+        ternary = foo.code_block.statements[0].value.value.props[0].value.statement
+        ternary.reduce_condition(True)
+    # language=typescript jsx
+    assert (
+        file.content
+        == """
+function foo(): JSX.Element {
+    return (
+        <Container
+            content={<ComponentA title="hello" />}
+        />
+    );
+}
+"""
+    )

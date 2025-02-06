@@ -25,10 +25,9 @@ Parent = TypeVar("Parent", bound="CodeBlock")
 class RaiseStatement(Statement[Parent], HasValue, Generic[Parent]):
     """Abstract representation of raise statements, e.g. in Python:
 
-    ```python
-    def f(x):
-        raise ValueError()
-    ```
+    Example:
+        def f(x):
+            raise ValueError()
     """
 
     statement_type = StatementType.RAISE_STATEMENT

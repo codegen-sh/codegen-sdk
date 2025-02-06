@@ -1,7 +1,7 @@
 from typing import Self
 
 from openai import BaseModel
-from pydantic import ConfigDict
+from pydantic.config import ConfigDict
 
 from codegen.sdk.codebase.span import Span
 

@@ -87,7 +87,6 @@ class RepoOperator(ABC):
 
     @cached_property
     def git_cli(self) -> GitCLI:
-        """Note: this is recursive, may want to look out"""
         git_cli = GitCLI(self.repo_path)
         username = None
         user_level = None

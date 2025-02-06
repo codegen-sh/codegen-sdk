@@ -54,6 +54,12 @@ class File(Editable[None]):
     """Represents a generic file.
 
     Could represent a source file or a non-code file such as a markdown file or image file.
+
+    Attributes:
+        name: The name of the file.
+        file_path: The relative file path as a string.
+        path: The absolute path of the file as a Path object.
+        node_type: The type of node, set to NodeType.FILE.
     """
 
     name: str
@@ -432,6 +438,9 @@ class SourceFile(
 
     Enables creating, reading, updating, and deleting files and searching through their contents,
     etc.
+
+    Attributes:
+        code_block: Represents the block of code contained in the file.
     """
 
     code_block: TCodeBlock
@@ -578,7 +587,7 @@ class SourceFile(
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str, content: str, G: CodebaseGraph, sync: bool = True, verify_syntax: bool = True) -> Self | None:
+    def from_content(cls, filepath: str | PathLike | Path, content: str, G: CodebaseGraph, sync: bool = True, verify_syntax: bool = True) -> Self | None:
         """Creates a new file from content and adds it to the graph."""
         path = G.to_absolute(filepath)
         ts_node = parse_file(path, content)
@@ -596,7 +605,7 @@ class SourceFile(
             G.add_single_file(path)
             return G.get_file(filepath)
         else:
-            return cls(ts_node, filepath, G)
+            return cls(ts_node, Path(filepath), G)
 
     @classmethod
     @noapidoc

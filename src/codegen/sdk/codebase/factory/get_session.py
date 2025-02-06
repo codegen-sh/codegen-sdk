@@ -2,7 +2,7 @@ import os
 import sys
 from collections.abc import Generator
 from contextlib import AbstractContextManager, contextmanager
-from typing import Any, Literal, overload
+from typing import Literal, overload
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import BaseRepoConfig
@@ -13,6 +13,22 @@ from codegen.sdk.core.codebase import Codebase, PyCodebaseType, TSCodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
 from codegen.sdk.tree_sitter_parser import print_errors
+
+
+@overload
+def get_codebase_session(
+    tmpdir: str | os.PathLike[str],
+    programming_language: None = None,
+    files: dict[str, str] = {},
+    commit: bool = True,
+    sync_graph: bool = True,
+    verify_input: bool = True,
+    verify_output: bool = True,
+    repo_config: BaseRepoConfig | None = None,
+    feature_flags: GSFeatureFlags = TestFlags,
+    session_options: SessionOptions = SessionOptions(),
+    secrets: Secrets = Secrets(),
+) -> AbstractContextManager[PyCodebaseType]: ...
 
 
 @overload
@@ -49,7 +65,7 @@ def get_codebase_session(
 
 @contextmanager
 def get_codebase_session(
-    tmpdir: Any,
+    tmpdir: str | os.PathLike[str],
     programming_language: ProgrammingLanguage = ProgrammingLanguage.PYTHON,
     files: dict[str, str] = {},
     commit: bool = True,

@@ -1,7 +1,8 @@
 import base64
 import os
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel
+from pydantic.config import ConfigDict
 
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.constants.envvars import FEATURE_FLAGS_BASE64, REPO_CONFIG_BASE64

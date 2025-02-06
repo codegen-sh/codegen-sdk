@@ -2,8 +2,8 @@
 	"$schema": "https://mintlify.com/schema.json",
 	"name": "Codegen",
 	"logo": {
-		"dark": "/logo/dark.svg",
-		"light": "/logo/light.svg"
+		"dark": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45a3e32761c42b324b_Codegen_Logomark_Dark.svg",
+		"light": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45bf55446746125835_Codegen_Logomark_Light.svg"
 	},
 	"modeToggle": {
 		"default": "dark"
@@ -14,7 +14,7 @@
 		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
 		"og:url": "https://docs.codegen.com",
 		"og:locale": "en_US",
-		"og:logo": "https://mintlify.s3.us-west-1.amazonaws.com/codegeninc/images/codegen-thumbnail.png",
+		"og:logo": "https://i.imgur.com/f4OVOqI.png",
 		"article:publisher": "Codegen, Inc.",
 		"twitter:title": "Codegen - Manipulate Code at Scale",
 		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
@@ -135,6 +135,7 @@
 				"building-with-codegen/traversing-the-call-graph",
 				"building-with-codegen/react-and-jsx",
 				"building-with-codegen/codebase-visualization",
+				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
 				"building-with-codegen/reducing-conditions"
 			]
@@ -157,7 +158,7 @@
 		},
 		{
 			"group": "Blog",
-			"pages": ["blog/posts", "blog/act-via-code"]
+			"pages": ["blog/posts", "blog/act-via-code", "blog/fixing-import-loops"]
 		},
 		{
 			"group": "API Reference",
@@ -207,7 +208,9 @@
 						"api-reference/core/IfBlockStatement",
 						"api-reference/core/Import",
 						"api-reference/core/ImportStatement",
+						"api-reference/core/ImportType",
 						"api-reference/core/Importable",
+						"api-reference/core/Interface",
 						"api-reference/core/List",
 						"api-reference/core/MessageType",
 						"api-reference/core/MultiExpression",

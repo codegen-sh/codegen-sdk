@@ -50,7 +50,7 @@ class Function(
     """Abstract representation of a Function.
 
     Attributes:
-        return_type: the return type annotation of the function
+        symbol_type: The type of symbol, set to SymbolType.Function.
     """
 
     symbol_type = SymbolType.Function

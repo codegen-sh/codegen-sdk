@@ -1,9 +1,0 @@
-{
-	"name": "codegen",
-	"commit": "ca20e29727d9f82d48c2581717edbf3254e11958",
-	"url": "https://github.codegen.app/codegen-sh-staging/codegen-staging.git",
-	"language": "PYTHON",
-	"priority": 1,
-	"repo_id": 1,
-	"base_path": "codegen-backend"
-}
