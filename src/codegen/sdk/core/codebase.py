@@ -23,6 +23,7 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
+from codegen.git.utils.pr_review import CodegenPR
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -76,7 +77,6 @@ from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
-from codegen.git.utils.pr_review import CodegenPR
 
 if TYPE_CHECKING:
     from codegen.sdk.core.export import Export
@@ -1201,7 +1201,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.info("Cloning repository...")
             if commit is None:
                 repo_operator = LocalRepoOperator.create_from_repo(
-                    repo_path=repo_path, 
+                    repo_path=repo_path,
                     url=repo_url,
                     github_api_key=config.secrets.github_api_key if config.secrets else None
                 )
@@ -1226,9 +1226,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             raise
 
     def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
-        """
-        Get all modified symbols in a pull request
-        """
+        """Get all modified symbols in a pull request"""
         pr = self._op.get_pull_request(pr_id)
         cg_pr = CodegenPR(self._op, self, pr)
         return cg_pr.modified_symbols

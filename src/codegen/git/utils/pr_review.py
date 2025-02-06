@@ -1,13 +1,14 @@
-from unidiff import PatchSet
 from typing import TYPE_CHECKING
+
+import requests
+from github import Repository
+from github.PullRequest import PullRequest
+from unidiff import PatchSet
+
+from codegen.git.models.pull_request_context import PullRequestContext
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
-from codegen.git.clients.git_repo_client import GitRepoClient
-from github.PullRequest import PullRequest
-from github import Repository
-from codegen.git.models.pull_request_context import PullRequestContext
 from codegen.sdk.core.codebase import Editable, File, Symbol
-import requests
 
 if TYPE_CHECKING:
     from codegen.sdk.core.codebase import Codebase
@@ -42,8 +43,9 @@ def get_file_to_changed_ranges(pull_patch_set: PatchSet) -> dict[str, list]:
 def get_pull_patch_set(op: LocalRepoOperator | RemoteRepoOperator, pull: PullRequestContext) -> PatchSet:
     # Get the diff directly from GitHub's API
     if not op.remote_git_repo:
-        raise ValueError("GitHub API client is required to get PR diffs")
-        
+        msg = "GitHub API client is required to get PR diffs"
+        raise ValueError(msg)
+
     # Get the diff directly from the PR
     diff_url = pull.raw_data.get('diff_url')
     if diff_url:
@@ -54,7 +56,7 @@ def get_pull_patch_set(op: LocalRepoOperator | RemoteRepoOperator, pull: PullReq
     else:
         # If diff_url not available, get the patch directly
         diff = pull.get_patch()
-    
+
     # Parse the diff into a PatchSet
     pull_patch_set = PatchSet(diff)
     return pull_patch_set

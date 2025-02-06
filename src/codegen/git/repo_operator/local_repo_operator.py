@@ -1,19 +1,19 @@
+import logging
 import os
 from functools import cached_property
 from typing import Self, override
-import logging
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
-from github import Github, Repository
+from github import Github
 from github.PullRequest import PullRequest
-from codegen.git.clients.git_repo_client import GitRepoClient
-from codegen.git.schemas.github import GithubScope, GithubType
 
+from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
+from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
@@ -63,19 +63,21 @@ class LocalRepoOperator(RepoOperator):
         if self._remote_git_repo is None:
             if not self._github_api_key:
                 return None
-                
+
             if not (base_url := self.base_url):
-                raise ValueError("Could not determine GitHub URL from remotes")
-                
+                msg = "Could not determine GitHub URL from remotes"
+                raise ValueError(msg)
+
             # Extract owner and repo from the base URL
             # Format: https://github.com/owner/repo
             parts = base_url.split('/')
             if len(parts) < 2:
-                raise ValueError(f"Invalid GitHub URL format: {base_url}")
+                msg = f"Invalid GitHub URL format: {base_url}"
+                raise ValueError(msg)
 
             owner = parts[-4]
             repo = parts[-3]
-            
+
             github = Github(self._github_api_key)
             self._remote_git_repo = github.get_repo(f"{owner}/{repo}")
         return self._remote_git_repo
@@ -109,7 +111,7 @@ class LocalRepoOperator(RepoOperator):
     @classmethod
     def create_from_commit(cls, repo_path: str, commit: str, url: str, github_api_key: str | None = None) -> Self:
         """Do a shallow checkout of a particular commit to get a repository from a given remote URL.
-        
+
         Args:
             repo_path (str): Path where the repo should be cloned
             commit (str): The commit hash to checkout
@@ -202,13 +204,13 @@ class LocalRepoOperator(RepoOperator):
 
     def get_pull_request(self, pr_number: int) -> PullRequest | None:
         """Get a GitHub Pull Request object for the given PR number.
-        
+
         Args:
             pr_number (int): The PR number to fetch
-            
+
         Returns:
             PullRequest | None: The PyGitHub PullRequest object if found, None otherwise
-            
+
         Note:
             This requires a GitHub API key to be set when creating the LocalRepoOperator
         """
@@ -220,5 +222,5 @@ class LocalRepoOperator(RepoOperator):
                 return None
             return repo.get_pull(pr_number)
         except Exception as e:
-            logger.warning(f"Failed to get PR {pr_number}: {str(e)}")
+            logger.warning(f"Failed to get PR {pr_number}: {e!s}")
             return None
