@@ -295,3 +295,34 @@ function foo(): string[] {
 }
 """
     )
+
+
+def test_reduce_ternary_condition_with_jsx_prop(tmpdir):
+    # language=typescript jsx
+    content = """
+function foo(): JSX.Element {
+    return (
+        <Container
+            content={condition ? <ComponentA title="hello" /> : undefined}
+        />
+    );
+}
+"""
+    with get_codebase_session(tmpdir=tmpdir, files={"dir/file1.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
+        file: TSFile = codebase.get_file("dir/file1.ts")
+        foo = file.get_function("foo")
+        ternary = foo.code_block.statements[0].value.value.props[0].value.statement
+        ternary.reduce_condition(True)
+    # language=typescript jsx
+    assert (
+        file.content
+        == """
+function foo(): JSX.Element {
+    return (
+        <Container
+            content={<ComponentA title="hello" />}
+        />
+    );
+}
+"""
+    )

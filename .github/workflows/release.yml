@@ -92,7 +92,7 @@ jobs:
           export UV_PUBLISH_USERNAME="__token__"
           uv publish --publish-url https://upload.pypi.org/legacy/
 
-      - name: Make github release
+      - name: Github release
         id: github-release
         uses: softprops/action-gh-release@v2
         with:

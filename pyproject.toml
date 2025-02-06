@@ -227,7 +227,7 @@ PyGithub = ["github"]
 
 [tool.cibuildwheel]
 build-frontend = { name = "build[uv]", args = ["--no-build-isolation"] }
-skip = ["*musllinux*", "*i686*"]
+skip = ["*i686*", "*musllinux*"]
 environment = { "HATCH_BUILD_HOOKS_ENABLE" = "true" }
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_34_x86_64"
 manylinux-aarch64-image = "quay.io/pypa/manylinux_2_34_aarch64"
