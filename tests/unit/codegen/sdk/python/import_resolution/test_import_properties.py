@@ -48,25 +48,6 @@ from module6 import *
         assert imports[5].is_from_import()
 
 
-def test_is_star_import(tmpdir) -> None:
-    # language=python
-    content = """
-import module1
-from module2 import symbol
-from module3 import *
-from module4 import (a, b, c)
-"""
-    with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}) as codebase:
-        file = codebase.get_file("test.py")
-        imports = file.imports
-
-        # Only star import should return True
-        assert not imports[0].is_star_import
-        assert not imports[1].is_star_import
-        assert imports[2].is_star_import
-        assert not imports[3].is_star_import
-
-
 def test_is_future_import(tmpdir) -> None:
     # language=python
     content = """

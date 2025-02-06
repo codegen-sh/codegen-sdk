@@ -190,43 +190,13 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
         - Future imports even if unused
         - Type hints and annotations
         """
-        # Track processed imports to avoid duplicates
-        processed_imports = set()
-
-        # Group imports by module for more efficient processing
-        module_imports = {}
-
-        # First pass - group imports by module
+        # Process each import statement
         for import_stmt in self.imports:
-            if import_stmt in processed_imports:
-                continue
-
             # Always preserve __future__ and star imports since we can't track their usage
-            if import_stmt.is_future_import or import_stmt.is_star_import:
+            if import_stmt.is_future_import or import_stmt.is_wildcard_import():
                 continue
 
-            module = import_stmt.module_name
-            if module not in module_imports:
-                module_imports[module] = []
-            module_imports[module].append(import_stmt)
-
-        # Second pass - process each module's imports
-        for module, imports in module_imports.items():
-            # Skip if any import from this module is used
-            if any(imp.usages for imp in imports):
-                # Remove individual unused imports if it's a from-style import
-                if len(imports) > 1 and imports[0].is_from_import():
-                    for imp in imports:
-                        if not imp.usages and imp not in processed_imports:
-                            processed_imports.add(imp)
-                            imp.remove()
-                continue
-
-            # If no imports from module are used, remove them all
-            for imp in imports:
-                if imp not in processed_imports:
-                    processed_imports.add(imp)
-                    imp.remove()
+            import_stmt.remove_if_unused()
 
         self.G.commit_transactions()
 

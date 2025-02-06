@@ -319,21 +319,7 @@ class PyImport(Import["PyFile"]):
         Returns:
             bool: True if this is a from-style import, False otherwise.
         """
-        return self.ts_node.type == "import_from_statement"
-
-    @property
-    def is_star_import(self) -> bool:
-        """Determines if this is a star import (from x import *).
-
-        Returns:
-            bool: True if this is a star import, False otherwise
-        """
-        if self.ts_node.type != "import_from_statement":
-            return False
-
-        # Look for wildcard_import node among children
-        wildcard_import = next((node for node in self.ts_node.children if node.type == "wildcard_import"), None)
-        return wildcard_import is not None
+        return self.import_type in [ImportType.NAMED_EXPORT, ImportType.WILDCARD]
 
     @property
     def is_future_import(self) -> bool:
