@@ -1,24 +1,18 @@
 import logging
 from collections.abc import Iterable, Iterator
-from typing import TYPE_CHECKING, Callable, Literal, TypeVar
+from typing import Callable, Generic, Literal
 
 from codeowners import CodeOwners as CodeOwnersParser
 
 from codegen.git.utils.cache_utils import cached_generator
-from codegen.sdk.core.interfaces.files_interface import FilesInterface, FilesParam, TFile
+from codegen.sdk.core.interfaces.files_interface import FilesInterface, FilesParam, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
 from codegen.shared.decorators.docs import apidoc
-
-if TYPE_CHECKING:
-    from codegen.sdk.core.symbol import Symbol
 
 logger = logging.getLogger(__name__)
 
 
-TSymbol = TypeVar("TSymbol", bound="Symbol")
-
-
 @apidoc
-class CodeOwner(FilesInterface):
+class CodeOwner(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """CodeOwner is a class that represents a code owner in a codebase.
 
     It is used to iterate over all files that are owned by a specific owner.

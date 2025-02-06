@@ -13,8 +13,13 @@ if TYPE_CHECKING:
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.import_resolution import Import, ImportStatement
     from codegen.sdk.core.symbol import Symbol
+    from codegen.sdk.typescript.class_definition import TSClass
     from codegen.sdk.typescript.export import TSExport
-
+    from codegen.sdk.typescript.file import TSFile
+    from codegen.sdk.typescript.function import TSFunction
+    from codegen.sdk.typescript.import_resolution import TSImport
+    from codegen.sdk.typescript.statements.import_statement import TSImportStatement
+    from codegen.sdk.typescript.symbol import TSSymbol
 
 logger = logging.getLogger(__name__)
 
@@ -99,15 +104,10 @@ class FilesInterface(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClas
         return next((s for s in self.functions if s.name == name), None)
 
     @py_noapidoc
-    def get_export(self, name: str) -> "TSExport | None":
+    def get_export(self: "FilesInterface[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
         """Get an export by name in files container (supports only typescript)."""
         return next((s for s in self.exports if s.name == name), None)
 
     def get_import(self, name: str) -> TImport | None:
         """Get an import by name in files container."""
         return next((s for s in self.imports if s.name == name), None)
-
-    def remove(self) -> None:
-        """Remove all the files in the files container."""
-        for f in self.files:
-            f.remove()

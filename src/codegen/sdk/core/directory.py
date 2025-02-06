@@ -2,29 +2,17 @@ import logging
 import os
 from collections.abc import Iterator
 from pathlib import Path
-from typing import TYPE_CHECKING, Self, TypeVar
+from typing import Generic, Self
 
 from codegen.git.utils.cache_utils import cached_generator
-from codegen.sdk.core.interfaces.files_interface import FilesInterface, TFile
-from codegen.shared.decorators.docs import apidoc, py_noapidoc
-
-if TYPE_CHECKING:
-    from codegen.sdk.core.assignment import Assignment
-    from codegen.sdk.typescript.class_definition import TSClass
-    from codegen.sdk.typescript.export import TSExport
-    from codegen.sdk.typescript.file import TSFile
-    from codegen.sdk.typescript.function import TSFunction
-    from codegen.sdk.typescript.import_resolution import TSImport
-    from codegen.sdk.typescript.statements.import_statement import TSImportStatement
-    from codegen.sdk.typescript.symbol import TSSymbol
-
-TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
+from codegen.sdk.core.interfaces.files_interface import FilesInterface, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.shared.decorators.docs import apidoc
 
 logger = logging.getLogger(__name__)
 
 
 @apidoc
-class Directory(FilesInterface):
+class Directory(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Directory representation for codebase.
 
     GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory.
@@ -134,11 +122,6 @@ class Directory(FilesInterface):
         rel_path = str(Path(file_path).relative_to(self.dirpath))
         del self.items[rel_path]
 
-    @py_noapidoc
-    def get_export(self: "Directory[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
-        """Get an export by name in the directory and its subdirectories (supports only typescript)."""
-        return next((s for s in self.exports if s.name == name), None)
-
     def get_file(self, filename: str, ignore_case: bool = False) -> TFile | None:
         """Get a file by its name relative to the directory."""
         from codegen.sdk.core.file import File
@@ -173,6 +156,11 @@ class Directory(FilesInterface):
         for file in self.files:
             new_file_path = os.path.join(new_path, os.path.relpath(file.file_path, old_path))
             file.update_filepath(new_file_path)
+
+    def remove(self) -> None:
+        """Remove all the files in the files container."""
+        for f in self.files:
+            f.remove()
 
     def rename(self, new_name: str) -> None:
         """Rename the directory."""
