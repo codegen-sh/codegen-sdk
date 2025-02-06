@@ -8,18 +8,11 @@ pub struct Node {
     pub type_name: String,
     pub named: bool,
     #[serde(default)]
-    pub subtypes: Vec<Subtype>,
+    pub subtypes: Vec<TypeDefinition>,
     #[serde(default)]
     pub fields: Option<Fields>,
     #[serde(default)]
     pub children: Option<Children>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Subtype {
-    #[serde(rename = "type")]
-    pub type_name: String,
-    pub named: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -36,7 +29,7 @@ pub struct FieldDefinition {
     pub types: Vec<TypeDefinition>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TypeDefinition {
     #[serde(rename = "type")]
     pub type_name: String,

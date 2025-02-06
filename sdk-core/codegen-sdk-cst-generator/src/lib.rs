@@ -1,5 +1,7 @@
 mod generator;
 pub(crate) mod parser;
+pub mod traits;
+pub mod utils;
 use std::error::Error;
 
 pub fn generate_cst(source: &str, language: &str) -> Result<(), Box<dyn Error>> {
