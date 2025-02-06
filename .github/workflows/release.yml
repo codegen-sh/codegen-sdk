@@ -109,7 +109,7 @@ jobs:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            username: ${{ job.status == 'success' && format('Released {0}', github.ref_name) || format('Failed to release {0}', github.ref_name) }}
+            username: ${{ job.status == 'success' && format('Released codegen@{0}', github.ref_name) || format('Failed to release codegen@{0}', github.ref_name) }}
             channel: "#release"
             icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
             text: |
