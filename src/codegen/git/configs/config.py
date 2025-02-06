@@ -3,7 +3,7 @@ import os
 
 class Config:
     def __init__(self) -> None:
-        self.GIT_ACCESS_TOKEN = self._get_env_var("GIT_ACCESS_TOKEN")
+        self.GITHUB_TOKEN = self._get_env_var("GITHUB_TOKEN")
 
     def _get_env_var(self, var_name, required: bool = False) -> str | None:
         value = os.environ.get(var_name)

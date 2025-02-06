@@ -9,7 +9,7 @@ import requests
 from fastapi import params
 
 from codegen.git.schemas.repo_config import RepoConfig
-from codegen.runner.constants.envvars import FEATURE_FLAGS_BASE64, REPO_CONFIG_BASE64
+from codegen.runner.constants.envvars import FEATURE_FLAGS_BASE64, GITHUB_TOKEN, REPO_CONFIG_BASE64
 from codegen.runner.models.apis import SANDBOX_SERVER_PORT
 from codegen.runner.models.configs import RunnerFeatureFlags
 
@@ -24,14 +24,14 @@ class SandboxClient:
     base_url: str
     _process: subprocess.Popen | None
 
-    def __init__(self, repo_config: RepoConfig, host: str = "127.0.0.1", port: int = SANDBOX_SERVER_PORT):
+    def __init__(self, repo_config: RepoConfig, git_access_token: str | None, host: str = "127.0.0.1", port: int = SANDBOX_SERVER_PORT):
         self.host = host
         self.port = port
         self.base_url = f"http://{host}:{port}"
         self._process = None
-        self._start_server(repo_config)
+        self._start_server(repo_config, git_access_token)
 
-    def _start_server(self, repo_config: RepoConfig) -> None:
+    def _start_server(self, repo_config: RepoConfig, git_access_token: str | None) -> None:
         """Start the FastAPI server in a subprocess"""
         # encoded_flags = runner_flags_from_posthog(repo_config.name).encoded_json() # TODO: once migrated to dockerized image, uncomment this line
         encoded_flags = RunnerFeatureFlags().encoded_json()
@@ -41,6 +41,7 @@ class SandboxClient:
                 REPO_CONFIG_BASE64: repo_config.encoded_json(),
                 FEATURE_FLAGS_BASE64: encoded_flags,
                 "OPENAI_PASS": "open-ai-password",
+                GITHUB_TOKEN: git_access_token,
             }
         )
 

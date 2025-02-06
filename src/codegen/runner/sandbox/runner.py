@@ -3,6 +3,7 @@ import sys
 
 from git import Commit as GitCommit
 
+from codegen.git.configs.config import config
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
@@ -35,7 +36,7 @@ class SandboxRunner:
         repo_config: RepoConfig,
     ) -> None:
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config, base_dir=repo_config.base_dir)
+        self.op = RemoteRepoOperator(repo_config=repo_config, base_dir=repo_config.base_dir, access_token=config.GITHUB_TOKEN)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:

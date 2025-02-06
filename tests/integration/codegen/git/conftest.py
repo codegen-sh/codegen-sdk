@@ -9,7 +9,7 @@ from codegen.git.schemas.repo_config import RepoConfig
 def mock_config():
     """Mock Config instance to prevent actual environment variable access during tests."""
     mock_config = MagicMock()
-    mock_config.GIT_ACCESS_TOKEN = "test-highside-token"
+    mock_config.GITHUB_TOKEN = "test-highside-token"
 
     yield mock_config
 

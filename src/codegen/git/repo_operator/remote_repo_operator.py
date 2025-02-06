@@ -40,8 +40,9 @@ class RemoteRepoOperator(RepoOperator):
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
         bot_commit: bool = True,
+        access_token: str | None = None,
     ) -> None:
-        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
+        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit, access_token=access_token)
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################

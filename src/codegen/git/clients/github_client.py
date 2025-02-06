@@ -20,7 +20,7 @@ class GithubClient:
 
     def __init__(self, base_url: str = Consts.DEFAULT_BASE_URL):
         self.base_url = base_url
-        self._client = Github(config.GIT_ACCESS_TOKEN, base_url=base_url)
+        self._client = Github(config.GITHUB_TOKEN, base_url=base_url)
 
     @classmethod
     def from_token(cls, token: str | None = None) -> Self:

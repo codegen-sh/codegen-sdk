@@ -6,6 +6,7 @@ from unittest.mock import Mock
 import pytest
 
 from codegen.git.clients.git_repo_client import GitRepoClient
+from codegen.git.configs.config import config
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.clients.sandbox_client import SandboxClient
@@ -35,7 +36,7 @@ def repo_config() -> RepoConfig:
 
 @pytest.fixture(autouse=True)
 def op(repo_config: RepoConfig) -> Generator[RemoteRepoOperator, None, None]:
-    yield RemoteRepoOperator(repo_config=repo_config)
+    yield RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
 
 
 @pytest.fixture(autouse=True)
@@ -47,6 +48,6 @@ def git_repo_client(repo_config: RepoConfig) -> GitRepoClient:
 def sandbox_client(repo_config: RepoConfig, get_free_port, tmpdir) -> Generator[SandboxClient, None, None]:
     # Use the pre-determined free port and a temporary directory
     repo_config.base_dir = str(tmpdir)
-    sb_client = SandboxClient(repo_config=repo_config, port=get_free_port)
+    sb_client = SandboxClient(repo_config=repo_config, port=get_free_port, git_access_token=config.GITHUB_TOKEN)
     sb_client.runner = Mock()
     yield sb_client
