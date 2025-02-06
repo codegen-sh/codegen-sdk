@@ -128,7 +128,7 @@ def generate_changelog(client: AnthropicHelper, complete: bool = False):
 
     releases = []
     parsed_releases: list[Release] = release_history.released.values()
-    parsed_releases = sorted(parsed_releases, key=lambda x: x["version"].tag_format, reverse=True)
+    parsed_releases = sorted(parsed_releases, key=lambda x: x["tagged_date"], reverse=True)
     for release in parsed_releases:
         version = f"v{release['version']!s}"
         tag_url = f"https://github.com/codegen-sh/codegen-sdk/releases/tag/{version}"
