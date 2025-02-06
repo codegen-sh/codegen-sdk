@@ -144,7 +144,7 @@ dev-dependencies = [
   "emoji>=2.14.0",
   "pytest-benchmark[histogram]>=5.1.0",
   "loguru>=0.7.3",
-  "httpx<0.28.0,>=0.25.1",
+  "httpx<0.28.2,>=0.28.1",
 ]
 
 
