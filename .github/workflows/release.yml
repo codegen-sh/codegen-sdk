@@ -94,6 +94,7 @@ jobs:
         id: github-release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: v0.5.24
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
@@ -105,7 +106,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             username: ${{ job.status == 'success' && format('Released <{0}|{1}>', steps.github-release.outputs.url, github.ref_name) || format('Failed to release {0}', github.ref_name) }}
-            channel: "#release"
+            channel: "#christine-test"
             icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
             text: |
               Actor: `${{ github.triggering_actor }}`
