@@ -297,7 +297,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
         if self.is_async:
             return
         self.add_keyword("async")
-        if self.return_type:
+        if self.return_type and self.return_type.name != "Promise":
             self.return_type.insert_before("Promise<", newline=False)
             self.return_type.insert_after(">", newline=False)
 
