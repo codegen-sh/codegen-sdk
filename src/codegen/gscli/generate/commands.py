@@ -214,16 +214,29 @@ iconType: "solid"
 """
     # Generate the changelog for the codegen_sdk API and update the changelog.mdx file
     client = AnthropicHelper(anthropic_key=anthropic_key, cache=True, openai_anthropic_translation=False)
-    new_releases = generate_changelog(client, complete)
+
     if complete:
-        new_changelog = header + new_releases
+        entire_release_history = generate_changelog(client)
+        new_changelog = header + entire_release_history
     else:
         # Read existing changelog and append new releases
         with open(os.path.join(docs_dir, "changelog/changelog.mdx")) as f:
+            # read the existing changelog
             existing_changelog = f.read()
             # Remove header from existing changelog
             existing_changelog = existing_changelog.split(header)[1]
-        new_changelog = header + new_releases + existing_changelog
+            # find the latest existing version
+            latest_existing_version = re.search(r'label="(v[\d.]+)"', existing_changelog)
+            # if there is a latest existing version, generate new releases
+            if latest_existing_version:
+                # generate new releases
+                new_releases = generate_changelog(client, latest_existing_version.group(1))
+                # append new releases to the existing changelog
+                new_changelog = header + new_releases + existing_changelog
+            else:
+                # if there is no latest existing version, generate a complete changelog
+                new_releases = generate_changelog(client)
+                new_changelog = header + new_releases
 
     with open(os.path.join(docs_dir, "changelog/changelog.mdx"), "w") as f:
         f.write(new_changelog)

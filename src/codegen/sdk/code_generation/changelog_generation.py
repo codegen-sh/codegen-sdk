@@ -114,7 +114,7 @@ Please write a high level summary of the changes in 1 to 5 bullet points.
     return json.loads(response.content[0].text)
 
 
-def generate_changelog(client: AnthropicHelper, complete: bool = False):
+def generate_changelog(client: AnthropicHelper, latest_existing_version: str | None = None):
     ctx = CliContextObj(ContextMock(), logger=logger, global_opts=GlobalCommandLineOptions())
     runtime = ctx.runtime_ctx
     translator = runtime.version_translator
@@ -131,6 +131,9 @@ def generate_changelog(client: AnthropicHelper, complete: bool = False):
     parsed_releases = sorted(parsed_releases, key=lambda x: x["tagged_date"], reverse=True)
     for release in parsed_releases:
         version = f"v{release['version']!s}"
+        if latest_existing_version and version == latest_existing_version:
+            break
+
         tag_url = f"https://github.com/codegen-sh/codegen-sdk/releases/tag/{version}"
         release_summary = generate_release_summary(client, release)
         release_content = f"""
@@ -140,7 +143,5 @@ def generate_changelog(client: AnthropicHelper, complete: bool = False):
 </Update>
 """
         releases.append(release_content)
-        if not complete:
-            break
 
     return "\n".join(releases)
