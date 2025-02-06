@@ -1163,7 +1163,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True, programming_language: ProgrammingLanguage | None = None, config: CodebaseConfig = DefaultConfig) -> "Codebase":
+    def from_repo(
+        cls,
+        repo_name: str,
+        *,
+        tmp_dir: str | None = None,
+        commit: str | None = None,
+        shallow: bool = True,
+        programming_language: ProgrammingLanguage | None = None,
+        config: CodebaseConfig = DefaultConfig,
+    ) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1200,19 +1209,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             # Use LocalRepoOperator to fetch the repository
             logger.info("Cloning repository...")
             if commit is None:
-                repo_operator = LocalRepoOperator.create_from_repo(
-                    repo_path=repo_path,
-                    url=repo_url,
-                    github_api_key=config.secrets.github_api_key if config.secrets else None
-                )
+                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
             else:
                 # Ensure the operator can handle remote operations
-                repo_operator = LocalRepoOperator.create_from_commit(
-                    repo_path=repo_path,
-                    commit=commit,
-                    url=repo_url,
-                    github_api_key=config.secrets.github_api_key if config.secrets else None
-                )
+                repo_operator = LocalRepoOperator.create_from_commit(repo_path=repo_path, commit=commit, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
             logger.info("Clone completed successfully")
 
             # Initialize and return codebase with proper context
@@ -1230,6 +1230,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         pr = self._op.get_pull_request(pr_id)
         cg_pr = CodegenPR(self._op, self, pr)
         return cg_pr.modified_symbols
+
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases

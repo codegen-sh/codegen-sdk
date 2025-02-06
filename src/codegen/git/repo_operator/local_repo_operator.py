@@ -20,6 +20,7 @@ from codegen.git.utils.file_utils import create_files
 
 logger = logging.getLogger(__name__)
 
+
 class OperatorIsLocal(Exception):
     """Error raised while trying to do a remote operation on a local operator"""
 
@@ -54,6 +55,7 @@ class LocalRepoOperator(RepoOperator):
         GitCLI.init(self.repo_path)
         repo_config = repo_config or BaseRepoConfig()
         super().__init__(repo_config, self.repo_path, bot_commit)
+
     ####################################################################################################################
     # PROPERTIES
     ####################################################################################################################
@@ -70,7 +72,7 @@ class LocalRepoOperator(RepoOperator):
 
             # Extract owner and repo from the base URL
             # Format: https://github.com/owner/repo
-            parts = base_url.split('/')
+            parts = base_url.split("/")
             if len(parts) < 2:
                 msg = f"Invalid GitHub URL format: {base_url}"
                 raise ValueError(msg)
@@ -200,7 +202,6 @@ class LocalRepoOperator(RepoOperator):
 
     def fetch_remote(self, remote_name: str = "origin", refspec: str | None = None, force: bool = True) -> FetchResult:
         raise OperatorIsLocal()
-
 
     def get_pull_request(self, pr_number: int) -> PullRequest | None:
         """Get a GitHub Pull Request object for the given PR number.

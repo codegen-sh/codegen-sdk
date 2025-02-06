@@ -27,6 +27,7 @@ def get_merge_base(git_repo_client: Repository, pull: PullRequest | PullRequestC
     comparison = git_repo_client.compare(pull.base.sha, pull.head.sha)
     return comparison.merge_base_commit.sha
 
+
 def get_file_to_changed_ranges(pull_patch_set: PatchSet) -> dict[str, list]:
     file_to_changed_ranges = {}
     for patched_file in pull_patch_set:
@@ -47,7 +48,7 @@ def get_pull_patch_set(op: LocalRepoOperator | RemoteRepoOperator, pull: PullReq
         raise ValueError(msg)
 
     # Get the diff directly from the PR
-    diff_url = pull.raw_data.get('diff_url')
+    diff_url = pull.raw_data.get("diff_url")
     if diff_url:
         # Fetch the diff content from the URL
         response = requests.get(diff_url)
@@ -110,7 +111,6 @@ class CodegenPR:
         if any(overlaps(symbol_range, changed_range) for changed_range in changed_ranges):
             return True
         return False
-
 
     @property
     def modified_symbols(self) -> list[Symbol]:
