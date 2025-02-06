@@ -101,19 +101,3 @@ jobs:
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
-
-      - uses: slackapi/slack-github-action@v2.0.0
-        if: always()
-        with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            username: ${{ job.status == 'success' && format('Released {0}', github.ref_name) || format('Failed to release {0}', github.ref_name) }}
-            channel: "#release"
-            icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
-            text: |
-              Actor: `${{ github.triggering_actor }}`
-              Author: `${{ github.event.head_commit.author.username }}`
-              ${{ format('Commit: <{0}/{1}/commit/{2}|{1}@{2}>', github.server_url, github.repository, github.sha) || ''}}
-              ${{ format('Description: `{0}`', github.event.head_commit.message) || ''}}
-              View <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|GHA logs>
