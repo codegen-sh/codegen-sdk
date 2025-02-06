@@ -1,0 +1,9 @@
+[package]
+name = "codegen-sdk-analyzer"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+salsa = "0.16.1"
+codegen-sdk-ast = { path = "../codegen-sdk-ast" }
+convert_case = "0.7.1"

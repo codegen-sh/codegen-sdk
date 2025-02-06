@@ -1,0 +1,13 @@
+[package]
+name = "codegen-sdk-cst"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tree-sitter = "0.25.1"
+tree-sitter-python = "0.23.6"
+tree-sitter-typescript = "0.23.2"
+[build-dependencies]
+codegen-sdk-cst-generator = { path = "../codegen-sdk-cst-generator" }
+tree-sitter-python = "0.23.6"
+tree-sitter-typescript = "0.23.2"

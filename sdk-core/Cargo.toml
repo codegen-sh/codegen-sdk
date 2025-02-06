@@ -1,0 +1,14 @@
+[package]
+name = "codegen-sdk-core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+codegen-sdk-analyzer = { path = "codegen-sdk-analyzer" }
+[workspace]
+members = [
+  "codegen-sdk-analyzer",
+  "codegen-sdk-ast",
+  "codegen-sdk-cst",
+  "codegen-sdk-cst-generator",
+]

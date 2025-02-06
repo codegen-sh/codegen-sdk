@@ -108,3 +108,11 @@ repos:
       - mdformat-ruff
       - mdformat-config
       - mdformat-pyproject
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+        args: ["--manifest-path=sdk-core/Cargo.toml", "--"]
+
+      - id: cargo-check
+        args: ["--manifest-path=sdk-core/Cargo.toml"]
