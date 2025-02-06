@@ -76,6 +76,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
+from codegen.git.utils.pr_review import CodegenPR
 
 if TYPE_CHECKING:
     from codegen.sdk.core.export import Export
@@ -1224,6 +1225,13 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
+    def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
+        """
+        Get all modified symbols in a pull request
+        """
+        pr = self._op.get_pull_request(pr_id)
+        cg_pr = CodegenPR(self._op, self, pr)
+        return cg_pr.modified_symbols
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
 # Type Aliases

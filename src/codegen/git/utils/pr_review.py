@@ -1,13 +1,16 @@
 from unidiff import PatchSet
+from typing import TYPE_CHECKING
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.clients.git_repo_client import GitRepoClient
 from github.PullRequest import PullRequest
 from github import Repository
 from codegen.git.models.pull_request_context import PullRequestContext
-from codegen.sdk.core.codebase import Codebase, Editable, File, Symbol
+from codegen.sdk.core.codebase import Editable, File, Symbol
 import requests
-from codegen.sdk.core.file import SourceFile
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.codebase import Codebase
 
 
 def get_merge_base(git_repo_client: Repository, pull: PullRequest | PullRequestContext) -> str:
@@ -73,13 +76,13 @@ class CodegenPR:
     """Wrapper around PRs - enables codemods to interact with them"""
 
     _gh_pr: PullRequest
-    _codebase: Codebase
+    _codebase: "Codebase"
     _op: LocalRepoOperator | RemoteRepoOperator
 
     # =====[ Computed ]=====
     _modified_file_ranges: dict[str, list[tuple[int, int]]] = None
 
-    def __init__(self, op: LocalRepoOperator, codebase: Codebase, pr: PullRequest):
+    def __init__(self, op: LocalRepoOperator, codebase: "Codebase", pr: PullRequest):
         self._op = op
         self._gh_pr = pr
         self._codebase = codebase
@@ -95,7 +98,6 @@ class CodegenPR:
     @property
     def modified_files(self) -> list[File]:
         filenames = self.modified_file_ranges.keys()
-        print(filenames)
         return [self._codebase.get_file(f, optional=True) for f in filenames]
 
     def is_modified(self, editable: Editable) -> bool:
@@ -110,6 +112,9 @@ class CodegenPR:
 
     @property
     def modified_symbols(self) -> list[Symbol]:
+        # Import SourceFile locally to avoid circular dependencies
+        from codegen.sdk.core.file import SourceFile
+
         all_modified = []
         for file in self.modified_files:
             if file is None:
