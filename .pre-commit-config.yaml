@@ -1,6 +1,5 @@
 default_language_version:
   python: python3.13
-fail_fast: true
 repos:
 
   - repo: https://github.com/ComPWA/taplo-pre-commit
@@ -75,21 +74,16 @@ repos:
         always_run: true
         entry: bash -c "uv run --frozen --all-extras --dev deptry src --ignore DEP001"
 
-
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.160.1
+    rev: 39.162.1
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.27"
+    rev: "0.5.29"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
 
-  - repo: https://github.com/zahorniak/pre-commit-circleci.git
-    rev: v1.1.0
-    hooks:
-      - id: circleci_validate
   - repo: "local"
     hooks:
       - id: disallowed-words-check
@@ -103,6 +97,7 @@ repos:
         language: system
         pass_filenames: false
         always_run: true
+
   - repo: https://github.com/hukkin/mdformat
     rev: 0.7.22  # Use the ref you want to point at
     hooks:

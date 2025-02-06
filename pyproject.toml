@@ -7,7 +7,7 @@ readme = "README.md"
 requires-python = ">=3.12, <3.14"
 dependencies = [
   "backoff==2.2.1",
-  "openai==1.61.0",
+  "openai==1.61.1",
   "tiktoken<1.0.0,>=0.5.1",
   "tabulate>=0.9.0,<1.0.0",
   "codeowners<1.0.0,>=0.6.0",
@@ -61,6 +61,7 @@ dependencies = [
   "tqdm>=4.67.1",
   "tomlkit>=0.13.2",
   "python-semantic-release",
+  "uvicorn[standard]>=0.30.0",
 ]
 
 license = { text = "Apache-2.0" }
@@ -106,7 +107,12 @@ keywords = [
 codegen = "codegen.cli.cli:main"
 
 [project.optional-dependencies]
-types = ["types-networkx>=3.2.1.20240918", "types-tabulate>=0.9.0.20240106"]
+types = [
+  "types-networkx>=3.2.1.20240918",
+  "types-tabulate>=0.9.0.20240106",
+  "types-requests>=2.32.0.20241016",
+  "types-toml>=0.10.8.20240310",
+]
 [tool.uv]
 cache-keys = [{ git = { commit = true, tags = true } }]
 dev-dependencies = [
@@ -145,6 +151,8 @@ dev-dependencies = [
   "loguru>=0.7.3",
   "httpx<0.28.0,>=0.25.1",
 ]
+
+
 keyring-provider = "subprocess"
 #extra-index-url = ["https://aws@codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/simple/"]
 publish-url = "https://codegen-922078275900.d.codeartifact.us-east-1.amazonaws.com/pypi/codegen/"
@@ -191,7 +199,7 @@ pythonpath = "."
 norecursedirs = "repos expected"
 # addopts = -v --cov=app --cov-report=term
 
-addopts = "--dist=loadgroup --junitxml=build/test-results/test/TEST.xml --strict-config --import-mode=importlib --cov-context=test --cov-report=json --cov-config=pyproject.toml -p no:doctest"
+addopts = "--dist=loadgroup --junitxml=build/test-results/test/TEST.xml --strict-config --import-mode=importlib --cov-context=test --cov-config=pyproject.toml -p no:doctest"
 filterwarnings = """
     ignore::DeprecationWarning:botocore.*:
     ignore::DeprecationWarning:sqlalchemy.*:
@@ -205,6 +213,7 @@ tmp_path_retention_policy = "failed"
 [build-system]
 requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"
+
 
 [tool.deptry]
 extend_exclude = [".*/eval/test_files/.*.py", ".*conftest.py"]
@@ -227,12 +236,7 @@ python-levenshtein = ["Levenshtein"]
 PyGithub = ["github"]
 [tool.cibuildwheel]
 build-frontend = "build[uv]"
-skip = [
-  "*-musllinux_i686",
-  "*-manylinux_i686",
-  "*-musllinux_x86_64",
-  "*-musllinux_aarch64",
-]
+skip = ["*i686*", "*musllinux*"]
 environment = { "HATCH_BUILD_HOOKS_ENABLE" = "true" }
 manylinux-x86_64-image = "quay.io/pypa/manylinux_2_34_x86_64"
 manylinux-aarch64-image = "quay.io/pypa/manylinux_2_34_aarch64"

@@ -1,67 +1,85 @@
-name: Upload Python Package
+name: Build & Release
 
 on:
   push:
     tags:
-      - v*.**
+      - v*
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
+  build:
+    name: Build 3.${{ matrix.python }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest-8, macos-latest]
+        os: [
+          ubuntu-latest,
+          ubuntu-24.04-arm, # https://github.com/actions/partner-runner-images/issues/37
+          macos-latest,
+        ]
+        python: [
+          12,
+          13,
+        ]
 
     steps:
+      - name: Github context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Setup backend
-        uses: ./.github/actions/setup-backend
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5.2
+        id: setup-uv
         with:
-          python-version: "3.12"
+          enable-cache: true
+          prune-cache: false
+          python-version: 3.${{ matrix.python }}
+          version: '0.5.24'
+          cache-suffix: 3.${{ matrix.python }}
 
-      - name: Get history and tags for SCM versioning to work
+      - name: Fetch tags
         run: |
           git branch
           git fetch --depth=1 origin +refs/tags/*:refs/tags/*
 
-      - name: Build release distributions
-        run: |
-          uv build --wheel
+      # TODO: add cbuildwheel cache
+      - name: Build wheel
+        uses: pypa/cibuildwheel@v2.22.0
         env:
-          HATCH_BUILD_HOOKS_ENABLE: true
+          CIBW_BUILD: "*cp3${{ matrix.python }}*"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
-          path: dist/
+          name: wheels-${{ matrix.os }}-3.${{ matrix.python }}
+          path: ./wheelhouse/*.whl
 
   release:
-    needs: build_wheels
-    runs-on: ubuntu-latest-8
-    permissions:
-      contents: write
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: build
+    runs-on: ubuntu-latest
     environment: release
+    permissions:
+      contents: write # grants permission to create a release on github
     steps:
       - uses: actions/checkout@v4
 
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-1
+        uses: ./.github/actions/setup-environment
 
       - name: Download All Artifacts
         uses: actions/download-artifact@v4
@@ -70,82 +88,32 @@ jobs:
           merge-multiple: true
           pattern: wheels-*
 
-      - name: Make github release
+      - name: Release PyPI
+        run: |
+          export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
+          export UV_PUBLISH_USERNAME="__token__"
+          uv publish --publish-url https://upload.pypi.org/legacy/
+
+      - name: Github release
+        id: github-release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
 
-      - name: Publish message to slack
-        uses: slackapi/slack-github-action@v2.0.0
-        if: success() && startsWith(github.ref, 'refs/tags/')
+      # TODO: use python exec instead
+      - uses: slackapi/slack-github-action@v2.0.0
+        if: always()
         with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "✅ New codegen-sdk Release Successfully Published! 🚀",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Version:* ${{ github.ref_name }}\n*Released by:* <${{ github.server_url }}/${{ github.actor }}|@${{ github.actor }}>\n\n*Links:*\n• <${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ github.ref_name }}|GitHub Release>\n• <https://pypi.org/project/codegen-sdk/${{ github.ref_name }}|PyPI Package>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "<!date^${{ github.event.release.published_at }}^Published {date_num} at {time}|Published just now>"
-                    }
-                  ]
-                }
-              ]
-            }
-
-      - name: Publish failed message to slack
-        uses: slackapi/slack-github-action@v2.0.0
-        if: failure() && startsWith(github.ref, 'refs/tags/')
-        with:
-          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
-          webhook-type: incoming-webhook
-          payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "❌ codegen-sdk Release Failed",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Version:* ${{ github.ref_name }}\n*Attempted by:* <${{ github.server_url }}/${{ github.actor }}|@${{ github.actor }}>\n\n*Details:*\n• Failed to publish version ${{ github.ref_name }}\n• <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View workflow run>"
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "Failed at <!date^${{ github.event.release.published_at }}^{date_num} {time}|just now>"
-                    }
-                  ]
-                }
-              ]
-            }
+            username: ${{ job.status == 'success' && format('Released codegen@{0}', github.ref_name) || format('Failed to release codegen@{0}', github.ref_name) }}
+            channel: "#release"
+            icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
+            text: |
+              Actor: `${{ github.triggering_actor }}`
+              Author: `${{ github.event.head_commit.author.username }}`
+              ${{ format('Commit: <{0}/{1}/commit/{2}|{1}@{2}>', github.server_url, github.repository, github.sha) || ''}}
+              View <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|GHA logs>

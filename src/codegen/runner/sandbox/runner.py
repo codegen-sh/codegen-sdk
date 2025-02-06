@@ -24,7 +24,6 @@ class SandboxRunner:
     """Responsible for orchestrating the lifecycle of a warmed sandbox"""
 
     # =====[ __init__ instance attributes ]=====
-    container_id: str
     repo: RepoConfig
     commit: GitCommit
     op: RemoteRepoOperator | None
@@ -35,10 +34,8 @@ class SandboxRunner:
 
     def __init__(
         self,
-        container_id: str,
         repo_config: RepoConfig,
     ) -> None:
-        self.container_id = container_id
         self.repo = repo_config
         self.op = RemoteRepoOperator(repo_config, base_dir=repo_config.base_dir, github_type=GithubType.Github)
         self.commit = self.op.git_cli.head.commit

@@ -1,14 +1,14 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
+from typing import Generic, TypeVar
 
 from codegen.sdk.codebase.flagging.enums import MessageType
+from codegen.sdk.core.interfaces.editable import Editable
 
-if TYPE_CHECKING:
-    from codegen.sdk.core.interfaces.editable import Editable
+Symbol = TypeVar("Symbol", bound=Editable | None)
 
 
 @dataclass
-class CodeFlag[Symbol: Editable | None]:
+class CodeFlag(Generic[Symbol]):
     symbol: Symbol
     message: str | None = None  # a short desc of the code flag/violation. ex: enums should be ordered alphabetically
     message_type: MessageType = MessageType.GITHUB | MessageType.CODEGEN  # where to send the message (either Github or Slack)
