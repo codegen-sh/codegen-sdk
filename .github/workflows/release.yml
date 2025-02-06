@@ -71,15 +71,12 @@ jobs:
           path: ./wheelhouse/*.whl
 
   release:
-    if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/') }}
+    if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
+      contents: write # grants permission to create a release on github
     steps:
       - uses: actions/checkout@v4
 
@@ -93,27 +90,19 @@ jobs:
           merge-multiple: true
           pattern: wheels-*
 
-      - name: Semantic release
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        uses: codfish/semantic-release-action@v3
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release PyPI
+        run: |
+          export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
+          export UV_PUBLISH_USERNAME="__token__"
+          uv publish --publish-url https://upload.pypi.org/legacy/
 
       - name: Github release
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+        id: github-release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: true
-
-      - name: PyPI release
-        if: steps.semantic.outputs.new-release-published == 'true'
-        run: |
-          export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
-          export UV_PUBLISH_USERNAME="__token__"
-          uv publish --publish-url https://upload.pypi.org/legacy/
 
       - uses: slackapi/slack-github-action@v2.0.0
         if: always()
