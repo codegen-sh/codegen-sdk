@@ -13,7 +13,6 @@ from github.PullRequest import PullRequest
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
-from codegen.git.schemas.github import GithubType
 from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
@@ -49,7 +48,6 @@ class LocalRepoOperator(RepoOperator):
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
         self._github_api_key = github_api_key
-        self.github_type = GithubType.Github
         self._remote_git_repo = None
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
