@@ -55,7 +55,11 @@ def get_function_context(function) -> dict:
         if isinstance(dep, Import):
             dep = hop_through_imports(dep)
 
-        context["dependencies"].append({"source": dep.source, "filepath": dep.filepath})
+        # Add dependency code
+        context["dependencies"].append({
+            "source": dep.source, 
+            "filepath": dep.filepath
+        })
 
     # Add usages
     for usage in function.usages:
