@@ -23,7 +23,7 @@ jobs:
       matrix:
         os: [
           ubuntu-latest,
-          ubuntu-24.04-arm,
+          ubuntu-24.04-arm, # https://github.com/actions/partner-runner-images/issues/37
           macos-latest,
         ]
         python: [
@@ -42,10 +42,15 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Setup environment
-        uses: ./.github/actions/setup-environment
+      - name: Install UV
+        uses: astral-sh/setup-uv@v5.2
+        id: setup-uv
         with:
+          enable-cache: true
+          prune-cache: false
           python-version: 3.${{ matrix.python }}
+          version: '0.5.24'
+          cache-suffix: 3.${{ matrix.python }}
 
       - name: Fetch tags
         run: |
