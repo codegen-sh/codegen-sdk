@@ -47,14 +47,10 @@ jobs:
           version: '0.5.24'
           cache-suffix: 3.12
 
-      - name: Install UV 3.13
-        uses: astral-sh/setup-uv@v5.2
+      - name: Setup python 3.13
+        uses: actions/setup-python@v4
         with:
-          enable-cache: true
-          prune-cache: false
           python-version: 3.13
-          version: '0.5.24'
-          cache-suffix: 3.13
 
       - name: Fetch tags
         run: |
