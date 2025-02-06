@@ -77,11 +77,11 @@ repos:
 
 
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 39.160.1
+    rev: 39.161.3
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.27"
+    rev: "0.5.28"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]

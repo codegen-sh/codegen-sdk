@@ -21,8 +21,7 @@ inputs:
     default: ''
   codecov_flags:
     description: 'Flags for codecov upload'
-    required: false
-    default: 'smart-tests'
+    required: true
 
 runs:
   using: "composite"
@@ -39,12 +38,11 @@ runs:
       run: |
         uv run codecovcli create-commit -t ${{ inputs.codecov_token }}
         uv run codecovcli create-report -t ${{ inputs.codecov_token }}
-        bash ./.circleci/ats.sh
+        bash .github/actions/run_ats/ats.sh
 
     - name: Run tests
       shell: bash
       run: |
-        echo "pwd: $(pwd)" # FIXME: for debugging
         TESTS_TO_RUN=$(cat codecov_ats/tests_to_run.txt)
         if [ -z "$TESTS_TO_RUN" ]; then
           echo "No tests to run, skipping..."
@@ -56,7 +54,6 @@ runs:
           -vv \
           --cov \
           --cov-append \
-          --cov-report=xml \
           ${{ inputs.collect_args }}
 
     - uses: ./.github/actions/report

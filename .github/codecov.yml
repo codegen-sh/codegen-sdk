@@ -17,7 +17,7 @@ component_management:
         - type: patch
           target: 50 # Language specific featues must be 100% covered
       flags:
-        - smart-tests
+        - unit-tests
     - component_id: codegen-sdk-typescript
       name: codegen-sdk-typescript
       paths:
@@ -27,10 +27,14 @@ component_management:
           threshold: 0 # Shouldn't remove coverage
         - type: patch
           target: 50 # Language specific featues must be 100% covered
+      flags:
+        - unit-tests
     - component_id: codegen-sdk-core
       name: codegen-sdk-core
       paths:
         - src/codegen/sdk/**
+      flags:
+        - unit-tests
 
 flag_management:
   default_rules:
