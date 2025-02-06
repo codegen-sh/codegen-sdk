@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   build:
-    name: Build 3.${{ matrix.python }} ${{ matrix.os }}
+    name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -25,10 +25,6 @@ jobs:
           ubuntu-latest,
           ubuntu-24.04-arm, # https://github.com/actions/partner-runner-images/issues/37
           macos-latest,
-        ]
-        python: [
-          12,
-          13,
         ]
 
     steps:
@@ -42,15 +38,23 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
-      - name: Install UV
+      - name: Install UV 3.12
         uses: astral-sh/setup-uv@v5.2
-        id: setup-uv
         with:
           enable-cache: true
           prune-cache: false
-          python-version: 3.${{ matrix.python }}
+          python-version: 3.12
           version: '0.5.24'
-          cache-suffix: 3.${{ matrix.python }}
+          cache-suffix: 3.12
+
+      - name: Install UV 3.13
+        uses: astral-sh/setup-uv@v5.2
+        with:
+          enable-cache: true
+          prune-cache: false
+          python-version: 3.13
+          version: '0.5.24'
+          cache-suffix: 3.13
 
       - name: Fetch tags
         run: |
@@ -62,12 +66,11 @@ jobs:
         uses: pypa/cibuildwheel@v2.22.0
         env:
           HATCH_BUILD_HOOKS_ENABLE: true
-          CIBW_BUILD: "*cp3${{ matrix.python }}*"
           CIBW_SKIP: '{*i686*,*musllinux*}'
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}-3.${{ matrix.python }}
+          name: wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
   release:
