@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup backend
-        uses: ./.github/actions/setup-backend
+        uses: ./.github/actions/setup-environment
 
       - name: Get changed files
         id: changed-files

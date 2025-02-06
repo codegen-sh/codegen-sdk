@@ -94,7 +94,7 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         return self._elements + self._inserts_till()
 
     @writer
-    def remove(self, value: Child | None, *args, **kwargs) -> None:
+    def remove(self, value: Child | None = None, *args, **kwargs) -> None:
         """Removes an element from a Collection.
 
         Deletes the specified element from the Collection by calling its remove method. If no value is specified,
@@ -112,7 +112,9 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         # For example, let's remove all occurrences of the value instead of just the first one
         if value is None:
             super().remove(*args, **kwargs)
-        value.remove(*args, **kwargs)
+            Editable.remove(self, *args, **kwargs)
+        else:
+            value.remove(*args, **kwargs)
 
     def _inserts_till(self, max_idx: int | None = None) -> int:
         """Find the number of pending inserts until max_idx."""

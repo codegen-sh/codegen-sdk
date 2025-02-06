@@ -95,7 +95,7 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
         Returns:
             list[JSXProp]: A list of JSXProp objects representing each attribute on the element.
         """
-        return [JSXProp(x.ts_node, self) for x in self._attribute_nodes]
+        return [self._parse_expression(x.ts_node, default=JSXProp) for x in self._attribute_nodes]
 
     @reader
     def get_prop(self, name: str) -> JSXProp | None:
@@ -124,7 +124,7 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
         Returns:
             list[JSXProp]: A list of JSXProp objects representing each attribute/prop on the JSXElement.
         """
-        return [JSXProp(x.ts_node, self) for x in self._attribute_nodes]
+        return [self._parse_expression(x.ts_node, default=JSXProp) for x in self._attribute_nodes]
 
     @writer
     def set_name(self, name: str) -> None:

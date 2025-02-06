@@ -37,24 +37,30 @@ class Chainable(Editable[Parent], Generic[Parent]):
             self._resolving = False
 
     @noapidoc
-    def with_resolution_frame(self, child: Editable, *args, generic_parameters: list | None = None, generics: dict | None = None, **kwargs) -> Generator[ResolutionStack["Self"], None, None]:
-        """Resolve the definition(s) of this object."""
+    def with_resolution(
+        self, resolution: ResolutionStack["Self"], *args, generic_parameters: list | None = None, generics: dict | None = None, **kwargs
+    ) -> Generator[ResolutionStack["Self"], None, None]:
         from codegen.sdk.core.interfaces.supports_generic import SupportsGenerics
 
+        assert resolution is not self
+        generics = generics or resolution.generics
+        if generic_parameters:
+            if isinstance(resolution.top.node, SupportsGenerics) and self.G.config.feature_flags.generics:
+                generics = {k: v for v, k in zip(generic_parameters, resolution.top.node.generics)}
+            elif not generics:
+                generics = {i: v for i, v in enumerate(generic_parameters)}
+        yield resolution.with_frame(self, *args, **kwargs, generics=generics)
+
+    @noapidoc
+    def with_resolution_frame(self, child: Editable, *args, generic_parameters: list | None = None, generics: dict | None = None, **kwargs) -> Generator[ResolutionStack["Self"], None, None]:
+        """Resolve the definition(s) of this object."""
         if isinstance(child, Chainable):
             assert child is not self
             if not child._resolving:
                 resolved = child.resolved_type_frames
                 if len(resolved) > 0:
                     for resolution in resolved:
-                        assert resolution is not self
-                        generics = generics or resolution.generics
-                        if generic_parameters:
-                            if isinstance(resolution.top.node, SupportsGenerics):
-                                generics = {k: v for v, k in zip(generic_parameters, resolution.top.node.generics)}
-                            elif not generics:
-                                generics = {i: v for i, v in enumerate(generic_parameters)}
-                        yield resolution.with_frame(self, *args, **kwargs, generics=generics)
+                        yield from self.with_resolution(resolution, *args, generic_parameters=generic_parameters, generics=generics, **kwargs)
                     return
         if generics is None:
             generics = {i: v for i, v in enumerate(generic_parameters)} if generic_parameters else None
