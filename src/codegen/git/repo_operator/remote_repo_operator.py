@@ -10,10 +10,9 @@ from git.remote import PushInfoList
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
-from codegen.git.schemas.github import GithubScope, GithubType
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
-from codegen.git.utils.clone_url import get_clone_url_for_repo_config, url_to_github
+from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config, get_clone_url_for_repo_config, url_to_github
 from codegen.git.utils.codeowner_utils import create_codeowners_parser_for_repo
 from codegen.git.utils.remote_progress import CustomRemoteProgress
 from codegen.shared.performance.stopwatch_utils import stopwatch
@@ -27,7 +26,6 @@ class RemoteRepoOperator(RepoOperator):
     # __init__ attributes
     repo_config: RepoConfig
     base_dir: str
-    github_type: GithubType
 
     # lazy attributes
     _remote_git_repo: GitRepoClient | None = None
@@ -41,11 +39,9 @@ class RemoteRepoOperator(RepoOperator):
         base_dir: str = "/tmp",
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
-        github_type: GithubType = GithubType.GithubEnterprise,
         bot_commit: bool = True,
     ) -> None:
         super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
-        self.github_type = github_type
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################
@@ -53,9 +49,15 @@ class RemoteRepoOperator(RepoOperator):
     ####################################################################################################################
 
     @property
+    def clone_url(self) -> str:
+        if self.access_token:
+            return get_authenticated_clone_url_for_repo_config(repo=self.repo_config, token=self.access_token)
+        return super().clone_url
+
+    @property
     def remote_git_repo(self) -> GitRepoClient:
         if not self._remote_git_repo:
-            self._remote_git_repo = GitRepoClient(self.repo_config, github_type=self.github_type, access_scope=GithubScope.WRITE)
+            self._remote_git_repo = GitRepoClient(self.repo_config)
         return self._remote_git_repo
 
     @property
@@ -77,24 +79,24 @@ class RemoteRepoOperator(RepoOperator):
     @override
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""
-        pull_repo(repo=self.repo_config, path=self.base_dir, github_type=self.github_type)
+        pull_repo(repo_path=self.repo_path, clone_url=self.clone_url)
 
     def clone_repo(self, shallow: bool = True) -> None:
-        clone_repo(repo=self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
+        clone_repo(repo_path=self.repo_path, clone_url=self.clone_url, shallow=shallow)
 
     def clone_or_pull_repo(self, shallow: bool = True) -> None:
         """If repo exists, pulls changes. otherwise, clones the repo."""
         # TODO(CG-7804): if repo is not valid we should delete it and re-clone. maybe we can create a pull_repo util + use the existing clone_repo util
         if self.repo_exists():
             self.clean_repo()
-        clone_or_pull_repo(self.repo_config, path=self.base_dir, shallow=shallow, github_type=self.github_type)
+        clone_or_pull_repo(repo_path=self.repo_path, clone_url=self.clone_url, shallow=shallow)
 
     def setup_repo_dir(self, setup_option: SetupOption = SetupOption.PULL_OR_CLONE, shallow: bool = True) -> None:
         os.makedirs(self.base_dir, exist_ok=True)
         os.chdir(self.base_dir)
         if setup_option is SetupOption.CLONE:
             # if repo exists delete, then clone, else clone
-            clone_repo(shallow=shallow)
+            clone_repo(shallow=shallow, repo_path=self.repo_path, clone_url=self.clone_url)
         elif setup_option is SetupOption.PULL_OR_CLONE:
             # if repo exists, pull changes, else clone
             self.clone_or_pull_repo(shallow=shallow)
@@ -185,6 +187,6 @@ class RemoteRepoOperator(RepoOperator):
     @cached_property
     def base_url(self) -> str | None:
         repo_config = self.repo_config
-        clone_url = get_clone_url_for_repo_config(repo_config, github_type=GithubType.Github)
+        clone_url = get_clone_url_for_repo_config(repo_config)
         branch = self.get_active_branch_or_commit()
         return url_to_github(clone_url, branch)
