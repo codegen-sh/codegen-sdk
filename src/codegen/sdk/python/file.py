@@ -200,13 +200,6 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
 
         self.G.commit_transactions()
 
-    def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file.
-        In Python this is equivalent to removing unused imports since Python doesn't have
-        explicit export statements. Calls remove_unused_imports() internally.
-        """
-        self.remove_unused_imports()
-
     @cached_property
     @noapidoc
     @reader(cache=True)

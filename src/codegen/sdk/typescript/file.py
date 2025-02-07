@@ -238,63 +238,6 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
                 if function.type == "import" or (function.type == "identifier" and function.text.decode("utf-8") == "require"):
                     TSImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
 
-    @writer
-    def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file.
-
-        Analyzes all exports in the file and removes any that are not used. An export is considered unused if it has no direct
-        symbol usages and no re-exports that are used elsewhere in the codebase.
-
-        When removing unused exports, the method also cleans up any related unused imports. For default exports, it removes
-        the 'export default' keyword, and for named exports, it removes the 'export' keyword or the entire export statement.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        for export in self.exports:
-            symbol_export_unused = True
-            symbols_to_remove = []
-
-            exported_symbol = export.resolved_symbol
-            for export_usage in export.symbol_usages:
-                if export_usage.node_type == NodeType.IMPORT or (export_usage.node_type == NodeType.EXPORT and export_usage.resolved_symbol != exported_symbol):
-                    # If the import has no usages then we can add the import to the list of symbols to remove
-                    reexport_usages = export_usage.symbol_usages
-                    if len(reexport_usages) == 0:
-                        symbols_to_remove.append(export_usage)
-                        break
-
-                    # If any of the import's usages are valid symbol usages, export is used.
-                    if any(usage.node_type == NodeType.SYMBOL for usage in reexport_usages):
-                        symbol_export_unused = False
-                        break
-
-                    symbols_to_remove.append(export_usage)
-
-                elif export_usage.node_type == NodeType.SYMBOL:
-                    symbol_export_unused = False
-                    break
-
-            # export is not used, remove it
-            if symbol_export_unused:
-                # remove the unused imports
-                for imp in symbols_to_remove:
-                    imp.remove()
-
-                if exported_symbol == exported_symbol.export.declared_symbol:
-                    # change this to be more robust
-                    if exported_symbol.source.startswith("export default "):
-                        exported_symbol.replace("export default ", "")
-                    else:
-                        exported_symbol.replace("export ", "")
-                else:
-                    exported_symbol.export.remove()
-                if exported_symbol.export != export:
-                    export.remove()
-
     @noapidoc
     def _get_export_data(self, relative_path: str, export_type: str = "EXPORT") -> tuple[tuple[str, str], dict[str, callable]]:
         quoted_paths = (f"'{relative_path}'", f'"{relative_path}"')
@@ -463,51 +406,99 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         return next((x for x in self.symbols if isinstance(x, TSNamespace) and x.name == name), None)
 
     @writer
-    def remove_unused_imports(self, moved_symbol_names: set[str] | None = None) -> None:
+    def remove_unused_imports(self) -> None:
         """Removes unused imports from the file.
 
-        Args:
-            moved_symbol_names: Optional set of symbol names that were moved to another file
+        Handles different TypeScript import styles:
+        - Single imports (import x from 'y')
+        - Named imports (import { x } from 'y')
+        - Multi-imports (import { a, b as c } from 'y')
+        - Type imports (import type { X } from 'y')
+        - Side effect imports (import 'y')
+        - Wildcard imports (import * as x from 'y')
+
+        Preserves:
+        - Comments and whitespace where possible
+        - Side effect imports (e.g., CSS imports)
+        - Type imports used in type annotations
         """
-        for import_statement in self.import_statements:
-            # Track which symbols in this import statement are still used
-            used_symbols = []
-            removed_symbols = []
+        # Process each import statement
+        for import_stmt in self.imports:
+            # Always preserve side effect imports since we can't track their usage
+            if import_stmt.import_type == ImportType.SIDE_EFFECT:
+                continue
 
-            for import_symbol in import_statement.imports:
-                # Skip side effect imports
-                if import_symbol.import_type == ImportType.SIDE_EFFECT:
-                    continue
+            # Check if all imports in this statement are unused
+            import_stmt.remove_if_unused()
 
-                symbol_name = import_symbol.alias.source if import_symbol.alias else import_symbol.name
+        self.G.commit_transactions()
 
-                # Check if this import is still used in the file
-                is_used = False
-                for usage in import_symbol.usages:
-                    # Skip usages from moved symbols if provided
-                    if moved_symbol_names and usage.usage_symbol and usage.usage_symbol.name in moved_symbol_names:
-                        continue
-                    is_used = True
+    @writer
+    def remove_unused_exports(self) -> None:
+        """Removes unused exports from the file.
+
+        Handles different TypeScript export styles:
+        - Default exports (export default x)
+        - Named exports (export function x, export const x)
+        - Re-exports (export { x } from 'y')
+        - Type exports (export type X, export interface X)
+
+        Preserves:
+        - Type exports (these may be used in type positions)
+        - Default exports (these are often used dynamically)
+        - Exports used by other files through imports
+        - Exports used within the same file
+        """
+        for export in self.exports:
+            # Skip type exports and default exports
+            if export.is_type_export() or export.is_default_export():
+                continue
+
+            symbol_export_unused = True
+            symbols_to_remove = []
+
+            exported_symbol = export.resolved_symbol
+            for export_usage in export.symbol_usages:
+                if export_usage.node_type == NodeType.IMPORT or (export_usage.node_type == NodeType.EXPORT and export_usage.resolved_symbol != exported_symbol):
+                    # If the import has no usages then we can add the import to the list of symbols to remove
+                    reexport_usages = export_usage.symbol_usages
+                    if len(reexport_usages) == 0:
+                        symbols_to_remove.append(export_usage)
+                        break
+
+                    # If any of the import's usages are valid symbol usages, export is used.
+                    if any(usage.node_type == NodeType.SYMBOL for usage in reexport_usages):
+                        symbol_export_unused = False
+                        break
+
+                    symbols_to_remove.append(export_usage)
+
+                elif export_usage.node_type == NodeType.SYMBOL:
+                    symbol_export_unused = False
                     break
 
-                if is_used:
-                    used_symbols.append(import_symbol)
-                else:
-                    removed_symbols.append(import_symbol)
+            # export is not used, remove it
+            if symbol_export_unused:
+                # remove the unused imports
+                for imp in symbols_to_remove:
+                    imp.remove()
 
-            if not used_symbols and removed_symbols:
-                # If no symbols are used, remove the entire import statement
-                import_statement.remove()
-            elif removed_symbols and used_symbols:
-                # If some symbols are used but others aren't, update the import statement
-                new_imports = []
-                for symbol in used_symbols:
-                    if symbol.alias:
-                        new_imports.append(f"{symbol.name} as {symbol.alias.source}")
+                # Handle different export types
+                if hasattr(export, 'source') and export.source:
+                    # Re-export case (export { x } from 'y')
+                    export.remove()
+                elif exported_symbol and hasattr(exported_symbol, 'export') and exported_symbol.export:
+                    if exported_symbol.export.declared_symbol == exported_symbol:
+                        # Direct export case (export function x)
+                        if exported_symbol.source.startswith("export default "):
+                            exported_symbol.replace("export default ", "")
+                        else:
+                            exported_symbol.replace("export ", "")
                     else:
-                        new_imports.append(symbol.name)
+                        # Export statement case (export { x })
+                        exported_symbol.export.remove()
+                else:
+                    # Fallback - just remove the export
+                    export.remove()
 
-                module = import_statement.module.source
-                type_prefix = "type " if import_statement.is_type_import else ""
-                new_statement = f"import {type_prefix}{{ {', '.join(new_imports)} }} from {module};"
-                import_statement.source = new_statement
+        self.G.commit_transactions()
