@@ -494,8 +494,8 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
     def flag(self, **kwargs: Unpack[FlagKwargs]) -> CodeFlag[Self]:
         """Flags a TypeScript symbol by adding a flag comment and returning a CodeFlag.
 
-        This implementation first creates the CodeFlag through the standard flagging system,
-        then adds a TypeScript-specific comment to visually mark the flagged code.
+        Adds "👈 🚩" at the end of the line. If a message is provided, it will be
+        added after the flag.
 
         Args:
             **kwargs: Flag keyword arguments including optional 'message'
@@ -503,12 +503,8 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         Returns:
             CodeFlag[Self]: The code flag object for tracking purposes
         """
-        # First create the standard CodeFlag through the base implementation
         code_flag = super().flag(**kwargs)
-
-        # Add a TypeScript comment to visually mark the flag
         message = kwargs.get("message", "")
-        if message:
-            self.set_inline_comment(f"🚩 {message}")
-
+        comment = f"👈 🚩 {message}" if message else "👈 🚩"
+        self.set_inline_comment(comment)
         return code_flag
