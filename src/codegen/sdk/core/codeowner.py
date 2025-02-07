@@ -62,7 +62,7 @@ class CodeOwner(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TCl
         return self.owner_value
 
     def __iter__(self) -> Iterator[TFile]:
-        return self.files_generator()
+        return iter(self.files_generator())
 
     def __repr__(self) -> str:
         return f"CodeOwner(owner_type={self.owner_type}, owner_value={self.owner_value})"
