@@ -28,13 +28,13 @@ class GitRepoClient:
     gh_client: GithubClient
     _repo: Repository
 
-    def __init__(self, repo_config: RepoConfig) -> None:
+    def __init__(self, repo_config: RepoConfig, access_token: str) -> None:
         self.repo_config = repo_config
-        self.gh_client = self._create_github_client()
+        self.gh_client = self._create_github_client(token=access_token)
         self._repo = self._create_client()
 
-    def _create_github_client(self) -> GithubClient:
-        return GithubClient()
+    def _create_github_client(self, token: str) -> GithubClient:
+        return GithubClient(token=token)
 
     def _create_client(self) -> Repository:
         client = self.gh_client.get_repo_by_full_name(self.repo_config.full_name)
