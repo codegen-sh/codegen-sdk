@@ -28,9 +28,9 @@ class RepoOperator(ABC):
 
     repo_config: BaseRepoConfig
     base_dir: str
+    bot_commit: bool = True
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
-    bot_commit: bool = True
 
     def __init__(
         self,
@@ -54,6 +54,10 @@ class RepoOperator(ABC):
     @property
     def repo_path(self) -> str:
         return os.path.join(self.base_dir, self.repo_name)
+
+    @property
+    def clone_url(self) -> str:
+        return f"https://github.com/{self.repo_config.full_name}.git"
 
     @property
     def viz_path(self) -> str:
