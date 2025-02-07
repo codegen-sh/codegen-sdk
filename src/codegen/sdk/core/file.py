@@ -772,12 +772,10 @@ class SourceFile(
         """
         return next((x for x in self.imports if x.alias is not None and x.alias.source == symbol_alias), None)
 
-    @proxy_property
-    def symbols(self, nested: bool = False) -> list[Symbol | TClass | TFunction | TGlobalVar | TInterface]:
+    @property
+    @reader(cache=False)
+    def symbols(self) -> list[Symbol | TClass | TFunction | TGlobalVar | TInterface]:
         """Returns all Symbols in the file, sorted by position in the file.
-
-        Args:
-            nested: Include nested symbols
 
         Returns:
             list[Symbol | TClass | TFunction | TGlobalVar | TInterface]: A list of all top-level symbols in the file, sorted by their position in the file. Symbols can be one of the following types:
@@ -788,7 +786,7 @@ class SourceFile(
                 - TInterface: Interface definition
         """
         nodes = cast(list[Any], self.get_nodes(sort=False))
-        filtered = [x for x in nodes if isinstance(x, Symbol) and (nested or x.is_top_level)]
+        filtered = [x for x in nodes if isinstance(x, Symbol) and x.is_top_level]
         return list(sort_editables(filtered, dedupe=False))
 
     @reader(cache=False)
