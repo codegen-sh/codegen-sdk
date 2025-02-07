@@ -15,6 +15,7 @@ from codegen.cli.api.endpoints import (
     PR_LOOKUP_ENDPOINT,
     RUN_ENDPOINT,
     RUN_ON_PR_ENDPOINT,
+    IMPROVE_ENDPOINT,
 )
 from codegen.cli.api.schemas import (
     AskExpertInput,
@@ -36,12 +37,15 @@ from codegen.cli.api.schemas import (
     RunCodemodOutput,
     RunOnPRInput,
     RunOnPRResponse,
+    ImproveCodemodInput,
+    ImproveCodemodResponse,
 )
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.codemod.convert import convert_to_ui
 from codegen.cli.env.global_env import global_env
 from codegen.cli.errors import InvalidTokenError, ServerError
 from codegen.cli.utils.codemods import Codemod
+from codegen.cli.utils.constants import ProgrammingLanguage
 from codegen.cli.utils.function_finder import DecoratedFunction
 
 InputT = TypeVar("InputT", bound=BaseModel)
@@ -55,7 +59,7 @@ class RestAPI:
 
     auth_token: str | None = None
 
-    def __init__(self, auth_token: str):
+    def __init__(self, auth_token: str | None = None):
         self.auth_token = auth_token
 
     def _get_headers(self) -> dict[str, str]:
@@ -247,4 +251,14 @@ class RestAPI:
             PR_LOOKUP_ENDPOINT,
             PRLookupInput(input=PRLookupInput.BasePRLookupInput(repo_full_name=repo_full_name, github_pr_number=github_pr_number)),
             PRLookupResponse,
+        )
+
+
+    def improve_codemod(self, codemod: str, task: str, concerns: list[str], context: dict[str, str], language: ProgrammingLanguage) -> ImproveCodemodResponse:
+        """Improve a codemod."""
+        return self._make_request(
+            "GET",
+            IMPROVE_ENDPOINT,
+            ImproveCodemodInput(input=ImproveCodemodInput.BaseImproveCodemodInput(codemod=codemod, task=task, concerns=concerns, context=context, language=language)),
+            ImproveCodemodResponse
         )
