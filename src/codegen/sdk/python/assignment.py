@@ -105,10 +105,15 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
     @commiter
     def _compute_dependencies(self, usage_type: UsageKind | None = None, dest: HasName | None = None) -> None:
         super()._compute_dependencies(usage_type, dest)
-        if len(self.parent.assignments)>=2:
+        if len(self.parent.assignments) >= 2:
             for assigment_sibling in self.parent.assignments:
-                if assigment_sibling.name!=self.name:
-                    self.G.add_edge(self.node_id,assigment_sibling.node_id,EdgeType.SYMBOL_USAGE,usage=Usage(match=self.get_name(),kind=UsageKind.ASSIGNMENT_SIBLING,usage_type=UsageType.DIRECT,usage_symbol=self,imported_by=None))
+                if assigment_sibling.name != self.name:
+                    self.G.add_edge(
+                        self.node_id,
+                        assigment_sibling.node_id,
+                        EdgeType.SYMBOL_USAGE,
+                        usage=Usage(match=self.get_name(), kind=UsageKind.ASSIGNMENT_SIBLING, usage_type=UsageType.DIRECT, usage_symbol=self, imported_by=None),
+                    )
 
     @proxy_property
     @reader(cache=False)
@@ -140,10 +145,10 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
             meta_data = edge[2]
             if meta_data.type == EdgeType.SYMBOL_USAGE:
                 usage = meta_data.usage
-                if usage.kind==UsageKind.ASSIGNMENT_SIBLING:
+                if usage.kind == UsageKind.ASSIGNMENT_SIBLING:
                     sibling = self.G.get_node(edge[0])
                     for s_edge in self.G.in_edges(sibling.node_id):
-                        if s_edge[2].usage.kind!=UsageKind.ASSIGNMENT_SIBLING:
+                        if s_edge[2].usage.kind != UsageKind.ASSIGNMENT_SIBLING:
                             usages_to_return.append(usage)
                             break
                 elif usage_types is None or usage.usage_type in usage_types:
