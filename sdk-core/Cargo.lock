@@ -80,6 +80,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
+name = "bytes"
+version = "1.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f61dac84819c6588b558454b194026eb1f09c293b9036ae9b159e74e73ab6cf9"
+
+[[package]]
 name = "cc"
 version = "1.2.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -151,6 +157,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "codegen-sdk-common"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "ouroboros",
+ "tree-sitter",
+]
+
+[[package]]
 name = "codegen-sdk-core"
 version = "0.1.0"
 dependencies = [
@@ -168,10 +183,10 @@ dependencies = [
 name = "codegen-sdk-cst"
 version = "0.1.0"
 dependencies = [
+ "bytes",
+ "codegen-sdk-common",
  "codegen-sdk-cst-generator",
  "ouroboros",
- "prettyplease",
- "syn 2.0.98",
  "tree-sitter",
  "tree-sitter-python",
  "tree-sitter-typescript",
@@ -181,6 +196,7 @@ dependencies = [
 name = "codegen-sdk-cst-generator"
 version = "0.1.0"
 dependencies = [
+ "codegen-sdk-common",
  "convert_case",
  "phf",
  "prettyplease",

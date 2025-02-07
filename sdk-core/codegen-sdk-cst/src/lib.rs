@@ -6,7 +6,7 @@ use std::{
     panic::catch_unwind,
 };
 
-use codegen_sdk_cst_generator::traits::FromNode;
+use codegen_sdk_common::traits::FromNode;
 use tree_sitter::{Language, Parser};
 fn parse_file(file_path: &str, language: Language) -> Result<tree_sitter::Tree, Box<dyn Error>> {
     let file = File::open(file_path)?;

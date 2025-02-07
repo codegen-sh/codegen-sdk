@@ -12,6 +12,7 @@ pub struct {name} {
     end_byte: usize,
     start_position: Point,
     end_position: Point,
+    text: Box<Bytes>,
 ";
 const FOOTER_TEMPLATE: &str = "
 }
@@ -31,6 +32,9 @@ impl CSTNode for {{name}} {
     fn end_position(&self) -> Point {
         self.end_position
     }
+    fn text(&self) -> &Bytes {
+        &self.text
+    }
 }
 impl FromNode for {{name}} {
     fn from_node(node: tree_sitter::Node) -> Self {
@@ -39,6 +43,7 @@ impl FromNode for {{name}} {
             end_byte: node.end_byte(),
             start_position: node.start_position(),
             end_position: node.end_position(),
+            text: Box::new(get_text_from_node(node)),
             {{fields}}
         }
     }

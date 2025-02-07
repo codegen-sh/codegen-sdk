@@ -11,6 +11,7 @@ serde = { version = "1.0.217", features = ["derive"] }
 serde_json = "1.0.138"
 syn = "2.0.98"
 tree-sitter = "0.25.1"
+codegen-sdk-common = { path = "../codegen-sdk-common" }
 [dev-dependencies]
 serde_json = "1.0.138"
 tree-sitter-python = "0.23.6"

@@ -6,12 +6,12 @@ edition = "2021"
 [dependencies]
 tree-sitter = "0.25.1"
 tree-sitter-python = "0.23.6"
-tree-sitter-typescript = "0.23.2"
-codegen-sdk-cst-generator = { path = "../codegen-sdk-cst-generator" }
-prettyplease = "0.2.29"
-syn = "2.0.98"
 ouroboros = "0.18.5"
+tree-sitter-typescript = "0.23.2"
+bytes = "1.10.0"
+codegen-sdk-common = { path = "../codegen-sdk-common" }
 [build-dependencies]
 codegen-sdk-cst-generator = { path = "../codegen-sdk-cst-generator" }
+codegen-sdk-common = { path = "../codegen-sdk-common" }
 tree-sitter-python = "0.23.6"
 tree-sitter-typescript = "0.23.2"

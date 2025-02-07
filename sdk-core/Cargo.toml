@@ -16,6 +16,9 @@ sysinfo = "0.33.1"
 members = [
   "codegen-sdk-analyzer",
   "codegen-sdk-ast",
+  "codegen-sdk-common",
   "codegen-sdk-cst",
   "codegen-sdk-cst-generator",
 ]
+[workspace.dependencies]
+ouroboros = "0.18.5"

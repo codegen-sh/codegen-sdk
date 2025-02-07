@@ -1,0 +1,9 @@
+[package]
+name = "codegen-sdk-common"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+bytes = "1.10.0"
+tree-sitter = "0.25.1"
+ouroboros = "0.18.5"
