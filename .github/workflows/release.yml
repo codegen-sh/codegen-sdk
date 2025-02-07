@@ -46,7 +46,7 @@ jobs:
         uses: astral-sh/setup-uv@v5.2
         id: setup-uv
         with:
-          enable-cache: true
+          enable-cache: false
           prune-cache: false
           python-version: 3.${{ matrix.python }}
           version: '0.5.24'
