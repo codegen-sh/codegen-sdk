@@ -35,7 +35,7 @@ def test_namespace_same_file_usage(tmpdir) -> None:
 
         # PI has direct usage (export) and chained usage (in calculateArea)
         assert set(pi.symbol_usages(UsageType.DIRECT)) == {pi.export}
-        # assert set(pi.symbol_usages(UsageType.CHAINED)) == {calc_area}
+        assert set(pi.symbol_usages(UsageType.CHAINED)) == {calc_area}
         assert set(pi.symbol_usages) == {pi.export, calc_area}
 
         # square has direct usage (export) and chained usage (in calculateArea)
@@ -95,8 +95,8 @@ def test_namespace_cross_file_usage(tmpdir) -> None:
         assert {namespace.export}.issubset(namespace.symbol_usages(UsageType.DIRECT))
         assert {namespace.export, calc_area}.issubset(namespace.symbol_usages)
         assert {pi.export}.issubset(pi.symbol_usages(UsageType.DIRECT))
-        # assert {pi.export, calc_area}.issubset(pi.symbol_usages)
-        # assert {calc_area}.issubset(square.symbol_usages(UsageType.CHAINED))
+        assert {pi.export, calc_area}.issubset(pi.symbol_usages)
+        assert {calc_area}.issubset(square.symbol_usages(UsageType.CHAINED))
 
         # Verify attribute resolution
         assert namespace.resolve_attribute("PI") == pi

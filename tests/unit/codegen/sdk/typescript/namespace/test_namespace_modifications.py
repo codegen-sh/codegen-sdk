@@ -1,5 +1,7 @@
 from typing import TYPE_CHECKING
 
+import pytest
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
 
@@ -35,7 +37,7 @@ def test_namespace_add_symbol(tmpdir) -> None:
         original_parent.remove_symbol(new_const.name)
 
         # Add to namespace by moving operation
-        # namespace.add_symbol(new_const, export=True, move=True)
+        namespace.add_symbol(new_const, export=True, move=True)
 
         codebase.G.commit_transactions()
 
@@ -45,8 +47,8 @@ def test_namespace_add_symbol(tmpdir) -> None:
         # Verify symbols were moved correctly
         assert namespace.get_symbol("ya") is not None
         assert file.get_symbol("ya") is None  # Should no longer exist in file directly
-        # assert namespace.get_symbol("yb") is not None
-        # assert file.get_symbol("yb") is None  # Should no longer exist in file directly
+        assert namespace.get_symbol("yb") is not None
+        assert file.get_symbol("yb") is None  # Should no longer exist in file directly
 
         # 2. Add new exported symbol from string
         exported_code = "const z = 3"
@@ -58,7 +60,7 @@ def test_namespace_add_symbol(tmpdir) -> None:
         assert exported.parent.ts_node_type == "export_statement"
 
         assert len(namespace.symbols) == 2
-        assert {s.name for s in namespace.symbols} == {"x", "z"}
+        assert {s.name for s in namespace.symbols} == {"x", "z", "ya", "yb"}
 
 
 def test_namespace_remove_symbol(tmpdir) -> None:
@@ -139,3 +141,45 @@ def test_namespace_export_symbol(tmpdir) -> None:
         external = namespace.get_symbol("external")
         assert external is not None
         assert external.is_exported
+
+
+@pytest.mark.skip("TODO: Symbol Animals is ambiguous in codebase - more than one instance")
+def test_namespace_merging(tmpdir) -> None:
+    """Test TypeScript namespace merging functionality."""
+    FILE_NAME = "test.ts"
+    # language=typescript
+    FILE_CONTENT = """
+    namespace Animals {
+        export class Dog { bark() {} }
+    }
+
+    namespace Animals {  // Merge with previous namespace
+        export class Cat { meow() {} }
+    }
+
+    namespace Plants {  // Different namespace, should not merge
+        export class Tree {}
+    }
+    """
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={FILE_NAME: FILE_CONTENT}) as codebase:
+        animals = codebase.get_symbol("Animals")
+        assert animals is not None
+
+        # Test merged namespace access
+        assert animals.get_class("Dog") is not None
+        assert animals.get_class("Cat") is not None
+
+        # Verify merged namespaces
+        assert len(animals.merged_namespaces) == 1
+        merged = animals.merged_namespaces[0]
+        assert merged.name == "Animals"
+        assert merged != animals
+
+        # Verify all symbols accessible
+        all_symbols = animals.symbols
+        assert len(all_symbols) == 2
+        assert {s.name for s in all_symbols} == {"Dog", "Cat"}
+
+        # Verify non-merged namespace
+        plants = codebase.get_symbol("Plants")
+        assert len(plants.merged_namespaces) == 0

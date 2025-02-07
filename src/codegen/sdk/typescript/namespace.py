@@ -3,8 +3,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter
+from codegen.sdk.core.dataclasses.usage import Usage, UsageType
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.enums import SymbolType
+from codegen.sdk.enums import EdgeType, SymbolType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.enum_definition import TSEnum
@@ -264,11 +265,12 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
         if isinstance(symbol, str):
             if export and not symbol.startswith("export "):
                 symbol = f"export {symbol}"
+            self.code_block.statements.append(symbol)
         elif isinstance(symbol, TSSymbol):
+            source = symbol.source
             if export and not symbol.is_exported:
-                export_src = f"export {symbol.source};"
-                self.code_block.statements.append(export_src)
-        self.code_block.statements.append(symbol)
+                source = f"export {source}"
+            self.code_block.statements.append(source)
         self.G.commit_transactions()
 
         # Remove symbol from original location if remove_original is True

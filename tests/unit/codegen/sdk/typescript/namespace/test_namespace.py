@@ -332,3 +332,46 @@ def test_namespace_nested_deep(tmpdir) -> None:
         assert len(nested) == 2  # Should find B and C
         assert all(isinstance(ns, TSNamespace) for ns in nested)
         assert {ns.name for ns in nested} == {"B", "C"}
+
+
+def test_namespace_imports(tmpdir) -> None:
+    """Test importing and using namespaces."""
+    FILE_NAME_1 = "math.ts"
+    # language=typescript
+    FILE_CONTENT_1 = """
+    export namespace Math {
+        export const PI = 3.14159;
+        export function square(x: number) { return x * x; }
+
+        export namespace Advanced {
+            export function cube(x: number) { return x * x * x; }
+        }
+    }
+    """
+
+    FILE_NAME_2 = "app.ts"
+    # language=typescript
+    FILE_CONTENT_2 = """
+    import { Math } from './math';
+
+    console.log(Math.PI);
+    console.log(Math.square(5));
+    console.log(Math.Advanced.cube(3));
+    """
+
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={FILE_NAME_1: FILE_CONTENT_1, FILE_NAME_2: FILE_CONTENT_2}) as codebase:
+        math_ns = codebase.get_symbol("Math")
+        assert math_ns is not None
+        assert math_ns.name == "Math"
+
+        # Test namespace import resolution
+        file2 = codebase.get_file(FILE_NAME_2)
+        math_import = file2.get_import("Math")
+        assert math_import is not None
+        assert math_import.is_namespace_import
+
+        # Test nested namespace access
+        advanced = math_ns.get_namespace("Advanced")
+        assert advanced is not None
+        assert advanced.name == "Advanced"
+        assert advanced.get_function("cube") is not None
