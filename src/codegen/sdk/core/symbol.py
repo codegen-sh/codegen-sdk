@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast
+from typing import TYPE_CHECKING, Generic, Literal, TypeVar, cast
 
 from rich.markup import escape
 from tree_sitter import Node as TSNode
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
 from codegen.sdk.core.detached_symbols.argument import Argument
+from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 from codegen.sdk.core.expressions import Name, Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
@@ -30,7 +31,6 @@ if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
     from codegen.sdk.codebase.codebase_graph import CodebaseGraph
-    from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.import_resolution import Import
