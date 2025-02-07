@@ -1,3 +1,4 @@
+import logging
 import os
 from functools import cached_property
 from typing import Self, override
@@ -6,12 +7,17 @@ from codeowners import CodeOwners as CodeOwnersParser
 from git import Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
+from github import Github
+from github.PullRequest import PullRequest
 
+from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
+
+logger = logging.getLogger(__name__)
 
 
 class OperatorIsLocal(Exception):
@@ -29,19 +35,52 @@ class LocalRepoOperator(RepoOperator):
     _repo_name: str
     _git_cli: GitCLI
     repo_config: BaseRepoConfig
+    _github_api_key: str | None
+    _remote_git_repo: GitRepoClient | None = None
 
     def __init__(
         self,
         repo_path: str,  # full path to the repo
+        github_api_key: str | None = None,
         repo_config: BaseRepoConfig | None = None,
         bot_commit: bool = False,
     ) -> None:
         self._repo_path = repo_path
         self._repo_name = os.path.basename(repo_path)
+        self._github_api_key = github_api_key
+        self._remote_git_repo = None
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
         repo_config = repo_config or BaseRepoConfig()
         super().__init__(repo_config, self.repo_path, bot_commit)
+
+    ####################################################################################################################
+    # PROPERTIES
+    ####################################################################################################################
+
+    @property
+    def remote_git_repo(self) -> GitRepoClient:
+        if self._remote_git_repo is None:
+            if not self._github_api_key:
+                return None
+
+            if not (base_url := self.base_url):
+                msg = "Could not determine GitHub URL from remotes"
+                raise ValueError(msg)
+
+            # Extract owner and repo from the base URL
+            # Format: https://github.com/owner/repo
+            parts = base_url.split("/")
+            if len(parts) < 2:
+                msg = f"Invalid GitHub URL format: {base_url}"
+                raise ValueError(msg)
+
+            owner = parts[-4]
+            repo = parts[-3]
+
+            github = Github(self._github_api_key)
+            self._remote_git_repo = github.get_repo(f"{owner}/{repo}")
+        return self._remote_git_repo
 
     ####################################################################################################################
     # CLASS METHODS
@@ -70,9 +109,16 @@ class LocalRepoOperator(RepoOperator):
         return op
 
     @classmethod
-    def create_from_commit(cls, repo_path: str, commit: str, url: str) -> Self:
-        """Do a shallow checkout of a particular commit to get a repository from a given remote URL."""
-        op = cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
+    def create_from_commit(cls, repo_path: str, commit: str, url: str, github_api_key: str | None = None) -> Self:
+        """Do a shallow checkout of a particular commit to get a repository from a given remote URL.
+
+        Args:
+            repo_path (str): Path where the repo should be cloned
+            commit (str): The commit hash to checkout
+            url (str): Git URL of the repository
+            github_api_key (str | None): Optional GitHub API key for operations that need GitHub access
+        """
+        op = cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
         op.discard_changes()
         if op.get_active_branch_or_commit() != commit:
             op.create_remote("origin", url)
@@ -81,12 +127,13 @@ class LocalRepoOperator(RepoOperator):
         return op
 
     @classmethod
-    def create_from_repo(cls, repo_path: str, url: str) -> Self:
+    def create_from_repo(cls, repo_path: str, url: str, github_api_key: str | None = None) -> Self:
         """Create a fresh clone of a repository or use existing one if up to date.
 
         Args:
             repo_path (str): Path where the repo should be cloned
             url (str): Git URL of the repository
+            github_api_key (str | None): Optional GitHub API key for operations that need GitHub access
         """
         # Check if repo already exists
         if os.path.exists(repo_path):
@@ -102,7 +149,7 @@ class LocalRepoOperator(RepoOperator):
                     remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
                     # If up to date, use existing repo
                     if local_head.hexsha == remote_head.hexsha:
-                        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
+                        return cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
             except Exception:
                 # If any git operations fail, fallback to fresh clone
                 pass
@@ -113,13 +160,13 @@ class LocalRepoOperator(RepoOperator):
 
             shutil.rmtree(repo_path)
 
-        # Do a fresh clone with depth=1 to get latest commit
+        # Clone the repository
         GitCLI.clone_from(url=url, to_path=repo_path, depth=1)
 
         # Initialize with the cloned repo
         git_cli = GitCLI(repo_path)
 
-        return cls(repo_config=BaseRepoConfig(), repo_path=repo_path, bot_commit=False)
+        return cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
 
     ####################################################################################################################
     # PROPERTIES
@@ -153,3 +200,26 @@ class LocalRepoOperator(RepoOperator):
 
     def fetch_remote(self, remote_name: str = "origin", refspec: str | None = None, force: bool = True) -> FetchResult:
         raise OperatorIsLocal()
+
+    def get_pull_request(self, pr_number: int) -> PullRequest | None:
+        """Get a GitHub Pull Request object for the given PR number.
+
+        Args:
+            pr_number (int): The PR number to fetch
+
+        Returns:
+            PullRequest | None: The PyGitHub PullRequest object if found, None otherwise
+
+        Note:
+            This requires a GitHub API key to be set when creating the LocalRepoOperator
+        """
+        try:
+            # Create GitHub client and get the PR
+            repo = self.remote_git_repo
+            if repo is None:
+                logger.warning("GitHub API key is required to fetch pull requests")
+                return None
+            return repo.get_pull(pr_number)
+        except Exception as e:
+            logger.warning(f"Failed to get PR {pr_number}: {e!s}")
+            return None

@@ -10,15 +10,8 @@ from codegen.sdk.codebase.flagging.groupers.enums import GroupBy
 
 
 class Codemod(BaseModel):
-    run_id: int
-    version_id: int
-    epic_title: str
     user_code: str
-    codemod_context: CodemodContext
-
-    # Sentry tags
-    epic_id: int
-    is_admin: bool = False
+    codemod_context: CodemodContext = CodemodContext()
 
 
 class GroupingConfig(BaseModel):
@@ -28,7 +21,8 @@ class GroupingConfig(BaseModel):
 
 
 class BranchConfig(BaseModel):
-    base_branch: str | None = None
+    branch_name: str | None = None
+    custom_base_branch: str | None = None
     custom_head_branch: str | None = None
     force_push_head_branch: bool = False
 
