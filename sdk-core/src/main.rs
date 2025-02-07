@@ -3,7 +3,8 @@ use codegen_sdk_cst::{parse_file_typescript, typescript};
 use glob::glob;
 use rayon::prelude::*;
 use std::error::Error;
-use std::{path, sync::mpsc, thread, time::Instant};
+use std::{path, time::Instant};
+use sysinfo::{Pid, Process, System};
 #[derive(Debug, Parser)]
 struct Args {
     input: String,
@@ -34,12 +35,15 @@ fn main() {
         })
         .collect();
     let end = Instant::now();
-    let duration = end.duration_since(start);
-
+    let duration: std::time::Duration = end.duration_since(start);
+    let s = System::new_all();
+    let current = s.process(sysinfo::get_current_pid().unwrap()).unwrap();
+    let memory = current.memory();
     println!(
-        "{} files parsed in {:?} seconds with {} errors",
+        "{} files parsed in {:?} seconds with {} errors. Using {} MB of memory",
         files.len(),
         duration.as_secs(),
-        errors.len()
+        errors.len(),
+        memory / 1024 / 1024
     );
 }
