@@ -1,8 +1,5 @@
 import logging
 
-from codegen.git.schemas.github import GithubType
-from codegen.runner.models.codemod import Codemod
-from codegen.runner.utils.branch_sync import get_remote_for_github_type
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 
 logger = logging.getLogger(__name__)
@@ -23,7 +20,7 @@ class SandboxRepo:
             return
 
         # fetch the base branch from highside (do not checkout yet)
-        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        highside_remote = self.codebase.op.git_cli.remote(name="origin")
         self.codebase.op.fetch_remote(highside_remote.name, refspec=f"{base_branch}:{base_branch}")
 
         # checkout the base branch (and possibly sync graph)
@@ -47,7 +44,7 @@ class SandboxRepo:
             return
 
         # fetch the head branch from highside (do not checkout yet)
-        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        highside_remote = self.codebase.op.git_cli.remote(name="origin")
         self.codebase.op.fetch_remote(highside_remote.name, refspec=f"{head_branch}:{head_branch}")
 
     def reset_branch(self, base_branch: str, head_branch: str) -> None:
@@ -57,16 +54,16 @@ class SandboxRepo:
         logger.info(f"Checking out head branch {head_branch} ...")
         self.codebase.checkout(branch=head_branch, create_if_missing=True)
 
-    def push_changes_to_remote(self, codemod: Codemod, head_branch: str, force_push: bool) -> bool:
+    def push_changes_to_remote(self, commit_msg: str, head_branch: str, force_push: bool) -> bool:
         """Takes current state of repo and pushes it"""
         # =====[ Stage changes ]=====
-        has_staged_commit = self.codebase.git_commit(f"[Codegen] {codemod.epic_title}")
+        has_staged_commit = self.codebase.git_commit(f"[Codegen] {commit_msg}")
         if not has_staged_commit:
-            logger.info(f"Skipping opening pull request for cm_run {codemod.run_id} b/c the codemod produced no changes")
+            logger.info("Skipping opening pull request for cm_run b/c the codemod produced no changes")
             return False
 
         # =====[ Push changes highside ]=====
-        highside_remote = get_remote_for_github_type(op=self.codebase.op, github_type=GithubType.Github)
+        highside_remote = self.codebase.op.git_cli.remote(name="origin")
         highside_res = self.codebase.op.push_changes(remote=highside_remote, refspec=f"{head_branch}:{head_branch}", force=force_push)
         return not any(push_info.flags & push_info.ERROR for push_info in highside_res)
 
