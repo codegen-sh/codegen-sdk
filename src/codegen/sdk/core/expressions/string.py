@@ -68,3 +68,7 @@ class String(Expression[Parent], Builtin, Generic[Parent]):
         # If the string is a template string, we need to compute the dependencies of the string content
         for expression in self.expressions:
             expression._compute_dependencies(usage_type, dest)
+
+    @property
+    def __class__(self):
+        return str
