@@ -133,7 +133,9 @@ class PyImport(Import["PyFile"]):
         if base_path == "src":
             # Try "test" next
             return self.resolve_import(base_path="test", add_module_name=add_module_name)
-
+        if base_path == "test":
+            # Try "test" next
+            return self.resolve_import(base_path="test", add_module_name=add_module_name)
         # if not G_override:
         #     for resolver in G.import_resolvers:
         #         if imp := resolver.resolve(self):

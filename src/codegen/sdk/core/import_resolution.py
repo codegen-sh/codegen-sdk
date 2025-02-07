@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar, Generic, Literal, Self, TypeVar, ove
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
 from codegen.sdk.core.autocommit import commiter, reader, remover, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
+from codegen.sdk.core.dataclasses.usage import Usage, UsageKind, UsageType
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
@@ -152,6 +152,10 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
             # for symbol in resolution.from_file.symbols:
             #     usage = SymbolUsage(parent_symbol_name=self.name, child_symbol_name=self.name, type=SymbolUsageType.IMPORTED, match=self, usage_type=UsageType.DIRECT)
             #     self.G.add_edge(self.node_id, symbol.node_id, type=EdgeType.SYMBOL_USAGE, usage=usage)
+            if self.import_type==ImportType.WILDCARD:
+                for symbol in resolution.from_file.symbols:
+                    usage = Usage(match=symbol.get_name(),usage_symbol=symbol,imported_by=self,usage_type=UsageType.DIRECT, kind=UsageKind.IMPORTED_WILDCARD)
+                    self.G.add_edge(self.node_id, symbol.node_id, type=EdgeType.SYMBOL_USAGE, usage=usage)
 
         #  Referenced symbols that we can't find.
         #  Could be:
