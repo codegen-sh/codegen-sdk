@@ -5,14 +5,14 @@ from subprocess import Popen
 import typer
 
 
-def profile(repo: str, memory: bool = False):
+def profile(repo: str, memory: bool = False, extra_repos: bool = True):
     type = "mem" if memory else "cpu"
     base = f".profiles/{type}/{repo}"
     os.makedirs(base, exist_ok=True)
     output = f"{base}/raw.austin"
     compressed = f"{base}/compressed.austin"
     image = f"{base}/parse.svg"
-    test = Popen(["pytest", "tests/codemod/test_parse.py", "--extra-repos=true", "--durations=100", "-k", repo])
+    test = Popen(["pytest", "tests/integration/codemod/test_parse.py", "--durations=100", "-k", repo, "--extra-repos=True" if extra_repos else ""])
     try:
         command = ["sudo", "austin", "-p", str(test.pid), "-o", output]
         if memory:

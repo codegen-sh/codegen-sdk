@@ -1,11 +1,11 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.external_module import ExternalModule
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.python.class_definition import PyClass
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.external_module import ExternalModule
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.python.class_definition import PyClass
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -17,7 +17,7 @@ if the function is a class without a constructor, or if the function is part of 
     uid="1a4b9e66-1df5-4ad1-adbb-034976add8e0",
 )
 @canonical
-class UseNamedKwargs(Codemod3, Skill):
+class UseNamedKwargs(Codemod, Skill):
     """Converts all functions to use named kwargs if there are more than >= 2 args being used.
 
     In general you can use FunctionCall.convert_args_to_kwargs() once you have filtered properly

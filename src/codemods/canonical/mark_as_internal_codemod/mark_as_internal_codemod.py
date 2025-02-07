@@ -1,11 +1,11 @@
 from pathlib import Path
 
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -16,7 +16,7 @@ already contain the @internal tag, append it appropriately.""",
     uid="fe61add3-ab41-49ec-9c26-c2d13e2647d1",
 )
 @canonical
-class MarkAsInternalCodemod(Codemod3, Skill):
+class MarkAsInternalCodemod(Codemod, Skill):
     """Mark all functions that are only used in the same directory or subdirectory as an internal function.
     To mark function as internal by adding the @internal tag to the docstring.
     """

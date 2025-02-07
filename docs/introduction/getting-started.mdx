@@ -5,70 +5,53 @@ icon: "bolt"
 iconType: "solid"
 ---
 
-Follow our step-by-step tutorial to get up and running with Codegen in a jupyter notebook.
+A quick tour of Codegen in a Jupyter notebook.
 
 ## Installation
 
-We recommend using [`uv`](https://github.com/astral-sh/uv) with Python 3.13 for the best experience.
-
-First, install `uv` if you haven't already:
+Install [codegen](https://pypi.org/project/codegen/) on Pypi via [uv](https://github.com/astral-sh/uv):
 
 ```bash
-brew install uv
+uv tool install codegen
 ```
 
-`cd` into the directory you want to parse:
+## Quick Start with Jupyter
+
+The [codegen notebook](/cli/notebook) command creates a virtual environment and opens a Jupyter notebook for quick prototyping. This is often the fastest way to get up and running.
 
 ```bash
-cd path/to/git/repository
+# Launch Jupyter with a demo notebook
+codegen notebook --demo
 ```
 
-Create and activate a Python 3.13 virtual environment:
 
-```bash
-uv venv --python 3.13.0 && source .venv/bin/activate
-```
+<Tip>
+  The `notebook --demo` comes pre-configured to load [FastAPI](https://github.com/fastapi/fastapi)'s codebase, so you can start
+  exploring right away!
+</Tip>
 
-Install [Codegen from PyPI](https://pypi.org/project/codegen/) using `uv`:
-
-```bash
-uv pip install codegen
-```
-
-Install and run Jupyter (optional):
-
-<Tip>Jupyter notebooks are great for exploration and debugging.</Tip>
-
-```bash
-uv pip install jupyterlab && jupyter lab
-```
-
-<Info>
-  You can also use the CLI if you prefer to work in a terminal. [Learn more
-  here](/cli/about).
-</Info>
+<Note>
+  Prefer working in your IDE? See [IDE Usage](/introduction/ide-usage)
+</Note>
 
 ## Initializing a Codebase
 
-Instantiating a [`Codebase`](/api-reference/core/Codebase) will automatically parse a codebase and make it available for manipulation.
+Instantiating a [Codebase](/api-reference/core/Codebase) will automatically parse a codebase and make it available for manipulation.
 
 ```python
 from codegen import Codebase
 
-# Parse a codebase
-codebase = Codebase("./")
+# Clone + parse fastapi/fastapi
+codebase = Codebase.from_repo('fastapi/fastapi')
+
+# Or, parse a local repository
+codebase = Codebase("path/to/git/repo")
 ```
 
 <Note>
   This will automatically infer the programming language of the codebase and
-  parse all files in the codebase.
+  parse all files in the codebase. Learn more about [parsing codebases here](/building-with-codegen/parsing-codebases)
 </Note>
-
-<Tip>
-  The initial parse may take a few minutes for large codebases. This
-  pre-computation enables constant-time operations afterward. [Learn more
-  here.](/introduction/how-it-works)
-</Tip>
 
 ## Exploring Your Codebase
 
@@ -76,10 +59,12 @@ Let's explore the codebase we just initialized.
 
 Here are some common patterns for code navigation in Codegen:
 
-- Iterate over all [`Functions`](/api-reference/core/Function) with [`Codebase.functions`](/api-reference/core/Codebase#functions)
-- View class inheritance with [`Class.superclasses`](/api-reference/core/Class#superclasses)
-- View function call-sites with [`Function.call_sites`](/api-reference/core/Function#call-sites)
-- View function usages with [`Function.usages`](/api-reference/core/Function#usages)
+- Iterate over all [Functions](/api-reference/core/Function) with [Codebase.functions](/api-reference/core/Codebase#functions)
+- View class inheritance with [Class.superclasses](/api-reference/core/Class#superclasses)
+- View function usages with [Function.usages](/api-reference/core/Function#usages)
+- View inheritance hierarchies with [inheritance APIs](https://docs.codegen.com/building-with-codegen/class-api#working-with-inheritance)
+- Identify recursive functions by looking at [FunctionCalls](https://docs.codegen.com/building-with-codegen/function-calls-and-callsites)
+- View function call-sites with [Function.call_sites](/api-reference/core/Function#call-sites)
 
 ```python
 # Print overall stats
@@ -105,7 +90,7 @@ if recursive:
         print(f"  - {func.name}")
 ```
 
-### Analyzing Tests
+## Analyzing Tests
 
 Let's specifically drill into large test files, which can be cumbersome to manage.
 
@@ -132,44 +117,58 @@ for file, num_tests in file_test_counts.most_common()[:5]:
     print(f"   💡 Functions: {len(file.functions)}")
 ```
 
-### Splitting Up Large Test Files
+## Splitting Up Large Test Files
 
-Lets split up the largest test files into separate modules for better organization:
+Lets split up the largest test files into separate modules for better organization.
+
+This uses Codegen's [codebase.move_to_file(...)](/building-with-codegen/moving-symbols), which will:
+- update all imports
+- (optionally) move dependencies
+- do so very fast ⚡️
+
+While maintaining correctness.
 
 ```python
-print("\n📦 Splitting Test Files")
+filename = 'tests/test_path.py'
+print(f"📦 Splitting Test File: {filename}")
 print("=" * 50)
 
-# Process top 5 largest test files
-for file, num_tests in file_test_counts.most_common()[:5]:
-    # Create a new directory based on the file name
-    base_name = file.path.replace('.py', '')
-    print(f"\n🔄 Processing: {file.filepath}")
-    print(f"   📊 {num_tests} test classes to split")
+# Grab a file
+file = codebase.get_file(filename)
+base_name = filename.replace('.py', '')
 
-    # Move each test class to its own file
-    for test_class in file.classes:
-        if test_class.name.startswith('Test'):
-            # Create descriptive filename from test class name
-            new_file = f"{base_name}/{test_class.name.lower()}.py"
-            print(f"   📝 Moving {test_class.name} -> {new_file}")
+# Group tests by subpath
+test_groups = {}
+for test_function in file.functions:
+    if test_function.name.startswith('test_'):
+        test_subpath = '_'.join(test_function.name.split('_')[:3])
+        if test_subpath not in test_groups:
+            test_groups[test_subpath] = []
+        test_groups[test_subpath].append(test_function)
 
-            # Codegen handles all the complexity:
-            # - Creates directories if needed
-            # - Updates all imports automatically
-            # - Maintains test dependencies
-            # - Preserves decorators and docstrings
-            test_class.move_to_file(new_file)
+# Print and process each group
+for subpath, tests in test_groups.items():
+    print(f"\\n{subpath}/")
+    new_filename = f"{base_name}/{subpath}.py"
+
+    # Create file if it doesn't exist
+    if not codebase.has_file(new_filename):
+        new_file = codebase.create_file(new_filename)
+    file = codebase.get_file(new_filename)
+
+    # Move each test in the group
+    for test_function in tests:
+        print(f"    - {test_function.name}")
+        test_function.move_to_file(new_file, strategy="add_back_edge")
 
 # Commit changes to disk
 codebase.commit()
-
 ```
 
 <Warning>
   In order to commit changes to your filesystem, you must call
-  [`Codebase.commit()`](/api-reference/core/Codebase#commit). Learn more about
-  [Commit and Reset](/building-with-codegen/commit-and-reset).
+  [codebase.commit()](/api-reference/core/Codebase#commit). Learn more about
+  [commit() and reset()](/building-with-codegen/commit-and-reset).
 </Warning>
 
 ### Finding Specific Content
@@ -246,7 +245,7 @@ Codegen's graph structure makes it easy to analyze relationships between code el
 ```python
 # Find dead code
 for func in codebase.functions:
-    if len(function.usages) == 0:
+    if len(func.usages) == 0:
         print(f'🗑️ Dead code: {func.name}')
         func.remove()
 
@@ -274,8 +273,7 @@ if base_class:
 
 <Note>
   Learn more about [dependencies and
-  references](/building-with-codegen/dependencies-and-references) or [imports
-  and exports](/building-with-codegen/imports-and-exports).
+  references](/building-with-codegen/dependencies-and-usages) or [imports](/building-with-codegen/imports) and [exports](/building-with-codegen/exports).
 </Note>
 
 ## What's Next?
@@ -297,14 +295,15 @@ if base_class:
     Understand key concepts like working with files, functions, imports, and the
     call graph to effectively manipulate code.
   </Card>
+  <Card title="IDE Setup" icon="window" href="/introduction/ide-usage">
+    Iterate locally with your favorite IDE, work with a debugger and build sophisticated codemods
+  </Card>
   <Card
     title="Integrate with AI Tools"
-    icon="robot"
+    icon="microchip"
     href="/introduction/work-with-ai"
   >
     Learn how to use Codegen with Cursor, Devin, Windsurf, and more.
   </Card>
-  <Card title="API Reference" icon="code" href="/api-reference">
-    Explore the complete API documentation for all Codegen classes and methods.
-  </Card>
+
 </CardGroup>

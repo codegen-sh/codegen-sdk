@@ -1,12 +1,9 @@
 # Codegen Docs
 
-This unites docs from:
-- graph-sitter (this repo)
-- codegen-cli
-
 ## Development
 
 From within the `docs/` subdirectory:
+
 ```bash
 npm i -g mintlify
 mintlify dev --port 3333

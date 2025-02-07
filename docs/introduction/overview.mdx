@@ -9,15 +9,123 @@ iconType: "solid"
 
 It provides a scriptable interface to a powerful, multi-lingual language server built on top of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
-<iframe src="https://chadcode.sh/embedded/123" className="w-full h-96"></iframe>
+export const metaCode = `from codegen import Codebase
+
+# Codegen builds a complete graph connecting
+# functions, classes, imports and their relationships
+codebase = Codebase("./")
+
+# Work with code without dealing with syntax trees or parsing
+for function in codebase.functions:
+    # Comprehensive static analysis for references, dependencies, etc.
+    if not function.usages:
+        # Auto-handles references and imports to maintain correctness
+        function.remove()
+
+# Fast, in-memory code index
+codebase.commit()
+`
+
+export const code = `def foo():
+  pass
+
+def bar():
+  foo()
+
+def baz():
+  pass
+`
+
+<iframe
+  width="100%"
+  height="370px"
+  scrolling="no"
+  src={`https://codegen.sh/embedded/codemod/?code=${encodeURIComponent(
+    metaCode
+  )}&input=${encodeURIComponent(code)}`}
+  style={{
+    backgroundColor: "#15141b",
+  }}
+  className="rounded-xl"
+></iframe>
+
+
+<Note>
+Codegen handles complex refactors while maintaining correctness, enabling a broad set of advanced code manipulation programs. 
+</Note>
+
+<Tip>Codegen works with both Python and Typescript/JSX codebases. Learn more about language support [here](/building-with-codegen/language-support).</Tip>
 
 ## Installation
 
 ```bash
+# Install CLI
+uv tool install codegen
+
+# Install inside existing project
 pip install codegen
 ```
 
+## What can I do with Codegen?
+
+Codegen enables you to programmatically manipulate code with scale and precision.
+
+<Frame caption="Call graph visualization for modal/modal-client/_Client">
+<iframe
+  width="100%"
+  height="500px"
+  scrolling="no"
+  src={`https://codegen.sh/embedded/graph?id=66e2e195-ceec-4935-876a-ed4cfc1731c7&zoom=0.5&targetNodeName=_Client`}
+  className="rounded-xl"
+  style={{
+    backgroundColor: "#15141b",
+  }}
+></iframe>
+</Frame>
+<Info>
+View source code on [modal/modal-client](https://github.com/modal-labs/modal-client/blob/cbac0d80dfd98588027ecd21850152776be3ab82/modal/client.py#L70). View codemod on [codegen.sh](https://www.codegen.sh/codemod/66e2e195-ceec-4935-876a-ed4cfc1731c7/public/diff)
+</Info>
+
+Common use cases include:
+
+<CardGroup cols={2}>
+  <Card
+    title="Visualize Your Codebase"
+    icon="diagram-project"
+    href="/tutorials/codebase-visualization"
+  >
+    Generate interactive visualizations of your codebase's structure, dependencies, and relationships.
+  </Card>
+  <Card
+    title="Mine Codebase Data"
+    icon="robot"
+    href="/tutorials/training-data"
+  >
+    Create high-quality training data for fine-tuning LLMs on your codebase.
+  </Card>
+  <Card
+    title="Eliminate Feature Flags"
+    icon="flag"
+    href="/tutorials/manage-feature-flags"
+  >
+    Add, remove, and update feature flags across your application.
+  </Card>
+  <Card
+    title="Organize Your Codebase"
+    icon="folder-tree"
+    href="/tutorials/organize-your-codebase"
+  >
+    Restructure files, enforce naming conventions, and improve project layout.
+  </Card>
+</CardGroup>
+
+
 ## Get Started
+
+import {
+  COMMUNITY_SLACK_URL,
+  CODEGEN_SDK_GITHUB_URL,
+} from "/snippets/links.mdx";
 
 <CardGroup cols={2}>
   <Card
@@ -30,18 +138,10 @@ pip install codegen
   <Card title="Tutorials" icon="diagram-project" href="/tutorials/at-a-glance">
     Learn how to use Codegen for common code transformation tasks.
   </Card>
-  <Card
-    title="View on GitHub"
-    icon="github"
-    href="https://github.com/codegen-sh/codegen-sdk"
-  >
+  <Card title="View on GitHub" icon="github" href={CODEGEN_SDK_GITHUB_URL}>
     Star us on GitHub and contribute to the project.
   </Card>
-  <Card
-    title="Join our Slack"
-    icon="slack"
-    href="https://join.slack.com/t/codegen-community/shared_invite/..."
-  >
+  <Card title="Join our Slack" icon="slack" href={COMMUNITY_SLACK_URL}>
     Get help and connect with the Codegen community.
   </Card>
 </CardGroup>
@@ -58,7 +158,7 @@ Codegen was engineered backwards from real-world refactors we performed for ente
 
 As AI becomes increasingly sophisticated, we're seeing a fascinating shift: AI agents aren't bottlenecked by their ability to understand code or generate solutions. Instead, they're limited by their ability to efficiently manipulate codebases. The challenge isn't the "brain" - it's the "hands."
 
-We built Codegen with a key insight: future AI agents will need to ["act via code,"](https://voyager.minedojo.org/) building their own sophisticated tools for code manipulation. Rather than generating diffs or making direct text changes, these agents will:
+We built Codegen with a key insight: future AI agents will need to ["act via code,"](/blog/act-via-code) building their own sophisticated tools for code manipulation. Rather than generating diffs or making direct text changes, these agents will:
 
 1. Express transformations as composable programs
 2. Build higher-level tools by combining primitive operations

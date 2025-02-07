@@ -8,7 +8,9 @@ iconType: "solid"
 
 Migrating from Python 2 to Python 3 involves several syntax and API changes. This guide will walk you through using Codegen to automate this migration, handling print statements, string handling, iterators, and more.
 
-You can find the complete example code in our [examples repository](https://github.com/codegen-sh/codegen-examples/tree/main/python2_to_python3).
+<Info>
+You can find the complete example code in our [examples repository](https://github.com/codegen-sh/codegen-examples/tree/7b978091c3153b687c32928fe10f05425e22f6a5/examples/python2_to_python3).
+</Info>
 
 ## Overview
 
@@ -227,7 +229,7 @@ python run.py
 
 The script will:
 
-1. Process all Python files in your codebase
+1. Process all Python [files](/api-reference/python/PyFile) in your codebase
 2. Apply the transformations in the correct order
 3. Maintain your code's functionality while updating to Python 3 syntax
 

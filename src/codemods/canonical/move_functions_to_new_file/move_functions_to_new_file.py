@@ -1,10 +1,14 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.file import SourceFile
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from typing import TYPE_CHECKING
+
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import SourceFile
 
 
 @skill(
@@ -15,7 +19,7 @@ in the codebase, create the new file, and move the matching functions while incl
     uid="b29f6b8b-0837-4548-b770-b597bbcd3e02",
 )
 @canonical
-class MoveFunctionsToNewFile(Codemod3, Skill):
+class MoveFunctionsToNewFile(Codemod, Skill):
     """This codemod moves functions that starts with "pylsp_" in their names to a new file called pylsp_shared.py
 
     When it moves them to this file, all imports across the codebase will get updated to reflect the new location.

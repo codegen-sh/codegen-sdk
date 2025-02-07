@@ -3,7 +3,7 @@
 Put your codemod in the canonical folder if it is canonical, otherwise put it in misc.
 You can also add company folders if you wish
 `{codemod_folder} = src/codemods/{type}/{name}`
-`{codemod_tests_folder} = tests/codemod/{type}/{name}`
+`{codemod_tests_folder} = tests/integration/codemod/{type}/{name}`
 
 ## Repos
 

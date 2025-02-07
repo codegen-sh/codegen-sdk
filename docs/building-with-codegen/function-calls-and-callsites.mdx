@@ -74,10 +74,17 @@ def process_data(input_data: str, debug: bool = False):
 process_data("test", debug=True)
 ```
 
-You can access the arguments and parameters of the function call:
+You can access and modify the arguments and parameters of the function call with APIs detailed below.
+
+### Finding Arguments
+
+The primary APIs for finding arguments are:
+
+- [FunctionCall.args](/api-reference/core/FunctionCall#args)
+- [FunctionCall.get_arg_by_parameter_name(...)](/api-reference/core/FunctionCall#get-arg-by-parameter-name)
+- [FunctionCall.get_arg_by_index(...)](/api-reference/core/FunctionCall#get-arg-by-index)
 
 ```python
-# Manipulation code:
 # Get the function call
 call = file.function_calls[0]
 
@@ -97,6 +104,53 @@ for arg in call.args:
 debug_arg = call.get_arg_by_parameter_name("debug")
 first_arg = call.get_arg_by_index(0)
 ```
+
+### Modifying Arguments
+
+There are two ways to modify function call arguments:
+
+1. Using [FunctionCall.set_kwarg(...)](/api-reference/core/FunctionCall#set-kwarg) to add or modify keyword arguments:
+
+```python
+# Modifying keyword arguments
+call.set_kwarg("debug", "False")  # Modifies existing kwarg
+call.set_kwarg("new_param", "value", create_on_missing=True)  # Adds new kwarg
+call.set_kwarg("input_data", "'new_value'", override_existing=True)  # Converts positional to kwarg
+```
+
+2. Using [FuncionCall.args.append(...)](/api-reference/core/FunctionCall#args) to add new arguments:
+   <Tip>
+     [FunctionCall.args](/api-reference/core/FunctionCall#args) is a
+     [Collection](/building-with-codegen/collections) of
+     [Argument](/api-reference/core/Argument) objects, so it supports
+     [.append(...)](/api-reference/core/List#append),
+     [.insert(...)](/api-reference/core/List#insert) and other collection
+     methods.
+   </Tip>
+
+```python
+# Adding new arguments
+call.args.append('cloud="aws"')  # Add a new keyword argument
+call.args.append('"value"')      # Add a new positional argument
+
+# Real-world example: Adding arguments to a decorator
+@app.function(image=runner_image)
+def my_func():
+    pass
+
+# Add cloud and region if not present
+if "cloud=" not in decorator.call.source:
+    decorator.call.args.append('cloud="aws"')
+if "region=" not in decorator.call.source:
+    decorator.call.args.append('region="us-east-1"')
+```
+
+The `set_kwarg` method provides intelligent argument manipulation:
+
+- If the argument exists and is positional, it converts it to a keyword argument
+- If the argument exists and is already a keyword, it updates its value (if override_existing=True)
+- If the argument doesn't exist, it creates it (if create_on_missing=True)
+- When creating new arguments, it intelligently places them based on parameter order
 
 Arguments and parameters support safe edit operations like so:
 

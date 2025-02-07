@@ -1,9 +1,9 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -14,7 +14,7 @@ file before iterating through the classes in the large file to move the relevant
     uid="a7c7388d-f473-4a37-b316-e881079fe093",
 )
 @canonical
-class SplitFile(Codemod3, Skill):
+class SplitFile(Codemod, Skill):
     """This codemod moves symbols from one large to a new file with the goal of breaking up a large file."""
 
     language = ProgrammingLanguage.PYTHON
@@ -24,7 +24,8 @@ class SplitFile(Codemod3, Skill):
         # Grab large file to split
         file = codebase.get_file("sqlglot/optimizer/scope.py", optional=True)
         if file is None:
-            raise FileNotFoundError("The file `sqlglot/optimizer/scope.py` was not found.")
+            msg = "The file `sqlglot/optimizer/scope.py` was not found."
+            raise FileNotFoundError(msg)
 
         # Create a new file for storing all our 'Enum' classes
         new_file = codebase.create_file("sqlglot/optimizer/enums.py")

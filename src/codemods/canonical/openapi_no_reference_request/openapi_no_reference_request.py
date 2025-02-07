@@ -1,11 +1,11 @@
-from graph_sitter.codemod import Codemod3
-from graph_sitter.core.codebase import Codebase
-from graph_sitter.core.detached_symbols.decorator import Decorator
-from graph_sitter.core.symbol import Symbol
-from graph_sitter.enums import ProgrammingLanguage
-from graph_sitter.skills.core.skill import Skill
-from graph_sitter.skills.core.utils import skill, skill_impl
-from graph_sitter.writer_decorators import canonical
+from codegen.sdk.core.codebase import Codebase
+from codegen.sdk.core.detached_symbols.decorator import Decorator
+from codegen.sdk.core.symbol import Symbol
+from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.writer_decorators import canonical
+from codemods.codemod import Codemod
+from tests.shared.skills.decorators import skill, skill_impl
+from tests.shared.skills.skill import Skill
 
 
 @skill(
@@ -17,7 +17,7 @@ correct namespace to use.""",
     uid="5341d15f-92c7-4a3e-b409-416603dfa7f6",
 )
 @canonical
-class OpenAPINoReferenceRequest(Codemod3, Skill):
+class OpenAPINoReferenceRequest(Codemod, Skill):
     """As part of the OpenAPI typing initiative for Flask endpoints, this codemod will add `@my_namespace.expect(None)` to all Flask routes that do not interact with the request object."""
 
     language = ProgrammingLanguage.PYTHON

@@ -7,33 +7,34 @@ component_management:
       - type: project # in this case every component that doens't have a status defined will have a project type one
         threshold: 0 # Shouldn't remove coverage
   individual_components:
-    - component_id: graph-sitter-python  # this is an identifier that should not be changed
-      name: graph-sitter-python  # this is a display name, and can be changed freely
+    - component_id: codegen-sdk-python  # this is an identifier that should not be changed
+      name: codegen-sdk-python  # this is a display name, and can be changed freely
       paths:
-        - src/graph_sitter/python/**
+        - src/codegen/sdk/python/**
       statuses:
         - type: project # in this case every component that doens't have a status defined will have a project type one
           threshold: 0 # Shouldn't remove coverage
         - type: patch
           target: 50 # Language specific featues must be 100% covered
-    - component_id: graph-sitter-typescript
-      name: graph-sitter-typescript
+      flags:
+        - unit-tests
+    - component_id: codegen-sdk-typescript
+      name: codegen-sdk-typescript
       paths:
-        - src/graph_sitter/typescript/**
+        - src/codegen/sdk/typescript/**
       statuses:
         - type: project # in this case every component that doens't have a status defined will have a project type one
           threshold: 0 # Shouldn't remove coverage
         - type: patch
           target: 50 # Language specific featues must be 100% covered
-    - component_id: graph-sitter-core
-      name: graph-sitter-core
+      flags:
+        - unit-tests
+    - component_id: codegen-sdk-core
+      name: codegen-sdk-core
       paths:
-        - src/graph_sitter/**
-    - component_id: codegen-git
-      name: codegen-git
-      paths:
-        - codegen-git/**
-
+        - src/codegen/sdk/**
+      flags:
+        - unit-tests
 
 flag_management:
   default_rules:
@@ -42,24 +43,18 @@ flag_management:
     statuses:
       - type: project
   individual_flags:
-    - name: smart-tests
+    - name: unit-tests
       carryforward: true
       carryforward_mode: 'labels'
       statuses:
         - type: 'project'
         - type: 'patch'
-    - name: smart-tests-codemod
+    - name: codemod-tests
       carryforward: true
       carryforward_mode: 'labels'
-      statuses:
-        - type: 'project'
-        - type: 'patch'
-    - name: smart-tests-codemod-oss
+    - name: integration-tests
       carryforward: true
       carryforward_mode: 'labels'
-      statuses:
-        - type: 'project'
-        - type: 'patch'
 comment:
   layout: "condensed_header, condensed_files"
   hide_project_coverage: true
@@ -76,4 +71,3 @@ cli:
         - "--verbose"
         - "-n=auto"
       python_path: ".venv/bin/python"
-

@@ -2,11 +2,21 @@
 	"$schema": "https://mintlify.com/schema.json",
 	"name": "Codegen",
 	"logo": {
-		"dark": "/logo/dark.svg",
-		"light": "/logo/light.svg"
+		"dark": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45a3e32761c42b324b_Codegen_Logomark_Dark.svg",
+		"light": "https://cdn.prod.website-files.com/67070304751b9b01bf6a161c/679bcf45bf55446746125835_Codegen_Logomark_Light.svg"
 	},
 	"modeToggle": {
 		"default": "dark"
+	},
+	"metadata": {
+		"og:site_name": "Codegen",
+		"og:title": "Codegen - Manipulate Code at Scale",
+		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
+		"og:url": "https://docs.codegen.com",
+		"og:locale": "en_US",
+		"og:logo": "https://i.imgur.com/f4OVOqI.png",
+		"article:publisher": "Codegen, Inc.",
+		"twitter:site": "@codegen"
 	},
 	"favicon": "/favicon.svg",
 	"colors": {
@@ -44,6 +54,10 @@
 			"url": "/cli"
 		},
 		{
+			"name": "Blog",
+			"url": "/blog"
+		},
+		{
 			"name": "Changelog",
 			"url": "/changelog"
 		}
@@ -54,10 +68,12 @@
 			"pages": [
 				"introduction/overview",
 				"introduction/getting-started",
-				"introduction/guiding-principles",
-				"introduction/how-it-works",
-				"introduction/community",
+				"introduction/installation",
+				"introduction/ide-usage",
 				"introduction/work-with-ai",
+				"introduction/how-it-works",
+				"introduction/guiding-principles",
+				"introduction/community",
 				"introduction/about",
 				"introduction/faq"
 			]
@@ -67,17 +83,20 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/migrating-apis",
+				"tutorials/codebase-visualization",
+				"tutorials/training-data",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
+				"tutorials/manage-feature-flags",
 				"tutorials/deleting-dead-code",
 				"tutorials/increase-type-coverage",
-				"tutorials/manage-feature-flags",
 				"tutorials/managing-typescript-exports",
 				"tutorials/converting-default-exports",
 				"tutorials/creating-documentation",
 				"tutorials/react-modernization",
 				"tutorials/unittest-to-pytest",
 				"tutorials/sqlalchemy-1.6-to-2.0",
+				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
 				"tutorials/flask-to-fastapi"
 			]
@@ -87,6 +106,9 @@
 			"pages": [
 				"building-with-codegen/at-a-glance",
 				"building-with-codegen/parsing-codebases",
+				"building-with-codegen/reusable-codemods",
+				"building-with-codegen/dot-codegen",
+				"building-with-codegen/function-decorator",
 				"building-with-codegen/language-support",
 				"building-with-codegen/commit-and-reset",
 				"building-with-codegen/git-operations",
@@ -94,31 +116,46 @@
 				"building-with-codegen/the-editable-api",
 				"building-with-codegen/symbol-api",
 				"building-with-codegen/class-api",
+				"building-with-codegen/imports",
+				"building-with-codegen/exports",
 				"building-with-codegen/inheritable-behaviors",
 				"building-with-codegen/statements-and-code-blocks",
-				"building-with-codegen/imports-and-exports",
 				"building-with-codegen/dependencies-and-usages",
 				"building-with-codegen/function-calls-and-callsites",
 				"building-with-codegen/variable-assignments",
 				"building-with-codegen/local-variables",
 				"building-with-codegen/comments-and-docstrings",
 				"building-with-codegen/external-modules",
+				"building-with-codegen/type-annotations",
 				"building-with-codegen/moving-symbols",
 				"building-with-codegen/collections",
 				"building-with-codegen/traversing-the-call-graph",
 				"building-with-codegen/react-and-jsx",
 				"building-with-codegen/codebase-visualization",
+				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
 				"building-with-codegen/reducing-conditions"
 			]
 		},
 		{
 			"group": "CLI",
-			"pages": ["cli/about", "cli/init", "cli/create", "cli/run", "cli/expert"]
+			"pages": [
+				"cli/about",
+				"cli/init",
+				"cli/notebook",
+				"cli/create",
+				"cli/run",
+				"cli/reset",
+				"cli/expert"
+			]
 		},
 		{
 			"group": "Changelog",
 			"pages": ["changelog/changelog"]
+		},
+		{
+			"group": "Blog",
+			"pages": ["blog/posts", "blog/act-via-code", "blog/fixing-import-loops"]
 		},
 		{
 			"group": "API Reference",
@@ -168,7 +205,9 @@
 						"api-reference/core/IfBlockStatement",
 						"api-reference/core/Import",
 						"api-reference/core/ImportStatement",
+						"api-reference/core/ImportType",
 						"api-reference/core/Importable",
+						"api-reference/core/Interface",
 						"api-reference/core/List",
 						"api-reference/core/MessageType",
 						"api-reference/core/MultiExpression",
