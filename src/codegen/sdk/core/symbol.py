@@ -54,7 +54,7 @@ class Symbol(Usable[Statement[CodeBlock]], Generic[Parent, TCodeBlock]):
     """
 
     symbol_type: SymbolType
-    node_type: Literal["SYMBOL"] = NodeType.SYMBOL.value
+    node_type: Literal[NodeType.SYMBOL] = NodeType.SYMBOL
 
     def __init__(
         self,
@@ -83,7 +83,7 @@ class Symbol(Usable[Statement[CodeBlock]], Generic[Parent, TCodeBlock]):
 
     @property
     @noapidoc
-    def parent_symbol(self) -> "Symbol[Any, Any] | SourceFile[Any, Any, Any, Any, Any, Any] | Import[Any] | Export[Any]":
+    def parent_symbol(self) -> Symbol | SourceFile | Import | Export:
         """Returns the parent symbol of the symbol."""
         from codegen.sdk.core.export import Export
 

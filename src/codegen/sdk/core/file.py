@@ -66,7 +66,7 @@ class File(Editable[None]):
     name: str
     file_path: str
     path: Path
-    node_type: Literal["FILE"] = NodeType.FILE.value
+    node_type: Literal[NodeType.FILE] = NodeType.FILE
     _pending_content_bytes: bytes | None = None
     _directory: Directory | None
     _pending_imports: set[str]
