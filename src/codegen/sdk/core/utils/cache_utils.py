@@ -2,6 +2,8 @@ import functools
 from collections.abc import Iterator
 from typing import Callable, Generic, ParamSpec, TypeVar
 
+from codegen.sdk.extensions.utils import lru_cache
+
 ItemType = TypeVar("ItemType")
 GenParamSpec = ParamSpec("GenParamSpec")
 
@@ -33,7 +35,7 @@ def cached_generator(maxsize: int = 16, typed: bool = False) -> Callable[[Callab
     """
 
     def decorator(func: Callable[GenParamSpec, Iterator[ItemType]]) -> Callable[GenParamSpec, Iterator[ItemType]]:
-        @functools.lru_cache(maxsize=maxsize, typed=typed)
+        @lru_cache(maxsize=maxsize, typed=typed)
         @functools.wraps(func)
         def wrapper(*args: GenParamSpec.args, **kwargs: GenParamSpec.kwargs) -> Iterator[ItemType]:
             return LazyGeneratorCache(func(*args, **kwargs))
