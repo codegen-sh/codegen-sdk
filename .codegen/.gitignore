@@ -6,6 +6,7 @@ jupyter/
 .venv/
 codegen-system-prompt.txt
 *.txt
+*.pyc
 
 # Python cache files
 __pycache__/
