@@ -1,6 +1,5 @@
-# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: "Setup Graph Sitter"
-description: "Setup Graph Sitter"
+name: "Setup Environment"
+description: "Setup Environment"
 inputs:
   python-version:
     required: false
@@ -9,11 +8,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-#    - name: ccache
-#      uses: hendrikmuhs/ccache-action@v1.2
-#      with:
-#        create-symlink: true
-#        key: ${{ runner.os }}
     - name: Install UV
       uses: astral-sh/setup-uv@v5.2
       id: setup-uv
@@ -23,19 +17,14 @@ runs:
         python-version: ${{ inputs.python-version }}
         version: '0.5.24'
         cache-suffix: ${{inputs.python-version}}
+
     - name: Install dependencies
       shell: bash
       run: |
         uv sync --frozen --all-extras
+
     - name: Install codecov
       shell: bash
       run: |
         uv tool install codecov-cli --python 3.10
         uv tool update-shell
-    # - name: Configure AWS Credentials
-    #   if: env.skip == '1'
-    #   uses: aws-actions/configure-aws-credentials@v2
-    #   with:
-    #     aws-access-key-id: ${{ inputs.aws-access-key-id }}
-    #     aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
-    #     aws-region: us-west-1

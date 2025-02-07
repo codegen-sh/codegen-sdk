@@ -22,6 +22,7 @@ from codegen.sdk.typescript.class_definition import TSClass
 from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 from codegen.sdk.typescript.detached_symbols.jsx.element import JSXElement
 from codegen.sdk.typescript.detached_symbols.jsx.expression import JSXExpression
+from codegen.sdk.typescript.detached_symbols.jsx.prop import JSXProp
 from codegen.sdk.typescript.detached_symbols.parameter import TSParameter
 from codegen.sdk.typescript.enum_definition import TSEnum
 from codegen.sdk.typescript.enums import TSFunctionTypeNames
@@ -91,6 +92,7 @@ TSExpressionMap = {
     "jsx_closing_element": JSXElement,
     "jsx_opening_element": JSXElement,
     "jsx_self_closing_element": JSXElement,
+    "jsx_attribute": JSXProp,
     "spread_element": Unpack,
     "subscript_expression": SubscriptExpression,
     "type_parameters": TypeParameters,
