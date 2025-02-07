@@ -66,7 +66,7 @@ class File(Editable[None]):
     name: str
     file_path: str
     path: Path
-    node_type: Literal[NodeType.FILE] = NodeType.FILE
+    node_type: Literal["FILE"] = NodeType.FILE.value
     _pending_content_bytes: bytes | None = None
     _directory: Directory | None
     _pending_imports: set[str]
@@ -110,7 +110,7 @@ class File(Editable[None]):
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str | Path, content: str | bytes, G: CodebaseGraph, sync: bool = False, binary: bool = False) -> Self | None:
+    def from_content(cls, filepath: PathLike[str], content: str | bytes, G: CodebaseGraph, sync: bool = False, binary: bool = False) -> Self | None:
         """Creates a new file from content."""
         if sync:
             logger.warn("Creating & Syncing non-source files are not supported. Ignoring sync...")

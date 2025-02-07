@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast
 
 from rich.markup import escape
 from tree_sitter import Node as TSNode
@@ -45,7 +45,7 @@ TCodeBlock = TypeVar("TCodeBlock", bound="CodeBlock")
 
 
 @apidoc
-class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeBlock]):
+class Symbol(Usable[Statement[CodeBlock]], Generic[Parent, TCodeBlock]):
     """Abstract representation of a Symbol in a Codebase. A Symbol is a top-level entity in a file, e.g. a Function, Class, GlobalVariable, etc.
 
     Attributes:
@@ -54,14 +54,14 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
     """
 
     symbol_type: SymbolType
-    node_type: Literal[NodeType.SYMBOL] = NodeType.SYMBOL
+    node_type: Literal["SYMBOL"] = NodeType.SYMBOL.value
 
     def __init__(
         self,
         ts_node: TSNode,
         file_id: NodeId,
         G: CodebaseGraph,
-        parent: Statement[CodeBlock[Parent, ...]],
+        parent: Statement[CodeBlock],
         name_node: TSNode | None = None,
         name_node_type: type[Name] = DefinedName,
     ) -> None:
@@ -83,7 +83,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
 
     @property
     @noapidoc
-    def parent_symbol(self) -> Symbol | SourceFile | Import | Export:
+    def parent_symbol(self) -> "Symbol[Any, Any] | SourceFile[Any, Any, Any, Any, Any, Any] | Import[Any] | Export[Any]":
         """Returns the parent symbol of the symbol."""
         from codegen.sdk.core.export import Export
 
