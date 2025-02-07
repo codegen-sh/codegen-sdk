@@ -7,7 +7,7 @@ import rich
 import rich_click as click
 from packaging.version import Version
 
-from codegen.cli.auth.session import CodegenSession
+import codegen
 
 
 def fetch_pypi_releases(package: str) -> list[str]:
@@ -16,16 +16,14 @@ def fetch_pypi_releases(package: str) -> list[str]:
     return response.json()["releases"].keys()
 
 
-def filter_versions(versions: list[Version], current_version: Version) -> list[Version]:
-    # Filter out versions that are less than the previous minor version
-    if current_version.minor == 0:
-        if current_version.major == 0:
-            return versions
-        compare_tuple = (current_version.major - 1, 9, 0)
-    else:
-        compare_tuple = (current_version.major, current_version.minor - 1, 0)
+def filter_versions(versions: list[Version], current_version: Version, num_prev_minor_version: int = 1) -> list[Version]:
+    descending_minor_versions = [v_tuple for v_tuple in sorted(set(v.release[:2] for v in versions), reverse=True) if v_tuple < current_version.release[:2]]
+    try:
+        compare_tuple = descending_minor_versions[:num_prev_minor_version][-1] + (0,)
+    except IndexError:
+        compare_tuple = current_version.release
 
-    return [v for v in versions if v > v.release > compare_tuple]
+    return [v for v in versions if (v.major, v.minor, v.micro) >= compare_tuple]  # v.release will only show major,minor if micro doesn't exist.
 
 
 def install_package(package: str, *args: str) -> None:
@@ -35,8 +33,8 @@ def install_package(package: str, *args: str) -> None:
 @click.command(name="update")
 @click.option("--list", "-l", "list_", is_flag=True, help="List all supported versions of the codegen")
 @click.option("--version", "-v", type=str, help="Update to a specific version of the codegen")
-def update_command(session: CodegenSession, list_: bool = False, version: str | None = None):
-    """Update the codegen SDK to the latest version.
+def update_command(list_: bool = False, version: str | None = None):
+    """Update Codegen to the latest or specified version
 
     --list: List all supported versions of the codegen
     --version: Update to a specific version of the codegen
@@ -45,15 +43,15 @@ def update_command(session: CodegenSession, list_: bool = False, version: str | 
         msg = "Cannot specify both --list and --version"
         raise click.ClickException(msg)
 
-    package_info = distribution(__package__)
-    version = package_info.version
+    package_info = distribution(codegen.__package__)
+    current_version = Version(package_info.version)
 
     if list_:
         releases = fetch_pypi_releases(package_info.name)
-        filtered_releases = filter_versions([Version(r) for r in releases], Version(version))
+        filtered_releases = filter_versions([Version(r) for r in releases], current_version, num_prev_minor_version=2)
         for release in filtered_releases:
-            if release == version:
-                release = f"[bold]{release}(current)[/bold]"
+            if release.release == current_version.release:
+                release = f"[bold]{release}[/bold] (current)"
             rich.print(release)
     elif version:
         install_package(f"{package_info.name}=={version}")
