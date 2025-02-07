@@ -5,12 +5,12 @@ import resource
 import sys
 from abc import abstractmethod
 from collections.abc import Sequence
+from dataclasses import dataclass
+from datetime import datetime
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from dataclasses import dataclass
-from datetime import datetime
-from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar
+from typing import TYPE_CHECKING, Generic, Literal, TypeVar
 
 from git import Commit
 from tree_sitter import Node as TSNode
@@ -290,6 +290,7 @@ class File(Editable[None]):
     @dataclass
     class GitInteraction:
         """Represents a git interaction (commit) for a file."""
+
         commit_hash: str
         author: str
         date: datetime
@@ -301,13 +302,7 @@ class File(Editable[None]):
             stats = commit.stats.files.get(filepath)
             if not stats:
                 return None
-            return cls(
-                commit_hash=commit.hexsha,
-                author=commit.author.name or "Unknown",
-                date=commit.committed_datetime,
-                lines_added=stats["insertions"],
-                lines_removed=stats["deletions"]
-            )
+            return cls(commit_hash=commit.hexsha, author=commit.author.name or "Unknown", date=commit.committed_datetime, lines_added=stats["insertions"], lines_removed=stats["deletions"])
 
     @cached_property
     def git_interactions(self) -> list[GitInteraction]:
