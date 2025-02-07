@@ -1230,5 +1230,5 @@ class SourceFile(
 
     @property
     @noapidoc
-    def descendant_symbols(self) -> list[Importable]:
-        return self.get_nodes()
+    def descendant_symbols(self) -> list[Importable[Any]]:
+        return list(self.get_nodes())
