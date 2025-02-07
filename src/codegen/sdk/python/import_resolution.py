@@ -135,8 +135,8 @@ class PyImport(Import["PyFile"]):
             return self.resolve_import(base_path="test", add_module_name=add_module_name)
         if base_path == "test" and module_source:
             # Try to resolve assuming package nested in repo
-            possible_package_base_path = module_source.split('.')[0]
-            if possible_package_base_path not in  ("test","src"):
+            possible_package_base_path = module_source.split(".")[0]
+            if possible_package_base_path not in ("test", "src"):
                 return self.resolve_import(base_path=possible_package_base_path, add_module_name=add_module_name)
 
         # if not G_override:

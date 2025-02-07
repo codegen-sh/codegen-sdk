@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, ClassVar, Generic, Literal, Self, TypeVar, ove
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
 from codegen.sdk.core.autocommit import commiter, reader, remover, writer
-from codegen.sdk.core.dataclasses.usage import Usage, UsageKind, UsageType
+from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions.name import Name
 from codegen.sdk.core.external_module import ExternalModule
 from codegen.sdk.core.interfaces.chainable import Chainable
