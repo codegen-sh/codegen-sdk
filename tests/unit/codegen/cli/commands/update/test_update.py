@@ -5,6 +5,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 from packaging.version import Version
+from rich.text import Text
 
 from codegen.cli.commands.update import main
 
@@ -51,7 +52,7 @@ def test_conflicting_options():
     result = runner.invoke(main.update_command, ["--list", "--version", "0.3.0"])
     # The command should exit with non-zero exit code.
     assert result.exit_code != 0, "Expected a non-zero exit code when both --list and --version are provided."
-    assert "Cannot specify both --list and --version" in result.output
+    assert "Cannot specify both --list and --version" in Text.from_ansi(result.output).plain
 
 
 def test_update_default(mock_install_package):
