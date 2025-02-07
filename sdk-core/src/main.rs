@@ -11,13 +11,13 @@ struct Args {
 }
 fn main() {
     rayon::ThreadPoolBuilder::new()
-        .num_threads(10)
         .stack_size(1024 * 1024 * 1024 * 10)
         .build_global()
         .unwrap();
     let args = Args::parse();
     let dir = args.input;
-    let mut errors: Vec<Box<dyn Error>> = Vec::new();
+    let mut errors = Vec::new();
+    let (tx, rx) = crossbeam::channel::unbounded();
     let start = Instant::now();
     let files_to_parse: Vec<Result<path::PathBuf, glob::GlobError>> =
         glob(&format!("{}/**/*.ts", dir)).unwrap().collect();
@@ -29,20 +29,31 @@ fn main() {
                 if file.is_dir() {
                     return None;
                 }
-                return parse_file_typescript(file.to_str().unwrap()).ok();
+                return match parse_file_typescript(file.to_str().unwrap()) {
+                    Ok(program) => Some(program),
+                    Err(e) => {
+                        tx.send(()).unwrap();
+                        None
+                    }
+                };
             }
             return None;
         })
         .collect();
     let end = Instant::now();
     let duration: std::time::Duration = end.duration_since(start);
+    drop(tx);
+    for e in rx.iter() {
+        errors.push(e);
+    }
     let s = System::new_all();
     let current = s.process(sysinfo::get_current_pid().unwrap()).unwrap();
     let memory = current.memory();
     println!(
-        "{} files parsed in {:?} seconds with {} errors. Using {} MB of memory",
+        "{} files parsed in {:?}.{} seconds with {} errors. Using {} MB of memory",
         files.len(),
         duration.as_secs(),
+        duration.subsec_millis(),
         errors.len(),
         memory / 1024 / 1024
     );
