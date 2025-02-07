@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.enums import ImportType, NodeType, ProgrammingLanguage, SymbolType
+from codegen.sdk.enums import ImportType, ProgrammingLanguage, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.assignment import TSAssignment
@@ -449,56 +449,31 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         - Exports used by other files through imports
         - Exports used within the same file
         """
+        exports_to_remove = []
+
         for export in self.exports:
-            # Skip type exports and default exports
-            if export.is_type_export() or export.is_default_export():
+            # Skip type exports
+            if export.is_type_export():
                 continue
 
-            symbol_export_unused = True
-            symbols_to_remove = []
+            # Skip default exports
+            if export.is_default_export():
+                continue
 
-            exported_symbol = export.resolved_symbol
-            for export_usage in export.symbol_usages:
-                if export_usage.node_type == NodeType.IMPORT or (export_usage.node_type == NodeType.EXPORT and export_usage.resolved_symbol != exported_symbol):
-                    # If the import has no usages then we can add the import to the list of symbols to remove
-                    reexport_usages = export_usage.symbol_usages
-                    if len(reexport_usages) == 0:
-                        symbols_to_remove.append(export_usage)
-                        break
+            # Check if export is used
+            has_usages = bool(export.symbol_usages)
 
-                    # If any of the import's usages are valid symbol usages, export is used.
-                    if any(usage.node_type == NodeType.SYMBOL for usage in reexport_usages):
-                        symbol_export_unused = False
-                        break
+            # For re-exports, check if the re-exported symbol is used
+            if export.is_reexport():
+                if export.resolved_symbol and export.resolved_symbol.symbol_usages:
+                    continue
 
-                    symbols_to_remove.append(export_usage)
+            # Remove if no usages found
+            if not has_usages:
+                exports_to_remove.append(export)
 
-                elif export_usage.node_type == NodeType.SYMBOL:
-                    symbol_export_unused = False
-                    break
-
-            # export is not used, remove it
-            if symbol_export_unused:
-                # remove the unused imports
-                for imp in symbols_to_remove:
-                    imp.remove()
-
-                # Handle different export types
-                if hasattr(export, "source") and export.source:
-                    # Re-export case (export { x } from 'y')
-                    export.remove()
-                elif exported_symbol and hasattr(exported_symbol, "export") and exported_symbol.export:
-                    if exported_symbol.export.declared_symbol == exported_symbol:
-                        # Direct export case (export function x)
-                        if exported_symbol.source.startswith("export default "):
-                            exported_symbol.replace("export default ", "")
-                        else:
-                            exported_symbol.replace("export ", "")
-                    else:
-                        # Export statement case (export { x })
-                        exported_symbol.export.remove()
-                else:
-                    # Fallback - just remove the export
-                    export.remove()
+        # Remove unused exports
+        for export in exports_to_remove:
+            export.remove()
 
         self.G.commit_transactions()
