@@ -116,8 +116,9 @@ def test_list_versions(mock_request):
         (["0.4.5", "0.7.0", "1.0.0"], "1.0.0", 1, ["0.7.0", "1.0.0"]),
         (["0.2.0", "0.3.0", "1.0.0"], "1.0.0", 0, ["1.0.0"]),
         (["0.2.0", "0.3.4", "0.3.5", "1.0.0"], "1.0.0", 1, ["0.3.4", "0.3.5", "1.0.0"]),
+        (["0.5.1", "0.5.2", "0.6.0", "1.0.0"], "0.5.2", 1, ["0.5.1", "0.5.2", "0.6.0", "1.0.0"]),
     ],
-    ids=["all_future_versions", "prev_2", "prev_1", "no_prev", "multiple_minor"],
+    ids=["all_future_versions", "prev_2", "prev_1", "no_prev", "multiple_minor", "all_micros"],
 )
 def test_filter_versions(versions, current, num_prev, expected):
     """Test the filtering logic used to select releases to print."""
