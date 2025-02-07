@@ -180,7 +180,7 @@ class CodebaseGraph:
         syncs = defaultdict(lambda: [])
         for filepath, _ in repo_operator.iter_files(subdirs=self.projects[0].subdirectories, extensions=self.extensions, ignore_list=GLOBAL_FILE_IGNORE_LIST):
             syncs[SyncType.ADD].append(self.to_absolute(filepath))
-        logger.info(f"> Parsing {len(syncs[SyncType.ADD])} files in {self.projects[0].subdirectories} with {self.extensions} extensions")
+        logger.info(f"> Parsing {len(syncs[SyncType.ADD])} files in {self.projects[0].subdirectories or 'ALL'} subdirectories with {self.extensions} extensions")
         self._process_diff_files(syncs, incremental=False)
         files: list[SourceFile] = self.get_nodes(NodeType.FILE)
         logger.info(f"> Found {len(files)} files")
