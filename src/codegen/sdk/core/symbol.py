@@ -1,9 +1,16 @@
 from __future__ import annotations
 
 from abc import abstractmethod
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar
+from typing import TYPE_CHECKING, Dict, Generic, Literal, TypeVar, cast
 
 from rich.markup import escape
+from tree_sitter import Node as TSNode
+
+if TYPE_CHECKING:
+    from codegen.sdk.core.file import File
+    from codegen.sdk.core.codebase import CodebaseGraph
+    from codegen.sdk.core.node_id import NodeId
+    from codegen.sdk.core.statements.code_block import CodeBlock
 
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
@@ -404,6 +411,31 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
                 return True
             parent = parent.parent
         return False
+
+    @property
+    @reader
+    def last_editor(self) -> str | None:
+        """Returns the GitHub username of the last person who edited this symbol.
+        
+        Uses git blame to determine the last editor. For new files or symbols,
+        returns None.
+        
+        Returns:
+            str | None: The GitHub username of the last editor, or None if not available
+        """
+        try:
+            blame_info = cast(Dict[int, tuple[str, str]], self.file.blame_info)
+            # Get the most common author in the symbol's line range
+            authors: Dict[str, int] = {}
+            start_line = self.ts_node.start_point[0] + 1  # Convert to 1-based line numbers
+            end_line = self.ts_node.end_point[0] + 1
+            for lineno in range(start_line, end_line + 1):
+                author, _ = blame_info.get(lineno, (None, None))
+                if author:
+                    authors[author] = authors.get(author, 0) + 1
+            return max(authors.items(), key=lambda x: x[1])[0] if authors else None
+        except Exception:
+            return None
 
     @writer
     def add_keyword(self, keyword: str) -> None:

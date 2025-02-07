@@ -70,3 +70,44 @@ result = codebase.checkout(commit="abc123")
 # Checkout and pull from remote
 result = codebase.checkout(branch="main", remote=True)
 ```
+
+## Symbol Last Editor
+
+Each symbol in the codebase has a `last_editor` property that returns the GitHub username of the last person who edited that symbol, based on git blame information:
+
+```python
+# Get the last person who edited a function
+function = codebase.get_function("my_function")
+last_editor = function.last_editor  # Returns GitHub username or None
+
+# Use last_editor when creating PRs
+if last_editor:
+    codebase.make_pr(title="...", body="...", assignee=last_editor)
+```
+
+The `last_editor` property:
+- Returns the GitHub username of the most frequent editor in the symbol's line range
+- Returns None for new files or when git blame information is not available
+- Is cached for performance
+
+### Git Interactions
+
+Each file in the codebase also provides access to git history information through two properties:
+
+```python
+# Get all git interactions for a file
+file = codebase.get_file("my_file.py")
+interactions = file.git_interactions  # List of dicts with commit info
+
+# Get line-by-line blame information
+blame_info = file.blame_info  # Dict mapping line numbers to (author, commit) tuples
+```
+
+The `git_interactions` property returns a list of dictionaries containing:
+- `commit_hash`: The commit hash
+- `author`: The author's name
+- `date`: The commit date
+- `lines_added`: Number of lines added
+- `lines_removed`: Number of lines removed
+
+The `blame_info` property returns a dictionary mapping line numbers to tuples of `(author_name, commit_hash)`.

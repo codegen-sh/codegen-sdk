@@ -8,7 +8,10 @@ from collections.abc import Sequence
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
+from typing import TYPE_CHECKING, Any, Dict, Generic, Literal, Tuple, TypeVar
+
+if TYPE_CHECKING:
+    from typing_extensions import Self, override
 
 from tree_sitter import Node as TSNode
 
@@ -282,6 +285,46 @@ class File(Editable[None]):
             str: The file path of the file.
         """
         return self.file_path
+
+    @cached_property
+    def git_interactions(self) -> list[dict[str, Any]]:
+        """Returns a list of git interactions for this file.
+        
+        Each interaction contains:
+        - commit_hash: The commit hash
+        - author: The author's name
+        - date: The commit date
+        - lines_added: Number of lines added
+        - lines_removed: Number of lines removed
+        """
+        repo = self.G.op.git_cli
+        interactions = []
+        for commit in repo.iter_commits(paths=self.filepath):
+            stats = commit.stats.files.get(self.filepath)
+            if stats:
+                interactions.append({
+                    "commit_hash": commit.hexsha,
+                    "author": commit.author.name,
+                    "date": commit.committed_datetime,
+                    "lines_added": stats["insertions"],
+                    "lines_removed": stats["deletions"]
+                })
+        return interactions
+
+    @cached_property
+    def blame_info(self) -> dict[int, tuple[str, str]]:
+        """Returns git blame information for each line in the file.
+        
+        Returns:
+            dict mapping line numbers to tuples of (author name, commit hash)
+        """
+        repo = self.G.op.git_cli
+        blame = repo.blame(self.G.op.get_active_branch_or_commit(), self.filepath)
+        return {
+            lineno: (commit.author.name, commit.hexsha)
+            for commit, lines in blame
+            for lineno in range(lines[0].lineno, lines[-1].lineno + 1)
+        }
 
     @mover
     def rename(self, new_name: str) -> None:
