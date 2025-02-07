@@ -655,6 +655,47 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             raise ValueError(msg)
         return matches[0]
 
+    def get_symbol_dependencies(self, symbol: TSymbol, max_depth: int = 2) -> dict[TSymbol, list[TSymbol]]:
+        """Gets all dependencies of a symbol up to a specified depth level.
+
+        This method recursively traverses the dependency graph starting from the given symbol,
+        collecting all dependencies up to the specified maximum depth. The dependencies are
+        returned as a dictionary mapping each symbol to its direct dependencies.
+
+        Args:
+            symbol (TSymbol): The symbol to get dependencies for.
+            max_depth (int): Maximum depth to traverse in the dependency graph. Defaults to 2.
+
+        Returns:
+            dict[TSymbol, list[TSymbol]]: A dictionary mapping each symbol to its list of direct dependencies.
+                The dictionary includes the input symbol and all symbols encountered during traversal
+                up to max_depth levels deep.
+        """
+
+        def _collect_dependencies(current_symbol: TSymbol, current_depth: int, dependency_map: dict[TSymbol, list[TSymbol]]) -> None:
+            # Get direct dependencies, filtering out Import objects to only keep Symbols
+            direct_deps = [dep for dep in current_symbol.dependencies if isinstance(dep, Symbol)]
+
+            # Add current symbol and its dependencies to the map if not already present
+            # or if present but with empty dependencies (from max depth)
+            if current_symbol not in dependency_map or not dependency_map[current_symbol]:
+                dependency_map[current_symbol] = direct_deps
+
+            # Process dependencies if not at max depth
+            if current_depth < max_depth:
+                for dep in direct_deps:
+                    _collect_dependencies(dep, current_depth + 1, dependency_map)
+            else:
+                # At max depth, ensure dependencies are in map with empty lists
+                for dep in direct_deps:
+                    if dep not in dependency_map:
+                        dependency_map[dep] = []
+
+        # Initialize dependency map and start recursive collection
+        dependencies: dict[TSymbol, list[TSymbol]] = {}
+        _collect_dependencies(symbol, 1, dependencies)
+        return dependencies
+
     @noapidoc
     @staticmethod
     def _remove_extension(filename: str) -> str:
