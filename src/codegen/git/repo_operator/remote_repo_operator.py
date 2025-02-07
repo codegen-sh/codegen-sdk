@@ -26,6 +26,7 @@ class RemoteRepoOperator(RepoOperator):
     # __init__ attributes
     repo_config: RepoConfig
     base_dir: str
+    access_token: str | None = None
 
     # lazy attributes
     _remote_git_repo: GitRepoClient | None = None
@@ -42,7 +43,8 @@ class RemoteRepoOperator(RepoOperator):
         bot_commit: bool = True,
         access_token: str | None = None,
     ) -> None:
-        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit, access_token=access_token)
+        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
+        self.access_token = access_token
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################
