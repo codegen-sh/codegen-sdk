@@ -4,8 +4,8 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Generic, Self
 
-from codegen.git.utils.cache_utils import cached_generator
 from codegen.sdk.core.interfaces.files_interface import FilesInterface, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.sdk.core.utils.cache_utils import cached_generator
 from codegen.shared.decorators.docs import apidoc
 
 logger = logging.getLogger(__name__)

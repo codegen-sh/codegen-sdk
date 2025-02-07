@@ -4,8 +4,8 @@ from typing import Callable, Generic, Literal
 
 from codeowners import CodeOwners as CodeOwnersParser
 
-from codegen.git.utils.cache_utils import cached_generator
 from codegen.sdk.core.interfaces.files_interface import FilesInterface, FilesParam, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.sdk.core.utils.cache_utils import cached_generator
 from codegen.shared.decorators.docs import apidoc
 
 logger = logging.getLogger(__name__)

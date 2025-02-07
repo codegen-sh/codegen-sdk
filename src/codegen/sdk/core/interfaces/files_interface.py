@@ -3,7 +3,7 @@ from collections.abc import Iterator
 from itertools import chain
 from typing import TYPE_CHECKING, Generic, ParamSpec, TypeVar
 
-from codegen.git.utils.cache_utils import cached_generator
+from codegen.sdk.core.utils.cache_utils import cached_generator
 from codegen.shared.decorators.docs import py_noapidoc
 
 if TYPE_CHECKING:
