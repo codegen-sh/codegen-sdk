@@ -29,11 +29,7 @@ def test_remove_unused_imports_complete_removal(tmpdir):
     const x = 5;
     """
 
-    with get_codebase_session(
-        tmpdir=tmpdir,
-        programming_language=ProgrammingLanguage.TYPESCRIPT,
-        files={"test.ts": content}
-    ) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": content}) as codebase:
         file = codebase.get_file("test.ts")
         file.remove_unused_imports()
         assert file.content.strip() == expected.strip()
@@ -51,11 +47,7 @@ def test_remove_unused_imports_partial_removal(tmpdir):
     console.log(used);
     """
 
-    with get_codebase_session(
-        tmpdir=tmpdir,
-        programming_language=ProgrammingLanguage.TYPESCRIPT,
-        files={"test.ts": content}
-    ) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": content}) as codebase:
         file = codebase.get_file("test.ts")
         file.remove_unused_imports()
         assert file.content.strip() == expected.strip()
@@ -74,11 +66,7 @@ def test_remove_unused_imports_with_side_effects(tmpdir):
     const x = 5;
     """
 
-    with get_codebase_session(
-        tmpdir=tmpdir,
-        programming_language=ProgrammingLanguage.TYPESCRIPT,
-        files={"test.ts": content}
-    ) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": content}) as codebase:
         file = codebase.get_file("test.ts")
         file.remove_unused_imports()
         assert file.content.strip() == expected.strip()
@@ -104,14 +92,7 @@ def test_remove_unused_imports_with_moved_symbols(tmpdir):
     }
     """
 
-    with get_codebase_session(
-        tmpdir=tmpdir,
-        programming_language=ProgrammingLanguage.TYPESCRIPT,
-        files={
-            "main.ts": content1,
-            "utils.ts": content2
-        }
-    ) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"main.ts": content1, "utils.ts": content2}) as codebase:
         main_file = codebase.get_file("main.ts")
         foo = main_file.get_function("foo")
 
@@ -120,4 +101,3 @@ def test_remove_unused_imports_with_moved_symbols(tmpdir):
         foo.move_to_file(new_file)
 
         assert main_file.content.strip() == expected1.strip()
-
