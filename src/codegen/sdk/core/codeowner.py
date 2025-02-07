@@ -4,15 +4,15 @@ from typing import Callable, Generic, Literal
 
 from codeowners import CodeOwners as CodeOwnersParser
 
-from codegen.sdk.core.interfaces.files_interface import FilesInterface, FilesParam, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.sdk.core.interfaces.has_symbols import FilesParam, HasSymbols, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
 from codegen.sdk.core.utils.cache_utils import cached_generator
-from codegen.shared.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc, py_noapidoc
 
 logger = logging.getLogger(__name__)
 
 
 @apidoc
-class CodeOwner(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
+class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """CodeOwner is a class that represents a code owner in a codebase.
 
     It is used to iterate over all files that are owned by a specific owner.
@@ -50,6 +50,7 @@ class CodeOwner(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TCl
                 codeowners.append(CodeOwner(file_source, owner_label, owner_value))
         return codeowners
 
+    @py_noapidoc
     @cached_generator(maxsize=16)
     def files_generator(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
         for source_file in self.files_source(*args, **kwargs):

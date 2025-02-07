@@ -36,7 +36,7 @@ FilesParam = ParamSpec("FilesParam")
 TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
 
 
-class FilesInterface(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
+class HasSymbols(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Abstract interface for files in a codebase.
 
     Abstract interface for files in a codebase.
@@ -104,7 +104,7 @@ class FilesInterface(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClas
         return next((s for s in self.functions if s.name == name), None)
 
     @py_noapidoc
-    def get_export(self: "FilesInterface[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
+    def get_export(self: "HasSymbols[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
         """Get an export by name in files container (supports only typescript)."""
         return next((s for s in self.exports if s.name == name), None)
 

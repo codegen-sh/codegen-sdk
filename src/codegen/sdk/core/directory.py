@@ -4,15 +4,15 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Generic, Self
 
-from codegen.sdk.core.interfaces.files_interface import FilesInterface, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.sdk.core.interfaces.has_symbols import HasSymbols, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
 from codegen.sdk.core.utils.cache_utils import cached_generator
-from codegen.shared.decorators.docs import apidoc
+from codegen.shared.decorators.docs import apidoc, py_noapidoc
 
 logger = logging.getLogger(__name__)
 
 
 @apidoc
-class Directory(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
+class Directory(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Directory representation for codebase.
 
     GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory.
@@ -101,6 +101,7 @@ class Directory(FilesInterface[TFile, TSymbol, TImportStatement, TGlobalVar, TCl
         _get_subdirectories(self)
         return subdirectories
 
+    @py_noapidoc
     @cached_generator()
     def files_generator(self) -> Iterator[TFile]:
         """Yield files recursively from the directory."""

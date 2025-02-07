@@ -2,12 +2,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from codegen.sdk.core.interfaces.files_interface import FilesInterface
+from codegen.sdk.core.interfaces.has_symbols import HasSymbols
 
 
 @pytest.fixture
 def fake_interface():
-    class FakeFilesInterface(FilesInterface):
+    class FakeHasSymbols(HasSymbols):
         def __init__(self, files):
             self._files = files
 
@@ -52,12 +52,12 @@ def fake_interface():
     file2.imports[0].name = "import2"
 
     fake_files = [file1, file2]
-    return FakeFilesInterface(fake_files)
+    return FakeHasSymbols(fake_files)
 
 
 def test_files_generator_not_implemented():
-    # Instantiating FilesInterface directly should cause files_generator to raise NotImplementedError.
-    fi = FilesInterface()
+    # Instantiating HasSymbols directly should cause files_generator to raise NotImplementedError.
+    fi = HasSymbols()
     with pytest.raises(NotImplementedError):
         list(fi.files_generator())
 
