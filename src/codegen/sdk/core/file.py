@@ -8,8 +8,11 @@ from collections.abc import Sequence
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
+from dataclasses import dataclass
+from datetime import datetime
 from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar
 
+from git import Commit
 from tree_sitter import Node as TSNode
 from typing_extensions import Self, override
 
@@ -66,7 +69,7 @@ class File(Editable[None]):
     name: str
     file_path: str
     path: Path
-    node_type: Literal[NodeType.FILE] = NodeType.FILE
+    node_type: Literal["FILE"] = NodeType.FILE.value
     _pending_content_bytes: bytes | None = None
     _directory: Directory | None
     _pending_imports: set[str]
@@ -284,25 +287,43 @@ class File(Editable[None]):
         """
         return self.file_path
 
+    @dataclass
+    class GitInteraction:
+        """Represents a git interaction (commit) for a file."""
+        commit_hash: str
+        author: str
+        date: datetime
+        lines_added: int
+        lines_removed: int
+
+        @classmethod
+        def from_commit(cls, commit: Commit, filepath: str) -> "File.GitInteraction | None":
+            stats = commit.stats.files.get(filepath)
+            if not stats:
+                return None
+            return cls(
+                commit_hash=commit.hexsha,
+                author=commit.author.name or "Unknown",
+                date=commit.committed_datetime,
+                lines_added=stats["insertions"],
+                lines_removed=stats["deletions"]
+            )
+
     @cached_property
-    def git_interactions(self) -> list[dict[str, Any]]:
+    def git_interactions(self) -> list[GitInteraction]:
         """Returns a list of git interactions for this file.
 
-        Each interaction contains:
-        - commit_hash: The commit hash
-        - author: The author's name
-        - date: The commit date
-        - lines_added: Number of lines added
-        - lines_removed: Number of lines removed
+        Each interaction contains commit information including the author,
+        date, and number of lines changed.
+
+        Returns:
+            list[GitInteraction]: List of git interactions for this file
         """
         repo = self.G.op.git_cli
         interactions = []
         for commit in repo.iter_commits(paths=self.filepath):
-            stats = commit.stats.files.get(self.filepath)
-            if stats:
-                interactions.append(
-                    {"commit_hash": commit.hexsha, "author": commit.author.name, "date": commit.committed_datetime, "lines_added": stats["insertions"], "lines_removed": stats["deletions"]}
-                )
+            if interaction := self.GitInteraction.from_commit(commit, self.filepath):
+                interactions.append(interaction)
         return interactions
 
     @cached_property

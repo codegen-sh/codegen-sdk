@@ -103,9 +103,9 @@ interactions = file.git_interactions  # List of dicts with commit info
 blame_info = file.blame_info  # Dict mapping line numbers to (author, commit) tuples
 ```
 
-The `git_interactions` property returns a list of dictionaries containing:
+The `git_interactions` property returns a list of `GitCommitInfo` objects containing:
 - `commit_hash`: The commit hash
-- `author`: The author's name
+- `author`: The author's name (or "Unknown" if not available)
 - `date`: The commit date
 - `lines_added`: Number of lines added
 - `lines_removed`: Number of lines removed

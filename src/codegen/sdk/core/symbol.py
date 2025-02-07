@@ -54,7 +54,7 @@ class Symbol(Usable[Statement[CodeBlock]], Generic[Parent, TCodeBlock]):
     """
 
     symbol_type: SymbolType
-    node_type: Literal[NodeType.SYMBOL] = NodeType.SYMBOL
+    node_type: Literal["SYMBOL"] = NodeType.SYMBOL.value
 
     def __init__(
         self,
