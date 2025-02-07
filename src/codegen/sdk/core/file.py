@@ -10,7 +10,7 @@ from datetime import datetime
 from functools import cached_property
 from os import PathLike
 from pathlib import Path
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, Literal, TypeVar, cast, Sequence
 
 from git import Commit
 from tree_sitter import Node as TSNode
@@ -480,7 +480,7 @@ class SourceFile(
     File,
     HasBlock,
     Usable,
-    HasAttribute[Symbol | TImport],
+    HasAttribute[Symbol | Import],
     Generic[TImport, TFunction, TClass, TGlobalVar, TInterface, TCodeBlock],
 ):
     """Represents a file with source code in the codebase.
@@ -606,6 +606,7 @@ class SourceFile(
     @noapidoc
     def get_extensions() -> list[str]:
         """Returns a list of file extensions for the given programming language file."""
+        return []
 
     @abstractmethod
     def symbol_can_be_added(self, symbol: Symbol) -> bool:
@@ -786,15 +787,17 @@ class SourceFile(
                 - TGlobalVar: Global variable assignment
                 - TInterface: Interface definition
         """
-        return sort_editables([x for x in self.get_nodes(sort=False) if isinstance(x, Symbol) and (nested or x.is_top_level)], dedupe=False)
+        nodes = cast(list[Any], self.get_nodes(sort=False))
+        filtered = [x for x in nodes if isinstance(x, Symbol) and (nested or x.is_top_level)]
+        return list(sort_editables(filtered, dedupe=False))
 
     @reader(cache=False)
     @noapidoc
-    def get_nodes(self, *, sort_by_id: bool = False, sort: bool = True) -> Sequence[Importable]:
+    def get_nodes(self, *, sort_by_id: bool = False, sort: bool = True) -> list[Importable[Any]]:
         """Returns all nodes in the file, sorted by position in the file."""
-        ret = self._nodes
+        ret = cast(list[Importable[Any]], self._nodes)
         if sort:
-            return sort_editables(ret, by_id=sort_by_id, dedupe=False)
+            return list(sort_editables(ret, by_id=sort_by_id, dedupe=False))
         return ret
 
     @reader
