@@ -21,6 +21,7 @@ def foo():
 """
         assert file.content == expected
 
+
 def test_function_flag_without_message(tmpdir):
     # language=python
     content = """
