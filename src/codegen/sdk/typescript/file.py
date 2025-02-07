@@ -484,10 +484,10 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
                     imp.remove()
 
                 # Handle different export types
-                if hasattr(export, 'source') and export.source:
+                if hasattr(export, "source") and export.source:
                     # Re-export case (export { x } from 'y')
                     export.remove()
-                elif exported_symbol and hasattr(exported_symbol, 'export') and exported_symbol.export:
+                elif exported_symbol and hasattr(exported_symbol, "export") and exported_symbol.export:
                     if exported_symbol.export.declared_symbol == exported_symbol:
                         # Direct export case (export function x)
                         if exported_symbol.source.startswith("export default "):

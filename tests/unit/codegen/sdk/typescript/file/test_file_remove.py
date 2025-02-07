@@ -163,10 +163,7 @@ def test_remove_unused_exports_with_reexports(tmpdir):
     export function localFunction() { return true; }
     """
 
-    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={
-        "main.ts": content1,
-        "other.ts": content2
-    }) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"main.ts": content1, "other.ts": content2}) as codebase:
         main_file = codebase.get_file("main.ts")
         main_file.remove_unused_exports()
         assert main_file.content.strip() == expected1.strip()
@@ -192,11 +189,7 @@ def test_remove_unused_exports_with_moved_and_reexported_symbol(tmpdir):
     }
     """
 
-    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={
-        "utils.ts": content1,
-        "main.ts": content2,
-        "consumer.ts": content3
-    }) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"utils.ts": content1, "main.ts": content2, "consumer.ts": content3}) as codebase:
         utils_file = codebase.get_file("utils.ts")
         main_file = codebase.get_file("main.ts")
 
