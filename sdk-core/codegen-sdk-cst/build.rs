@@ -13,6 +13,10 @@ fn get_node_types() -> HashMap<String, String> {
             "typescript".to_string(),
             tree_sitter_typescript::TYPESCRIPT_NODE_TYPES.to_string(),
         ),
+        (
+            "tsx".to_string(),
+            tree_sitter_typescript::TSX_NODE_TYPES.to_string(),
+        ),
     ])
 }
 fn main() {

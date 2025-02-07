@@ -1,5 +1,5 @@
 use clap::Parser;
-use codegen_sdk_cst::{parse_file_typescript, typescript};
+use codegen_sdk_cst::{parse_file_typescript, tsx};
 use glob::glob;
 use rayon::prelude::*;
 use std::error::Error;
@@ -20,9 +20,9 @@ fn main() {
     let (tx, rx) = crossbeam::channel::unbounded();
     let start = Instant::now();
     let files_to_parse: Vec<Result<path::PathBuf, glob::GlobError>> =
-        glob(&format!("{}/**/*.ts", dir)).unwrap().collect();
+        glob(&format!("{}/**/*.ts*", dir)).unwrap().collect();
 
-    let files: Vec<Box<typescript::Program>> = files_to_parse
+    let files: Vec<Box<tsx::Program>> = files_to_parse
         .par_iter()
         .filter_map(|file| {
             if let Ok(file) = file {

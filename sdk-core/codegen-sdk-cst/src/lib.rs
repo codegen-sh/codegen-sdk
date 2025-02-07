@@ -24,6 +24,10 @@ fn parse_file(file_path: &str, language: Language) -> Result<tree_sitter::Tree, 
 pub mod typescript {
     include!(concat!(env!("OUT_DIR"), "/typescript.rs"));
 }
+pub mod tsx {
+    include!(concat!(env!("OUT_DIR"), "/tsx.rs"));
+}
+
 #[derive(Debug)]
 struct ParseError {}
 impl Error for ParseError {}
@@ -32,16 +36,14 @@ impl Display for ParseError {
         write!(f, "ParseError")
     }
 }
-pub fn parse_file_typescript(file_path: &str) -> Result<Box<typescript::Program>, Box<dyn Error>> {
-    let tree = parse_file(
-        file_path,
-        tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
-    )?;
+pub fn parse_file_typescript(file_path: &str) -> Result<Box<tsx::Program>, Box<dyn Error>> {
+    let tree = parse_file(file_path, tree_sitter_typescript::LANGUAGE_TSX.into())?;
     Ok(
-        catch_unwind(|| Box::new(typescript::Program::from_node(tree.root_node())))
+        catch_unwind(|| Box::new(tsx::Program::from_node(tree.root_node())))
             .map_err(|e| ParseError {})?,
     )
 }
+#[cfg(test)]
 mod tests {
     use std::io::Write;
 
