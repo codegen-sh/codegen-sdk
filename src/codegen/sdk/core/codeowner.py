@@ -4,6 +4,7 @@ from typing import Callable, Generic, Literal
 
 from codeowners import CodeOwners as CodeOwnersParser
 
+from codegen.sdk._proxy import proxy_property
 from codegen.sdk.core.interfaces.has_symbols import FilesParam, HasSymbols, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
 from codegen.sdk.core.utils.cache_utils import cached_generator
 from codegen.shared.decorators.docs import apidoc, py_noapidoc
@@ -31,7 +32,6 @@ class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass,
         self.owner_type = owner_type
         self.owner_value = owner_value
         self.files_source = files_source
-        self.files = self.files_generator
 
     @classmethod
     def from_parser(cls, parser: CodeOwnersParser, file_source: Callable[FilesParam, Iterable[TFile]]) -> list["CodeOwner"]:
@@ -57,6 +57,10 @@ class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass,
             # Filter files by owner value
             if self.owner_value in source_file.owners:
                 yield source_file
+
+    @proxy_property
+    def files(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
+        return self.files_generator(*args, **kwargs)
 
     @property
     def name(self) -> str:

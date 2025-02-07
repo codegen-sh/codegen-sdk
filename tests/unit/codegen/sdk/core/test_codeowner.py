@@ -1,4 +1,3 @@
-from collections.abc import Iterable
 from unittest.mock import MagicMock
 
 import pytest
@@ -8,7 +7,7 @@ from codegen.sdk.core.codeowner import CodeOwner
 
 # Dummy file objects used for testing CodeOwner.
 @pytest.fixture
-def fake_files() -> Iterable[MagicMock]:
+def fake_files() -> list[MagicMock]:
     file1 = MagicMock()
     file1.owners = ["alice", "bob"]
 
@@ -31,6 +30,20 @@ def test_files_generator_returns_correct_files(fake_files):
     assert fake_files[0] in files
     assert fake_files[2] in files
     assert fake_files[1] not in files
+
+
+def test_files_property(fake_files):
+    def file_source(*args, **kwargs):
+        return fake_files
+
+    codeowner = CodeOwner(file_source, "USERNAME", "alice")
+    files = list(codeowner.files)
+    # file1 and file3 contain "alice" as one of their owners.
+    assert fake_files[0] in files
+    assert fake_files[2] in files
+    assert fake_files[1] not in files
+
+    assert files == list(codeowner.files())
 
 
 def test_name_property_and_repr():
