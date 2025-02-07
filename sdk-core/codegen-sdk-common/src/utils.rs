@@ -10,5 +10,5 @@ pub fn named_children_without_field_names<'a>(node: tree_sitter::Node) -> Vec<tr
     children
 }
 pub fn get_text_from_node(node: tree_sitter::Node) -> Bytes {
-    BytesMut::with_capacity(node.end_byte() - node.start_byte()).into()
+    BytesMut::zeroed(node.end_byte() - node.start_byte()).into()
 }
