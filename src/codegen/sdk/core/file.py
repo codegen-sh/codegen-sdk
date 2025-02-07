@@ -541,7 +541,8 @@ class SourceFile(
     def remove_internal_edges(self) -> None:
         """Removes all its direct nodes and edges for each of its internal symbols and imports."""
         # ==== [ Classes, Assignments, Function, Interfaces ] ====
-        for symbol in self.symbols(nested=True):
+        nodes = cast(list[Any], self.get_nodes(sort=False))
+        for symbol in [x for x in nodes if isinstance(x, Symbol)]:
             symbol._remove_internal_edges()
 
         # ==== [ Exports ] ====
@@ -847,7 +848,7 @@ class SourceFile(
         Returns:
             list[TGlobalVar]: A list of global variable assignments, where each element is an Assignment representing a global variable.
         """
-        return [s for s in self.symbols if s.symbol_type == SymbolType.GlobalVar]
+        return cast(list[TGlobalVar], [s for s in self.symbols if s.symbol_type == SymbolType.GlobalVar])
 
     @reader
     def get_global_var(self, name: str) -> TGlobalVar | None:
@@ -872,7 +873,7 @@ class SourceFile(
         Returns:
             list[TClass]: A list of Class objects in the file, sorted by position in the file.
         """
-        return [s for s in self.symbols if s.symbol_type == SymbolType.Class]
+        return cast(list[TClass], [s for s in self.symbols if s.symbol_type == SymbolType.Class])
 
     @reader
     def get_class(self, name: str) -> TClass | None:
@@ -901,7 +902,7 @@ class SourceFile(
         Returns:
             list[TFunction]: A list of Function objects representing all top-level functions in the file.
         """
-        return [s for s in self.symbols if s.symbol_type == SymbolType.Function]
+        return cast(list[TFunction], [s for s in self.symbols if s.symbol_type == SymbolType.Function])
 
     @reader
     def get_function(self, name: str) -> TFunction | None:
