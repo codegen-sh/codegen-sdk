@@ -149,13 +149,8 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
 
         elif resolution.imports_file:
             self.G.add_edge(self.node_id, resolution.from_file.node_id, type=EdgeType.IMPORT_SYMBOL_RESOLUTION)
-            # for symbol in resolution.from_file.symbols:
-            #     usage = SymbolUsage(parent_symbol_name=self.name, child_symbol_name=self.name, type=SymbolUsageType.IMPORTED, match=self, usage_type=UsageType.DIRECT)
-            #     self.G.add_edge(self.node_id, symbol.node_id, type=EdgeType.SYMBOL_USAGE, usage=usage)
-            if self.import_type == ImportType.WILDCARD:
-                for symbol in resolution.from_file.symbols:
-                    usage = Usage(match=symbol.get_name(), usage_symbol=symbol, imported_by=self, usage_type=UsageType.DIRECT, kind=UsageKind.IMPORTED_WILDCARD)
-                    self.G.add_edge(self.node_id, symbol.node_id, type=EdgeType.SYMBOL_USAGE, usage=usage)
+        else:
+            pass
 
         #  Referenced symbols that we can't find.
         #  Could be:

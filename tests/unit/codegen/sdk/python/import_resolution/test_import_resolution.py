@@ -215,6 +215,22 @@ def func_1():
         assert call_site.file == consumer_file
 
 
+def test_import_resolution_init_wildcard(tmpdir: str) -> None:
+    """Tests function.usages returns usages from file imports"""
+    # language=python
+    content1 = """TEST_CONST=2"""
+    content2 = """from testdir.test1 import *
+    test2=5
+    test=TEST_CONST"""
+    content3 = """from testdir import TEST_CONST
+    test3=TEST_CONST"""
+    with get_codebase_session(tmpdir=tmpdir, files={"testdir/test1.py": content1, "testdir/__init__.py": content2, "test3.py": content3}) as codebase:
+        file1: SourceFile = codebase.get_file("testdir/test1.py")
+        file2: SourceFile = codebase.get_file("testdir/__init__.py")
+        symb = file1.get_symbol("TEST_CONST")
+        assert symb.usages
+
+
 def test_import_resolution_circular(tmpdir: str) -> None:
     """Tests function.usages returns usages from file imports"""
     # language=python
