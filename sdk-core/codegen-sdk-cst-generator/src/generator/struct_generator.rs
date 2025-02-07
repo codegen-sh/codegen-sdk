@@ -6,17 +6,39 @@ use super::{
 };
 use crate::generator::state::State;
 const HEADER_TEMPLATE: &str = "
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone)]
 pub struct {name} {
+    start_byte: usize,
+    end_byte: usize,
+    start_position: Point,
+    end_position: Point,
 ";
 const FOOTER_TEMPLATE: &str = "
 }
 ";
 
 const CONSTRUCTOR_TEMPLATE: &str = "
+impl CSTNode for {{name}} {
+    fn start_byte(&self) -> usize {
+        self.start_byte
+    }
+    fn end_byte(&self) -> usize {
+        self.end_byte
+    }
+    fn start_position(&self) -> Point {
+        self.start_position
+    }
+    fn end_position(&self) -> Point {
+        self.end_position
+    }
+}
 impl FromNode for {{name}} {
     fn from_node(node: tree_sitter::Node) -> Self {
         Self {
+            start_byte: node.start_byte(),
+            end_byte: node.end_byte(),
+            start_position: node.start_position(),
+            end_position: node.end_position(),
             {{fields}}
         }
     }
@@ -39,7 +61,7 @@ fn convert_type_definition(
             )
             .as_str(),
         );
-        generate_enum(type_name, state, &enum_name);
+        generate_enum(type_name, state, &enum_name, true);
         enum_name
     }
 }

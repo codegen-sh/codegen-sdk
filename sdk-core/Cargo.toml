@@ -4,7 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+clap = { version = "4.5.28", features = ["derive"] }
 codegen-sdk-analyzer = { path = "codegen-sdk-analyzer" }
+codegen-sdk-cst = { path = "codegen-sdk-cst" }
+crossbeam = "0.8.4"
+glob = "0.3.2"
+phf = { version = "0.11.3", features = ["macros"] }
+rayon = "1.10.0"
 [workspace]
 members = [
   "codegen-sdk-analyzer",

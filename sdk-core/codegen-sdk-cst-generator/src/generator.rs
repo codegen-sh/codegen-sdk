@@ -11,10 +11,11 @@ mod naming;
 mod state;
 mod struct_generator;
 const IMPORTS: &str = "
-use codegen_sdk_cst_generator::traits::FromNode;
-use tree_sitter;
+use codegen_sdk_cst_generator::traits::*;
+use tree_sitter::{self, Point};
 extern crate ouroboros;
 use codegen_sdk_cst_generator::utils::*;
+
 ";
 
 pub(crate) fn generate_cst(node_types: &Vec<Node>) -> Result<String, Box<dyn Error>> {
@@ -25,19 +26,23 @@ pub(crate) fn generate_cst(node_types: &Vec<Node>) -> Result<String, Box<dyn Err
             state
                 .variants
                 .insert(normalize_type_name(&node.type_name), node.subtypes.clone());
+        } else if node.children.is_none() && node.fields.is_none() {
+            state
+                .anonymous_nodes
+                .insert(node.type_name.clone(), normalize_type_name(&node.type_name));
         }
     }
     for node in node_types {
-        if !node.named {
+        let name = normalize_type_name(&node.type_name);
+        if nodes.contains(&name) {
             continue;
         }
-        if nodes.contains(&node.type_name) {
-            panic!("Duplicate node type: {}", node.type_name);
+        nodes.insert(name.clone());
+        if name == "" {
+            continue;
         }
-        nodes.insert(&node.type_name);
-        let name = normalize_type_name(&node.type_name);
         if node.subtypes.len() > 0 {
-            generate_enum(&node.subtypes, &mut state, &name);
+            generate_enum(&node.subtypes, &mut state, &name, true);
         } else {
             generate_struct(node, &mut state, &name);
         }

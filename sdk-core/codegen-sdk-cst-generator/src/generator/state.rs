@@ -7,4 +7,5 @@ pub struct State {
     pub enums: String,
     pub structs: String,
     pub variants: HashMap<String, Vec<TypeDefinition>>,
+    pub anonymous_nodes: HashMap<String, String>,
 }

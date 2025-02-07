@@ -1,7 +1,9 @@
 use std::{
     error::Error,
+    fmt::{self, Display},
     fs::File,
     io::{BufReader, Read},
+    panic::catch_unwind,
 };
 
 use codegen_sdk_cst_generator::traits::FromNode;
@@ -22,13 +24,23 @@ fn parse_file(file_path: &str, language: Language) -> Result<tree_sitter::Tree, 
 pub mod typescript {
     include!(concat!(env!("OUT_DIR"), "/typescript.rs"));
 }
-fn parse_file_typescript(file_path: &str) -> Result<typescript::Program, Box<dyn Error>> {
+#[derive(Debug)]
+struct ParseError {}
+impl Error for ParseError {}
+impl Display for ParseError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "ParseError")
+    }
+}
+pub fn parse_file_typescript(file_path: &str) -> Result<Box<typescript::Program>, Box<dyn Error>> {
     let tree = parse_file(
         file_path,
         tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
     )?;
-    let module = typescript::Program::from_node(tree.root_node());
-    Ok(module)
+    Ok(
+        catch_unwind(|| Box::new(typescript::Program::from_node(tree.root_node())))
+            .map_err(|e| ParseError {})?,
+    )
 }
 mod tests {
     use std::io::Write;
