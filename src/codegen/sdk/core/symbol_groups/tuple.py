@@ -24,3 +24,7 @@ class Tuple(Collection["Expression[Self, None]", Parent], Expression[Parent], Bu
     def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self._init_children([self._parse_expression(child) for child in ts_node.named_children if child.type])
+
+    @property
+    def __class__(self):
+        return tuple
