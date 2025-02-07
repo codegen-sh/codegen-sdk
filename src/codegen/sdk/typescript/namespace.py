@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter
 from codegen.sdk.core.interfaces.has_name import HasName
-from codegen.sdk.core.statements.symbol_statement import SymbolStatement
 from codegen.sdk.enums import SymbolType
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.class_definition import TSClass
@@ -279,7 +278,8 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
         self.G.commit_transactions()
         added_symbol = self.get_symbol(symbol_name)
         if added_symbol is None:
-            raise ValueError(f"Failed to add symbol {symbol_name} to namespace")
+            msg = f"Failed to add symbol {symbol_name} to namespace"
+            raise ValueError(msg)
         return added_symbol
 
     @ts_apidoc
