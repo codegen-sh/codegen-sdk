@@ -504,7 +504,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
             CodeFlag[Self]: The code flag object for tracking purposes
         """
         code_flag = super().flag(**kwargs)
-        message = kwargs.get("message", "")
-        comment = f"👈 🚩 {message}" if message else "👈 🚩"
+        message = kwargs.get("message")
+        comment = f"👈 🚩 {message}" if message is not None else "👈 🚩"
         self.set_inline_comment(comment)
         return code_flag
