@@ -240,6 +240,7 @@ class RunOnPRResponse(BaseModel):
 # IMPROVE
 ###########################################################################
 
+
 class ImproveCodemodInput(BaseModel):
     class BaseImproveCodemodInput(BaseModel):
         codemod: str = Field(..., description="Source code of the codemod to improve")
@@ -249,6 +250,7 @@ class ImproveCodemodInput(BaseModel):
         language: ProgrammingLanguage = Field(..., description="Language of the codemod")
 
     input: BaseImproveCodemodInput = Field(..., description="Input data for improvement")
+
 
 class ImproveCodemodResponse(BaseModel):
     success: bool = Field(..., description="Whether the improvement was successful")

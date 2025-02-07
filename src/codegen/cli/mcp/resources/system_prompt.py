@@ -2389,7 +2389,7 @@ results = function.find_string_literals(["error", "warning"])
 results = function.find_string_literals(["error"], fuzzy_match=True)
 
 # Search with regex
-matches = function.search(r"data\['[^']*'\]")  # Find dict access
+matches = function.search(r"data\\['[^']*'\\]")  # Find dict access
 matches = function.search("TODO:", include_comments=True)
 
 # Find specific patterns
@@ -6327,9 +6327,9 @@ migrate_api_v1_to_v2(codebase)
 4. **Document Changes**:
    ```python
    # Add clear deprecation messages
-   old_api.add_decorator(\'\'\@deprecated(
+   old_api.add_decorator(\'\'\\@deprecated(
        "Use new_api() instead. Migration guide: docs/migrations/v2.md"
-   )\'\'\)
+   )\'\'\\)
    ```
 
 <Note>

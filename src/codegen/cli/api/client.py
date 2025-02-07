@@ -11,11 +11,11 @@ from codegen.cli.api.endpoints import (
     DOCS_ENDPOINT,
     EXPERT_ENDPOINT,
     IDENTIFY_ENDPOINT,
+    IMPROVE_ENDPOINT,
     LOOKUP_ENDPOINT,
     PR_LOOKUP_ENDPOINT,
     RUN_ENDPOINT,
     RUN_ON_PR_ENDPOINT,
-    IMPROVE_ENDPOINT,
 )
 from codegen.cli.api.schemas import (
     AskExpertInput,
@@ -28,6 +28,8 @@ from codegen.cli.api.schemas import (
     DocsInput,
     DocsResponse,
     IdentifyResponse,
+    ImproveCodemodInput,
+    ImproveCodemodResponse,
     LookupInput,
     LookupOutput,
     PRLookupInput,
@@ -37,8 +39,6 @@ from codegen.cli.api.schemas import (
     RunCodemodOutput,
     RunOnPRInput,
     RunOnPRResponse,
-    ImproveCodemodInput,
-    ImproveCodemodResponse,
 )
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.codemod.convert import convert_to_ui
@@ -253,12 +253,11 @@ class RestAPI:
             PRLookupResponse,
         )
 
-
     def improve_codemod(self, codemod: str, task: str, concerns: list[str], context: dict[str, str], language: ProgrammingLanguage) -> ImproveCodemodResponse:
         """Improve a codemod."""
         return self._make_request(
             "GET",
             IMPROVE_ENDPOINT,
             ImproveCodemodInput(input=ImproveCodemodInput.BaseImproveCodemodInput(codemod=codemod, task=task, concerns=concerns, context=context, language=language)),
-            ImproveCodemodResponse
+            ImproveCodemodResponse,
         )

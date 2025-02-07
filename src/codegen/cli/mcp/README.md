@@ -8,9 +8,12 @@ A MCP server implementation that provides tools and resources for using and work
 
 ## Usage
 
-Most AI Agents that support MCP will have some way to configure the server startup. 
+Most AI Agents that support MCP will have some way to configure the server startup.
+
 ### Cline
+
 Add this to your `cline_mcp_settings.json` file to get started:
+
 ```
 {
   "mcpServers": {
@@ -35,4 +38,3 @@ Name: codegen-mcp
 Type: Command
 Command: uv --directory <path to codegen installation>/codegen-sdk/src/codegen/cli/mcp run server.py
 ```
-

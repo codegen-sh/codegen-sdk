@@ -1,14 +1,18 @@
 from typing import Annotated, Any
-from codegen.cli.mcp.resources.system_setup_instructions import SETUP_INSTRUCTIONS
-from mcp.server.fastmcp import FastMCP, Context
+
+from mcp.server.fastmcp import Context, FastMCP
+
 from codegen.cli.api.client import RestAPI
 from codegen.cli.mcp.resources.system_prompt import SYSTEM_PROMPT
+from codegen.cli.mcp.resources.system_setup_instructions import SETUP_INSTRUCTIONS
 from codegen.cli.utils.constants import ProgrammingLanguage
+
 # Initialize FastMCP server
 
 mcp = FastMCP("codegen-mcp", instructions="MCP server for the Codegen SDK. Use the tools and resources to setup codegen in your environment and to create and improve your Codegen Codemods.")
 
 # ----- RESOURCES -----
+
 
 @mcp.resource("system://agent_prompt", description="Provides all the information the agent needs to know about Codegen SDK", mime_type="text/plain")
 def get_docs() -> str:
@@ -31,16 +35,24 @@ def get_service_config() -> dict[str, Any]:
         "description": "The MCP server for assisting with creating/writing/improving codegen codemods.",
     }
 
+
 # ----- TOOLS -----
 
+
 @mcp.tool()
-def generate_codemod(title: Annotated[str, "The title of the codemod (hyphenated)"], task: Annotated[str, "The task to which the codemod should implement to solve"], codebase_path: Annotated[str, "The absolute path to the codebase directory"], ctx: Context) -> str:
+def generate_codemod(
+    title: Annotated[str, "The title of the codemod (hyphenated)"],
+    task: Annotated[str, "The task to which the codemod should implement to solve"],
+    codebase_path: Annotated[str, "The absolute path to the codebase directory"],
+    ctx: Context,
+) -> str:
     """Generate a codemod for the given task and codebase."""
     return f'''
     Use the codegen cli to generate a codemod. If you need to intall the cli the command to do so is `uv tool install codegen`. Once installed, run the following command to generate the codemod:
-          
+
     codegen create {title} -d "{task}"
     '''
+
 
 @mcp.tool()
 def improve_codemod(
@@ -49,7 +61,7 @@ def improve_codemod(
     concerns: Annotated[list[str], "A list of issues that were discovered with the current codemod that need to be considered in the next iteration"],
     context: Annotated[dict[str, Any], "Additional context for the codemod this can be a list of files that are related, additional information about the task, etc."],
     language: Annotated[ProgrammingLanguage, "The language of the codebase, i.e ALL CAPS PYTHON or TYPESCRIPT "],
-    ctx: Context
+    ctx: Context,
 ) -> str:
     """Improve the codemod."""
     try:
@@ -63,4 +75,4 @@ def improve_codemod(
 if __name__ == "__main__":
     # Initialize and run the server
     print("Starting codegen server...")
-    mcp.run(transport='stdio')
+    mcp.run(transport="stdio")
