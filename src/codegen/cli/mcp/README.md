@@ -35,3 +35,4 @@ Name: codegen-mcp
 Type: Command
 Command: uv --directory <path to codegen installation>/codegen-sdk/src/codegen/cli/mcp run server.py
 ```
+
