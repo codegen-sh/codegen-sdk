@@ -191,12 +191,7 @@ function Container(props: ContainerProps) {
 function Helper({ props }: HelperProps) {}
 """
 
-    files = {
-        "Component.tsx": SRC_CONTENT,
-        "adjacent.tsx": ADJ_CONTENT,
-        "misc.tsx": MISC_CONTENT,
-        "import.tsx": IMPORT_CONTENT
-    }
+    files = {"Component.tsx": SRC_CONTENT, "adjacent.tsx": ADJ_CONTENT, "misc.tsx": MISC_CONTENT, "import.tsx": IMPORT_CONTENT}
 
     with get_codebase_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files=files) as codebase:
         src_file = codebase.get_file("Component.tsx")
