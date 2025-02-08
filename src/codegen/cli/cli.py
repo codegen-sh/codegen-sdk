@@ -14,6 +14,7 @@ from codegen.cli.commands.reset.main import reset_command
 from codegen.cli.commands.run.main import run_command
 from codegen.cli.commands.run_on_pr.main import run_on_pr_command
 from codegen.cli.commands.style_debug.main import style_debug_command
+from codegen.cli.metrics.wrap_command import metrics_wrapper
 
 click.rich_click.USE_RICH_MARKUP = True
 install(show_locals=True)
@@ -26,19 +27,19 @@ def main():
 
 
 # Wrap commands with error handler
-main.add_command(init_command)
-main.add_command(logout_command)
-main.add_command(login_command)
-main.add_command(run_command)
-main.add_command(profile_command)
-main.add_command(create_command)
-main.add_command(expert_command)
-main.add_command(list_command)
-main.add_command(deploy_command)
-main.add_command(style_debug_command)
-main.add_command(run_on_pr_command)
-main.add_command(notebook_command)
-main.add_command(reset_command)
+main.add_command(metrics_wrapper(init_command))
+main.add_command(metrics_wrapper(logout_command))
+main.add_command(metrics_wrapper(login_command))
+main.add_command(metrics_wrapper(run_command))
+main.add_command(metrics_wrapper(profile_command))
+main.add_command(metrics_wrapper(create_command))
+main.add_command(metrics_wrapper(expert_command))
+main.add_command(metrics_wrapper(list_command))
+main.add_command(metrics_wrapper(deploy_command))
+main.add_command(metrics_wrapper(style_debug_command))
+main.add_command(metrics_wrapper(run_on_pr_command))
+main.add_command(metrics_wrapper(notebook_command))
+main.add_command(metrics_wrapper(reset_command))
 
 
 if __name__ == "__main__":
