@@ -1,10 +1,33 @@
-import os
+"""Headless workspace for code manipulation."""
+
 from typing import Optional
 
 from codegen import Codebase
-from codegen.sdk.core.directory import Directory
 
-from .tools.reveal_symbol import reveal_symbol as reveal_symbol_tool
+from .tools import (
+    commit as commit_tool,
+)
+from .tools import (
+    create_file as create_file_tool,
+)
+from .tools import (
+    delete_file as delete_file_tool,
+)
+from .tools import (
+    edit_file as edit_file_tool,
+)
+from .tools import (
+    list_directory as list_directory_tool,
+)
+from .tools import (
+    reveal_symbol as reveal_symbol_tool,
+)
+from .tools import (
+    search as search_tool,
+)
+from .tools import (
+    view_file as view_file_tool,
+)
 
 
 class Workspace:
@@ -32,25 +55,7 @@ class Workspace:
         Raises:
             FileNotFoundError: If the file does not exist
         """
-        try:
-            file = self.codebase.get_file(filepath)
-        except ValueError:
-            msg = f"File not found: {filepath}"
-            raise FileNotFoundError(msg)
-
-        if not file:
-            msg = f"File not found: {filepath}"
-            raise FileNotFoundError(msg)
-
-        return {
-            "filepath": file.filepath,
-            "content": file.content,
-            "extension": file.extension,
-            "name": file.name,
-            "functions": [f.name for f in file.functions],
-            "classes": [c.name for c in file.classes],
-            "imports": [i.source for i in file.imports],
-        }
+        return view_file_tool(self.codebase, filepath)
 
     def list_directory(self, dirpath: str = "./", depth: int = 1) -> dict:
         """List contents of a directory.
@@ -70,37 +75,7 @@ class Workspace:
         Raises:
             NotADirectoryError: If the directory does not exist
         """
-        try:
-            directory = self.codebase.get_directory(dirpath)
-        except ValueError:
-            msg = f"Directory not found: {dirpath}"
-            raise NotADirectoryError(msg)
-
-        if not directory:
-            msg = f"Directory not found: {dirpath}"
-            raise NotADirectoryError(msg)
-
-        # Get immediate files
-        files = []
-        subdirs = []
-
-        for item in directory.items.values():
-            if isinstance(item, Directory):
-                subdirs.append(item.name)
-            else:
-                # Get full filename with extension from filepath
-                files.append(os.path.basename(item.filepath))
-
-        # If depth > 1 or unlimited (-1), recursively get subdirectories
-        if depth != 1:
-            new_depth = depth - 1 if depth > 1 else -1
-            for item in directory.items.values():
-                if isinstance(item, Directory):
-                    subdir_result = self.list_directory(os.path.join(dirpath, item.name), depth=new_depth)
-                    files.extend(subdir_result["files"])
-                    subdirs.extend(subdir_result["subdirectories"])
-
-        return {"path": directory.path, "name": directory.name, "files": files, "subdirectories": subdirs}
+        return list_directory_tool(self.codebase, dirpath, depth)
 
     def search(self, query: str, target_directories: Optional[list[str]] = None) -> dict:
         """Search the codebase using semantic search.
@@ -112,16 +87,7 @@ class Workspace:
         Returns:
             Dict containing search results
         """
-        results = []
-        for file in self.codebase.files:
-            if target_directories and not any(file.filepath.startswith(d) for d in target_directories):
-                continue
-
-            matches = file.search(query)
-            if matches:
-                results.append({"filepath": file.filepath, "matches": [m.source for m in matches]})
-
-        return {"query": query, "results": results}
+        return search_tool(self.codebase, query, target_directories)
 
     def edit_file(self, filepath: str, content: str) -> dict:
         """Edit a file by replacing its entire content.
@@ -136,15 +102,7 @@ class Workspace:
         Raises:
             FileNotFoundError: If the file does not exist
         """
-        try:
-            file = self.codebase.get_file(filepath)
-        except ValueError:
-            msg = f"File not found: {filepath}"
-            raise FileNotFoundError(msg)
-
-        file.edit(content)
-        self.codebase.commit()
-        return self.view_file(filepath)
+        return edit_file_tool(self.codebase, filepath, content)
 
     def create_file(self, filepath: str, content: str = "") -> dict:
         """Create a new file.
@@ -159,12 +117,7 @@ class Workspace:
         Raises:
             FileExistsError: If the file already exists
         """
-        if self.codebase.has_file(filepath):
-            msg = f"File already exists: {filepath}"
-            raise FileExistsError(msg)
-        file = self.codebase.create_file(filepath, content=content)
-        self.codebase.commit()
-        return self.view_file(filepath)
+        return create_file_tool(self.codebase, filepath, content)
 
     def delete_file(self, filepath: str) -> dict:
         """Delete a file.
@@ -178,15 +131,7 @@ class Workspace:
         Raises:
             FileNotFoundError: If the file does not exist
         """
-        try:
-            file = self.codebase.get_file(filepath)
-        except ValueError:
-            msg = f"File not found: {filepath}"
-            raise FileNotFoundError(msg)
-
-        file.remove()
-        self.codebase.commit()
-        return {"status": "success", "deleted_file": filepath}
+        return delete_file_tool(self.codebase, filepath)
 
     def commit(self) -> dict:
         """Commit any pending changes to disk.
@@ -194,8 +139,7 @@ class Workspace:
         Returns:
             Dict containing commit status
         """
-        self.codebase.commit()
-        return {"status": "success", "message": "Changes committed to disk"}
+        return commit_tool(self.codebase)
 
     def reveal_symbol(
         self,

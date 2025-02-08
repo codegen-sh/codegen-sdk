@@ -62,6 +62,9 @@ dependencies = [
   "tomlkit>=0.13.2",
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
+  "langchain>=0.3.18",
+  "langchain-community>=0.3.17",
+  "langchain-core>=0.3.34",
 ]
 
 license = { text = "Apache-2.0" }
@@ -147,6 +150,8 @@ dev-dependencies = [
   "loguru>=0.7.3",
   "httpx<0.28.2,>=0.28.1",
   "jupyterlab>=4.3.5",
+  "langchain>=0.3.18",
+  "langchain-community>=0.3.17",
 ]
 
 
