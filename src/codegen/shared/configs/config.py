@@ -7,7 +7,7 @@ from codegen.shared.configs.models import Config
 
 
 def load(config_path: Path | None = None) -> Config:
-    """Load configuration from the config file."""
+    """Loads configuration from various sources."""
     # Load from .env file
     env_config = _load_from_env()
 

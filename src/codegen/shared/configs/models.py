@@ -52,7 +52,6 @@ class Config(BaseSettings):
     repository: RepositoryConfig = Field(default_factory=RepositoryConfig)
     feature_flags: FeatureFlagsConfig = Field(default_factory=FeatureFlagsConfig)
 
-    @staticmethod
     def save(self, config_path: Path | None = None) -> None:
         """Save configuration to the config file."""
         path = config_path or CONFIG_PATH
@@ -60,7 +59,29 @@ class Config(BaseSettings):
         path.parent.mkdir(parents=True, exist_ok=True)
 
         with open(path, "w") as f:
-            toml.dump(Config.model_dump(exclude_none=True), f)
+            toml.dump(self.model_dump(exclude_none=True), f)
+
+    def get(self, full_key: str) -> str | None:
+        data = self.model_dump()
+        keys = full_key.split(".")
+        current = data
+        for k in keys:
+            if not isinstance(current, dict) or k not in current:
+                return None
+            current = current[k]
+        return current
+
+    def set(self, full_key: str, value: str) -> None:
+        data = self.model_dump()
+        keys = full_key.split(".")
+        current = data
+        for k in keys[:-1]:
+            if k not in current:
+                current[k] = {}
+            current = current[k]
+        current[keys[-1]] = value
+        self.model_validate(data)
+        self.save()
 
     def __str__(self) -> str:
         """Return a pretty-printed string representation of the config."""

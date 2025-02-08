@@ -4,6 +4,8 @@ import rich
 import rich_click as click
 from rich.table import Table
 
+from codegen.shared.configs.config import config
+
 
 @click.group(name="config")
 def config_command():
@@ -14,10 +16,8 @@ def config_command():
 @config_command.command(name="list")
 def list_command():
     """List current configuration values."""
-    from codegen.shared.configs.config import config
-
     table = Table(title="Configuration Values", border_style="blue", show_header=True)
-    table.add_column("Key", style="cyan")
+    table.add_column("Key", style="cyan", no_wrap=True)
     table.add_column("Value", style="magenta")
 
     def flatten_dict(data: dict, prefix: str = "") -> dict:
@@ -40,7 +40,7 @@ def list_command():
 
     for prefix, group in groupby(sorted_items, key=get_prefix):
         table.add_section()
-        table.add_row(f"[bold blue]{prefix}[/bold blue]", "")
+        table.add_row(f"[bold yellow]{prefix}[/bold yellow]", "")
         for key, value in group:
             # Remove the prefix from the displayed key
             display_key = key[len(prefix) + 1 :] if "." in key else key
@@ -53,14 +53,23 @@ def list_command():
 @click.argument("key")
 def get_command(key: str):
     """Get a configuration value."""
-    # TODO: Implement configuration get logic
-    rich.print(f"[yellow]Getting configuration value for: {key}[/yellow]")
+    value = config.get(key)
+    if value is None:
+        rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
+        return
+
+    rich.print(f"[cyan]{key}[/cyan] = [magenta]{value}[/magenta]")
 
 
 @config_command.command(name="set")
 @click.argument("key")
 @click.argument("value")
 def set_command(key: str, value: str):
-    """Set a configuration value."""
-    # TODO: Implement configuration set logic
-    rich.print(f"[green]Setting {key}={value}[/green]")
+    """Set a configuration value and write to config.toml."""
+    value = config.get(key)
+    if value is None:
+        rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
+        return
+
+    config.set(key, value)
+    rich.print(f"[green]Successfully set {key}=[magenta]{value}[/magenta] and saved to config.toml[/green]")
