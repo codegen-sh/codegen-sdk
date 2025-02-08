@@ -1,6 +1,8 @@
 import os
 
 
+
+
 class Config:
     def __init__(self) -> None:
         self.GITHUB_TOKEN = self._get_env_var("GITHUB_TOKEN")
