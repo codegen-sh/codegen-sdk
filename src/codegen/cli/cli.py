@@ -1,6 +1,7 @@
 import rich_click as click
 from rich.traceback import install
 
+from codegen.cli.commands.config.main import config_command
 from codegen.cli.commands.create.main import create_command
 from codegen.cli.commands.deploy.main import deploy_command
 from codegen.cli.commands.expert.main import expert_command
@@ -39,6 +40,7 @@ main.add_command(style_debug_command)
 main.add_command(run_on_pr_command)
 main.add_command(notebook_command)
 main.add_command(reset_command)
+main.add_command(config_command)
 
 
 if __name__ == "__main__":
