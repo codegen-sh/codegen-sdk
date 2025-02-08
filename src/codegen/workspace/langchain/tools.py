@@ -210,10 +210,6 @@ class RevealSymbolTool(BaseTool):
             if found_symbol:
                 break
 
-        if not found_symbol:
-            msg = f"Symbol not found: {symbol_name}"
-            raise ValueError(msg)
-
         result = reveal_symbol(
             found_symbol,
             degree,

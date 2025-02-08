@@ -1,6 +1,6 @@
 """Headless workspace for code manipulation."""
 
-from typing import Optional
+from typing import Any, Optional
 
 from codegen import Codebase
 
@@ -148,7 +148,7 @@ class Workspace:
         max_tokens: Optional[int] = None,
         collect_dependencies: bool = True,
         collect_usages: bool = True,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Reveal the dependencies and usages of a symbol up to N degrees.
 
         Args:
@@ -164,9 +164,7 @@ class Workspace:
                 - dependencies: List of symbols this symbol depends on (if collect_dependencies=True)
                 - usages: List of symbols that use this symbol (if collect_usages=True)
                 - truncated: Whether the results were truncated due to max_tokens
-
-        Raises:
-            ValueError: If the symbol is not found
+                - error: Optional error message if the symbol was not found
         """
         # Find the symbol
         found_symbol = None
@@ -177,10 +175,6 @@ class Workspace:
                     break
             if found_symbol:
                 break
-
-        if not found_symbol:
-            msg = f"Symbol not found: {symbol_name}"
-            raise ValueError(msg)
 
         return reveal_symbol_tool(
             found_symbol,

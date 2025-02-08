@@ -90,7 +90,12 @@ def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> d
                 files.extend(subdir_result["files"])
                 subdirs.extend(subdir_result["subdirectories"])
 
-    return {"path": directory.path, "name": directory.name, "files": files, "subdirectories": subdirs}
+    return {
+        "path": str(directory.path),  # Convert PosixPath to string
+        "name": directory.name,
+        "files": files,
+        "subdirectories": subdirs,
+    }
 
 
 def edit_file(codebase: Codebase, filepath: str, content: str) -> dict[str, Any]:

@@ -31,7 +31,8 @@ def search(
         codebase: The codebase to operate on
         query: The text to search for or regex pattern to match
         target_directories: Optional list of directories to search in
-        file_extensions: Optional list of file extensions to search (e.g. ['.py', '.ts'])
+        file_extensions: Optional list of file extensions to search (e.g. ['.py', '.ts']).
+                        If None, searches all files ('*')
         page: Page number to return (1-based, default: 1)
         files_per_page: Number of files to return per page (default: 10)
         use_regex: Whether to treat query as a regex pattern (default: False)
@@ -78,19 +79,24 @@ def search(
         # For non-regex searches, escape special characters and make case-insensitive
         pattern = re.compile(re.escape(query), re.IGNORECASE)
 
+    # Handle file extensions
+    extensions = file_extensions if file_extensions is not None else "*"
+
     all_results = []
-    for file in codebase.files:
+    for file in codebase.files(extensions=extensions):
         # Skip if file doesn't match target directories
         if target_directories and not any(file.filepath.startswith(d) for d in target_directories):
             continue
 
-        # Skip if file extension doesn't match
-        if file_extensions and not any(file.filepath.endswith(ext) for ext in file_extensions):
+        # Skip binary files
+        try:
+            content = file.content
+        except ValueError:  # File is binary
             continue
 
         file_matches = []
         # Split content into lines and store with line numbers (1-based)
-        lines = enumerate(file.content.splitlines(), 1)
+        lines = enumerate(content.splitlines(), 1)
 
         # Search each line for the pattern
         for line_number, line in lines:

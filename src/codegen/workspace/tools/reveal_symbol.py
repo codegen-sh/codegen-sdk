@@ -231,7 +231,12 @@ def reveal_symbol(
             - dependencies: List of symbols this symbol depends on (if collect_dependencies=True)
             - usages: List of symbols that use this symbol (if collect_usages=True)
             - truncated: Whether the results were truncated due to max_tokens
+            - error: Optional error message if the symbol was not found
     """
+    # Check if we got a valid symbol
+    if symbol is None:
+        return {"error": "Symbol not found", "truncated": False, "dependencies": [], "usages": []}
+
     # Get dependencies and usages up to specified degree
     dependencies, usages, total_tokens = get_extended_context(symbol, degree, max_tokens, collect_dependencies=collect_dependencies, collect_usages=collect_usages)
 
