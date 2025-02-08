@@ -41,8 +41,8 @@
 		"thumbsRating": true
 	},
 	"topbarCtaButton": {
-		"name": "Codegen",
-		"url": "https://codegen.sh/new"
+		"name": "GitHub",
+		"url": "https://github.com/codegen-sh/codegen-sdk"
 	},
 	"tabs": [
 		{
