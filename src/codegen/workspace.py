@@ -3,6 +3,9 @@ from typing import Optional
 
 from codegen import Codebase
 from codegen.sdk.core.directory import Directory
+from codegen.sdk.core.external_module import ExternalModule
+from codegen.sdk.core.import_resolution import Import
+from codegen.sdk.core.symbol import Symbol
 
 
 class Workspace:
@@ -17,6 +20,19 @@ class Workspace:
             codebase: The Codebase instance to wrap
         """
         self.codebase = codebase
+
+    def hop_through_imports(self, imp: Import) -> Symbol | ExternalModule:
+        """Find the root symbol for an import by following the import chain.
+
+        Args:
+            imp: The import to resolve
+
+        Returns:
+            The root symbol or external module that the import chain leads to
+        """
+        if isinstance(imp.imported_symbol, Import):
+            return self.hop_through_imports(imp.imported_symbol)
+        return imp.imported_symbol
 
     def view_file(self, filepath: str) -> dict:
         """View the contents and metadata of a file.
@@ -134,8 +150,9 @@ class Workspace:
         Raises:
             FileNotFoundError: If the file does not exist
         """
-        file = self.codebase.get_file(filepath)
-        if not file:
+        try:
+            file = self.codebase.get_file(filepath)
+        except ValueError:
             msg = f"File not found: {filepath}"
             raise FileNotFoundError(msg)
 
@@ -152,6 +169,9 @@ class Workspace:
 
         Returns:
             Dict containing new file state
+
+        Raises:
+            FileExistsError: If the file already exists
         """
         if self.codebase.has_file(filepath):
             msg = f"File already exists: {filepath}"
@@ -168,6 +188,9 @@ class Workspace:
 
         Returns:
             Dict containing deletion status
+
+        Raises:
+            FileNotFoundError: If the file does not exist
         """
         try:
             file = self.codebase.get_file(filepath)
@@ -187,3 +210,87 @@ class Workspace:
         """
         self.codebase.commit()
         return {"status": "success", "message": "Changes committed to disk"}
+
+    def get_extended_context(self, symbol: Symbol, degree: int) -> tuple[set[Symbol], set[Symbol]]:
+        """Recursively collect dependencies and usages up to the specified degree.
+
+        Args:
+            symbol: The symbol to collect context for
+            degree: How many levels deep to collect dependencies and usages
+
+        Returns:
+            A tuple of (dependencies, usages) where each is a set of related Symbol objects
+        """
+        dependencies = set()
+        usages = set()
+
+        if degree > 0:
+            # Collect direct dependencies
+            for dep in symbol.dependencies:
+                # Hop through imports to find the root symbol
+                if isinstance(dep, Import):
+                    dep = self.hop_through_imports(dep)
+
+                if isinstance(dep, Symbol) and dep not in dependencies:
+                    dependencies.add(dep)
+                    dep_deps, dep_usages = self.get_extended_context(dep, degree - 1)
+                    dependencies.update(dep_deps)
+                    usages.update(dep_usages)
+
+            # Collect usages in the current symbol
+            for usage in symbol.usages:
+                usage_symbol = usage.usage_symbol
+                # Hop through imports for usage symbols too
+                if isinstance(usage_symbol, Import):
+                    usage_symbol = self.hop_through_imports(usage_symbol)
+
+                if isinstance(usage_symbol, Symbol) and usage_symbol not in usages:
+                    usages.add(usage_symbol)
+                    usage_deps, usage_usages = self.get_extended_context(usage_symbol, degree - 1)
+                    dependencies.update(usage_deps)
+                    usages.update(usage_usages)
+
+        return dependencies, usages
+
+    def reveal_symbol(self, symbol_name: str, degree: int = 1) -> dict:
+        """Reveal the dependency graph for a symbol.
+
+        Args:
+            symbol_name: Name of the symbol to analyze
+            degree: How many degrees of separation to analyze. Default is 1 (immediate dependencies/usages).
+                   Use -1 for unlimited depth.
+
+        Returns:
+            Dict containing:
+                - symbol: Basic info about the found symbol
+                - dependencies: List of symbols this symbol depends on
+                - usages: List of symbols that depend on this symbol
+
+        Raises:
+            ValueError: If the symbol is not found
+        """
+        # Find the symbol
+        symbol = self.codebase.get_symbol(symbol_name)
+        if not symbol:
+            msg = f"Symbol not found: {symbol_name}"
+            raise ValueError(msg)
+
+        # Helper to get symbol info
+        def get_symbol_info(s):
+            return {
+                "name": s.name,
+                "type": s.__class__.__name__,  # Function, Class, etc.
+                "filepath": s.file.filepath,
+                "start_point": s.start_point,
+                "end_point": s.end_point,
+                "source": s.source,  # Add source code
+            }
+
+        # Get extended context
+        dependencies, usages = self.get_extended_context(symbol, degree)
+
+        # Convert to list of dicts for JSON serialization
+        deps_info = [get_symbol_info(d) for d in dependencies]
+        usages_info = [get_symbol_info(u) for u in usages]
+
+        return {"symbol": get_symbol_info(symbol), "dependencies": deps_info, "usages": usages_info}

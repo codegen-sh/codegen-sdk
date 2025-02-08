@@ -149,3 +149,74 @@ def test_commit(tmpdir) -> None:
         # Verify changes persisted
         view_result = workspace.view_file("test.py")
         assert "print('updated')" in view_result["content"]
+
+
+def test_reveal_symbol(tmpdir) -> None:
+    # language=python
+    files = {
+        "src/data.py": """
+from src.utils import validate_input
+
+def process_data(data: str) -> dict:
+    if validate_input(data):
+        return {"data": data}
+    return {"error": "Invalid data"}
+""",
+        "src/utils.py": """
+def validate_input(data: str) -> bool:
+    return len(data) > 0
+
+def unused_function():
+    pass
+""",
+        "src/api.py": """
+from src.data import process_data
+
+def handle_request(request_data: str) -> dict:
+    return process_data(request_data)
+
+def another_handler(data: str) -> dict:
+    return handle_request(data)
+""",
+    }
+
+    with get_codebase_session(tmpdir=tmpdir, files=files) as codebase:
+        workspace = Workspace(codebase)
+
+        # Test revealing process_data function with degree=1
+        result = workspace.reveal_symbol("process_data", degree=1)
+
+        # Check basic symbol info
+        assert result["symbol"]["name"] == "process_data"
+        assert result["symbol"]["type"] == "Function"
+        assert "process_data" in result["symbol"]["source"]
+
+        # Check immediate dependencies (should find validate_input through import)
+        deps = result["dependencies"]
+        assert len(deps) == 1
+        assert deps[0]["name"] == "validate_input"
+
+        # Check immediate usages (should find handle_request)
+        usages = result["usages"]
+        assert len(usages) == 1
+        assert usages[0]["name"] == "handle_request"
+
+        # Test with degree=2 to see deeper relationships
+        deep_result = workspace.reveal_symbol("process_data", degree=2)
+
+        # Should now see both handle_request and another_handler
+        assert len(deep_result["usages"]) == 2
+        usage_names = {u["name"] for u in deep_result["usages"]}
+        assert usage_names == {"handle_request", "another_handler"}
+
+        # Test revealing a symbol with no dependencies or usages
+        unused_result = workspace.reveal_symbol("unused_function")
+        assert len(unused_result["dependencies"]) == 0
+        assert len(unused_result["usages"]) == 0
+
+        # Test revealing non-existent symbol
+        try:
+            workspace.reveal_symbol("nonexistent_function")
+            assert False, "Should raise ValueError"
+        except ValueError:
+            pass
