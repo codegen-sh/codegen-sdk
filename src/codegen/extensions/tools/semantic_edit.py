@@ -1,6 +1,7 @@
 """Tool for making semantic edits to files using a small, fast LLM."""
 
-import anthropic
+from langchain_community.chat_models import ChatOpenAI
+from langchain_core.messages import HumanMessage, SystemMessage
 
 from codegen import Codebase
 
@@ -59,8 +60,13 @@ def semantic_edit(codebase: Codebase, filepath: str, edit_spec: str) -> dict[str
     # Get the original content
     original_content = file.content
 
-    # Create the prompt for the LLM
-    prompt = f"""You are a code editing assistant. Your task is to modify the given file content according to the edit specification.
+    # Create the messages for the LLM
+    system_message = SystemMessage(
+        content="You are a code editing assistant. You make precise, minimal edits to code files based on edit specifications. Return ONLY the modified code, no explanations."
+    )
+
+    human_message = HumanMessage(
+        content=f"""Modify the given file content according to the edit specification.
 The edit specification shows code blocks that should be changed, with markers for existing code.
 Please apply these changes carefully, preserving all code structure and formatting.
 
@@ -75,19 +81,17 @@ Edit specification:
 ```
 
 Return ONLY the modified file content, exactly as it should appear after the changes."""
-
-    # Call Claude Haiku to make the edit
-    client = anthropic.Anthropic()
-    message = client.messages.create(
-        model="claude-3-5-haiku",
-        max_tokens=20000,
-        temperature=0,
-        system="You are a code editing assistant. You make precise, minimal edits to code files based on edit specifications. Return ONLY the modified code, no explanations.",
-        messages=[{"role": "user", "content": prompt}],
     )
 
-    # Get the modified content
-    modified_content = message.content[0].text
+    # Call GPT-4-Turbo to make the edit
+    llm = ChatOpenAI(
+        model="gpt-4o-mini",
+        temperature=0,
+        max_tokens=10000,
+    )
+
+    response = llm.invoke([system_message, human_message])
+    modified_content = response.content
 
     # Apply the edit
     file.edit(modified_content)
