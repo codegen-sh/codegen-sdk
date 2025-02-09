@@ -174,3 +174,7 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
             if child.value:
                 ret.extend(child.value.descendant_symbols)
         return ret
+
+    @property
+    def __class__(self):
+        return dict

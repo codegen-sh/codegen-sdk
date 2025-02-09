@@ -6,7 +6,7 @@ from github.PullRequest import PullRequest
 
 from codegen.git.models.pr_options import PROptions
 from codegen.runner.diff.get_raw_diff import get_raw_diff
-from codegen.runner.models.codemod import BranchConfig, Codemod, CodemodRunResult, CreatedBranch, GroupingConfig
+from codegen.runner.models.codemod import BranchConfig, CodemodRunResult, CreatedBranch, GroupingConfig
 from codegen.runner.sandbox.repo import SandboxRepo
 from codegen.runner.utils.branch_name import get_head_branch_name
 from codegen.runner.utils.exception_utils import update_observation_meta
@@ -54,7 +54,7 @@ class SandboxExecutor:
         logger.info(f"> Created {len(groups)} groups")
         return groups
 
-    async def execute_flag_groups(self, codemod: Codemod, execute_func: Callable, flag_groups: list[Group], branch_config: BranchConfig) -> tuple[list[CodemodRunResult], list[CreatedBranch]]:
+    async def execute_flag_groups(self, commit_msg: str, execute_func: Callable, flag_groups: list[Group], branch_config: BranchConfig) -> tuple[list[CodemodRunResult], list[CreatedBranch]]:
         run_results = []
         head_branches = []
         for idx, group in enumerate(flag_groups):
@@ -64,13 +64,13 @@ class SandboxExecutor:
             if group:
                 logger.info(f"Running group {group.segment} ({idx + 1} out of {len(flag_groups)})...")
 
-            head_branch = branch_config.custom_head_branch or get_head_branch_name(codemod, group)
+            head_branch = branch_config.custom_head_branch or get_head_branch_name(branch_config.branch_name, group)
             logger.info(f"Running with head branch: {head_branch}")
-            self.remote_repo.reset_branch(branch_config.base_branch, head_branch)
+            self.remote_repo.reset_branch(branch_config.custom_base_branch, head_branch)
 
             run_result = await self.execute(execute_func, group=group)
-            created_branch = CreatedBranch(base_branch=branch_config.base_branch, head_ref=None)
-            if self.remote_repo.push_changes_to_remote(codemod, head_branch, branch_config.force_push_head_branch):
+            created_branch = CreatedBranch(base_branch=branch_config.custom_base_branch, head_ref=None)
+            if self.remote_repo.push_changes_to_remote(commit_msg, head_branch, branch_config.force_push_head_branch):
                 created_branch.head_ref = head_branch
 
             self.codebase.reset()

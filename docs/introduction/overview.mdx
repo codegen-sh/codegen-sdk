@@ -9,7 +9,8 @@ iconType: "solid"
 
 It provides a scriptable interface to a powerful, multi-lingual language server built on top of [Tree-sitter](https://tree-sitter.github.io/tree-sitter/).
 
-export const metaCode = `from codegen import Codebase
+```python
+from codegen import Codebase
 
 # Codegen builds a complete graph connecting
 # functions, classes, imports and their relationships
@@ -24,30 +25,7 @@ for function in codebase.functions:
 
 # Fast, in-memory code index
 codebase.commit()
-`
-
-export const code = `def foo():
-  pass
-
-def bar():
-  foo()
-
-def baz():
-  pass
-`
-
-<iframe
-  width="100%"
-  height="370px"
-  scrolling="no"
-  src={`https://codegen.sh/embedded/codemod/?code=${encodeURIComponent(
-    metaCode
-  )}&input=${encodeURIComponent(code)}`}
-  style={{
-    backgroundColor: "#15141b",
-  }}
-  className="rounded-xl"
-></iframe>
+```
 
 
 <Note>

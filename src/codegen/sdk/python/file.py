@@ -187,7 +187,7 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
         another file.
         """
         if self.name == "__init__":
-            ret = {}
+            ret = super().valid_import_names
             if self.directory:
                 for file in self.directory:
                     if file.name == "__init__":
