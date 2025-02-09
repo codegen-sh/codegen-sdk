@@ -1,7 +1,5 @@
 """Tool for making semantic edits to files using a small, fast LLM."""
 
-from typing import Any
-
 import anthropic
 
 from codegen import Codebase
@@ -28,11 +26,11 @@ def extract_code_blocks(edit_spec: str) -> list[tuple[str, str]]:
     return blocks
 
 
-def semantic_edit(codebase: Codebase, filepath: str, edit_spec: str) -> dict[str, Any]:
+def semantic_edit(codebase: Codebase, filepath: str, edit_spec: str) -> dict[str, str]:
     """Edit a file using a semantic edit specification.
 
     The edit specification should contain code blocks showing the desired changes,
-    with "# ... existing code ..." markers to indicate unchanged code.
+    with "# ... existing code ..." or "// ... unchanged code ..." etc. markers to indicate unchanged code.
 
     Args:
         codebase: The codebase to operate on
@@ -81,8 +79,8 @@ Return ONLY the modified file content, exactly as it should appear after the cha
     # Call Claude Haiku to make the edit
     client = anthropic.Anthropic()
     message = client.messages.create(
-        model="claude-3-haiku-20240307",
-        max_tokens=4000,
+        model="claude-3-5-haiku",
+        max_tokens=20000,
         temperature=0,
         system="You are a code editing assistant. You make precise, minimal edits to code files based on edit specifications. Return ONLY the modified code, no explanations.",
         messages=[{"role": "user", "content": prompt}],
