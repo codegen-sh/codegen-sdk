@@ -1,4 +1,4 @@
-"""Demo implementation of an agent with workspace tools."""
+"""Demo implementation of an agent with Codegen tools."""
 
 from langchain import hub
 from langchain.agents import AgentExecutor
@@ -10,16 +10,16 @@ from langchain_openai import ChatOpenAI
 from codegen import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 
-from . import get_workspace_tools
+from . import get_codebase_tools
 
 
-def create_workspace_agent(
+def create_codebase_agent(
     codebase: Codebase,
-    model_name: str = "gpt-4o",
+    model_name: str = "gpt-4",
     temperature: float = 0,
     verbose: bool = True,
 ) -> RunnableWithMessageHistory:
-    """Create an agent with all workspace tools.
+    """Create an agent with all codebase tools.
 
     Args:
         codebase: The codebase to operate on
@@ -36,8 +36,8 @@ def create_workspace_agent(
         temperature=temperature,
     )
 
-    # Get all workspace tools
-    tools = get_workspace_tools(codebase)
+    # Get all codebase tools
+    tools = get_codebase_tools(codebase)
 
     # Get the prompt to use
     prompt = hub.pull("hwchase17/openai-functions-agent")
@@ -70,25 +70,12 @@ def create_workspace_agent(
 
 if __name__ == "__main__":
     # Initialize codebase
-    codebase = Codebase("./", programming_language=ProgrammingLanguage.PYTHON)
+    print("Initializing codebase...")
+    codebase = Codebase.from_repo("fastapi/fastapi", programming_language=ProgrammingLanguage.PYTHON)
 
     # Create agent with history
-    agent = create_workspace_agent(codebase)
-
-    # Example interactions
-    print("\nAsking agent to explore the codebase...")
-    result = agent.invoke(
-        {"input": "List all Python files in the src directory"},
-        config={"configurable": {"session_id": "demo"}},
-    )
-    print("Messages:", result["messages"])
-
-    print("\nAsking agent to analyze a specific file...")
-    result = agent.invoke(
-        {"input": "Show me the contents of src/codegen/workspace/tools/reveal_symbol.py"},
-        config={"configurable": {"session_id": "demo"}},
-    )
-    print("Messages:", result["messages"])
+    print("Creating agent...")
+    agent = create_codebase_agent(codebase)
 
     print("\nAsking agent to analyze symbol relationships...")
     result = agent.invoke(

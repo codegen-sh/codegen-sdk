@@ -1,7 +1,7 @@
 """File operations for manipulating the codebase."""
 
 import os
-from typing import Any
+from typing import Any, Literal
 
 from codegen import Codebase
 from codegen.sdk.core.directory import Directory
@@ -15,20 +15,15 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
         filepath: Path to the file relative to workspace root
 
     Returns:
-        Dict containing file contents and metadata
-
-    Raises:
-        FileNotFoundError: If the file does not exist
+        Dict containing file contents and metadata, or error information if file not found
     """
     try:
         file = codebase.get_file(filepath)
     except ValueError:
-        msg = f"File not found: {filepath}"
-        raise FileNotFoundError(msg)
+        return {"error": f"File not found: {filepath}"}
 
     if not file:
-        msg = f"File not found: {filepath}"
-        raise FileNotFoundError(msg)
+        return {"error": f"File not found: {filepath}"}
 
     return {
         "filepath": file.filepath,
@@ -44,6 +39,9 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
 def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> dict[str, Any]:
     """List contents of a directory.
 
+    TODO(CG-10729): add support for directories that only including non-SourceFiles (code files). At the moment,
+     only files and directories that have SourceFile objects are included.
+
     Args:
         codebase: The codebase to operate on
         dirpath: Path to directory relative to workspace root
@@ -51,24 +49,15 @@ def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> d
                Use -1 for unlimited depth.
 
     Returns:
-        Dict containing directory contents and metadata:
-            - path: Full path of the directory
-            - name: Name of the directory
-            - files: List of file names (with extensions) in the directory
-            - subdirectories: List of subdirectory names (not full paths)
-
-    Raises:
-        NotADirectoryError: If the directory does not exist
+        Dict containing directory contents and metadata, or error information if directory not found
     """
     try:
         directory = codebase.get_directory(dirpath)
     except ValueError:
-        msg = f"Directory not found: {dirpath}"
-        raise NotADirectoryError(msg)
+        return {"error": f"Directory not found: {dirpath}"}
 
     if not directory:
-        msg = f"Directory not found: {dirpath}"
-        raise NotADirectoryError(msg)
+        return {"error": f"Directory not found: {dirpath}"}
 
     # Get immediate files
     files = []
@@ -87,8 +76,9 @@ def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> d
         for item in directory.items.values():
             if isinstance(item, Directory):
                 subdir_result = list_directory(codebase, os.path.join(dirpath, item.name), depth=new_depth)
-                files.extend(subdir_result["files"])
-                subdirs.extend(subdir_result["subdirectories"])
+                if "error" not in subdir_result:
+                    files.extend(subdir_result["files"])
+                    subdirs.extend(subdir_result["subdirectories"])
 
     return {
         "path": str(directory.path),  # Convert PosixPath to string
@@ -107,16 +97,12 @@ def edit_file(codebase: Codebase, filepath: str, content: str) -> dict[str, Any]
         content: New content for the file
 
     Returns:
-        Dict containing updated file state
-
-    Raises:
-        FileNotFoundError: If the file does not exist
+        Dict containing updated file state, or error information if file not found
     """
     try:
         file = codebase.get_file(filepath)
     except ValueError:
-        msg = f"File not found: {filepath}"
-        raise FileNotFoundError(msg)
+        return {"error": f"File not found: {filepath}"}
 
     file.edit(content)
     codebase.commit()
@@ -132,14 +118,10 @@ def create_file(codebase: Codebase, filepath: str, content: str = "") -> dict[st
         content: Initial file content
 
     Returns:
-        Dict containing new file state
-
-    Raises:
-        FileExistsError: If the file already exists
+        Dict containing new file state, or error information if file already exists
     """
     if codebase.has_file(filepath):
-        msg = f"File already exists: {filepath}"
-        raise FileExistsError(msg)
+        return {"error": f"File already exists: {filepath}"}
     file = codebase.create_file(filepath, content=content)
     codebase.commit()
     return view_file(codebase, filepath)
@@ -153,20 +135,95 @@ def delete_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
         filepath: Path to the file to delete
 
     Returns:
-        Dict containing deletion status
-
-    Raises:
-        FileNotFoundError: If the file does not exist
+        Dict containing deletion status, or error information if file not found
     """
     try:
         file = codebase.get_file(filepath)
     except ValueError:
-        msg = f"File not found: {filepath}"
-        raise FileNotFoundError(msg)
+        return {"error": f"File not found: {filepath}"}
 
     file.remove()
     codebase.commit()
     return {"status": "success", "deleted_file": filepath}
+
+
+def rename_file(codebase: Codebase, filepath: str, new_filepath: str) -> dict[str, Any]:
+    """Rename a file and update all imports to point to the new location.
+
+    Args:
+        codebase: The codebase to operate on
+        filepath: Current path of the file relative to workspace root
+        new_filepath: New path for the file relative to workspace root
+
+    Returns:
+        Dict containing rename status and new file info, or error information if file not found
+    """
+    try:
+        file = codebase.get_file(filepath)
+    except ValueError:
+        return {"error": f"File not found: {filepath}"}
+
+    if codebase.has_file(new_filepath):
+        return {"error": f"Destination file already exists: {new_filepath}"}
+
+    try:
+        file.update_filepath(new_filepath)
+        codebase.commit()
+        return {"status": "success", "old_filepath": filepath, "new_filepath": new_filepath, "file_info": view_file(codebase, new_filepath)}
+    except Exception as e:
+        return {"error": f"Failed to rename file: {e!s}"}
+
+
+def move_symbol(
+    codebase: Codebase,
+    source_file: str,
+    symbol_name: str,
+    target_file: str,
+    strategy: Literal["update_all_imports", "add_back_edge"] = "update_all_imports",
+    include_dependencies: bool = True,
+) -> dict[str, Any]:
+    """Move a symbol from one file to another.
+
+    Args:
+        codebase: The codebase to operate on
+        source_file: Path to the file containing the symbol
+        symbol_name: Name of the symbol to move
+        target_file: Path to the destination file
+        strategy: Strategy for handling imports:
+                 - "update_all_imports": Updates all import statements across the codebase (default)
+                 - "add_back_edge": Adds import and re-export in the original file
+        include_dependencies: Whether to move dependencies along with the symbol
+
+    Returns:
+        Dict containing move status and updated file info, or error information if operation fails
+    """
+    try:
+        source = codebase.get_file(source_file)
+    except ValueError:
+        return {"error": f"Source file not found: {source_file}"}
+
+    try:
+        target = codebase.get_file(target_file)
+    except ValueError:
+        return {"error": f"Target file not found: {target_file}"}
+
+    symbol = source.get_symbol(symbol_name)
+    if not symbol:
+        return {"error": f"Symbol '{symbol_name}' not found in {source_file}"}
+
+    try:
+        symbol.move_to_file(target, include_dependencies=include_dependencies, strategy=strategy)
+        codebase.commit()
+        return {
+            "status": "success",
+            "symbol": symbol_name,
+            "source_file": source_file,
+            "target_file": target_file,
+            "source_file_info": view_file(codebase, source_file),
+            "target_file_info": view_file(codebase, target_file),
+        }
+    except Exception as e:
+        return {"error": f"Failed to move symbol: {e!s}"}
 
 
 def commit(codebase: Codebase) -> dict[str, Any]:

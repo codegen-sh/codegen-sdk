@@ -63,7 +63,8 @@ dependencies = [
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
   "langchain[openai]",
-  "jupyterlab>=4.3.5",
+  "langchain_core",
+  "langchain_openai",
 ]
 
 license = { text = "Apache-2.0" }
