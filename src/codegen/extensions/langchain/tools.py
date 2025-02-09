@@ -14,7 +14,6 @@ from ..tools import (
     delete_file,
     edit_file,
     list_directory,
-    make_pr,
     move_symbol,
     rename_file,
     reveal_symbol,
@@ -317,28 +316,4 @@ class MoveSymbolTool(BaseTool):
             strategy=strategy,
             include_dependencies=include_dependencies,
         )
-        return json.dumps(result, indent=2)
-
-
-class MakePRInput(BaseModel):
-    """Input for creating a pull request."""
-
-    title: str = Field(..., description="The title for the pull request")
-    body: str = Field(..., description="The description/body for the pull request")
-    branch: str | None = Field(default=None, description="Optional branch name to create PR from. If provided, will checkout/create branch and push to it.")
-
-
-class MakePRTool(BaseTool):
-    """Tool for creating pull requests."""
-
-    name: ClassVar[str] = "make_pr"
-    description: ClassVar[str] = "Creates a pull request or returns a URL to create one. Can optionally specify a branch to create/push to."
-    args_schema: ClassVar[type[BaseModel]] = MakePRInput
-    codebase: Codebase = Field(exclude=True)
-
-    def __init__(self, codebase: Codebase) -> None:
-        super().__init__(codebase=codebase)
-
-    def _run(self, title: str, body: str, branch: str | None = None) -> str:
-        result = make_pr(self.codebase, title, body, branch=branch)
         return json.dumps(result, indent=2)
