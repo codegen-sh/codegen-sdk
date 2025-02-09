@@ -3,9 +3,9 @@
 from langchain import hub
 from langchain.agents import AgentExecutor
 from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
-from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_community.chat_models import ChatOpenAI
+from langchain_core.chat_history import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
 
 from codegen import Codebase
 from codegen.sdk.enums import ProgrammingLanguage

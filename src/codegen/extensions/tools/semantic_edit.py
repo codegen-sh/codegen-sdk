@@ -2,8 +2,8 @@
 
 import difflib
 
-from langchain_community.chat_models import ChatOpenAI
 from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_openai import ChatOpenAI
 
 from codegen import Codebase
 
@@ -135,7 +135,10 @@ Original file content:
 Edit specification:
 {edit_spec}
 
-Return ONLY the modified code content. Do not include any markdown formatting, explanations, or code block markers."""
+Return ONLY the modified file's content. Do not include any markdown formatting, explanations, or code block markers.
+
+IMPORTANT: you output will be directly written to file and the entire file content will be replaced, so include the entire file content!!
+"""
     )
 
     # Call the LLM
