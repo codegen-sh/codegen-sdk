@@ -20,6 +20,7 @@ from ..tools import (
     reveal_symbol,
     search,
     semantic_edit,
+    semantic_search,
     view_file,
 )
 
@@ -341,4 +342,28 @@ class MakePRTool(BaseTool):
 
     def _run(self, title: str, body: str, branch: str | None = None) -> str:
         result = make_pr(self.codebase, title, body, branch=branch)
+        return json.dumps(result, indent=2)
+
+
+class SemanticSearchTool(BaseTool):
+    """Tool for semantic code search."""
+
+    name: ClassVar[str] = "semantic_search"
+    description: ClassVar[str] = "Search the codebase using natural language queries and semantic similarity"
+    args_schema: ClassVar[type[BaseModel]] = type(
+        "SemanticSearchInput",
+        (BaseModel,),
+        {
+            "query": (str, Field(..., description="The natural language search query")),
+            "k": (int, Field(default=5, description="Number of results to return")),
+            "preview_length": (int, Field(default=200, description="Length of content preview in characters")),
+        },
+    )
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, query: str, k: int = 5, preview_length: int = 200) -> str:
+        result = semantic_search(self.codebase, query, k=k, preview_length=preview_length)
         return json.dumps(result, indent=2)
