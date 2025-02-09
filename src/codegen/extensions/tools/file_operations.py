@@ -237,21 +237,3 @@ def commit(codebase: Codebase) -> dict[str, Any]:
     """
     codebase.commit()
     return {"status": "success", "message": "Changes committed to disk"}
-
-
-def make_pr(codebase: Codebase, title: str, body: str, branch: str | None = None) -> dict[str, Any]:
-    """Creates a pull request or returns a URL to create one.
-
-    Args:
-        codebase: The codebase to operate on
-        title: The title for the pull request
-        body: The description/body for the pull request
-        branch: Optional branch name to create PR from. If provided, will checkout/create branch and push to it.
-
-    Returns:
-        Dict containing either:
-        - On success: {"status": "success", "url": "<pr_url>", "number": pr_number}
-        - On manual URL: {"status": "manual", "url": "<url_to_create_pr>"}
-        - On error: {"error": "<error_message>"}
-    """
-    return codebase.make_pr(title=title, body=body, branch=branch)
