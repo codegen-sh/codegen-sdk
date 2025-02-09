@@ -62,6 +62,7 @@ dependencies = [
   "tomlkit>=0.13.2",
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
+  "langchain",
 ]
 
 license = { text = "Apache-2.0" }
