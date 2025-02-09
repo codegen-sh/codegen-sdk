@@ -5,6 +5,7 @@ This set of examples demonstrates four different approaches to visualizing code 
 ## Visualization Types
 
 ### 1. Function Call Relationships (`call_trace.py`)
+
 Traces downstream function call relationships from a target method. This visualization is particularly useful for understanding the flow of execution and identifying complex call chains that might need optimization or refactoring.
 
 > [!NOTE]
@@ -37,6 +38,7 @@ def create_downstream_call_trace(src_func: Function, depth: int = 0):
 ```
 
 ### 2. Symbol Dependencies (`dependency_trace.py`)
+
 Maps symbol dependencies throughout the codebase. This helps developers identify tightly coupled components and understand the impact of modifying shared dependencies, making it easier to plan architectural changes.
 
 > [!NOTE]
@@ -64,6 +66,7 @@ def create_dependencies_visualization(symbol: Symbol, depth: int = 0):
 ```
 
 ### 3. Function Blast Radius (`blast_radius.py`)
+
 Shows the impact radius of potential changes. This visualization is invaluable for risk assessment before refactoring, as it reveals all the code paths that could be affected by modifying a particular function or symbol.
 
 > [!NOTE]
@@ -91,6 +94,7 @@ def create_blast_radius_visualization(symbol: PySymbol, depth: int = 0):
 ```
 
 ### 4. Class Method Relationships (`method_relationships.py`)
+
 Creates a comprehensive view of class method interactions. This helps developers understand class cohesion, identify potential god classes, and spot opportunities for breaking down complex classes into smaller, more manageable components.
 
 > [!NOTE]
@@ -118,22 +122,26 @@ def graph_class_methods(target_class: Class):
 All visualizations share these characteristics:
 
 1. **Configurable Depth**
+
    - MAX_DEPTH setting controls recursion
    - Prevents infinite loops in circular references
 
-2. **Color Coding**
+1. **Color Coding**
+
    ```python
    COLOR_PALETTE = {
        "StartFunction": "#9cdcfe",  # Entry point
-       "PyFunction": "#a277ff",     # Regular functions
-       "PyClass": "#ffca85",        # Classes
-       "ExternalModule": "#f694ff"  # External calls
+       "PyFunction": "#a277ff",  # Regular functions
+       "PyClass": "#ffca85",  # Classes
+       "ExternalModule": "#f694ff",  # External calls
    }
    ```
 
-3. **Edge Metadata**
+1. **Edge Metadata**
+
    - Tracks file paths
    - Creates data object for visualization
+
 ## Running the Visualizations
 
 ```bash
@@ -148,9 +156,10 @@ python method_relationships.py  # Class method relationships
 ```
 
 Each script will:
+
 1. Initialize the codebase
-2. Create the appropriate graph for the relationship
-3. Generate visualization data
+1. Create the appropriate graph for the relationship
+1. Generate visualization data
 
 ## View Results
 

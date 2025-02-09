@@ -9,17 +9,21 @@ This example demonstrates how to use Codegen to automatically migrate a Flask ap
 The migration script handles four key transformations:
 
 1. **Updates Imports and Initialization**
+
    ```python
    # From:
    from flask import Flask
+
    app = Flask(__name__)
 
    # To:
    from fastapi import FastAPI
+
    app = FastAPI()
    ```
 
-2. **Converts Route Decorators**
+1. **Converts Route Decorators**
+
    ```python
    # From:
    @app.route("/users", methods=["POST"])
@@ -28,24 +32,23 @@ The migration script handles four key transformations:
    @app.post("/users")
    ```
 
-3. **Sets Up Static File Handling**
+1. **Sets Up Static File Handling**
+
    ```python
    # Adds:
    from fastapi.staticfiles import StaticFiles
+
    app.mount("/static", StaticFiles(directory="static"), name="static")
    ```
 
-4. **Updates Template Rendering**
+1. **Updates Template Rendering**
+
    ```python
    # From:
    return render_template("users.html", users=users)
 
    # To:
-   return Jinja2Templates(directory="templates").TemplateResponse(
-       "users.html",
-       context={"users": users},
-       request=request
-   )
+   return Jinja2Templates(directory="templates").TemplateResponse("users.html", context={"users": users}, request=request)
    ```
 
 ## Running the Example

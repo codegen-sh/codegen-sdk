@@ -10,28 +10,34 @@ This example demonstrates how to use Codegen to automatically add OpenAPI decora
 The script automates the documentation process in several key steps:
 
 1. **Resource Class Detection**
+
    ```python
    for cls in codebase.classes:
        if cls.is_subclass_of("Resource"):
            # Process Flask-RESTx resource classes
    ```
+
    - Identifies Flask-RESTx resource classes
    - Analyzes HTTP method handlers (get, post, put, patch, delete)
    - Determines which decorators are missing
 
-2. **Response Analysis**
+1. **Response Analysis**
+
    ```python
    response_schemas = analyze_method_returns(method)
    ```
+
    - Analyzes return statements
    - Extracts response codes and schemas
    - Handles error responses from `http_error` calls
    - Processes existing `@doc` decorators
 
-3. **Parameter Analysis**
+1. **Parameter Analysis**
+
    ```python
    expect_schema = analyze_method_params(method)
    ```
+
    - Analyzes request parameter usage
    - Detects JSON request body schemas
    - Processes existing `@expect` decorators
@@ -39,16 +45,19 @@ The script automates the documentation process in several key steps:
 ## Why This Makes Documentation Easy
 
 1. **Automated Analysis**
+
    - Automatically detects API patterns
    - Infers response and request schemas
    - No manual documentation required
 
-2. **Consistent Documentation**
+1. **Consistent Documentation**
+
    - Ensures all endpoints are documented
    - Maintains consistent decorator usage
    - Preserves existing decorators
 
-3. **Intelligent Schema Detection**
+1. **Intelligent Schema Detection**
+
    - Analyzes model fields
    - Detects request parameter types
    - Handles nested objects
@@ -56,53 +65,60 @@ The script automates the documentation process in several key steps:
 ## Common Documentation Patterns
 
 ### Response Decorators
+
 ```python
 # Before
-@ns.route('/endpoint')
+@ns.route("/endpoint")
 class MyResource(Resource):
     def get(self):
-        return {'data': result}
+        return {"data": result}
+
 
 # After
-@ns.route('/endpoint')
+@ns.route("/endpoint")
 class MyResource(Resource):
-    @ns.response(200, 'Success', {'data': {'type': 'any'}})
+    @ns.response(200, "Success", {"data": {"type": "any"}})
     def get(self):
-        return {'data': result}
+        return {"data": result}
 ```
 
 ### Request Expect Decorators
+
 ```python
 # Before
-@ns.route('/endpoint')
+@ns.route("/endpoint")
 class MyResource(Resource):
     def post(self):
-        data = request.json['name']
-        return {'status': 'success'}
+        data = request.json["name"]
+        return {"status": "success"}
+
 
 # After
-@ns.route('/endpoint')
+@ns.route("/endpoint")
 class MyResource(Resource):
-    @ns.expect({'name': {'type': 'any', 'required': True}})
-    @ns.response(200, 'Success', {'status': {'type': 'any'}})
+    @ns.expect({"name": {"type": "any", "required": True}})
+    @ns.response(200, "Success", {"status": {"type": "any"}})
     def post(self):
-        data = request.json['name']
-        return {'status': 'success'}
+        data = request.json["name"]
+        return {"status": "success"}
 ```
 
 ## Key Benefits to Note
 
 1. **Better API Documentation**
+
    - Clear response schemas
    - Documented request parameters
    - Improved API explorer experience
 
-2. **Consistent Error Handling**
+1. **Consistent Error Handling**
+
    - Documented error responses
    - Clear status codes
    - Better client integration
 
-3. **Time Savings**
+1. **Time Savings**
+
    - Automated decorator generation
    - Reduced manual documentation work
    - Easier maintenance
@@ -118,10 +134,11 @@ python run.py
 ```
 
 The script will:
+
 1. Initialize the codebase
-2. Find Flask-RESTx resource classes
-3. Analyze methods and add decorators
-4. Print detailed analytics about missing decorators
+1. Find Flask-RESTx resource classes
+1. Analyze methods and add decorators
+1. Print detailed analytics about missing decorators
 
 ## Learn More
 
@@ -131,4 +148,4 @@ The script will:
 
 ## Contributing
 
-Feel free to submit issues and enhancement requests! 
+Feel free to submit issues and enhancement requests!

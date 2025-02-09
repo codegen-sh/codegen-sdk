@@ -1,6 +1,6 @@
 # Transform React Fragment to Shorthand Syntax
 
-This example demonstrates how to use Codegen to automatically convert React Fragment components to the shorthand syntax (<>). The script makes this process simple by handling all the tedious manual updates automatically.
+This example demonstrates how to use Codegen to automatically convert React Fragment components to the shorthand syntax (\<>). The script makes this process simple by handling all the tedious manual updates automatically.
 
 > [!NOTE]
 > This codemod helps modernize React codebases by using the more concise fragment syntax while maintaining functionality.
@@ -10,6 +10,7 @@ This example demonstrates how to use Codegen to automatically convert React Frag
 The script automates the entire conversion process in a few key steps:
 
 1. **Fragment Detection**
+
    ```jsx
    // From:
    <Fragment>
@@ -24,7 +25,8 @@ The script automates the entire conversion process in a few key steps:
    </>
    ```
 
-2. **Import Cleanup**
+1. **Import Cleanup**
+
    ```typescript
    // From:
    import React, { Fragment } from 'react';
@@ -36,25 +38,28 @@ The script automates the entire conversion process in a few key steps:
 ## Why This Makes Migration Easy
 
 1. **Zero Manual Updates**
+
    - Codegen SDK handles all Fragment replacements
    - Automatically cleans up imports
 
-2. **Consistent Changes**
+1. **Consistent Changes**
+
    - Ensures all Fragments are converted
    - Maintains code functionality
 
-3. **Safe Transformations**
+1. **Safe Transformations**
+
    - Preserves JSX structure
    - Handles nested Fragments correctly
 
 ## Running the Migration
 
-
 The script will:
+
 1. Find all Fragment components
-2. Convert them to shorthand syntax
-3. Clean up Fragment imports
-4. Preserve other React imports
+1. Convert them to shorthand syntax
+1. Clean up Fragment imports
+1. Preserve other React imports
 
 ## Learn More
 
@@ -62,6 +67,7 @@ The script will:
 - [JSX Fragments](https://react.dev/reference/jsx#jsx-fragments)
 - [Codegen Documentation](https://docs.codegen.com)
 - [More on Codegen SDK jsx elements API](https://docs.codegen.com/api-reference/typescript/JSXElement#jsxelement)
+
 ## Contributing
 
-Feel free to submit issues and enhancement requests! 
+Feel free to submit issues and enhancement requests!

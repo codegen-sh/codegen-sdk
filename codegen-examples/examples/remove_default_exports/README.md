@@ -7,22 +7,26 @@ This codemod demonstrates how to automatically convert default exports to named 
 The script automates the entire migration process in a few key steps:
 
 1. **File Detection and Analysis**
+
    ```python
    codebase = Codebase("./")
    for file in codebase.files:
        if "/shared/" not in file.filepath:
            continue
    ```
+
    - Automatically identifies shared TypeScript files
    - Analyzes export structures
    - Determines necessary export modifications
 
-2. **Export Conversion**
+1. **Export Conversion**
+
    ```python
    for export in file.exports:
        if export.is_default_export():
            export.make_non_default()
    ```
+
    - Converts default exports to named exports
    - Ensures corresponding non-shared files are updated
    - Preserves existing export configurations
@@ -30,6 +34,7 @@ The script automates the entire migration process in a few key steps:
 ## Common Migration Patterns
 
 ### Default Export Conversion
+
 ```typescript
 // Before
 export default function myFunction() {}
@@ -39,6 +44,7 @@ export function myFunction() {}
 ```
 
 ### Re-export Conversion
+
 ```typescript
 // Before
 export { default } from './module';

@@ -10,67 +10,80 @@ This example demonstrates how to automatically convert Python dictionary literal
 The script (`run.py`) automates the entire conversion process in a few key steps:
 
 1. **Codebase Loading**
+
    ```python
    codebase = Codebase.from_repo("modal-labs/modal-client")
    ```
+
    - Loads your codebase into Codegen's intelligent code analysis engine
    - Provides a simple SDK for making codebase-wide changes
    - Supports any Git repository as input
 
-2. **Dictionary Detection**
+1. **Dictionary Detection**
+
    ```python
    if "{" in global_var.source and "}" in global_var.source:
        dict_content = global_var.value.source.strip("{}")
    ```
+
    - Automatically identifies dictionary literals in your code
    - Processes both global variables and class attributes
    - Skips empty dictionaries to avoid unnecessary conversions
 
-3. **Schema Creation**
+1. **Schema Creation**
+
    ```python
    class_name = global_var.name.title() + "Schema"
    model_def = f"""class {class_name}(BaseModel):
        {dict_content.replace(",", "\n    ")}"""
    ```
+
    - Generates meaningful model names based on variable names
    - Converts dictionary key-value pairs to class attributes
    - Maintains proper Python indentation
 
-4. **Code Updates**
+1. **Code Updates**
+
    ```python
    global_var.insert_before(model_def + "\n\n")
    global_var.set_value(f"{class_name}(**{global_var.value.source})")
    ```
+
    - Inserts new Pydantic models in appropriate locations
    - Updates dictionary assignments to use the new models
    - Automatically adds required Pydantic imports
 
-
 ## Common Conversion Patterns
 
 ### Global Variables
+
 ```python
 # Before
 config = {"host": "localhost", "port": 8080}
+
 
 # After
 class ConfigSchema(BaseModel):
     host: str = "localhost"
     port: int = 8080
 
+
 config = ConfigSchema(**{"host": "localhost", "port": 8080})
 ```
 
 ### Class Attributes
+
 ```python
 # Before
 class Service:
     defaults = {"timeout": 30, "retries": 3}
 
+
 # After
 class DefaultsSchema(BaseModel):
     timeout: int = 30
     retries: int = 3
+
 
 class Service:
     defaults = DefaultsSchema(**{"timeout": 30, "retries": 3})

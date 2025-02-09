@@ -106,4 +106,3 @@ def delete_publisher(publisher_id: int, db: Session = Depends(get_db)):
     db.delete(db_publisher)
     db.commit()
     return db_publisher
-

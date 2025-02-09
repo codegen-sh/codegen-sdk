@@ -9,41 +9,26 @@ This example demonstrates how to use Codegen to generate training data for large
 The script analyzes your codebase and generates training data by:
 
 1. **Finding All Functions**
+
    - Scans the entire codebase to identify function definitions
    - Filters out trivial functions (less than 2 lines)
 
-2. **Capturing Implementation Context**
+1. **Capturing Implementation Context**
+
    ```python
-   {
-     "implementation": {
-       "source": "def process_data():\n    ...",
-       "filepath": "src/process.py"
-     }
-   }
+   {"implementation": {"source": "def process_data():\n    ...", "filepath": "src/process.py"}}
    ```
 
-3. **Extracting Dependencies**
+1. **Extracting Dependencies**
+
    ```python
-   {
-     "dependencies": [
-       {
-         "source": "def helper_function():\n    ...",
-         "filepath": "src/helpers.py"
-       }
-     ]
-   }
+   {"dependencies": [{"source": "def helper_function():\n    ...", "filepath": "src/helpers.py"}]}
    ```
 
-4. **Recording Usages**
+1. **Recording Usages**
+
    ```python
-   {
-     "usages": [
-       {
-         "source": "result = process_data()",
-         "filepath": "src/main.py"
-       }
-     ]
-   }
+   {"usages": [{"source": "result = process_data()", "filepath": "src/main.py"}]}
    ```
 
 ## Running the Example
@@ -68,13 +53,27 @@ The script will analyze your codebase and output a `training_data.json` file con
 ## Output Format
 
 The generated `training_data.json` follows this structure:
+
 ```json
 {
   "functions": [
     {
-      "implementation": { "source": "...", "filepath": "..." },
-      "dependencies": [{ "source": "...", "filepath": "..." }],
-      "usages": [{ "source": "...", "filepath": "..." }]
+      "implementation": {
+        "source": "...",
+        "filepath": "..."
+      },
+      "dependencies": [
+        {
+          "source": "...",
+          "filepath": "..."
+        }
+      ],
+      "usages": [
+        {
+          "source": "...",
+          "filepath": "..."
+        }
+      ]
     }
   ],
   "metadata": {

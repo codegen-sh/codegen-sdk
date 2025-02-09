@@ -7,41 +7,48 @@ This example demonstrates how to use Codegen to automatically migrate test code 
 The script (`run.py`) automates the entire migration process in a few key steps:
 
 1. **Codebase Loading**
+
    ```python
-   codebase = Codebase.from_repo(
-       "getmoto/moto", commit="786a8ada7ed0c7f9d8b04d49f24596865e4b7901")
+   codebase = Codebase.from_repo("getmoto/moto", commit="786a8ada7ed0c7f9d8b04d49f24596865e4b7901")
    ```
+
    - Loads your codebase into Codegen's intelligent code analysis engine
    - Provides a simple SDK for making codebase-wide changes
    - Supports specific commit targeting for version control
 
-2. **Test File Detection**
+1. **Test File Detection**
+
    ```python
    if "tests" not in file.filepath:
        continue
    ```
+
    - Automatically identifies test files using Codegen's file APIs
    - Skips non-test files to avoid unnecessary processing
    - Focuses changes where time mocking is most commonly used
 
-3. **Import Updates**
+1. **Import Updates**
+
    ```python
    for imp in file.imports:
-       if imp.symbol_name and 'freezegun' in imp.source:
-           if imp.name == 'freeze_time':
-               imp.edit('from time_machine import travel')
+       if imp.symbol_name and "freezegun" in imp.source:
+           if imp.name == "freeze_time":
+               imp.edit("from time_machine import travel")
    ```
+
    - Uses Codegen's import analysis to find and update imports
    - Handles both direct and aliased imports
    - Preserves import structure and formatting
 
-4. **Function Call Transformation**
+1. **Function Call Transformation**
+
    ```python
    for fcall in file.function_calls:
-       if 'freeze_time' not in fcall.source:
+       if "freeze_time" not in fcall.source:
            continue
        # Transform freeze_time to travel with tick=False
    ```
+
    - Uses Codegen's function call analysis to find all usages
    - Adds required TimeMachine parameters
    - Maintains existing arguments and formatting
@@ -49,25 +56,30 @@ The script (`run.py`) automates the entire migration process in a few key steps:
 ## Why This Makes Migration Easy
 
 1. **Zero Manual Updates**
+
    - Codegen SDK handles all the file searching and updating
    - No tedious copy-paste work
 
-2. **Consistent Changes**
+1. **Consistent Changes**
+
    - Codegen ensures all transformations follow the same patterns
    - Maintains code style consistency
 
-3. **Safe Transformations**
+1. **Safe Transformations**
+
    - Codegen validates changes before applying them
    - Easy to review and revert if needed
 
 ## Common Migration Patterns
 
 ### Decorator Usage
+
 ```python
 # FreezeGun
 @freeze_time("2023-01-01")
 def test_function():
     pass
+
 
 # Automatically converted to:
 @travel("2023-01-01", tick=False)
@@ -76,6 +88,7 @@ def test_function():
 ```
 
 ### Context Manager Usage
+
 ```python
 # FreezeGun
 with freeze_time("2023-01-01"):
@@ -87,6 +100,7 @@ with travel("2023-01-01", tick=False):
 ```
 
 ### Moving Time Forward
+
 ```python
 # FreezeGun
 freezer = freeze_time("2023-01-01")
@@ -104,14 +118,17 @@ traveller.stop()
 ## Key Differences to Note
 
 1. **Tick Parameter**
+
    - TimeMachine requires explicit tick behavior configuration
    - Script automatically adds `tick=False` to match FreezeGun's default behavior
 
-2. **Time Movement**
+1. **Time Movement**
+
    - FreezeGun uses `move_to()` with datetime strings
    - TimeMachine uses `shift()` with timedelta objects
 
-3. **Return Values**
+1. **Return Values**
+
    - FreezeGun's decorator returns the freezer object
    - TimeMachine's decorator returns a traveller object
 

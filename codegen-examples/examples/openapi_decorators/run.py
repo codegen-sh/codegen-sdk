@@ -2,11 +2,12 @@ import codegen
 from codegen import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 
+
 def analyze_model_fields(method) -> dict:
     """Analyze model fields from ns_conf.model definitions."""
     print(f"\n🔍 Analyzing model fields for method: {method.name}")
     schema = {}
-    
+
     # Look for model definitions in doc decorators
     for decorator in method.decorators:
         if ".doc" in decorator.source:
@@ -21,25 +22,26 @@ def analyze_model_fields(method) -> dict:
                                 name, field_type = field.split(":", 1)
                                 name = name.strip()
                                 if "fields.String" in field_type:
-                                    schema[name] = {'type': 'string'}
+                                    schema[name] = {"type": "string"}
                                 elif "fields.Boolean" in field_type:
-                                    schema[name] = {'type': 'boolean'}
+                                    schema[name] = {"type": "boolean"}
                                 elif "fields.Integer" in field_type:
-                                    schema[name] = {'type': 'integer'}
+                                    schema[name] = {"type": "integer"}
                                 elif "fields.Nested" in field_type:
-                                    schema[name] = {'type': 'object'}
+                                    schema[name] = {"type": "object"}
                                 else:
-                                    schema[name] = {'type': 'any'}
+                                    schema[name] = {"type": "any"}
             except Exception as e:
                 print(f"   ⚠️ Couldn't parse model fields: {str(e)}")
-                
+
     return schema
+
 
 def analyze_doc_responses(method) -> list[tuple]:
     """Analyze responses defined in @ns_conf.doc decorators."""
     print(f"\n🔍 Analyzing doc responses for method: {method.name}")
     responses = []
-    
+
     for decorator in method.decorators:
         if ".doc" in decorator.source:
             try:
@@ -56,14 +58,15 @@ def analyze_doc_responses(method) -> list[tuple]:
                                 responses.append((code, desc, schema))
             except Exception as e:
                 print(f"   ⚠️ Couldn't parse doc responses: {str(e)}")
-    
+
     return responses
+
 
 def analyze_method_returns(method) -> list[tuple]:
     """Analyze method return statements to determine response schemas."""
     print(f"\n🔍 Analyzing returns for method: {method.name}")
     responses = set()  # Using set to avoid duplicates
-    
+
     # First check existing response decorators
     for decorator in method.decorators:
         if ".response" in decorator.source:
@@ -80,7 +83,7 @@ def analyze_method_returns(method) -> list[tuple]:
     doc_responses = analyze_doc_responses(method)
     for resp in doc_responses:
         responses.add(resp)
-    
+
     # Handle model fields if present
     model_schema = analyze_model_fields(method)
     if model_schema:
@@ -90,7 +93,7 @@ def analyze_method_returns(method) -> list[tuple]:
             responses.remove(success_responses[0])
             responses.add((200, success_responses[0][1], model_schema))
         else:
-            responses.add((200, 'Success', model_schema))
+            responses.add((200, "Success", model_schema))
 
     # Track http_error calls
     error_calls = [call for call in method.function_calls if call.name == "http_error"]
@@ -98,7 +101,7 @@ def analyze_method_returns(method) -> list[tuple]:
         if len(error_call.args) >= 2:
             try:
                 status_code = error_call.args[0].value
-                if hasattr(status_code, 'name'):  # Handle HTTPStatus enum
+                if hasattr(status_code, "name"):  # Handle HTTPStatus enum
                     status_code = getattr(HTTPStatus, status_code.name)
                 message = error_call.args[1].value
                 responses.add((int(status_code), message, None))
@@ -118,7 +121,7 @@ def analyze_method_returns(method) -> list[tuple]:
                     if ":" in pair:
                         key, _ = pair.split(":", 1)
                         key = key.strip().strip("'").strip('"')
-                        schema[key] = {'type': 'any'}
+                        schema[key] = {"type": "any"}
                 responses.add((200, "Success", schema))
         except Exception as e:
             print(f"   ⚠️ Couldn't analyze return: {str(e)}")
@@ -129,11 +132,12 @@ def analyze_method_returns(method) -> list[tuple]:
 
     return list(responses)
 
+
 def analyze_method_params(method) -> dict:
     """Analyze method parameters and request parsing to determine expect schema."""
     print(f"\n🔍 Analyzing parameters for method: {method.name}")
     schema = {}
-    
+
     # First check ns_conf.expect decorators
     for decorator in method.decorators:
         if ".expect" in decorator.source:
@@ -144,10 +148,10 @@ def analyze_method_params(method) -> dict:
                     for entry in dict_content.split(","):
                         if ":" in entry and "'" in entry:
                             key = entry.split(":")[0].strip().strip("'").strip('"')
-                            schema[key] = {'type': 'any', 'required': False}  # Default to not required
+                            schema[key] = {"type": "any", "required": False}  # Default to not required
             except Exception as e:
                 print(f"   ⚠️ Couldn't parse expect decorator: {str(e)}")
-                
+
     # Look for request.json usage if no schema found
     if not schema:
         for call in method.function_calls:
@@ -155,15 +159,16 @@ def analyze_method_params(method) -> dict:
                 try:
                     if "get(" in call.source:
                         key = call.source.split(".get(")[1].split(",")[0].strip("'\"")
-                        schema[key] = {'type': 'any', 'required': False}
+                        schema[key] = {"type": "any", "required": False}
                     else:
                         key = call.source.split("request.json")[1].strip("[].'\"")
-                        schema[key] = {'type': 'any', 'required': True}
+                        schema[key] = {"type": "any", "required": True}
                 except Exception as e:
                     print(f"   ⚠️ Couldn't analyze request.json: {str(e)}")
 
     print(f"   📝 Found expected params: {schema}")
     return schema
+
 
 @codegen.function("add-openapi-decorators")
 def run(codebase: Codebase):
@@ -173,47 +178,42 @@ def run(codebase: Codebase):
     for cls in codebase.classes:
         if cls.is_subclass_of("Resource"):
             file_analytics = []
-            
+
             ns_decorator = next((d for d in cls.decorators if ".route" in d.source), None)
             if not ns_decorator:
                 continue
-                
+
             ns_name = ns_decorator.source.split("@")[1].split(".")[0]
             print(f"      📌 Found namespace: {ns_name}")
-            
+
             for method in cls.methods:
                 print(f"\n      ⚡ Checking method: {method.name}")
-                
+
                 if method.name not in ("get", "post", "put", "patch", "delete"):
                     print("         ⏩ Skipping - not an HTTP method")
                     continue
-                
+
                 # Check existing decorators
                 existing_decorators = [d.source for d in method.decorators]
                 print(f"         📝 Existing decorators: {existing_decorators}")
-                
+
                 # Check for missing decorators
                 missing_response = not any(".response" in d for d in existing_decorators)
                 missing_expect = not any(".expect" in d for d in existing_decorators)
-                
+
                 if not (missing_response or missing_expect):
                     print("         ✅ All decorators present")
                     continue
-                
+
                 print(f"         🔧 Missing decorators - response: {missing_response}, expect: {missing_expect}")
 
-                missing_info = {
-                    "class": cls.name,
-                    "method": method.name,
-                    "missing_response": missing_response,
-                    "missing_expect": missing_expect
-                }
+                missing_info = {"class": cls.name, "method": method.name, "missing_response": missing_response, "missing_expect": missing_expect}
                 file_analytics.append(missing_info)
-                
+
                 try:
                     response_schemas = analyze_method_returns(method)
                     expect_schema = analyze_method_params(method) if method.name in ("post", "put", "patch") else {}
-                    
+
                     # Add missing expect decorator
                     if missing_expect and method.name in ("post", "put", "patch") and expect_schema:
                         schema_str = "{\n"
@@ -222,7 +222,7 @@ def run(codebase: Codebase):
                         schema_str += "}"
                         print(f"         ➕ Adding expect decorator with schema: {schema_str}")
                         method.insert_before(f"@{ns_name}.expect({schema_str})", fix_indentation=True)
-                    
+
                     # Add missing response decorators
                     if missing_response:
                         print(f"         ➕ Adding {len(response_schemas)} response decorators")
@@ -246,22 +246,22 @@ def run(codebase: Codebase):
 
     print("\n📊 Analytics: Missing OpenAPI Decorators")
     print("================================================================")
-    
+
     for file_path, missing_decorators in analytics.items():
         print(f"\nFile: {file_path}")
         for info in missing_decorators:
             print(f"  Class: {info['class']}, Method: {info['method']}")
-            if info['missing_response']:
+            if info["missing_response"]:
                 print("    ❌ Missing @response decorator")
-            if info['missing_expect']:
+            if info["missing_expect"]:
                 print("    ❌ Missing @expect decorator")
-    
+
     print("\n✅ OpenAPI decorators added!")
     codebase.commit()
 
 
 if __name__ == "__main__":
     print("🎯 Starting OpenAPI decorators addition...")
-    codebase = Codebase.from_repo("mindsdb/mindsdb", commit="4b76c44bfaec789289e15fbdff7397e866009f94",programming_language=ProgrammingLanguage.PYTHON)
+    codebase = Codebase.from_repo("mindsdb/mindsdb", commit="4b76c44bfaec789289e15fbdff7397e866009f94", programming_language=ProgrammingLanguage.PYTHON)
     run(codebase)
     print("✅ Done! OpenAPI decorators added to all API endpoints!")

@@ -11,16 +11,19 @@ We recommend using [`uv`](https://github.com/astral-sh/uv) with Python 3.13 for 
 To install Codegen, please follow the [official installation guide](https://docs.codegen.com/introduction/installation). Once Codegen is installed, use these steps to run the examples in this repository:
 
 Install the Codegen CLI globally
+
 ```bash
 uv tool install codegen
 ```
 
 Initialize Codegen in your project
+
 ```bash
 codegen init
 ```
 
 Activate the virtual environment
+
 ```bash
 source .codegen/.venv/bin/activate
 ```
@@ -34,6 +37,7 @@ To configure your IDE for optimal use with Codegen, follow our [IDE setup guide]
 ## Examples
 
 Within the examples folder, each subdirectory contains a self-contained example with:
+
 - An explanation of the transformation (`README.md`)
 - A Codegen script that performs the transformation (`run.py`)
 - Sample code to transform, if not using a repository (`input_repo/`)

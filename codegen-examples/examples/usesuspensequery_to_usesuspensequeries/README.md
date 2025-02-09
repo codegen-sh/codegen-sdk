@@ -10,29 +10,35 @@ This example demonstrates how to use Codegen to automatically convert multiple `
 The script automates the entire migration process in a few key steps:
 
 1. **File Detection**
+
    ```python
    for file in codebase.files:
        if "useSuspenseQuery" not in file.source:
            continue
    ```
+
    - Automatically identifies files using `useSuspenseQuery`
    - Skips irrelevant files to avoid unnecessary processing
    - Uses Codegen's intelligent code analysis engine
 
-2. **Import Management**
+1. **Import Management**
+
    ```python
    import_str = "import { useQuery, useSuspenseQueries } from '@tanstack/react-query'"
    file.add_import_from_import_string(import_str)
    ```
+
    - Uses Codegen's import analysis to add required imports
    - Preserves existing import structure
    - Handles import deduplication automatically
 
-3. **Query Transformation**
+1. **Query Transformation**
+
    ```python
    # Convert multiple queries to single useSuspenseQueries call
    new_query = f"const [{', '.join(results)}] = useSuspenseQueries({{queries: [{', '.join(queries)}]}})"
    ```
+
    - Collects multiple `useSuspenseQuery` calls
    - Combines them into a single `useSuspenseQueries` call
    - Maintains variable naming and query configurations
@@ -40,20 +46,24 @@ The script automates the entire migration process in a few key steps:
 ## Why This Makes Migration Easy
 
 1. **Zero Manual Updates**
+
    - Codegen SDK handles all the file searching and updating
    - No tedious copy-paste work
 
-2. **Consistent Changes**
+1. **Consistent Changes**
+
    - Ensures all transformations follow the same patterns
    - Maintains code style consistency
 
-3. **Safe Transformations**
+1. **Safe Transformations**
+
    - Validates changes before applying them
    - Easy to review and revert if needed
 
 ## Common Migration Patterns
 
 ### Multiple Query Calls
+
 ```typescript
 // Before
 const result1 = useSuspenseQuery(queryConfig1)
@@ -69,14 +79,17 @@ const [result1, result2, result3] = useSuspenseQueries({
 ## Key Benefits to Note
 
 1. **Reduced Re-renders**
+
    - Single query call instead of multiple separate calls
    - Better React performance
 
-2. **Improved Code Readability**
+1. **Improved Code Readability**
+
    - Cleaner, more consolidated query logic
    - Easier to maintain and understand
 
-3. **Network Optimization**
+1. **Network Optimization**
+
    - Batched query requests
    - Better resource utilization
 
@@ -91,10 +104,11 @@ python run.py
 ```
 
 The script will:
+
 1. Initialize the codebase
-2. Find files containing `useSuspenseQuery`
-3. Apply the transformations
-4. Print detailed progress information
+1. Find files containing `useSuspenseQuery`
+1. Apply the transformations
+1. Print detailed progress information
 
 ## Learn More
 

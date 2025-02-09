@@ -9,6 +9,7 @@ This example demonstrates how to use Codegen to automatically migrate Python 2 c
 The migration script handles five key transformations:
 
 1. **Convert Print Statements**
+
    ```python
    # From:
    print "Hello, world!"
@@ -19,19 +20,22 @@ The migration script handles five key transformations:
    print(x, y, z)
    ```
 
-2. **Update Unicode to str**
+1. **Update Unicode to str**
+
    ```python
    # From:
    from __future__ import unicode_literals
+
    text = unicode("Hello")
-   prefix = u"prefix"
+   prefix = "prefix"
 
    # To:
    text = str("Hello")
    prefix = "prefix"
    ```
 
-3. **Convert raw_input to input**
+1. **Convert raw_input to input**
+
    ```python
    # From:
    name = raw_input("Enter your name: ")
@@ -40,7 +44,8 @@ The migration script handles five key transformations:
    name = input("Enter your name: ")
    ```
 
-4. **Update Exception Handling**
+1. **Update Exception Handling**
+
    ```python
    # From:
    try:
@@ -55,12 +60,14 @@ The migration script handles five key transformations:
        print(e)
    ```
 
-5. **Modernize Iterator Methods**
+1. **Modernize Iterator Methods**
+
    ```python
    # From:
    class MyIterator:
        def next(self):
            return self.value
+
 
    # To:
    class MyIterator:

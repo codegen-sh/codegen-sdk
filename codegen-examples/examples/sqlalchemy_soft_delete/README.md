@@ -11,6 +11,7 @@ The codemod analyzes your codebase and automatically adds soft delete conditions
 The codemod processes your codebase in several steps:
 
 1. **Join Detection**
+
    ```python
    def should_process_join_call(call, soft_delete_models, join_methods):
        if str(call.name) not in join_methods:
@@ -23,11 +24,13 @@ The codemod processes your codebase in several steps:
        model_name = str(call_args[0].value)
        return model_name in soft_delete_models
    ```
+
    - Scans for SQLAlchemy join method calls (`join`, `outerjoin`, `innerjoin`)
    - Identifies joins involving soft-deletable models
    - Analyzes existing join conditions
 
-2. **Condition Addition**
+1. **Condition Addition**
+
    ```python
    def add_deleted_at_check(file, call, model_name):
        call_args = list(call.args)
@@ -43,18 +46,21 @@ The codemod processes your codebase in several steps:
        else:
            call_args[1].edit(f"and_({second_arg.source}, {deleted_at_check})")
    ```
+
    - Adds `deleted_at.is_(None)` checks to qualifying joins
    - Handles different join condition patterns:
      - Simple joins with no conditions
      - Joins with existing conditions (combines using `and_`)
    - Preserves existing conditions while adding soft delete checks
 
-3. **Import Management**
+1. **Import Management**
+
    ```python
    def ensure_and_import(file):
        if not any("and_" in imp.name for imp in file.imports):
            file.add_import_from_import_string("from sqlalchemy import and_")
    ```
+
    - Automatically adds required SQLAlchemy imports (`and_`)
    - Prevents duplicate imports
 
@@ -63,21 +69,15 @@ The codemod processes your codebase in several steps:
 ### Soft Delete Models
 
 The codemod processes joins for the following models:
+
 ```python
-soft_delete_models = {
-    "User",
-    "Update",
-    "Proposal",
-    "Comment",
-    "Project",
-    "Team",
-    "SavedSession"
-}
+soft_delete_models = {"User", "Update", "Proposal", "Comment", "Project", "Team", "SavedSession"}
 ```
 
 ### Join Methods
 
 The codemod handles these SQLAlchemy join methods:
+
 ```python
 join_methods = {"join", "outerjoin", "innerjoin"}
 ```
@@ -85,37 +85,39 @@ join_methods = {"join", "outerjoin", "innerjoin"}
 ## Code Transformations
 
 ### Simple Join with Model Reference
+
 ```python
 # Before
 query.join(Project, Session.project)
 
 # After
 from sqlalchemy import and_
+
 query.join(Project, and_(Session.project, Project.deleted_at.is_(None)))
 ```
 
 ### Join with Column Equality
+
 ```python
 # Before
 query.join(Project, Session.project_id == Project.id)
 
 # After
 from sqlalchemy import and_
+
 query.join(Project, and_(Session.project_id == Project.id, Project.deleted_at.is_(None)))
 ```
 
 ### Multiple Joins in Query Chain
+
 ```python
 # Before
-Session.query.join(Project, Session.project)\
-    .join(Account, Project.account)\
-    .outerjoin(Proposal, Session.proposal)
+Session.query.join(Project, Session.project).join(Account, Project.account).outerjoin(Proposal, Session.proposal)
 
 # After
 from sqlalchemy import and_
-Session.query.join(Project, and_(Session.project, Project.deleted_at.is_(None)))\
-    .join(Account, Project.account)\
-    .outerjoin(Proposal, and_(Session.proposal, Proposal.deleted_at.is_(None)))
+
+Session.query.join(Project, and_(Session.project, Project.deleted_at.is_(None))).join(Account, Project.account).outerjoin(Proposal, and_(Session.proposal, Proposal.deleted_at.is_(None)))
 ```
 
 ## Graph Disable Mode
@@ -123,14 +125,9 @@ Session.query.join(Project, and_(Session.project, Project.deleted_at.is_(None)))
 This codemod includes support for running without the graph feature enabled. This is useful for the faster processing of large codebases and reduced memory usage.
 
 To run in no-graph mode:
+
 ```python
-codebase = Codebase(
-    str(repo_path),
-    programming_language=ProgrammingLanguage.PYTHON,
-    config=CodebaseConfig(
-        feature_flags=GSFeatureFlags(disable_graph=True)
-    )
-)
+codebase = Codebase(str(repo_path), programming_language=ProgrammingLanguage.PYTHON, config=CodebaseConfig(feature_flags=GSFeatureFlags(disable_graph=True)))
 ```
 
 ## Running the Conversion

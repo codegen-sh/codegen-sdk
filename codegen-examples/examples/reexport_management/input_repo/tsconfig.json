@@ -1,9 +1,9 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./",
-    "paths": {
-      "*": ["modules/*"]
-    }
-  },
-  "include": ["modules/**/*"]
-} 
+	"compilerOptions": {
+		"baseUrl": "./",
+		"paths": {
+			"*": ["modules/*"]
+		}
+	},
+	"include": ["modules/**/*"]
+}

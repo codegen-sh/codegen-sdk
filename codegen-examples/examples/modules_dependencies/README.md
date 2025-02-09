@@ -10,32 +10,38 @@ This example demonstrates how to use Codegen to automatically analyze and visual
 The script analyzes module dependencies in several key steps:
 
 1. **Graph Initialization**
+
    ```python
    G = nx.DiGraph()
    list_apps = ["src/sentry/api", "src/sentry/auth", "src/sentry/flags"]
    for app in list_apps:
-       G.add_node(app, metadata={'color':'red'})
+       G.add_node(app, metadata={"color": "red"})
    ```
+
    - Creates a directed graph using NetworkX
    - Initializes nodes for each major application module
    - Sets up metadata for visualization
 
-2. **Import Analysis**
+1. **Import Analysis**
+
    ```python
    for file in codebase.files:
        if app in file.filepath:
            for import_statement in file.import_statements:
                # Analyze imports and build edges
    ```
+
    - Scans through all files in specified modules
    - Analyzes import statements
    - Creates edges based on module dependencies
 
-3. **Graph Cleanup**
+1. **Graph Cleanup**
+
    ```python
    nodes_to_remove = [node for node, degree in G.degree() if degree == 1]
    G.remove_nodes_from(nodes_to_remove)
    ```
+
    - Removes isolated nodes
    - Cleans up the graph for better visualization
    - Focuses on meaningful dependencies
@@ -43,16 +49,19 @@ The script analyzes module dependencies in several key steps:
 ## Why This Makes Architecture Analysis Easy
 
 1. **Automated Dependency Detection**
+
    - Automatically finds module relationships
    - Identifies import patterns
    - No manual tracking needed
 
-2. **Visual Representation**
+1. **Visual Representation**
+
    - Clear visualization of dependencies
    - Easy to identify clusters
    - Highlights potential architectural issues
 
-3. **Simplified Analysis**
+1. **Simplified Analysis**
+
    - Quick overview of codebase structure
    - Helps identify tightly coupled modules
    - Assists in refactoring decisions
@@ -60,13 +69,15 @@ The script analyzes module dependencies in several key steps:
 ## Common Dependency Patterns
 
 ### Module Dependencies
+
 ```python
 # The script will detect dependencies like:
 from src.sentry.api import endpoint  # Creates edge from current module to api
-from src.sentry.auth import tokens   # Creates edge from current module to auth
+from src.sentry.auth import tokens  # Creates edge from current module to auth
 ```
 
 ### Visualization Output
+
 ```
 DiGraph with n nodes and m edges where:
 - Nodes represent major modules
@@ -77,16 +88,19 @@ DiGraph with n nodes and m edges where:
 ## Key Benefits to Note
 
 1. **Better Architecture Understanding**
+
    - Clear view of module relationships
    - Identifies dependency patterns
    - Helps spot architectural issues
 
-2. **Refactoring Support**
+1. **Refactoring Support**
+
    - Identifies tightly coupled modules
    - Helps plan refactoring
    - Shows impact of changes
 
-3. **Documentation Aid**
+1. **Documentation Aid**
+
    - Visual documentation of architecture
    - Easy to share and discuss
    - Helps onboard new developers
@@ -102,14 +116,16 @@ python run.py
 ```
 
 The script will:
+
 1. Initialize the codebase
-2. Analyze module dependencies
-3. Create a dependency graph
-4. Output the visualization through codegen.sh
+1. Analyze module dependencies
+1. Create a dependency graph
+1. Output the visualization through codegen.sh
 
 ## Customization Options
 
 You can customize the analysis by:
+
 - Modifying the `list_apps` to include different modules
 - Adjusting node metadata and colors
 - Adding additional filtering criteria
@@ -123,4 +139,4 @@ You can customize the analysis by:
 
 ## Contributing
 
-Feel free to submit issues and enhancement requests! Contributions to improve the visualization or add new features are welcome. 
+Feel free to submit issues and enhancement requests! Contributions to improve the visualization or add new features are welcome.
