@@ -10,7 +10,19 @@ from langchain_openai import ChatOpenAI
 from codegen import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 
-from . import get_codebase_tools
+from .tools import (
+    CommitTool,
+    CreateFileTool,
+    DeleteFileTool,
+    EditFileTool,
+    ListDirectoryTool,
+    MoveSymbolTool,
+    RenameFileTool,
+    RevealSymbolTool,
+    SearchTool,
+    SemanticEditTool,
+    ViewFileTool,
+)
 
 
 def create_codebase_agent(
@@ -37,7 +49,19 @@ def create_codebase_agent(
     )
 
     # Get all codebase tools
-    tools = get_codebase_tools(codebase)
+    tools = [
+        ViewFileTool(codebase),
+        ListDirectoryTool(codebase),
+        SearchTool(codebase),
+        EditFileTool(codebase),
+        CreateFileTool(codebase),
+        DeleteFileTool(codebase),
+        RenameFileTool(codebase),
+        MoveSymbolTool(codebase),
+        RevealSymbolTool(codebase),
+        SemanticEditTool(codebase),
+        CommitTool(codebase),
+    ]
 
     # Get the prompt to use
     prompt = hub.pull("hwchase17/openai-functions-agent")

@@ -6,6 +6,8 @@ from .file_operations import (
     delete_file,
     edit_file,
     list_directory,
+    move_symbol,
+    rename_file,
     view_file,
 )
 from .reveal_symbol import reveal_symbol
@@ -19,11 +21,13 @@ __all__ = [
     "edit_file",
     "list_directory",
     # Symbol analysis
+    "move_symbol",
+    # File operations
+    "rename_file",
     "reveal_symbol",
     # Search
     "search",
     # Semantic edit
     "semantic_edit",
-    # File operations
     "view_file",
 ]

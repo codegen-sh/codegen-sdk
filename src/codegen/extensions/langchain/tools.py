@@ -1,7 +1,7 @@
 """Langchain tools for workspace operations."""
 
 import json
-from typing import ClassVar, Optional
+from typing import ClassVar, Literal, Optional
 
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field
@@ -14,6 +14,8 @@ from ..tools import (
     delete_file,
     edit_file,
     list_directory,
+    move_symbol,
+    rename_file,
     reveal_symbol,
     search,
     semantic_edit,
@@ -251,4 +253,67 @@ class SemanticEditTool(BaseTool):
 
     def _run(self, filepath: str, edit_spec: str) -> str:
         result = semantic_edit(self.codebase, filepath, edit_spec)
+        return json.dumps(result, indent=2)
+
+
+class RenameFileInput(BaseModel):
+    """Input for renaming a file."""
+
+    filepath: str = Field(..., description="Current path of the file relative to workspace root")
+    new_filepath: str = Field(..., description="New path for the file relative to workspace root")
+
+
+class RenameFileTool(BaseTool):
+    """Tool for renaming files and updating imports."""
+
+    name: ClassVar[str] = "rename_file"
+    description: ClassVar[str] = "Rename a file and update all imports to point to the new location"
+    args_schema: ClassVar[type[BaseModel]] = RenameFileInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, filepath: str, new_filepath: str) -> str:
+        result = rename_file(self.codebase, filepath, new_filepath)
+        return json.dumps(result, indent=2)
+
+
+class MoveSymbolInput(BaseModel):
+    """Input for moving a symbol between files."""
+
+    source_file: str = Field(..., description="Path to the file containing the symbol")
+    symbol_name: str = Field(..., description="Name of the symbol to move")
+    target_file: str = Field(..., description="Path to the destination file")
+    strategy: Literal["update_all_imports", "add_back_edge"] = Field(default="update_all_imports", description="Strategy for handling imports: 'update_all_imports' (default) or 'add_back_edge'")
+    include_dependencies: bool = Field(default=True, description="Whether to move dependencies along with the symbol")
+
+
+class MoveSymbolTool(BaseTool):
+    """Tool for moving symbols between files."""
+
+    name: ClassVar[str] = "move_symbol"
+    description: ClassVar[str] = "Move a symbol from one file to another, with configurable import handling"
+    args_schema: ClassVar[type[BaseModel]] = MoveSymbolInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(
+        self,
+        source_file: str,
+        symbol_name: str,
+        target_file: str,
+        strategy: Literal["update_all_imports", "add_back_edge"] = "update_all_imports",
+        include_dependencies: bool = True,
+    ) -> str:
+        result = move_symbol(
+            self.codebase,
+            source_file,
+            symbol_name,
+            target_file,
+            strategy=strategy,
+            include_dependencies=include_dependencies,
+        )
         return json.dumps(result, indent=2)
