@@ -80,8 +80,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
                 scope="session",
             )
         case "test_codemods_parse":
-            excluded_repos = {"typeshed", "plone", "papermark", "vscode"}  # TODO(CG-10655): fix these reps
-            to_test = {name: repo for name, repo in repos.items() if name not in excluded_repos}
+            to_test = {name: repo for name, repo in repos.items()}
             metafunc.parametrize(
                 "repo",
                 [pytest.param(repo, marks=pytest.mark.xdist_group(repo.name)) for repo in to_test.values()],
