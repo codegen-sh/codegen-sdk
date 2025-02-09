@@ -1,13 +1,10 @@
 import logging
-from typing import Self
 
 from github import Consts
 from github.GithubException import UnknownObjectException
 from github.MainClass import Github
 from github.Organization import Organization
 from github.Repository import Repository
-
-from codegen.git.configs.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -18,16 +15,9 @@ class GithubClient:
     base_url: str
     _client: Github
 
-    def __init__(self, base_url: str = Consts.DEFAULT_BASE_URL):
+    def __init__(self, token: str, base_url: str = Consts.DEFAULT_BASE_URL):
         self.base_url = base_url
-        self._client = Github(config.GITHUB_TOKEN, base_url=base_url)
-
-    @classmethod
-    def from_token(cls, token: str | None = None) -> Self:
-        """Option to create a git client from a token"""
-        gh_wrapper = cls()
-        gh_wrapper._client = Github(token, base_url=cls.base_url)
-        return gh_wrapper
+        self._client = Github(token, base_url=base_url)
 
     @property
     def client(self) -> Github:

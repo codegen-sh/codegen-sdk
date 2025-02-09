@@ -110,7 +110,7 @@ Not all import cycles are problematic! Some cycles using dynamic imports can wor
 
 PyTorch prevents most circular import issues through dynamic imports which can be seen through the `import_symbol.is_dynamic` property. If any edge in a strongly connected component is dynamic, runtime conflicts are typically resolved.
 
-However, we discovered an import loop worth investigating between [`flex_decoding.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_decoding.py) and [`flex_attention.py`](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_attention.py):
+However, we discovered an import loop worth investigating between [flex_decoding.py](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_decoding.py) and [flex_attention.py](https://github.com/pytorch/pytorch/blob/main/torch/_inductor/kernel/flex_attention.py):
 
 <img src="/images/problematic-import-loop.png" alt="Invalid import loop example" />
 

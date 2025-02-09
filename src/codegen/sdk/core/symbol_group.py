@@ -47,10 +47,10 @@ class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
     def __eq__(self, other: object) -> bool:
         if other is None:
             return False
-        if isinstance(other, list):
-            return self.symbols == other
         if isinstance(other, SymbolGroup):
             return self.symbols == other.symbols
+        if isinstance(other, list):
+            return self.symbols == other
         return super().__eq__(other)
 
     @property
