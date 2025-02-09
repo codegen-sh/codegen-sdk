@@ -16,6 +16,7 @@ from ..tools import (
     list_directory,
     reveal_symbol,
     search,
+    semantic_edit,
     view_file,
 )
 
@@ -217,4 +218,37 @@ class RevealSymbolTool(BaseTool):
             collect_dependencies=collect_dependencies,
             collect_usages=collect_usages,
         )
+        return json.dumps(result, indent=2)
+
+
+class SemanticEditInput(BaseModel):
+    """Input for semantic editing."""
+
+    filepath: str = Field(..., description="Path to the file to edit")
+    edit_spec: str = Field(
+        ...,
+        description="""The edit specification showing desired changes.
+Must contain code blocks between '# ... existing code ...' markers.
+Example:
+# ... existing code ...
+def new_function():
+    print("Hello")
+# ... existing code ...
+""",
+    )
+
+
+class SemanticEditTool(BaseTool):
+    """Tool for semantic editing of files."""
+
+    name: ClassVar[str] = "semantic_edit"
+    description: ClassVar[str] = "Edit a file using a semantic edit specification with code blocks"
+    args_schema: ClassVar[type[BaseModel]] = SemanticEditInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, filepath: str, edit_spec: str) -> str:
+        result = semantic_edit(self.codebase, filepath, edit_spec)
         return json.dumps(result, indent=2)
