@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
+from typing import TYPE_CHECKING, ClassVar, Generic, Literal, Self, TypeVar, override
 
 from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.codebase.transactions import TransactionPriority
@@ -76,7 +76,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
     module: Editable | None
     symbol_name: Editable | None
     alias: Editable | None
-    node_type: Literal[NodeType.IMPORT] = NodeType.IMPORT
+    node_type: ClassVar[Literal[NodeType.IMPORT]] = NodeType.IMPORT
     import_type: ImportType
     import_statement: ImportStatement
 

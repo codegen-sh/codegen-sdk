@@ -1,6 +1,5 @@
-# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
-name: "Setup Graph Sitter"
-description: "Setup Graph Sitter"
+name: "Setup Environment"
+description: "Setup Environment"
 inputs:
   python-version:
     required: false
@@ -9,11 +8,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-#    - name: ccache
-#      uses: hendrikmuhs/ccache-action@v1.2
-#      with:
-#        create-symlink: true
-#        key: ${{ runner.os }}
     - name: Install UV
       uses: astral-sh/setup-uv@v5.2
       id: setup-uv

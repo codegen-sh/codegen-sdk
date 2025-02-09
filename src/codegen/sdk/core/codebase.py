@@ -23,6 +23,7 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult
+from codegen.git.utils.pr_review import CodegenPR
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
@@ -112,7 +113,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         console: Manages console output for the codebase.
     """
 
-    _op: RepoOperator | RemoteRepoOperator
+    _op: RepoOperator | RemoteRepoOperator | LocalRepoOperator
     viz: VisualizationManager
     repo_path: Path
     console: Console
@@ -1162,7 +1163,16 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
 
     @classmethod
-    def from_repo(cls, repo_name: str, *, tmp_dir: str | None = None, commit: str | None = None, shallow: bool = True, programming_language: ProgrammingLanguage | None = None) -> "Codebase":
+    def from_repo(
+        cls,
+        repo_name: str,
+        *,
+        tmp_dir: str | None = None,
+        commit: str | None = None,
+        shallow: bool = True,
+        programming_language: ProgrammingLanguage | None = None,
+        config: CodebaseConfig = DefaultConfig,
+    ) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
 
         Args:
@@ -1171,6 +1181,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
             programming_language (ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
+            config (CodebaseConfig): Configuration for the codebase. Defaults to DefaultConfig.
 
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
@@ -1198,25 +1209,27 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             # Use LocalRepoOperator to fetch the repository
             logger.info("Cloning repository...")
             if commit is None:
-                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url)
+                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
             else:
                 # Ensure the operator can handle remote operations
-                repo_operator = LocalRepoOperator.create_from_commit(
-                    repo_path=repo_path,
-                    commit=commit,
-                    url=repo_url,
-                )
+                repo_operator = LocalRepoOperator.create_from_commit(repo_path=repo_path, commit=commit, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
             logger.info("Clone completed successfully")
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
             project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=programming_language)
-            codebase = Codebase(projects=[project], config=DefaultConfig)
+            codebase = Codebase(projects=[project], config=config)
             logger.info("Codebase initialization complete")
             return codebase
         except Exception as e:
             logger.exception(f"Failed to initialize codebase: {e}")
             raise
+
+    def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
+        """Get all modified symbols in a pull request"""
+        pr = self._op.get_pull_request(pr_id)
+        cg_pr = CodegenPR(self._op, self, pr)
+        return cg_pr.modified_symbols
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py

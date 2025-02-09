@@ -1,10 +1,13 @@
 from dataclasses import dataclass, field
+from typing import TypeVar
 
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import MessageType
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.shared.decorators.docs import noapidoc
+
+Symbol = TypeVar("Symbol", bound=Editable)
 
 
 @dataclass
@@ -13,9 +16,9 @@ class Flags:
     _find_mode: bool = False
     _active_group: list[CodeFlag] | None = None
 
-    def flag_instance[Symbol: Editable | None](
+    def flag_instance(
         self,
-        symbol: Symbol = None,
+        symbol: Symbol | None = None,
         message: str | None = None,
         message_type: MessageType = MessageType.GITHUB | MessageType.CODEGEN,
         message_recipient: str | None = None,

@@ -13,14 +13,9 @@
 		"og:title": "Codegen - Manipulate Code at Scale",
 		"og:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
 		"og:url": "https://docs.codegen.com",
-		"og:image": "https://i.imgur.com/ttPWzlG.jpeg",
 		"og:locale": "en_US",
 		"og:logo": "https://i.imgur.com/f4OVOqI.png",
 		"article:publisher": "Codegen, Inc.",
-		"twitter:title": "Codegen - Manipulate Code at Scale",
-		"twitter:description": "A scriptable interface to a powerful, multi-lingual language server built on top of Tree-sitter.",
-		"twitter:url": "https://docs.codegen.com",
-		"twitter:image": "https://i.imgur.com/ttPWzlG.jpeg",
 		"twitter:site": "@codegen"
 	},
 	"favicon": "/favicon.svg",
@@ -46,8 +41,8 @@
 		"thumbsRating": true
 	},
 	"topbarCtaButton": {
-		"name": "Codegen",
-		"url": "https://codegen.sh/new"
+		"name": "GitHub",
+		"url": "https://github.com/codegen-sh/codegen-sdk"
 	},
 	"tabs": [
 		{

@@ -72,6 +72,8 @@ class JSXExpression(Unwrappable["Function | JSXElement | JSXProp"]):
 
         if node is None:
             node = self
+        if isinstance(self.parent, JSXProp):
+            return
         if isinstance(node, JSXExpression | JSXElement | JSXProp):
             for child in self._anonymous_children:
                 child.remove()
