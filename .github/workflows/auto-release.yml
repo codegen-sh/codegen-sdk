@@ -13,18 +13,25 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     permissions:
+      checks: read # to wait for required checks
       contents: write # to be able to publish a GitHub release
+      id-token: write # to enable use of OIDC for npm provenance
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # TODO: clean-up once we remove LFS
+      # TODO(CG-10743): clean-up once we remove LFS
       - name: Remove pre-push hook
         run: rm -f .git/hooks/pre-push
+
+      - name: Wait for required checks
+        uses: poseidon/wait-for-status-checks@v0.6.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          match_pattern: "(unit-tests|integration-tests)"
 
       - uses: codfish/semantic-release-action@v3
         id: semantic
