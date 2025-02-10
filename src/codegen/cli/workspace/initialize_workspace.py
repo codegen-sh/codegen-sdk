@@ -147,6 +147,8 @@ def modify_gitignore(codegen_folder: Path):
         "__pycache__/",
         "*.py[cod]",
         "*$py.class",
+        "*.txt",
+        "*.pyc",
         "",
         "# Keep config.toml and codemods",
         "!config.toml",

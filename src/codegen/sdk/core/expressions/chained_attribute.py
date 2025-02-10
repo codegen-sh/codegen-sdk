@@ -15,8 +15,10 @@ from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
+    from codegen.sdk.core.detached_symbols.function_call import FunctionCall
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.interfaces.importable import Importable
+
 
 Object = TypeVar("Object", bound="Chainable")
 Attribute = TypeVar("Attribute", bound="Resolvable")
@@ -75,6 +77,49 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
         return self._attribute
 
     @property
+    @reader
+    def attribute_chain(self) -> list["FunctionCall | Name"]:
+        """Returns a list of elements in a chained attribute expression.
+
+        Breaks down chained expressions into individual components in order of appearance.
+        For example: `a.b.c().d` -> [Name("a"), Name("b"), FunctionCall("c"), Name("d")]
+
+        Returns:
+            list[FunctionCall | Name]: List of Name nodes (property access) and FunctionCall nodes (method calls)
+        """
+        from codegen.sdk.core.detached_symbols.function_call import FunctionCall
+
+        ret = []
+        curr = self
+
+        # Traverse backwards in code (children of tree node)
+        while isinstance(curr, ChainedAttribute):
+            curr = curr.object
+
+            if isinstance(curr, FunctionCall):
+                ret.insert(0, curr)
+                curr = curr.get_name()
+            elif isinstance(curr, ChainedAttribute):
+                ret.insert(0, curr.attribute)
+
+            # This means that we have reached the base of the chain and the first item was an attribute (i.e a.b.c.func())
+            if isinstance(curr, Name) and not isinstance(curr.parent, FunctionCall):
+                ret.insert(0, curr)
+
+        curr = self
+
+        # Traversing forward in code (parents of tree node). Will add the current node as well
+        while isinstance(curr, ChainedAttribute) or isinstance(curr, FunctionCall):
+            if isinstance(curr, FunctionCall):
+                ret.append(curr)
+            elif isinstance(curr, ChainedAttribute) and not isinstance(curr.parent, FunctionCall):
+                ret.append(curr.attribute)
+
+            curr = curr.parent
+
+        return ret
+
+    @property
     def object(self) -> Object:
         """Returns the object that contains the attribute being looked up.
 
@@ -89,11 +134,16 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     @noapidoc
     @override
     def _resolved_types(self) -> Generator[ResolutionStack[Self], None, None]:
+        from codegen.sdk.typescript.namespace import TSNamespace
+
         if not self.G.config.feature_flags.method_usages:
             return
         if res := self.file.valid_import_names.get(self.full_name, None):
             # Module imports
             yield from self.with_resolution_frame(res)
+            return
+        # HACK: This is a hack to skip the resolved types for namespaces
+        if isinstance(self.object, TSNamespace):
             return
         for resolved_type in self.object.resolved_type_frames:
             top = resolved_type.top

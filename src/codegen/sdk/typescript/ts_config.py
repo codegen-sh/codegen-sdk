@@ -163,7 +163,11 @@ class TSConfig:
                 cleaned_relative_path = relative_path.replace("*", "").rstrip("/").replace("//", "/")
                 if self._self_base_url:
                     cleaned_relative_path = os.path.join(self._self_base_url, cleaned_relative_path)
-                formatted_relative_path = str(self.config_file.G.to_relative(self._relative_to_absolute_directory_path(cleaned_relative_path)))
+                formatted_absolute_path = self._relative_to_absolute_directory_path(cleaned_relative_path)
+                formatted_relative_path = str(self.config_file.G.to_relative(formatted_absolute_path))
+                # Fix absolute path if its base
+                if formatted_relative_path == ".":
+                    formatted_relative_path = ""
                 formatted_relative_paths.append(formatted_relative_path)
             self_path_import_aliases[formatted_pattern] = formatted_relative_paths
         self._path_import_aliases = {**base_path_import_aliases, **self_path_import_aliases}

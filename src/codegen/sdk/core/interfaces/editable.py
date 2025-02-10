@@ -75,6 +75,10 @@ _EXCLUDE_FROM_REPR: list[str] = [
     "resolved_types",
     "valid_symbol_names",
     "valid_import_names",
+    "predecessor",
+    "successor",
+    "base",
+    "call_chain",
     "code_block",
     "parent_statement",
     "symbol_usages",
@@ -168,10 +172,10 @@ class Editable(JSONable, Generic[Parent]):
     def __eq__(self, other: object):
         if other is None:
             return False
-        if isinstance(other, str):
-            return self.source == other
         if isinstance(other, Editable):
             return self.filepath == other.filepath and self.ts_node.kind_id == other.ts_node.kind_id and self.range == other.range
+        if isinstance(other, str):
+            return self.source == other
         return False
 
     @reader
