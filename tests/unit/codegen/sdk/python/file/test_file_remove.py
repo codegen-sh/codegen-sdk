@@ -13,9 +13,9 @@ def foo(bar):
         file = codebase.get_file("test.py")
         filepath = file.filepath
         new_filepath = "new_file.py"
-        new_file = file.create_from_filepath(new_filepath, codebase.G)
+        new_file = file.create_from_filepath(new_filepath, codebase.ctx)
 
-    G = codebase.G
+    G = codebase.ctx
     assert G.get_node(file.node_id) == file
     assert G.get_node(new_file.node_id) == new_file
     assert G.has_node(file.node_id)
@@ -25,6 +25,6 @@ def foo(bar):
 
     # Delete the original
     file.remove()
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
     assert not os.path.exists(tmpdir / filepath)
     assert os.path.exists(tmpdir / new_filepath)

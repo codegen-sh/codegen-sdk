@@ -66,12 +66,12 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
 
     def _parse_assignments(self, assignment_node: TSNode) -> MultiExpression[PyHasBlock, PyAssignment]:
         if assignment_node.type in ["assignment", "augmented_assignment"]:
-            return PyAssignment.from_assignment(assignment_node, self.file_node_id, self.G, self.parent)
+            return PyAssignment.from_assignment(assignment_node, self.file_node_id, self.ctx, self.parent)
         elif assignment_node.type == "named_expression":
-            return PyAssignment.from_named_expression(assignment_node, self.file_node_id, self.G, self.parent)
+            return PyAssignment.from_named_expression(assignment_node, self.file_node_id, self.ctx, self.parent)
 
         logger.info(f"Unknown assignment type: {assignment_node.type}")
-        return MultiExpression(assignment_node, self.file_node_id, self.G, self.parent, [self.parent._parse_expression(assignment_node)])
+        return MultiExpression(assignment_node, self.file_node_id, self.ctx, self.parent, [self.parent._parse_expression(assignment_node)])
 
     def _DEPRECATED_parse_assignments(self) -> MultiExpression[PyHasBlock, PyAssignment]:
         assignments = []
@@ -80,8 +80,8 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
             right = assignment.child_by_field_name("right")
             if left.type == "pattern_list":
                 for identifier in find_all_descendants(left, {"identifier", "attribute"}):
-                    assignments.append(PyAssignment(assignment, self.file_node_id, self.G, self, left, right, identifier))
+                    assignments.append(PyAssignment(assignment, self.file_node_id, self.ctx, self, left, right, identifier))
             else:
-                assignments.append(PyAssignment(assignment, self.file_node_id, self.G, self, left, right, left))
+                assignments.append(PyAssignment(assignment, self.file_node_id, self.ctx, self, left, right, left))
 
-        return MultiExpression(self.ts_node, self.file_node_id, self.G, self.parent, assignments)
+        return MultiExpression(self.ts_node, self.file_node_id, self.ctx, self.parent, assignments)

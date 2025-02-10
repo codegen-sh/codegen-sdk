@@ -42,8 +42,8 @@ class Parents(Collection["TType", Parent], Generic[TType, Parent]):
         dest = self.parent
         for superclass in self:
             resolution: list[ResolutionStack] = superclass.resolved_types
-            if len(resolution) == 1 and self.G.has_node(getattr(resolution[0], "node_id", None)):
-                self.G.add_edge(dest.node_id, resolution[0].node_id, type=EdgeType.SUBCLASS)
+            if len(resolution) == 1 and self.ctx.has_node(getattr(resolution[0], "node_id", None)):
+                self.ctx.add_edge(dest.node_id, resolution[0].node_id, type=EdgeType.SUBCLASS)
             else:
                 self._log_parse("%r is ambiguous with possibilities: %r.", superclass, resolution)
         self.parent.__dict__.pop("superclasses", None)

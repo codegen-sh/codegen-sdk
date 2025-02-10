@@ -80,7 +80,7 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
         """Returns all attribute nodes of the element"""
         open_tag = self.ts_node.child_by_field_name("open_tag") or self.ts_node
         attribute_nodes = open_tag.children_by_field_name("attribute")
-        return [Value(x, self.file_node_id, self.G, self) for x in attribute_nodes]
+        return [Value(x, self.file_node_id, self.ctx, self) for x in attribute_nodes]
 
     @property
     @reader

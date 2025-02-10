@@ -37,7 +37,7 @@ class String(Expression[Parent], Builtin, Generic[Parent]):
     def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)
         content_children = list(self.children_by_field_types({"string_content", "string_fragment", "escape_sequence"}))
-        self.content_nodes = Collection(ts_node, self.file_node_id, self.G, self, delimiter="", children=content_children)
+        self.content_nodes = Collection(ts_node, self.file_node_id, self.ctx, self, delimiter="", children=content_children)
         self.content = "".join(x.ts_node.text.decode("utf-8") for x in content_children)
 
     @reader

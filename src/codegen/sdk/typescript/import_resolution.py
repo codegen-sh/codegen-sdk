@@ -216,7 +216,7 @@ class TSImport(Import["TSFile"], Exportable):
                 - imports_file: True if importing the entire file/module
         """
         self.file: TSFile  # Type cast ts_file
-        base_path = base_path or self.G.projects[0].base_path or ""
+        base_path = base_path or self.ctx.projects[0].base_path or ""
 
         # Get the import source path
         import_source = self.module.source.strip('"').strip("'") if self.module else ""
@@ -246,7 +246,7 @@ class TSImport(Import["TSFile"], Exportable):
         if "." not in import_name:
             possible_paths = ["index.ts", "index.js", "index.tsx", "index.jsx"]
             for p_path in possible_paths:
-                if self.G.to_absolute(os.path.join(import_source, p_path)).exists():
+                if self.ctx.to_absolute(os.path.join(import_source, p_path)).exists():
                     import_source = os.path.join(import_source, p_path)
                     break
 
@@ -256,7 +256,7 @@ class TSImport(Import["TSFile"], Exportable):
         for import_source_base in (import_source, os.path.splitext(import_source)[0]):
             for extension in extensions:
                 import_source_ext = import_source_base + extension
-                if file := self.G.get_file(import_source_ext):
+                if file := self.ctx.get_file(import_source_ext):
                     if self.is_module_import():
                         return ImportResolution(from_file=file, symbol=None, imports_file=True)
                     else:
@@ -532,10 +532,10 @@ class TSImport(Import["TSFile"], Exportable):
                 name = import_specifier.child_by_field_name("name")
                 is_match = self.symbol_name.source == name.text.decode("utf-8")
             if is_match:
-                return Name(import_specifier, self.file_node_id, self.G, self)
+                return Name(import_specifier, self.file_node_id, self.ctx, self)
         if named := next(iter(find_all_descendants(self.ts_node, {"identifier"})), None):
             if named.text.decode("utf-8") == self.symbol_name.source:
-                return Name(named, self.file_node_id, self.G, self)
+                return Name(named, self.file_node_id, self.ctx, self)
 
     @reader
     def get_import_string(self, alias: str | None = None, module: str | None = None, import_type: ImportType = ImportType.UNKNOWN, is_type_import: bool = False) -> str:

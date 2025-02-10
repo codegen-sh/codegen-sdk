@@ -53,7 +53,7 @@ class WithStatement(Statement["PyCodeBlock"], PyHasBlock):
         self.code_block.parse()
         clause = next(x for x in self.ts_node.children if x.type == "with_clause")
         items = [self._parse_expression(item.child_by_field_name("value")) for item in clause.children if item.type == "with_item"]
-        self.clause = ExpressionGroup(self.file_node_id, self.G, self, children=items)
+        self.clause = ExpressionGroup(self.file_node_id, self.ctx, self, children=items)
 
     @property
     @reader

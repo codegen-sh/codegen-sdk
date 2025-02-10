@@ -60,13 +60,13 @@ def g(tmpdir):
         assert len(edges) == 4
 
         # =====[ Edge Test ] =====
-        edge_data = codebase.G.get_edge_data(f.node_id, A.node_id)
+        edge_data = codebase.ctx.get_edge_data(f.node_id, A.node_id)
         types = [edge.usage.kind for edge in edge_data]
         assert len(types) == 1
         assert types[0] == UsageKind.TYPE_ANNOTATION
 
         f_body_assignment = f.code_block.statements[0].assignments[0]
-        edge_data = codebase.G.get_edge_data(f_body_assignment.node_id, A.node_id)
+        edge_data = codebase.ctx.get_edge_data(f_body_assignment.node_id, A.node_id)
         types = [edge.usage.kind for edge in edge_data]
         assert len(types) == 1
         assert UsageKind.BODY in types

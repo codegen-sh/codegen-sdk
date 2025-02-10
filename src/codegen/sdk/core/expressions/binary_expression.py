@@ -43,7 +43,7 @@ class BinaryExpression(Expression[Parent], Chainable, Generic[Parent]):
     def operator(self) -> ExpressionGroup[Expression[Self], Self]:
         """Returns the operator of the binary expression."""
         operator_nodes = self.ts_node.children[1:-1]
-        return ExpressionGroup(self.file_node_id, self.G, self, children=[self._parse_expression(node) for node in operator_nodes])
+        return ExpressionGroup(self.file_node_id, self.ctx, self, children=[self._parse_expression(node) for node in operator_nodes])
 
     @property
     def operators(self) -> list[ExpressionGroup[Expression[Self], Self]]:

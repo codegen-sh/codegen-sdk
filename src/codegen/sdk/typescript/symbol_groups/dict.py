@@ -65,7 +65,7 @@ class TSPair(Pair):
         """Reduces an editable to the following condition"""
         if self.shorthand and node == self.value:
             # Object shorthand
-            self.parent[self.key.source] = self.G.node_classes.bool_conversion[bool_condition]
+            self.parent[self.key.source] = self.ctx.node_classes.bool_conversion[bool_condition]
         else:
             super().reduce_condition(bool_condition, node)
 
@@ -126,7 +126,7 @@ class TSDict(Dict, HasAttribute):
                     break
         # CASE: {}
         else:
-            if not self.G.node_classes.int_dict_key:
+            if not self.ctx.node_classes.int_dict_key:
                 try:
                     int(__key)
                     __key = f"'{__key}'"

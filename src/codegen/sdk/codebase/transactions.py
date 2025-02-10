@@ -262,7 +262,7 @@ class FileRenameTransaction(Transaction):
         priority: int = 0,
     ) -> None:
         super().__init__(0, 0, file.path, priority=priority, new_content=new_file_path)
-        self.new_file_path = file.G.to_absolute(new_file_path)
+        self.new_file_path = file.ctx.to_absolute(new_file_path)
         self.file = file
 
     def execute(self) -> None:

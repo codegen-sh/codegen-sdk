@@ -38,12 +38,12 @@ class TSObjectPair(TSPair, Generic[Parent]):
             value = self._parse_expression(type_node)
             key = self._parse_expression(self.ts_node.child_by_field_name("name"))
         elif self.ts_node_type == "call_signature":
-            value = TSFunctionType(self.ts_node, self.file_node_id, self.G, self)
+            value = TSFunctionType(self.ts_node, self.file_node_id, self.ctx, self)
         elif self.ts_node_type == "index_signature":
             value = self._parse_expression(self.ts_node.child_by_field_name("type"))
             key = self._parse_expression(self.ts_node.named_children[0])
         elif self.ts_node_type == "method_signature":
-            value = TSFunctionType(self.ts_node, self.file_node_id, self.G, self)
+            value = TSFunctionType(self.ts_node, self.file_node_id, self.ctx, self)
             key = self._parse_expression(self.ts_node.child_by_field_name("name"))
         elif self.ts_node_type == "method_definition":
             key = self._parse_expression(self.ts_node.child_by_field_name("mapped_clause_type"))

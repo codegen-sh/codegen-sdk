@@ -44,7 +44,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         if parameters_node := self.ts_node.child_by_field_name("parameters"):
-            self._parameters = Collection(parameters_node, self.file_node_id, self.G, self)
+            self._parameters = Collection(parameters_node, self.file_node_id, self.ctx, self)
             params = [x for x in parameters_node.children if x.type in ("required_parameter", "optional_parameter")]
             symbols = None
             # Deconstructed object parameters
@@ -61,7 +61,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
                 symbols = [TSParameter(x, i, self._parameters) for (i, x) in enumerate(params)]
             self._parameters._init_children(symbols)
         elif parameters_node := self.ts_node.child_by_field_name("parameter"):
-            self._parameters = Collection(parameters_node, self.file_node_id, self.G, self)
+            self._parameters = Collection(parameters_node, self.file_node_id, self.ctx, self)
             self._parameters._init_children([TSParameter(parameters_node, 0, self._parameters)])
         else:
             logger.warning(f"Couldn't find parameters for {self!r}")

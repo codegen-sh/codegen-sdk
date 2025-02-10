@@ -33,8 +33,8 @@ class MySubClass(MyClass):
     """
     with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}) as codebase:
         assert codebase is not None
-        assert isinstance(codebase.G, CodebaseContext)
-        # assert set(codebase.G.nodes) == {
+        assert isinstance(codebase.ctx, CodebaseContext)
+        # assert set(codebase.ctx.nodes) == {
         #     "<PyAssignment>test.py::global_var_1:51-67",
         #     "<PyAssignment>test.py::global_var_2:68-84",
         #     "<PyClass>test.py::MyClass:141-192",
@@ -51,9 +51,9 @@ class MySubClass(MyClass):
         #     "import__z__from__some_file__to__test.py",
         #     "test.py",
         # }
-        import_resolution_edges = [edge for edge in codebase.G.edges if edge[2].type == EdgeType.IMPORT_SYMBOL_RESOLUTION]
+        import_resolution_edges = [edge for edge in codebase.ctx.edges if edge[2].type == EdgeType.IMPORT_SYMBOL_RESOLUTION]
         file_contains_node_edges = list(itertools.chain.from_iterable(file.get_nodes() for file in codebase.files))
-        symbol_usage_edges = [edge for edge in codebase.G.edges if edge[2].type == EdgeType.SYMBOL_USAGE]
+        symbol_usage_edges = [edge for edge in codebase.ctx.edges if edge[2].type == EdgeType.SYMBOL_USAGE]
 
         assert len(import_resolution_edges) == 4
         assert len(file_contains_node_edges) == 14

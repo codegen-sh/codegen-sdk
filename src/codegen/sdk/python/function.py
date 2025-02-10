@@ -148,7 +148,7 @@ class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, P
                     "dictionary_splat_pattern",
                 )
             ]
-            self._parameters = Collection(parameters_node, self.file_node_id, self.G, self)
+            self._parameters = Collection(parameters_node, self.file_node_id, self.ctx, self)
             self._parameters._init_children([PyParameter(x, i, self._parameters) for (i, x) in enumerate(params)])
         else:
             logger.warning(f"Couldn't find parameters for {self!r}")

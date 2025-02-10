@@ -41,7 +41,7 @@ class ComparisonExpression(BinaryExpression):
             if n not in elements:
                 operator_group.append(n)
             elif operator_group:
-                operator = ExpressionGroup(self.file_node_id, self.G, self, children=[self._parse_expression(op) for op in operator_group])
+                operator = ExpressionGroup(self.file_node_id, self.ctx, self, children=[self._parse_expression(op) for op in operator_group])
                 operators.append(operator)
                 operator_group.clear()
         return operators

@@ -79,8 +79,8 @@ class File(Editable[None]):
             ts_node = parser.parse(bytes("", "utf-8")).root_node
         self._range_index = RangeIndex()
         super().__init__(ts_node, getattr(self, "node_id", None), G, None)
-        self.path = self.G.to_absolute(filepath)
-        self.file_path = str(self.G.to_relative(self.path))
+        self.path = self.ctx.to_absolute(filepath)
+        self.file_path = str(self.ctx.to_relative(self.path))
         self.name = self.path.stem
         self._directory = None
         self._binary = binary
@@ -168,7 +168,7 @@ class File(Editable[None]):
     @noapidoc
     def write_bytes(self, content_bytes: bytes, to_disk: bool = False) -> None:
         self._pending_content_bytes = content_bytes
-        self.G.pending_files.add(self)
+        self.ctx.pending_files.add(self)
         if to_disk:
             self.write_pending_content()
             if self.ts_node.start_byte == self.ts_node.end_byte:
@@ -235,17 +235,17 @@ class File(Editable[None]):
         Returns:
             set[str]: A set of Github usernames or team names that own this file. Empty if no CODEOWNERS file exists.
         """
-        if self.G.codeowners_parser:
-            # return get_filepath_owners(codeowners=self.G.codeowners_parser, filepath=self.file_path)
-            filename_owners = self.G.codeowners_parser.of(self.file_path)
+        if self.ctx.codeowners_parser:
+            # return get_filepath_owners(codeowners=self.ctx.codeowners_parser, filepath=self.file_path)
+            filename_owners = self.ctx.codeowners_parser.of(self.file_path)
             return {owner[1] for owner in filename_owners}
         return set()
 
     @cached_property
     @noapidoc
     def github_url(self) -> str | None:
-        if self.G.base_url:
-            return self.G.base_url + "/" + self.file_path
+        if self.ctx.base_url:
+            return self.ctx.base_url + "/" + self.file_path
 
     @property
     @reader
@@ -451,7 +451,7 @@ class SourceFile(
         self._nodes = []
         super().__init__(filepath, G, ts_node=ts_node)
         self._nodes.clear()
-        self.G.filepath_idx[self.file_path] = self.node_id
+        self.ctx.filepath_idx[self.file_path] = self.node_id
         self._directory = None
         self._pending_imports = set()
         try:
@@ -525,18 +525,18 @@ class SourceFile(
 
         # Save any external import resolution edges to be re-resolved before removing the nodes
         for node_id in node_ids_to_remove:
-            external_edges_to_resolve.extend(self.G.predecessors(node_id))
+            external_edges_to_resolve.extend(self.ctx.predecessors(node_id))
 
         # Finally, remove the nodes
         for node_id in node_ids_to_remove:
             if reparse and node_id == self.node_id:
                 continue
-            if self.G.has_node(node_id):
-                self.G.remove_node(node_id)
+            if self.ctx.has_node(node_id):
+                self.ctx.remove_node(node_id)
         if not reparse:
-            self.G.filepath_idx.pop(self.file_path, None)
+            self.ctx.filepath_idx.pop(self.file_path, None)
         self._nodes.clear()
-        return list(filter(lambda node: self.G.has_node(node.node_id) and node is not None, external_edges_to_resolve))
+        return list(filter(lambda node: self.ctx.has_node(node.node_id) and node is not None, external_edges_to_resolve))
 
     @noapidoc
     @commiter
@@ -545,13 +545,13 @@ class SourceFile(
         self._pending_imports.clear()
         self.ts_node = parse_file(self.filepath, self.content)
         if self.node_id is None:
-            self.G.filepath_idx[self.file_path] = self.node_id
+            self.ctx.filepath_idx[self.file_path] = self.node_id
             self.file_node_id = self.node_id
         else:
-            assert self.G.has_node(self.node_id)
+            assert self.ctx.has_node(self.node_id)
         self.name = self.path.stem
         self._range_index.clear()
-        self.parse(self.G)
+        self.parse(self.ctx)
 
     @staticmethod
     @noapidoc
@@ -680,8 +680,8 @@ class SourceFile(
             list[TImport]: List of Import objects that import this file as a module,
                 sorted by file location.
         """
-        imps = [x for x in self.G.in_edges(self.node_id) if x[2].type == EdgeType.IMPORT_SYMBOL_RESOLUTION]
-        return sort_editables((self.G.get_node(x[0]) for x in imps), by_file=True, dedupe=False)
+        imps = [x for x in self.ctx.in_edges(self.node_id) if x[2].type == EdgeType.IMPORT_SYMBOL_RESOLUTION]
+        return sort_editables((self.ctx.get_node(x[0]) for x in imps), by_file=True, dedupe=False)
 
     @property
     @reader(cache=False)
@@ -783,7 +783,7 @@ class SourceFile(
         """
         ids = [x.node_id for x in self.symbols]
         # Create a subgraph based on G
-        subgraph = self.G.build_subgraph(ids)
+        subgraph = self.ctx.build_subgraph(ids)
         symbol_names = pseudo_topological_sort(subgraph)
         return [subgraph.get_node_data(x) for x in symbol_names]
 
@@ -915,7 +915,7 @@ class SourceFile(
         Returns:
             str: The module name used when importing this file.
         """
-        return self.get_import_module_name_for_file(self.filepath, self.G)
+        return self.get_import_module_name_for_file(self.filepath, self.ctx)
 
     @classmethod
     @abstractmethod
@@ -952,7 +952,7 @@ class SourceFile(
             None
         """
         # =====[ Add the new filepath as a new file node in the graph ]=====
-        new_file = self.G.node_classes.file_cls.from_content(new_filepath, self.content, self.G)
+        new_file = self.ctx.node_classes.file_cls.from_content(new_filepath, self.content, self.ctx)
         # =====[ Change the file on disk ]=====
         super().update_filepath(new_filepath)
         # =====[ Update all the inbound imports to point to the new module ]=====

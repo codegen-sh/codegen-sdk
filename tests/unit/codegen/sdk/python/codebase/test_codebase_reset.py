@@ -50,7 +50,7 @@ def test_reset_exception(tmpdir) -> None:
             path: str = "mypath"
 
         mm = mockme()
-        codebase.G.all_syncs = [mm]
+        codebase.ctx.all_syncs = [mm]
         try:
             codebase.reset()
         except Exception as e:
@@ -86,8 +86,8 @@ def bar(x):
         file0 = codebase.get_file("dir/file0.py", optional=True)
         file2 = codebase.get_file("dir/file2.py", optional=True)
 
-        init_nodes = codebase.G.get_nodes()
-        init_edges = codebase.G.get_edges()
+        init_nodes = codebase.ctx.get_nodes()
+        init_edges = codebase.ctx.get_edges()
 
         file0.update_filepath("dir/file0_updated.py")
         codebase.create_file("dir/new_file.py", "some_var = 1")
@@ -111,11 +111,11 @@ def bar(x):
     assert file1.source == file1_content[file0.ts_node.start_byte :]
     assert file2.source == file2_content[file0.ts_node.start_byte :]
 
-    assert len(codebase.G.get_nodes()) == len(init_nodes)
-    assert set(codebase.G.get_nodes()) == set(init_nodes)
-    assert set(codebase.G.get_nodes()) == set(codebase.G.old_graph.nodes())
-    assert len(codebase.G.get_edges()) == len(init_edges)
-    assert set(get_edges(codebase.G._graph)) == set(get_edges(codebase.G.old_graph))
+    assert len(codebase.ctx.get_nodes()) == len(init_nodes)
+    assert set(codebase.ctx.get_nodes()) == set(init_nodes)
+    assert set(codebase.ctx.get_nodes()) == set(codebase.ctx.old_graph.nodes())
+    assert len(codebase.ctx.get_edges()) == len(init_edges)
+    assert set(get_edges(codebase.ctx._graph)) == set(get_edges(codebase.ctx.old_graph))
 
 
 def test_codebase_reset_gitignore(tmpdir: str) -> None:

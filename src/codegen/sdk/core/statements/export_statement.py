@@ -36,15 +36,15 @@ class ExportStatement(Statement["TSCodeBlock"], Generic[TExport]):
     statement_type = StatementType.EXPORT_STATEMENT
 
     def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int):
-        super().__init__(ts_node, parent.file_node_id, parent.G, parent, pos)
+        super().__init__(ts_node, parent.file_node_id, parent.ctx, parent, pos)
         export_node = self.ts_node
         if node := self.child_by_field_types(["export_clause", "export_statement"]):
             export_node = node.ts_node
-        self.exports = Collection(export_node, self.file_node_id, self.G, self, bracket_size=2)
+        self.exports = Collection(export_node, self.file_node_id, self.ctx, self, bracket_size=2)
         if declaration := ts_node.child_by_field_name("declaration"):
             exports = TSExport.from_export_statement_with_declaration(ts_node, declaration, file_node_id, G, self, pos)
         elif value := ts_node.child_by_field_name("value"):
-            exports = TSExport.from_export_statement_with_value(self.ts_node, value, self.file_node_id, self.G, self, self.index)
+            exports = TSExport.from_export_statement_with_value(self.ts_node, value, self.file_node_id, self.ctx, self, self.index)
         else:
             exports = []
             if source_node := ts_node.child_by_field_name("source"):
@@ -77,7 +77,7 @@ class ExportStatement(Statement["TSCodeBlock"], Generic[TExport]):
                 # ==== [ Export assignment ] ====
                 # Examples: `export = XYZ;`, `export = function foo() {}`, `export = function() {}`, `export = { f1, f2 }`
                 # No other named exports can exist alongside this type of export in the file
-                exports.extend(TSExport.from_export_statement_with_value(self.ts_node, ts_node.named_children[0], self.file_node_id, self.G, self, self.index))
+                exports.extend(TSExport.from_export_statement_with_value(self.ts_node, ts_node.named_children[0], self.file_node_id, self.ctx, self, self.index))
         self.exports._init_children(exports)
         for exp in self.exports:
             exp.export_statement = self

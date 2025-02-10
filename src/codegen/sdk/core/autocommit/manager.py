@@ -78,7 +78,7 @@ class AutoCommit:
     _lock_all: bool = False
 
     def __init__(self, G: "CodebaseContext") -> None:
-        self.G = G
+        self.ctx = G
         self._files = {}
         self._nodes = {}
         self._locked_files = set()
@@ -94,7 +94,7 @@ class AutoCommit:
             files = lock.files if not lock.all else None
             if additional and files:
                 files.add(additional)
-            self.G.commit_transactions(files=files)
+            self.ctx.commit_transactions(files=files)
 
     def _update_file(self, symbol: "File", lock: PendingFiles) -> None:
         """Check for an update to a file, and if there is one, copy its dict."""
@@ -104,8 +104,8 @@ class AutoCommit:
                 logger.warning("Editing a removed node")
                 return
             self._commit(lock, new_id)
-            old_node = self.G.get_node(symbol.file_node_id)
-            new_node = self.G.get_node(
+            old_node = self.ctx.get_node(symbol.file_node_id)
+            new_node = self.ctx.get_node(
                 new_id if new_id is not None else symbol.file_node_id
             )
             old_node.__dict__ = new_node.__dict__
@@ -120,7 +120,7 @@ class AutoCommit:
     ):
         """Re-aquire a symbol."""
         # Prevent double re-aquire
-        new_node = self.G.get_node(new_node_id)
+        new_node = self.ctx.get_node(new_node_id)
         if new_node is None:
             if missing_ok:
                 return
@@ -209,7 +209,7 @@ class AutoCommit:
         if new_file is not None:
             self.set_pending_file(node, update_id=new_file)
         if is_symbol(node):
-            new_file_node = self.G.get_node(new_file) if new_file else None
+            new_file_node = self.ctx.get_node(new_file) if new_file else None
             if symbol_update := self._nodes.get(node.node_id, None):
                 assert symbol_update.symbol == node
                 if new_id is not None:

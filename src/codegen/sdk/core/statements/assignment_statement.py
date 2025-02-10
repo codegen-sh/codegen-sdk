@@ -55,7 +55,7 @@ class AssignmentStatement(Statement[TCodeBlock], HasValue, Generic[TCodeBlock, T
             raise ValueError(msg)
 
         first_assignment: TAssignment = self.assignments[0]
-        self._name_node = self.G.parser.parse_expression(first_assignment.ts_node, self.file_node_id, self.G, parent, default=Name)
+        self._name_node = self.ctx.parser.parse_expression(first_assignment.ts_node, self.file_node_id, self.ctx, parent, default=Name)
         self.left = first_assignment.left
         self.right = first_assignment.value
         self._value_node = self.right

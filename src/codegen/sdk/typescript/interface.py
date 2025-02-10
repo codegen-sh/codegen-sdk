@@ -61,7 +61,7 @@ class TSInterface(Interface[TSCodeBlock, TSAttribute, TSFunction, TSType], TSSym
         # =====[ Extends ]=====
         # Look for parent interfaces in the "extends" clause
         if extends_clause := self.child_by_field_types("extends_type_clause"):
-            self.parent_interfaces = Parents(extends_clause.ts_node, self.file_node_id, self.G, self)
+            self.parent_interfaces = Parents(extends_clause.ts_node, self.file_node_id, self.ctx, self)
         super().parse(G)
 
     @noapidoc

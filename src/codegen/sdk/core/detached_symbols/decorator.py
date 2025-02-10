@@ -29,7 +29,7 @@ class Decorator(Expression[TClass | TFunction], HasName, Generic[TClass, TFuncti
     """Abstract representation of a Decorator."""
 
     def __init__(self, ts_node: TSNode, parent: TClass | TFunction) -> None:
-        super().__init__(ts_node, parent.file_node_id, parent.G, parent)
+        super().__init__(ts_node, parent.file_node_id, parent.ctx, parent)
         self._name_node = self._parse_expression(self._get_name_node(), default=Name)
 
     @abstractmethod

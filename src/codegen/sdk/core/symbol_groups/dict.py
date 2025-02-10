@@ -133,7 +133,7 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
         if value := self.get(__key, None):
             value.edit(new_value)
         else:
-            if not self.G.node_classes.int_dict_key:
+            if not self.ctx.node_classes.int_dict_key:
                 try:
                     int(__key)
                     __key = f"'{__key}'"

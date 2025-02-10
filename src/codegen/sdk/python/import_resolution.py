@@ -83,7 +83,7 @@ class PyImport(Import["PyFile"]):
     @noapidoc
     @reader
     def resolve_import(self, base_path: str | None = None, *, add_module_name: str | None = None) -> ImportResolution[PyFile] | None:
-        base_path = base_path or self.G.projects[0].base_path or ""
+        base_path = base_path or self.ctx.projects[0].base_path or ""
         module_source = self.module.source if self.module else ""
         symbol_name = self.symbol_name.source if self.symbol_name else ""
         if add_module_name:
@@ -104,11 +104,11 @@ class PyImport(Import["PyFile"]):
                 base_path,
                 module_source.replace(".", "/") + "/" + symbol_name + ".py",
             )
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             return ImportResolution(from_file=file, symbol=None, imports_file=True)
 
         filepath = filepath.replace(".py", "/__init__.py")
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             # TODO - I think this is another edge case, due to `dao/__init__.py` etc.
             # You can't do `from a.b.c import foo` => `foo.utils.x` right now since `foo` is just a file...
             return ImportResolution(from_file=file, symbol=None, imports_file=True)
@@ -116,13 +116,13 @@ class PyImport(Import["PyFile"]):
         # =====[ Check if `module.py` file exists in the graph ]=====
         filepath = module_source.replace(".", "/") + ".py"
         filepath = os.path.join(base_path, filepath)
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             symbol = file.get_node_by_name(symbol_name)
             return ImportResolution(from_file=file, symbol=symbol)
 
         # =====[ Check if `module/__init__.py` file exists in the graph ]=====
         filepath = filepath.replace(".py", "/__init__.py")
-        if from_file := self.G.get_file(filepath):
+        if from_file := self.ctx.get_file(filepath):
             symbol = from_file.get_node_by_name(symbol_name)
             return ImportResolution(from_file=from_file, symbol=symbol)
 
@@ -141,7 +141,7 @@ class PyImport(Import["PyFile"]):
 
         return None
         # # =====[ Check if we are importing an external module in the graph ]=====
-        # if ext := self.G.get_external_module(self.source, self._unique_node.source):
+        # if ext := self.ctx.get_external_module(self.source, self._unique_node.source):
         #     return ImportResolution(symbol=ext)
         # # Implies we are not importing the symbol from the current repo.
         # # In these cases, consider the import as an ExternalModule and add to graph
@@ -252,7 +252,7 @@ class PyImport(Import["PyFile"]):
             else:
                 is_match = self.symbol_name.source == import_specifier.text.decode("utf-8")
             if is_match:
-                return Name(import_specifier, self.file_node_id, self.G, self)
+                return Name(import_specifier, self.file_node_id, self.ctx, self)
 
     @reader
     def get_import_string(

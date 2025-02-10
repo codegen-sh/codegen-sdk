@@ -79,10 +79,10 @@ class TSIfBlockStatement(IfBlockStatement[Parent, "TSIfBlockStatement"], Generic
         while alt_node := alt_block.ts_node.child_by_field_name("alternative"):
             if (if_node := alt_node.named_children[0]).type == "if_statement":
                 # Elif statements are represented as if statements with an else clause as the parent node
-                alt_block = TSIfBlockStatement(if_node, self.file_node_id, self.G, self.parent, self.index, else_clause_node=alt_node, main_if_block=self._main_if_block or self)
+                alt_block = TSIfBlockStatement(if_node, self.file_node_id, self.ctx, self.parent, self.index, else_clause_node=alt_node, main_if_block=self._main_if_block or self)
             else:
                 # Else clause
-                alt_block = TSIfBlockStatement(alt_node, self.file_node_id, self.G, self.parent, self.index, main_if_block=self._main_if_block or self)
+                alt_block = TSIfBlockStatement(alt_node, self.file_node_id, self.ctx, self.parent, self.index, main_if_block=self._main_if_block or self)
             if_blocks.append(alt_block)
         return if_blocks
 

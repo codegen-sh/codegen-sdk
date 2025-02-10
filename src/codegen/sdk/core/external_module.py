@@ -44,8 +44,8 @@ class ExternalModule(
         super().__init__(ts_node, file_node_id, G, None)
         self._name_node = import_name
         self.return_type = StubPlaceholder(parent=self)
-        assert self._idx_key not in self.G._ext_module_idx
-        self.G._ext_module_idx[self._idx_key] = self.node_id
+        assert self._idx_key not in self.ctx._ext_module_idx
+        self.ctx._ext_module_idx[self._idx_key] = self.node_id
         self._import = import_node
 
     @property
@@ -72,7 +72,7 @@ class ExternalModule(
         Returns:
             ExternalModule: A new ExternalModule instance representing the external module.
         """
-        return cls(imp.ts_node, imp.file_node_id, imp.G, imp._unique_node, imp)
+        return cls(imp.ts_node, imp.file_node_id, imp.ctx, imp._unique_node, imp)
 
     @property
     @reader

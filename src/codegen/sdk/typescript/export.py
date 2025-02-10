@@ -194,7 +194,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         if self.exported_symbol:
             for frame in self.resolved_type_frames:
                 if frame.parent_frame:
-                    frame.parent_frame.add_usage(self._name_node or self, UsageKind.EXPORTED_SYMBOL, self, self.G)
+                    frame.parent_frame.add_usage(self._name_node or self, UsageKind.EXPORTED_SYMBOL, self, self.ctx)
         elif self._exported_symbol:
             if not self.resolve_name(self._exported_symbol.source):
                 self._exported_symbol._compute_dependencies(UsageKind.BODY, dest=dest or self)
@@ -206,20 +206,20 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
     def compute_export_dependencies(self) -> None:
         """Create Export edges from this export to it's used symbols"""
         if self.declared_symbol is not None:
-            assert self.G.has_node(self.declared_symbol.node_id)
-            self.G.add_edge(self.node_id, self.declared_symbol.node_id, type=EdgeType.EXPORT)
+            assert self.ctx.has_node(self.declared_symbol.node_id)
+            self.ctx.add_edge(self.node_id, self.declared_symbol.node_id, type=EdgeType.EXPORT)
         elif self._exported_symbol is not None:
             symbol_name = self._exported_symbol.source
-            if (used_node := self.resolve_name(symbol_name)) and isinstance(used_node, Importable) and self.G.has_node(used_node.node_id):
-                self.G.add_edge(self.node_id, used_node.node_id, type=EdgeType.EXPORT)
+            if (used_node := self.resolve_name(symbol_name)) and isinstance(used_node, Importable) and self.ctx.has_node(used_node.node_id):
+                self.ctx.add_edge(self.node_id, used_node.node_id, type=EdgeType.EXPORT)
         elif self.value is not None:
             if isinstance(self.value, Chainable):
                 for resolved in self.value.resolved_types:
-                    if self.G.has_node(getattr(resolved, "node_id", None)):
-                        self.G.add_edge(self.node_id, resolved.node_id, type=EdgeType.EXPORT)
+                    if self.ctx.has_node(getattr(resolved, "node_id", None)):
+                        self.ctx.add_edge(self.node_id, resolved.node_id, type=EdgeType.EXPORT)
         elif self.name is None:
             # This is the export *; case
-            self.G.add_edge(self.node_id, self.file_node_id, type=EdgeType.EXPORT)
+            self.ctx.add_edge(self.node_id, self.file_node_id, type=EdgeType.EXPORT)
         if self.is_wildcard_export():
             for file in self.file.importers:
                 file.__dict__.pop("valid_symbol_names", None)
@@ -368,7 +368,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         Returns:
             Exportable | None: The exported symbol, file, or import, or None if no symbol is exported.
         """
-        return next(iter(self.G.successors(self.node_id, edge_type=EdgeType.EXPORT)), None)
+        return next(iter(self.ctx.successors(self.node_id, edge_type=EdgeType.EXPORT)), None)
 
     @property
     @reader

@@ -75,11 +75,11 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         Opposite of `usages`
         """
         # TODO: sort out attribute usages in dependencies
-        edges = [x for x in self.G.out_edges(self.node_id) if x[2].type == EdgeType.SYMBOL_USAGE]
+        edges = [x for x in self.ctx.out_edges(self.node_id) if x[2].type == EdgeType.SYMBOL_USAGE]
         unique_dependencies = []
         for edge in edges:
             if edge[2].usage.usage_type is None or edge[2].usage.usage_type in usage_types:
-                dependency = self.G.get_node(edge[1])
+                dependency = self.ctx.get_node(edge[1])
                 unique_dependencies.append(dependency)
         return sort_editables(unique_dependencies, by_file=True)
 
@@ -110,8 +110,8 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         Returns a list of node ids for edges that were removed.
         """
         # Must store edges to remove in a static read-only view before removing to avoid concurrent dict modification
-        for v in self.G.successors(self.node_id, edge_type=edge_type):
-            self.G.remove_edge(self.node_id, v.node_id, edge_type=edge_type)
+        for v in self.ctx.successors(self.node_id, edge_type=edge_type):
+            self.ctx.remove_edge(self.node_id, v.node_id, edge_type=edge_type)
 
     @property
     @noapidoc

@@ -33,7 +33,7 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
     _pos: int
 
     def __init__(self, node: TSNode, positional_idx: int, parent: FunctionCall) -> None:
-        super().__init__(node, parent.file_node_id, parent.G, parent)
+        super().__init__(node, parent.file_node_id, parent.ctx, parent)
         self._pos = positional_idx
 
         # TODO: Make the python and typescript implementations into different classes

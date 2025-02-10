@@ -60,7 +60,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             msg = f"Failed to parse function call. Child 'argument_list' node does not exist. Source: {self.source}"
             raise ValueError(msg)
         args = [Argument(x, i, self) for i, x in enumerate(arg_list_node.named_children) if x.type != "comment"]
-        self._arg_list = Collection(arg_list_node, self.file_node_id, self.G, self, children=args)
+        self._arg_list = Collection(arg_list_node, self.file_node_id, self.ctx, self, children=args)
 
     def __repr__(self) -> str:
         """Custom string representation showing the function call chain structure.
@@ -101,7 +101,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         call_node = find_first_ancestor(node.ts_node, ["call", "call_expression"])
         if call_node is None:
             return None
-        return cls(call_node, node.file_node_id, node.G, parent or node.parent)
+        return cls(call_node, node.file_node_id, node.ctx, parent or node.parent)
 
     @property
     @reader
@@ -118,10 +118,10 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             if func := find_first_ancestor(self.ts_node, [function_type.value for function_type in TSFunctionTypeNames]):
                 from codegen.sdk.typescript.function import TSFunction
 
-                return TSFunction.from_function_type(func, self.file_node_id, self.G, self.parent)
+                return TSFunction.from_function_type(func, self.file_node_id, self.ctx, self.parent)
         elif self.file.programming_language == ProgrammingLanguage.PYTHON:
             if func := find_first_ancestor(self.ts_node, ["function_definition"]):
-                return self.G.node_classes.function_cls(func, self.file_node_id, self.G, self.parent)
+                return self.ctx.node_classes.function_cls(func, self.file_node_id, self.ctx, self.parent)
 
         return None
 
@@ -179,7 +179,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             return False
 
         # 3) Check if the nearest parent call is awaited
-        parent_call_obj = FunctionCall(nearest_call, self.file_node_id, self.G, None)
+        parent_call_obj = FunctionCall(nearest_call, self.file_node_id, self.ctx, None)
         if not parent_call_obj.is_awaited:
             return False
 
@@ -527,7 +527,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             None
         """
         if self.ts_node.parent.type == "expression_statement":
-            Value(self.ts_node.parent, self.file_node_id, self.G, self.parent).remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
+            Value(self.ts_node.parent, self.file_node_id, self.ctx, self.parent).remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
         else:
             super().remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
 
@@ -565,7 +565,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
                         if generic := function_def_frame.generics.get(return_type.source, None):
                             yield from self.with_resolution_frame(generic, direct=function_def_frame.direct)
                             return
-                    if self.G.config.feature_flags.generics:
+                    if self.ctx.config.feature_flags.generics:
                         for arg in self.args:
                             if arg.parameter and (type := arg.parameter.type):
                                 if type.source == return_type.source:
@@ -600,7 +600,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
                 if isinstance(match, FunctionCall):
                     match._compute_dependencies(usage_type, dest)
                 for definition in self.function_definition_frames:
-                    definition.add_usage(match=self, dest=dest, usage_type=usage_type, G=self.G)
+                    definition.add_usage(match=self, dest=dest, usage_type=usage_type, G=self.ctx)
             else:
                 match._compute_dependencies(usage_type, dest)
 
@@ -664,7 +664,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @noapidoc
     def register_api_call(self, url: str):
         assert url, self
-        self.G.global_context.multigraph.usages[url].append(self)
+        self.ctx.global_context.multigraph.usages[url].append(self)
 
     @property
     @reader

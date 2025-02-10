@@ -34,7 +34,7 @@ class TupleType(Collection[Type, Parent], Type[Parent], Generic[TType, Parent]):
 
     def _get_types(self, node: TSNode) -> Generator[TType, None, None]:
         for child in node.named_children:
-            type_cls = self.G.node_classes.type_map.get(child.type, None)
+            type_cls = self.ctx.node_classes.type_map.get(child.type, None)
             if isinstance(type_cls, type) and issubclass(type_cls, self.__class__):
                 yield from self._get_types(child)
             else:

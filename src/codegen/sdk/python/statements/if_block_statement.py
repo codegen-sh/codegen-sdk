@@ -55,7 +55,7 @@ class PyIfBlockStatement(IfBlockStatement[Parent, "PyIfBlockStatement"], Generic
         alt_blocks = []
         if self.is_if_statement:
             for alt_node in self.ts_node.children_by_field_name("alternative"):
-                alt_block = PyIfBlockStatement(alt_node, self.file_node_id, self.G, self.parent, self.index, main_if_block=self._main_if_block or self)
+                alt_block = PyIfBlockStatement(alt_node, self.file_node_id, self.ctx, self.parent, self.index, main_if_block=self._main_if_block or self)
                 alt_blocks.append(alt_block)
         return alt_blocks
 

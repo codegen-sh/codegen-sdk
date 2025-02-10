@@ -117,7 +117,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         if isinstance(self, HasBlock) and self.is_decorated:
             new_ts_node = self.ts_node.parent
 
-        extended_nodes = [(Value(new_ts_node, self.file_node_id, self.G, self.parent) if node.ts_node == self.ts_node else node) for node in nodes]
+        extended_nodes = [(Value(new_ts_node, self.file_node_id, self.ctx, self.parent) if node.ts_node == self.ts_node else node) for node in nodes]
         return sort_editables(extended_nodes)
 
     @writer
@@ -418,11 +418,11 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         Raises:
             AssertionError: If the provided keyword is not in the language's valid keywords list.
         """
-        assert keyword in self.G.node_classes.keywords
+        assert keyword in self.ctx.node_classes.keywords
         to_insert_onto = None
-        to_insert_idx = self.G.node_classes.keywords.index(keyword)
-        for node in self.children_by_field_types(self.G.node_classes.keywords):
-            idx = self.G.node_classes.keywords.index(node)
+        to_insert_idx = self.ctx.node_classes.keywords.index(keyword)
+        for node in self.children_by_field_types(self.ctx.node_classes.keywords):
+            idx = self.ctx.node_classes.keywords.index(node)
             if node == keyword:
                 return
             if idx < to_insert_idx:

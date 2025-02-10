@@ -17,14 +17,14 @@ def mock_codebase_setup(tmpdir) -> tuple[Codebase, File, File]:
 def test_file_reparse_rename_global_var(mock_codebase_setup: tuple[Codebase, File, File]) -> None:
     codebase, file1, file2 = mock_codebase_setup
 
-    G = codebase.G
+    G = codebase.ctx
     init_nodes = G.get_nodes()
     init_edges = G.get_edges()
     assert [x.name for x in file2.classes] == ["MyClass2"]
     assert [x.name for x in file2.get_class("MyClass2").methods] == ["__init__", "square_plus_constant", "cube_plus_constant", "sin_plus_constant"]
 
     file2.get_class("MyClass2").rename("MyClass3")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
 
     assert [x.name for x in file2.classes] == ["MyClass3"]
     assert [x.name for x in file2.get_class("MyClass3").methods] == ["__init__", "square_plus_constant", "cube_plus_constant", "sin_plus_constant"]
@@ -35,7 +35,7 @@ def test_file_reparse_rename_global_var(mock_codebase_setup: tuple[Codebase, Fil
 def test_file_reparse_rename_referenced_class(mock_codebase_setup: tuple[Codebase, File, File]) -> None:
     codebase, file1, file2 = mock_codebase_setup
 
-    G = codebase.G
+    G = codebase.ctx
     init_nodes = G.get_nodes()
     init_edges = G.get_edges()
     assert [x.name for x in file1.classes] == ["MyClass1"]
@@ -43,7 +43,7 @@ def test_file_reparse_rename_referenced_class(mock_codebase_setup: tuple[Codebas
 
     symbol_to_rename = file1.get_class("MyClass1")
     symbol_to_rename.rename("ReferencedClass")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
 
     assert [x.name for x in file1.classes] == ["ReferencedClass"]
     assert [x.name for x in file1.get_class("ReferencedClass").methods] == ["__init__", "square", "cube", "sin"]
@@ -58,7 +58,7 @@ def test_file_reparse_rename_referenced_class(mock_codebase_setup: tuple[Codebas
 def test_file_reparse_add_new_import(mock_codebase_setup: tuple[Codebase, File, File]) -> None:
     codebase, file1, file2 = mock_codebase_setup
 
-    G = codebase.G
+    G = codebase.ctx
     init_nodes = G.get_nodes()
     init_edges = G.get_edges()
     init_file1_imports = file1.imports
@@ -91,7 +91,7 @@ def test_file_reparse_add_new_import(mock_codebase_setup: tuple[Codebase, File, 
 def test_file_reparse_move_global_var(mock_codebase_setup: tuple[Codebase, File, File]) -> None:
     codebase, file1, file2 = mock_codebase_setup
 
-    G = codebase.G
+    G = codebase.ctx
 
     # Move GLOBAL_CONSTANT_1 from file1 to file2
     global_var1 = file1.get_global_var("GLOBAL_CONSTANT_1")
@@ -104,7 +104,7 @@ def test_file_reparse_move_global_var(mock_codebase_setup: tuple[Codebase, File,
     imp_to_remove = file2.get_import("GLOBAL_CONSTANT_1")
     imp_to_remove.remove()
 
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
 
     assert file1.get_symbol("GLOBAL_CONSTANT_1") is None
     assert file2.get_symbol("GLOBAL_CONSTANT_1") is not None
@@ -141,7 +141,7 @@ def bar(x):
         file1 = codebase.get_file("dir/file1.py")
         file2 = codebase.get_file("file2.py")
 
-        G = codebase.G
+        G = codebase.ctx
         init_nodes = G.get_nodes()
         init_edges = G.get_edges()
 

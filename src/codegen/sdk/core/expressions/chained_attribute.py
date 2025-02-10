@@ -39,12 +39,12 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     def __init__(self, ts_node, file_node_id, G, parent: Parent, object: TSNode, attribute: TSNode):
         super().__init__(ts_node, file_node_id, G, parent=parent)
         self._object = self._parse_expression(object, default=Name)
-        if self.G.parser._should_log:
+        if self.ctx.parser._should_log:
             if not isinstance(self._object, Chainable):
                 msg = f"{self._object.__class__} is not chainable: {self._object.source}\nfile: {self.filepath}"
                 raise ValueError(msg)
         self._attribute = self._parse_expression(attribute, default=Name)
-        if self.G.parser._should_log:
+        if self.ctx.parser._should_log:
             if not isinstance(self._attribute, Resolvable):
                 msg = f"{self._attribute.__class__} is not resolvable: {self._attribute.source}\nfile: {self.filepath}"
                 raise ValueError(msg)
@@ -136,7 +136,7 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     def _resolved_types(self) -> Generator[ResolutionStack[Self], None, None]:
         from codegen.sdk.typescript.namespace import TSNamespace
 
-        if not self.G.config.feature_flags.method_usages:
+        if not self.ctx.config.feature_flags.method_usages:
             return
         if res := self.file.valid_import_names.get(self.full_name, None):
             # Module imports
@@ -167,9 +167,9 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     def _compute_dependencies(self, usage_type: UsageKind, dest: Optional["HasName | None"] = None) -> None:
         edges = []
         for used_frame in self.resolved_type_frames:
-            edges.extend(used_frame.get_edges(self, usage_type, dest, self.G))
+            edges.extend(used_frame.get_edges(self, usage_type, dest, self.ctx))
         edges = list(dict.fromkeys(edges))
-        self.G.add_edges(edges)
+        self.ctx.add_edges(edges)
         if self.object.source not in ("self", "this"):
             self.object._compute_dependencies(usage_type, dest)
 

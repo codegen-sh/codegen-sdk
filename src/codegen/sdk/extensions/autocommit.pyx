@@ -47,7 +47,7 @@ def reader(wrapped: Callable[P, T] | None = None, *, cache: bool | None = None) 
             instance = args[0]
             num_args -= 1
         name = wrapped.__name__
-        autocommit = instance.G._autocommit
+        autocommit = instance.ctx._autocommit
         should_cache = cache
 
         def run_func():
@@ -204,7 +204,7 @@ def commiter(wrapped: Callable[P, T] | None = None, *, reset: bool = False) -> C
         if isinstance(instance, CodebaseGraph):
             autocommit = instance._autocommit
         else:
-            autocommit = instance.G._autocommit
+            autocommit = instance.ctx._autocommit
         old_state = autocommit.enter_state(AutoCommitState.Committing)
         try:
             ret = wrapped(*args, **kwargs)

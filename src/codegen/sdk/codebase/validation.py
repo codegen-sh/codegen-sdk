@@ -33,11 +33,11 @@ def post_init_validation(codebase: CodebaseType) -> PostInitValidationStatus:
     from codegen.sdk.codebase.codebase_context import GLOBAL_FILE_IGNORE_LIST
 
     # Verify the graph has nodes
-    if len(codebase.G.nodes) == 0:
+    if len(codebase.ctx.nodes) == 0:
         return PostInitValidationStatus.NO_NODES
 
     # Verify the graph has the same number of files as there are in the repo
-    if len(codebase.files) != len(list(codebase.op.iter_files(codebase.G.projects[0].subdirectories, extensions=codebase.G.extensions, ignore_list=GLOBAL_FILE_IGNORE_LIST))):
+    if len(codebase.files) != len(list(codebase.op.iter_files(codebase.ctx.projects[0].subdirectories, extensions=codebase.ctx.extensions, ignore_list=GLOBAL_FILE_IGNORE_LIST))):
         return PostInitValidationStatus.MISSING_FILES
 
     # Verify import resolution
@@ -64,14 +64,14 @@ def post_reset_validation(init_nodes, nodes, init_edges, edges, repo_name: str, 
 
 def post_sync_validation(codebase: CodebaseType) -> bool:
     """Post codebase.sync, checks that the codebase graph is in a valid state (i.e. not corrupted by codebase.sync)"""
-    if len(codebase.G.all_syncs) > 0 or len(codebase.G.pending_syncs) > 0 or len(codebase.G.transaction_manager.to_commit()) > 0:
+    if len(codebase.ctx.all_syncs) > 0 or len(codebase.ctx.pending_syncs) > 0 or len(codebase.ctx.transaction_manager.to_commit()) > 0:
         msg = "Can only be called on a reset codebase"
         raise NotImplementedError(msg)
-    if not codebase.G.config.feature_flags.track_graph:
+    if not codebase.ctx.config.feature_flags.track_graph:
         msg = "Can only be called with track_graph=true"
         raise NotImplementedError(msg)
-    return len(dict.fromkeys(codebase.G.old_graph.nodes())) == len(dict.fromkeys(codebase.G.nodes)) and len(dict.fromkeys(codebase.G.old_graph.weighted_edge_list())) == len(
-        dict.fromkeys(codebase.G.edges)
+    return len(dict.fromkeys(codebase.ctx.old_graph.nodes())) == len(dict.fromkeys(codebase.ctx.nodes)) and len(dict.fromkeys(codebase.ctx.old_graph.weighted_edge_list())) == len(
+        dict.fromkeys(codebase.ctx.edges)
     )
 
 
@@ -140,7 +140,7 @@ Missing nodes
         from codegen.sdk.core.external_module import ExternalModule
 
         if isinstance(node, ExternalModule):
-            message += "External Module persisted with following dependencies: " + str(list((node.G.get_node(source), edge) for source, _, edge in node.G.in_edges(node.node_id)))
+            message += "External Module persisted with following dependencies: " + str(list((node.ctx.get_node(source), edge) for source, _, edge in node.ctx.in_edges(node.node_id)))
     return message
 
 

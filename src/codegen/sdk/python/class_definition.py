@@ -39,9 +39,9 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
         self._decorated_node = decorated_node
 
         if superclasses_node := self.ts_node.child_by_field_name("superclasses"):
-            self.parent_classes = Parents(superclasses_node, self.file_node_id, self.G, self)
+            self.parent_classes = Parents(superclasses_node, self.file_node_id, self.ctx, self)
         if self.constructor is not None and len(self.constructor.parameters) > 1:
-            self._parameters = SymbolGroup(self.file_node_id, self.G, self, children=self.constructor.parameters[1:])
+            self._parameters = SymbolGroup(self.file_node_id, self.ctx, self, children=self.constructor.parameters[1:])
         self.type_parameters = self.child_by_field_name("type_parameters")
 
     @noapidoc
@@ -76,7 +76,7 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
         else:
             # Set start byte at column=0 of start of the code block
             start_byte = block_node.start_byte - block_node.start_point[1]
-        return MultiLineCollection(children=methods, file_node_id=self.file_node_id, G=self.G, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte)
+        return MultiLineCollection(children=methods, file_node_id=self.file_node_id, G=self.ctx, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte)
 
     ####################################################################################################################
     # MANIPULATIONS
