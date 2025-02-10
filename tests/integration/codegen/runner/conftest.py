@@ -41,7 +41,7 @@ def op(repo_config: RepoConfig) -> Generator[RemoteRepoOperator, None, None]:
 
 @pytest.fixture(autouse=True)
 def git_repo_client(repo_config: RepoConfig) -> GitRepoClient:
-    yield GitRepoClient(repo_config=repo_config)
+    yield GitRepoClient(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
 
 
 @pytest.fixture(autouse=True)
