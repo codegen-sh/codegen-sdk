@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - develop
-      - fix-auto-reease-flow
   workflow_dispatch:
 
 permissions:
@@ -23,6 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
+      # TODO: clean-up once we remove LFS
       - name: Remove pre-push hook
         run: rm -f .git/hooks/pre-push
 
