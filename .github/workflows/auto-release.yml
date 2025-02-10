@@ -21,7 +21,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          lfs: true
+
+      # TODO: clean-up once we remove LFS
+      - name: Remove pre-push hook
+        run: rm -f .git/hooks/pre-push
 
       - uses: codfish/semantic-release-action@v3
         id: semantic
