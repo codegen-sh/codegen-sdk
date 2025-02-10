@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - develop
+      - fix-auto-reease-flow
   workflow_dispatch:
 
 permissions:
