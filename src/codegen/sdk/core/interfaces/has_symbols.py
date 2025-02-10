@@ -36,18 +36,14 @@ FilesParam = ParamSpec("FilesParam")
 TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
 
 
-class HasSymbols(
-    Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]
-):
+class HasSymbols(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
     """Abstract interface for files in a codebase.
 
     Abstract interface for files in a codebase.
     """
 
     @cached_generator()
-    def files_generator(
-        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
-    ) -> Iterator[TFile]:
+    def files_generator(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterator[TFile]:
         """Generator for yielding files of the current container's scope."""
         msg = "This method should be implemented by the subclass"
         raise NotImplementedError(msg)
@@ -60,9 +56,7 @@ class HasSymbols(
     @property
     def import_statements(self) -> list[TImportStatement]:
         """Get a recursive list of all import statements in files container."""
-        return list(
-            chain.from_iterable(f.import_statements for f in self.files_generator())
-        )
+        return list(chain.from_iterable(f.import_statements for f in self.files_generator()))
 
     @property
     def global_vars(self) -> list[TGlobalVar]:
