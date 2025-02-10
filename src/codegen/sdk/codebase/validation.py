@@ -30,12 +30,14 @@ class PostInitValidationStatus(StrEnum):
 
 def post_init_validation(codebase: CodebaseType) -> PostInitValidationStatus:
     """Post codebase._init_graph verifies that the built graph is valid."""
+    from codegen.sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST
+
     # Verify the graph has nodes
     if len(codebase.G.nodes) == 0:
         return PostInitValidationStatus.NO_NODES
 
     # Verify the graph has the same number of files as there are in the repo
-    if len(codebase.files) != len(codebase.op.list_files(codebase.G.projects[0].subdirectories, extensions=codebase.G.extensions)):
+    if len(codebase.files) != len(list(codebase.op.iter_files(codebase.G.projects[0].subdirectories, extensions=codebase.G.extensions, ignore_list=GLOBAL_FILE_IGNORE_LIST))):
         return PostInitValidationStatus.MISSING_FILES
 
     # Verify import resolution

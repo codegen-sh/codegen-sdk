@@ -424,14 +424,15 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         from codegen.sdk.core.interfaces.callable import Callable
 
         result = []
-        for resolution in self.get_name().resolved_type_frames:
-            top_node = resolution.top.node
-            if isinstance(top_node, Callable):
-                if isinstance(top_node, Class):
-                    if constructor := top_node.constructor:
-                        result.append(resolution.with_new_base(constructor, direct=True))
-                        continue
-                result.append(resolution)
+        if self.get_name():
+            for resolution in self.get_name().resolved_type_frames:
+                top_node = resolution.top.node
+                if isinstance(top_node, Callable):
+                    if isinstance(top_node, Class):
+                        if constructor := top_node.constructor:
+                            result.append(resolution.with_new_base(constructor, direct=True))
+                            continue
+                    result.append(resolution)
         return result
 
     @cached_property
@@ -546,15 +547,16 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         if desc := self.child_by_field_name("type_arguments"):
             desc._compute_dependencies(UsageKind.GENERIC, dest)
         match = self.get_name()
-        if len(self.function_definition_frames) > 0:
-            if isinstance(match, ChainedAttribute):
-                match.object._compute_dependencies(usage_type, dest)
-            if isinstance(match, FunctionCall):
+        if match:
+            if len(self.function_definition_frames) > 0:
+                if isinstance(match, ChainedAttribute):
+                    match.object._compute_dependencies(usage_type, dest)
+                if isinstance(match, FunctionCall):
+                    match._compute_dependencies(usage_type, dest)
+                for definition in self.function_definition_frames:
+                    definition.add_usage(match=self, dest=dest, usage_type=usage_type, G=self.G)
+            else:
                 match._compute_dependencies(usage_type, dest)
-            for definition in self.function_definition_frames:
-                definition.add_usage(match=self, dest=dest, usage_type=usage_type, G=self.G)
-        else:
-            match._compute_dependencies(usage_type, dest)
 
     @property
     @reader
