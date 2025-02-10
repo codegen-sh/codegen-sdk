@@ -134,6 +134,7 @@
 				"building-with-codegen/codebase-visualization",
 				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
+				"building-with-codegen/semantic-code-search",
 				"building-with-codegen/reducing-conditions"
 			]
 		},

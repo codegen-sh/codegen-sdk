@@ -62,6 +62,10 @@ dependencies = [
   "tomlkit>=0.13.2",
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
+  "langchain[openai]",
+  "langchain_core",
+  "langchain_openai",
+  "numpy>=2.2.2",
 ]
 
 license = { text = "Apache-2.0" }
@@ -146,6 +150,7 @@ dev-dependencies = [
   "pytest-asyncio<1.0.0,>=0.21.1",
   "loguru>=0.7.3",
   "httpx<0.28.2,>=0.28.1",
+  "jupyterlab>=4.3.5",
 ]
 
 

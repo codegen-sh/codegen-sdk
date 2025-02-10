@@ -1,0 +1,111 @@
+---
+title: "Semantic Code Search"
+sidebarTitle: "Semantic Code Search"
+icon: "magnifying-glass"
+iconType: "solid"
+---
+
+Codegen's `VectorIndex` enables semantic code search capabilities using embeddings. This allows you to search codebases using natural language queries and find semantically related code, even when the exact terms aren't present.
+
+<Warning>This is under active development. Interested in an application? [Reach out to the team!](/introduction/about.tsx)</Warning>
+
+## Basic Usage
+
+Create and save a vector index for your codebase:
+
+```python
+from codegen.extensions import VectorIndex
+
+# Initialize with your codebase
+index = VectorIndex(codebase)
+
+# Create embeddings for all files
+index.create()
+
+# Save to disk (defaults to .codegen/vector_index.pkl)
+index.save()
+```
+
+Later, load the index and perform semantic searches:
+
+```python
+# Create a codebase
+codebase = Codebase.from_repo('fastapi/fastapi')
+
+# Load a previously created index
+index = VectorIndex(codebase)
+index.load()
+
+# Search with natural language
+results = index.similarity_search(
+    "How does FastAPI handle dependency injection?",
+    k=5  # number of results
+)
+
+# Print results with previews
+for filepath, score in results:
+    print(f"\nScore: {score:.3f} | File: {filepath}")
+    file = codebase.get_file(filepath)
+    print(f"Preview: {file.content[:200]}...")
+```
+
+<Note>
+The search uses cosine similarity between embeddings to find the most semantically related files, regardless of exact keyword matches.
+</Note>
+
+## Getting Embeddings
+
+You can also get embeddings for arbitrary text using the same model:
+
+```python
+# Get embeddings for a list of texts
+texts = [
+    "Some code or text to embed",
+    "Another piece of text"
+]
+embeddings = index.get_embeddings(texts)  # shape: (n_texts, embedding_dim)
+```
+
+## How It Works
+
+The `VectorIndex` class:
+1. Processes each file in your codebase
+2. Splits large files into chunks that fit within token limits
+3. Uses OpenAI's text-embedding-3-small model to create embeddings
+4. Stores embeddings in a numpy array for efficient similarity search
+5. Saves the index to disk for reuse
+
+When searching:
+1. Your query is converted to an embedding using the same model
+2. Cosine similarity is computed between the query and all file embeddings
+3. The most similar files are returned, along with their similarity scores
+
+<Warning>
+Creating embeddings requires an OpenAI API key with access to the embeddings endpoint.
+</Warning>
+
+## Example Searches
+
+Here are some example semantic searches that demonstrate the power of the system:
+
+```python
+# Find authentication-related code
+results = index.similarity_search(
+    "How is user authentication implemented?",
+    k=3
+)
+
+# Find error handling patterns
+results = index.similarity_search(
+    "Show me examples of error handling and custom exceptions",
+    k=3
+)
+
+# Find configuration management
+results = index.similarity_search(
+    "Where is the application configuration and settings handled?",
+    k=3
+)
+```
+
+The semantic search can understand concepts and return relevant results even when the exact terms aren't present in the code.
