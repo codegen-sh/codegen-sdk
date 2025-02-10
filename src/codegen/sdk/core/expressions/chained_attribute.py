@@ -79,6 +79,14 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     @property
     @reader
     def attribute_chain(self) -> list["FunctionCall | Name"]:
+        """Returns a list of elements in a chained attribute expression.
+
+        Breaks down chained expressions into individual components in order of appearance.
+        For example: `a.b.c().d` -> [Name("a"), Name("b"), FunctionCall("c"), Name("d")]
+
+        Returns:
+            list[FunctionCall | Name]: List of Name nodes (property access) and FunctionCall nodes (method calls)
+        """
         from codegen.sdk.core.detached_symbols.function_call import FunctionCall
 
         ret = []

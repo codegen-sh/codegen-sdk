@@ -630,6 +630,14 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @property
     @reader
     def attribute_chain(self) -> list[FunctionCall | Name]:
+        """Returns a list of elements in the chainedAttribute that the function call belongs in.
+
+        Breaks down chained expressions into individual components in order of appearance.
+        For example: `a.b.c().d` -> [Name("a"), Name("b"), FunctionCall("c"), Name("d")]
+
+        Returns:
+            list[FunctionCall | Name]: List of Name nodes (property access) and FunctionCall nodes (method calls)
+        """
         if isinstance(self.get_name(), ChainedAttribute):  # child is chainedAttribute. MEANING that this is likely in the middle or the last function call of a chained function call chain.
             return self.get_name().attribute_chain
         elif isinstance(
