@@ -17,14 +17,16 @@ from codegen.sdk.core.interfaces.has_symbols import (
     TSymbol,
 )
 from codegen.sdk.core.utils.cache_utils import cached_generator
-from codegen.shared.decorators.docs import apidoc, py_noapidoc
+from codegen.shared.decorators.docs import apidoc, noapidoc
 
 logger = logging.getLogger(__name__)
 
 
 @apidoc
 class CodeOwner(
-    HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport],
+    HasSymbols[
+        TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport
+    ],
     Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport],
 ):
     """CodeOwner is a class that represents a code owner in a codebase.
@@ -73,15 +75,19 @@ class CodeOwner(
         return codeowners
 
     @cached_generator(maxsize=16)
-    @py_noapidoc
-    def files_generator(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
+    @noapidoc
+    def files_generator(
+        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
+    ) -> Iterable[TFile]:
         for source_file in self.files_source(*args, **kwargs):
             # Filter files by owner value
             if self.owner_value in source_file.owners:
                 yield source_file
 
     @proxy_property
-    def files(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
+    def files(
+        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
+    ) -> Iterable[TFile]:
         return self.files_generator(*args, **kwargs)
 
     @property
@@ -92,4 +98,6 @@ class CodeOwner(
         return iter(self.files_generator())
 
     def __repr__(self) -> str:
-        return f"CodeOwner(owner_type={self.owner_type}, owner_value={self.owner_value})"
+        return (
+            f"CodeOwner(owner_type={self.owner_type}, owner_value={self.owner_value})"
+        )
