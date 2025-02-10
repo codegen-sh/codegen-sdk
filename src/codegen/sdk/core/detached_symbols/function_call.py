@@ -629,6 +629,18 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         return sort_editables(calls, dedupe=False)
 
     @property
+    @reader
+    def attribute_chain(self) -> list[FunctionCall | Name]:
+        if isinstance(self.get_name(), ChainedAttribute):  # child is chainedAttribute. MEANING that this is likely in the middle or the last function call of a chained function call chain.
+            return self.get_name().attribute_chain
+        elif isinstance(
+            self.parent, ChainedAttribute
+        ):  # does not have child chainedAttribute, but parent is chainedAttribute. MEANING that this is likely the TOP function call of a chained function call chain.
+            return self.parent.attribute_chain
+        else:  # this is a standalone function call
+            return [self]
+
+    @property
     @noapidoc
     def descendant_symbols(self) -> list[Importable]:
         symbols = self.get_name().descendant_symbols

@@ -52,6 +52,13 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
         self._name_node = self._parse_expression(name_node, default=Name)
         self._value_node = self._parse_expression(_value_node)
 
+    def __repr__(self) -> str:
+        keyword = f"keyword={self.name}, " if self.name else ""
+        value = f"value='{self.value}', " if self.value else ""
+        type = f"type={self.type}" if self.type else ""
+
+        return f"Argument({keyword}{value}{type})"
+
     @noapidoc
     @classmethod
     def from_argument_list(cls, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
