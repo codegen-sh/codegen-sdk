@@ -82,9 +82,10 @@
 			"group": "Tutorials",
 			"pages": [
 				"tutorials/at-a-glance",
-				"tutorials/migrating-apis",
-				"tutorials/codebase-visualization",
+				"tutorials/build-code-agent",
 				"tutorials/training-data",
+				"tutorials/codebase-visualization",
+				"tutorials/migrating-apis",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
 				"tutorials/manage-feature-flags",
