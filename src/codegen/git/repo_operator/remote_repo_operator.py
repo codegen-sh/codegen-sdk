@@ -80,6 +80,22 @@ class RemoteRepoOperator(RepoOperator):
     ####################################################################################################################
 
     @override
+    def clean_repo(self) -> None:
+        """Cleans the repo by:
+        1. Discards any changes (tracked/untracked)
+        2. Checks out the default branch (+ makes sure it's up to date with the remote)
+        3. Deletes all branches except the default branch
+        4. Deletes all remotes except origin
+
+        Used in SetupOption.PULL_OR_CLONE to allow people to re-use existing repos and start from a clean state.
+        """
+        logger.info(f"Cleaning repo at {self.repo_path} ...")
+        self.discard_changes()
+        self.checkout_branch(self.default_branch, remote=True)
+        self.clean_branches()
+        self.clean_remotes()
+
+    @override
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""
         pull_repo(repo_path=self.repo_path, clone_url=self.clone_url)
