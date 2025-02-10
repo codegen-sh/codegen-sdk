@@ -43,7 +43,7 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
 
     @proxy_property
     @reader(cache=False)
-    def dependencies(self, usage_types: UsageType | None = None, max_depth: int | None = None) -> list[Union["Symbol", "Import"]]:
+    def dependencies(self, usage_types: UsageType | None = UsageType.DIRECT, max_depth: int | None = None) -> list[Union["Symbol", "Import"]]:
         """Returns a list of symbols that this symbol depends on.
 
         Args:
@@ -58,26 +58,24 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         Note:
             This method can be called as both a property or a method. If used as a property, it is equivalent to invoking it without arguments.
         """
-        if usage_types is None:
-            usage_types = UsageType.DIRECT
-
         # Get direct dependencies for this symbol and its descendants
         avoid = set(self.descendant_symbols)
         deps = []
         for symbol in self.descendant_symbols:
-            deps += filter(lambda x: x not in avoid, symbol._get_dependencies(usage_types))
+            deps.extend(filter(lambda x: x not in avoid, symbol._get_dependencies(usage_types)))
 
-        if max_depth is None or max_depth <= 1:
-            return sort_editables(deps, by_file=True)
+        if max_depth is not None and max_depth > 1:
+            # For max_depth > 1, recursively collect dependencies
+            seen = set(deps)
+            for dep in list(deps):  # Create a copy of deps to iterate over
+                if hasattr(dep, "dependencies"):
+                    next_deps = dep.dependencies(usage_types=usage_types, max_depth=max_depth - 1)
+                    for next_dep in next_deps:
+                        if next_dep not in seen:
+                            seen.add(next_dep)
+                            deps.append(next_dep)
 
-        # For max_depth > 1, recursively collect dependencies
-        all_deps = set(deps)
-        for dep in deps:
-            if hasattr(dep, "dependencies"):
-                next_deps = dep.dependencies(usage_types=usage_types, max_depth=max_depth - 1)
-                all_deps.update(next_deps)
-
-        return sort_editables(list(all_deps), by_file=True)
+        return sort_editables(deps, by_file=True)
 
     @reader(cache=False)
     @noapidoc
