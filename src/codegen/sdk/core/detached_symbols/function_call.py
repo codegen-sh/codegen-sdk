@@ -244,17 +244,14 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
 
     @property
     @reader
-    def successor(self) -> FunctionCall[Parent] | Name | None:
+    def successor(self) -> FunctionCall[Parent] | None:
         """Returns the next function call in a function call chain.
 
         Returns the next function call in a function call chain. This method is useful for traversing function call chains
         to analyze or modify sequences of chained function calls.
 
-        Args:
-            None
-
         Returns:
-            FunctionCall[Parent] | Name | None: The next function call in the chain, or None if there is no successor
+            FunctionCall[Parent] | None: The next function call in the chain, or None if there is no successor
             or if the successor is not a function call.
         """
         # this will avoid parent function calls in tree-sitter that are NOT part of the chained calls
