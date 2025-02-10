@@ -205,15 +205,7 @@ class RevealSymbolTool(BaseTool):
         collect_usages: bool = True,
     ) -> str:
         # Find the symbol first
-        found_symbol = None
-        for file in self.codebase.files:
-            for symbol in file.symbols:
-                if symbol.name == symbol_name:
-                    found_symbol = symbol
-                    break
-            if found_symbol:
-                break
-
+        found_symbol = self.codebase.get_symbol(symbol_name)
         result = reveal_symbol(
             found_symbol,
             degree,
