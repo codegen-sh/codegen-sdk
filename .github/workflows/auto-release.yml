@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - develop
-      - fix-auto-reease-flow
   workflow_dispatch:
 
 permissions:
@@ -26,6 +25,6 @@ jobs:
       - uses: codfish/semantic-release-action@v3
         id: semantic
         with:
-          dry-run: true
+          dry-run: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
