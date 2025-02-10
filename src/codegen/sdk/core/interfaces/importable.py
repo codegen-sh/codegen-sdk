@@ -66,17 +66,17 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
         deps = []
         for symbol in self.descendant_symbols:
             deps += filter(lambda x: x not in avoid, symbol._get_dependencies(usage_types))
-        
+
         if max_depth is None or max_depth <= 1:
             return sort_editables(deps, by_file=True)
-        
+
         # For max_depth > 1, recursively collect dependencies
         all_deps = set(deps)
         for dep in deps:
-            if hasattr(dep, 'dependencies'):
+            if hasattr(dep, "dependencies"):
                 next_deps = dep.dependencies(usage_types=usage_types, max_depth=max_depth - 1)
                 all_deps.update(next_deps)
-        
+
         return sort_editables(list(all_deps), by_file=True)
 
     @reader(cache=False)
