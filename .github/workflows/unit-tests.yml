@@ -20,7 +20,7 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup-environment
       - name: Run ATS and Tests
-        uses: ./.github/actions/run_ats
+        uses: ./.github/actions/run-ats
         timeout-minutes: 15
         with:
           default_tests: "tests/unit"
@@ -53,7 +53,7 @@ jobs:
       - name: Cache oss-repos
         uses: ./.github/actions/setup-oss-repos
       - name: Run ATS and Tests
-        uses: ./.github/actions/run_ats
+        uses: ./.github/actions/run-ats
         timeout-minutes: 15
         with:
           default_tests: "tests/integration/codemod/test_codemods.py"
