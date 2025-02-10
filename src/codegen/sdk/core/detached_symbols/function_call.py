@@ -62,6 +62,28 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         args = [Argument(x, i, self) for i, x in enumerate(arg_list_node.named_children) if x.type != "comment"]
         self._arg_list = Collection(arg_list_node, self.file_node_id, self.G, self, children=args)
 
+    def __repr__(self) -> str:
+        """Custom string representation showing the function call chain structure.
+
+        Format: FunctionCall(name=current, pred=pred_name, succ=succ_name, base=base_name)
+
+        It will only print out predecessor, successor, and base that are of type FunctionCall. If it's a property, it will not be logged
+        """
+        # Helper to safely get name
+
+        # Get names for each part
+        parts = [f"name='{self.name}'"]
+
+        if self.predecessor and isinstance(self.predecessor, FunctionCall):
+            parts.append(f"predecessor=FunctionCall(name='{self.predecessor.name}')")
+
+        if self.successor and isinstance(self.successor, FunctionCall):
+            parts.append(f"successor=FunctionCall(name='{self.successor.name}')")
+
+        parts.append(f"filepath='{self.file.filepath}'")
+
+        return f"FunctionCall({', '.join(parts)})"
+
     @classmethod
     def from_usage(cls, node: Editable[Parent], parent: Parent | None = None) -> Self | None:
         """Creates a FunctionCall object from an Editable instance that represents a function call.
@@ -210,9 +232,33 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             or if the predecessor is not a function call.
         """
         # Recursively travel down the tree to find the previous function call (child nodes are previous calls)
-        return self.call_chain[-2] if len(self.call_chain) > 1 else None
+        name = self.get_name()
+        while name:
+            if isinstance(name, FunctionCall):
+                return name
+            elif isinstance(name, ChainedAttribute):
+                name = name.object
+            else:
+                break
+        return None
 
-    # TODO: also define a successor?
+    @property
+    @reader
+    def successor(self) -> FunctionCall[Parent] | None:
+        """Returns the next function call in a function call chain.
+
+        Returns the next function call in a function call chain. This method is useful for traversing function call chains
+        to analyze or modify sequences of chained function calls.
+
+        Returns:
+            FunctionCall[Parent] | None: The next function call in the chain, or None if there is no successor
+            or if the successor is not a function call.
+        """
+        # this will avoid parent function calls in tree-sitter that are NOT part of the chained calls
+        if not isinstance(self.parent, ChainedAttribute):
+            return None
+
+        return self.parent_of_type(FunctionCall)
 
     @property
     @noapidoc
@@ -582,6 +628,26 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
         return sort_editables(calls, dedupe=False)
 
     @property
+    @reader
+    def attribute_chain(self) -> list[FunctionCall | Name]:
+        """Returns a list of elements in the chainedAttribute that the function call belongs in.
+
+        Breaks down chained expressions into individual components in order of appearance.
+        For example: `a.b.c().d` -> [Name("a"), Name("b"), FunctionCall("c"), Name("d")]
+
+        Returns:
+            list[FunctionCall | Name]: List of Name nodes (property access) and FunctionCall nodes (method calls)
+        """
+        if isinstance(self.get_name(), ChainedAttribute):  # child is chainedAttribute. MEANING that this is likely in the middle or the last function call of a chained function call chain.
+            return self.get_name().attribute_chain
+        elif isinstance(
+            self.parent, ChainedAttribute
+        ):  # does not have child chainedAttribute, but parent is chainedAttribute. MEANING that this is likely the TOP function call of a chained function call chain.
+            return self.parent.attribute_chain
+        else:  # this is a standalone function call
+            return [self]
+
+    @property
     @noapidoc
     def descendant_symbols(self) -> list[Importable]:
         symbols = self.get_name().descendant_symbols
@@ -603,24 +669,35 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
     @property
     @reader
     def call_chain(self) -> list[FunctionCall]:
-        """Returns a list of all function calls in this function call chain, including this call. Does not include calls made after this one."""
+        """Returns a list of all function  calls in this function call chain, including this call. Does not include calls made after this one."""
         ret = []
-        name = self.get_name()
-        while name:
-            if isinstance(name, FunctionCall):
-                ret.extend(name.call_chain)
-                break
-            elif isinstance(name, ChainedAttribute):
-                name = name.object
-            else:
-                break
+
+        # backward traversal
+        curr = self
+        pred = curr.predecessor
+        while pred is not None and isinstance(pred, FunctionCall):
+            ret.insert(0, pred)
+            pred = pred.predecessor
+
         ret.append(self)
+
+        # forward traversal
+        curr = self
+        succ = curr.successor
+        while succ is not None and isinstance(succ, FunctionCall):
+            ret.append(succ)
+            succ = succ.successor
+
         return ret
 
     @property
     @reader
     def base(self) -> Editable | None:
-        """Returns the base object of this function call chain."""
+        """Returns the base object of this function call chain.
+
+        Args:
+            Editable | None: The base object of this function call chain.
+        """
         name = self.get_name()
         while isinstance(name, ChainedAttribute):
             if isinstance(name.object, FunctionCall):
