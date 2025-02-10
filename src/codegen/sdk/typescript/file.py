@@ -4,6 +4,7 @@ import os
 from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
+from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interfaces.exportable import Exportable
 from codegen.sdk.enums import ImportType, ProgrammingLanguage, SymbolType
@@ -433,6 +434,24 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
 
         self.G.commit_transactions()
 
+    def _is_export_used(self, export: TSExport) -> bool:
+        # Get all symbol usages
+        usages = export.symbol_usages()
+
+        # If there are any usages, the export is used
+        if usages:
+            return True
+
+        # Check if this is a re-export that's used elsewhere
+        if export.is_reexport():
+            # Get the original symbol
+            original = export.resolved_symbol
+            if original:
+                # Check usages of the original symbol
+                return bool(original.symbol_usages())
+
+        return False
+
     @writer
     def remove_unused_exports(self) -> None:
         """Removes unused exports from the file.
@@ -453,24 +472,14 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
 
         for export in self.exports:
             # Skip type exports
-            if export.is_type_export():
-                continue
-
-            # Skip default exports
-            if export.is_default_export():
+            if export.is_type_export() or export.is_default_export():
                 continue
 
             # Check if export is used
-            has_usages = bool(export.symbol_usages)
+            if self._is_export_used(export):
+                continue
 
-            # For re-exports, check if the re-exported symbol is used
-            if export.is_reexport():
-                if export.resolved_symbol and export.resolved_symbol.symbol_usages:
-                    continue
-
-            # Remove if no usages found
-            if not has_usages:
-                exports_to_remove.append(export)
+            exports_to_remove.append(export)
 
         # Remove unused exports
         for export in exports_to_remove:
