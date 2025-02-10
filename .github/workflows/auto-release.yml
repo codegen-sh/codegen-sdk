@@ -23,6 +23,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Remove pre-push hook
+        run: rm -f .git/hooks/pre-push
+
       - uses: codfish/semantic-release-action@v3
         id: semantic
         with:
