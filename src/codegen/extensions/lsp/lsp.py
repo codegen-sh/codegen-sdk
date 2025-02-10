@@ -3,6 +3,7 @@ import logging
 from lsprotocol import types
 
 import codegen
+from codegen.extensions.lsp.document_symbol import get_document_symbol
 from codegen.extensions.lsp.protocol import CodegenLanguageServerProtocol
 from codegen.extensions.lsp.server import CodegenLanguageServer
 
@@ -24,20 +25,39 @@ def rename(server: CodegenLanguageServer, params: types.RenameParams):
     server.codebase.commit()
 
 
-# @server.feature(
-#     types.TEXT_DOCUMENT_RENAME,
-# )
-# def completions(params: types.CompletionParams):
-#     document = server.workspace.get_document(params.text_document.uri)
-#     current_line = document.lines[params.position.line].strip()
+@server.feature(
+    types.TEXT_DOCUMENT_DOCUMENT_SYMBOL,
+)
+def document_symbol(server: CodegenLanguageServer, params: types.DocumentSymbolParams) -> types.DocumentSymbolResult:
+    file = server.get_file(params.text_document.uri)
+    symbols = []
+    for symbol in file.symbols:
+        symbols.append(get_document_symbol(symbol))
+    return symbols
 
-#     if not current_line.endswith("hello."):
-#         return []
 
-#     return [
-#         types.CompletionItem(label="world"),
-#         types.CompletionItem(label="friend"),
-#     ]
+get_document_symbol
+
+
+@server.feature(
+    types.TEXT_DOCUMENT_HOVER,
+)
+def hover(server: CodegenLanguageServer, params: types.HoverParams) -> types.HoverResponse:
+    pass
+
+
+@server.feature(
+    types.TEXT_DOCUMENT_COMPLETION,
+)
+def completion(server: CodegenLanguageServer, params: types.CompletionParams):
+    pass
+
+
+@server.feature(
+    types.TEXT_DOCUMENT_DEFINITION,
+)
+def definition(server: CodegenLanguageServer, params: types.DefinitionParams):
+    pass
 
 
 if __name__ == "__main__":
