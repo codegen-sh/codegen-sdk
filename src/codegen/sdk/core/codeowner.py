@@ -5,7 +5,17 @@ from typing import Callable, Generic, Literal
 from codeowners import CodeOwners as CodeOwnersParser
 
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.core.interfaces.has_symbols import FilesParam, HasSymbols, TClass, TFile, TFunction, TGlobalVar, TImport, TImportStatement, TSymbol
+from codegen.sdk.core.interfaces.has_symbols import (
+    FilesParam,
+    HasSymbols,
+    TClass,
+    TFile,
+    TFunction,
+    TGlobalVar,
+    TImport,
+    TImportStatement,
+    TSymbol,
+)
 from codegen.sdk.core.utils.cache_utils import cached_generator
 from codegen.shared.decorators.docs import apidoc, py_noapidoc
 
@@ -13,7 +23,12 @@ logger = logging.getLogger(__name__)
 
 
 @apidoc
-class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport], Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
+class CodeOwner(
+    HasSymbols[
+        TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport
+    ],
+    Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport],
+):
     """CodeOwner is a class that represents a code owner in a codebase.
 
     It is used to iterate over all files that are owned by a specific owner.
@@ -28,13 +43,22 @@ class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass,
     owner_value: str
     files_source: Callable[FilesParam, Iterable[TFile]]
 
-    def __init__(self, files_source: Callable[FilesParam, Iterable[TFile]], owner_type: Literal["USERNAME", "TEAM", "EMAIL"], owner_value: str):
+    def __init__(
+        self,
+        files_source: Callable[FilesParam, Iterable[TFile]],
+        owner_type: Literal["USERNAME", "TEAM", "EMAIL"],
+        owner_value: str,
+    ):
         self.owner_type = owner_type
         self.owner_value = owner_value
         self.files_source = files_source
 
     @classmethod
-    def from_parser(cls, parser: CodeOwnersParser, file_source: Callable[FilesParam, Iterable[TFile]]) -> list["CodeOwner"]:
+    def from_parser(
+        cls,
+        parser: CodeOwnersParser,
+        file_source: Callable[FilesParam, Iterable[TFile]],
+    ) -> list["CodeOwner"]:
         """Create a list of CodeOwner objects from a CodeOwnersParser.
 
         Args:
@@ -50,16 +74,20 @@ class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass,
                 codeowners.append(CodeOwner(file_source, owner_label, owner_value))
         return codeowners
 
-    @py_noapidoc
     @cached_generator(maxsize=16)
-    def files_generator(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
+    @py_noapidoc
+    def files_generator(
+        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
+    ) -> Iterable[TFile]:
         for source_file in self.files_source(*args, **kwargs):
             # Filter files by owner value
             if self.owner_value in source_file.owners:
                 yield source_file
 
     @proxy_property
-    def files(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterable[TFile]:
+    def files(
+        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
+    ) -> Iterable[TFile]:
         return self.files_generator(*args, **kwargs)
 
     @property
@@ -70,4 +98,6 @@ class CodeOwner(HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass,
         return iter(self.files_generator())
 
     def __repr__(self) -> str:
-        return f"CodeOwner(owner_type={self.owner_type}, owner_value={self.owner_value})"
+        return (
+            f"CodeOwner(owner_type={self.owner_type}, owner_value={self.owner_value})"
+        )

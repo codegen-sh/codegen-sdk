@@ -36,14 +36,19 @@ FilesParam = ParamSpec("FilesParam")
 TSGlobalVar = TypeVar("TSGlobalVar", bound="Assignment")
 
 
-class HasSymbols(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]):
+class HasSymbols(
+    Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport]
+):
     """Abstract interface for files in a codebase.
 
     Abstract interface for files in a codebase.
     """
 
     @cached_generator()
-    def files_generator(self, *args: FilesParam.args, **kwargs: FilesParam.kwargs) -> Iterator[TFile]:
+    def files_generator(
+        self, *args: FilesParam.args, **kwargs: FilesParam.kwargs
+    ) -> Iterator[TFile]:
+        """Generator for yielding files of the current container's scope."""
         msg = "This method should be implemented by the subclass"
         raise NotImplementedError(msg)
 
@@ -55,7 +60,9 @@ class HasSymbols(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, T
     @property
     def import_statements(self) -> list[TImportStatement]:
         """Get a recursive list of all import statements in files container."""
-        return list(chain.from_iterable(f.import_statements for f in self.files_generator()))
+        return list(
+            chain.from_iterable(f.import_statements for f in self.files_generator())
+        )
 
     @property
     def global_vars(self) -> list[TGlobalVar]:
@@ -104,7 +111,10 @@ class HasSymbols(Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, T
         return next((s for s in self.functions if s.name == name), None)
 
     @py_noapidoc
-    def get_export(self: "HasSymbols[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]", name: str) -> "TSExport | None":
+    def get_export(
+        self: "HasSymbols[TSFile, TSSymbol, TSImportStatement, TSGlobalVar, TSClass, TSFunction, TSImport]",
+        name: str,
+    ) -> "TSExport | None":
         """Get an export by name in files container (supports only typescript)."""
         return next((s for s in self.exports if s.name == name), None)
 
