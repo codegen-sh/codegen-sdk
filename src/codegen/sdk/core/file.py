@@ -113,8 +113,8 @@ class File(Editable[None]):
         if not path.exists():
             update_graph = True
             path.parent.mkdir(parents=True, exist_ok=True)
-            G.file_tracker.write_file(path, content)
-            G.file_tracker.save_files({path})
+            G.io.write_file(path, content)
+            G.io.save_files({path})
 
         new_file = cls(filepath, G, ts_node=None, binary=binary)
         return new_file
@@ -127,7 +127,7 @@ class File(Editable[None]):
 
         TODO: move rest of graph sitter to operate in bytes to prevent multi byte character issues?
         """
-        return self.G.file_tracker.read_bytes(self.path)
+        return self.G.io.read_bytes(self.path)
 
     @property
     @reader
@@ -154,9 +154,9 @@ class File(Editable[None]):
     @noapidoc
     def write(self, content: str | bytes, to_disk: bool = False) -> None:
         """Writes contents to the file."""
-        self.G.file_tracker.write_file(self.path, content)
+        self.G.io.write_file(self.path, content)
         if to_disk:
-            self.G.file_tracker.save_files({self.path})
+            self.G.io.save_files({self.path})
             if self.ts_node.start_byte == self.ts_node.end_byte:
                 # TS didn't parse anything, register a write to make sure the transaction manager can restore the file later.
                 self.edit("")
@@ -250,7 +250,7 @@ class File(Editable[None]):
             None
         """
         self.transaction_manager.add_file_remove_transaction(self)
-        self.G.file_tracker.write_file(self.path, None)
+        self.G.io.write_file(self.path, None)
 
     @property
     def filepath(self) -> str:
@@ -574,10 +574,11 @@ class SourceFile(
             return None
 
         update_graph = False
-        if not path.exists():
+        if not G.io.file_exists(path):
             update_graph = True
             path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(content)
+            G.io.write_file(path, content)
+            G.io.save_files({path})
 
         if update_graph and sync:
             G.add_single_file(path)

@@ -15,6 +15,7 @@ from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectCo
 from codegen.sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 from codegen.sdk.codebase.flagging.flags import Flags
+from codegen.sdk.codebase.io.file_io import FileIO
 from codegen.sdk.codebase.transaction_manager import TransactionManager
 from codegen.sdk.codebase.validation import get_edges, post_reset_validation
 from codegen.sdk.core.autocommit import AutoCommit, commiter
@@ -36,6 +37,7 @@ if TYPE_CHECKING:
     from git import Commit as GitCommit
 
     from codegen.git.repo_operator.repo_operator import RepoOperator
+    from codegen.sdk.codebase.io.io import IO
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses
     from codegen.sdk.core.dataclasses.usage import Usage
     from codegen.sdk.core.expressions import Expression
@@ -46,8 +48,6 @@ if TYPE_CHECKING:
     from codegen.sdk.core.parser import Parser
 
 import logging
-
-from codegen.sdk.codebase.io.file_tracker import FileTracker
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ class CodebaseGraph:
     session_options: SessionOptions = SessionOptions()
     projects: list[ProjectConfig]
     unapplied_diffs: list[DiffLite]
-    file_tracker: FileTracker[SourceFile]
+    io: IO
 
     def __init__(
         self,
@@ -135,6 +135,7 @@ class CodebaseGraph:
 
         # =====[ __init__ attributes ]=====
         self.projects = projects
+        self.io = FileIO()
         context = projects[0]
         self.node_classes = get_node_classes(context.programming_language)
         self.config = config
@@ -166,7 +167,6 @@ class CodebaseGraph:
         self.pending_syncs = []
         self.all_syncs = []
         self.unapplied_diffs = []
-        self.file_tracker = FileTracker()
         self.flags = Flags()
 
     def __repr__(self):
@@ -271,7 +271,7 @@ class CodebaseGraph:
     def undo_applied_diffs(self) -> None:
         self.transaction_manager.clear_transactions()
         self.reset_codebase()
-        self.file_tracker.check_changes()
+        self.io.check_changes()
         self.pending_syncs.clear()  # Discard pending changes
         if len(self.all_syncs) > 0:
             logger.info(f"Unapplying {len(self.all_syncs)} diffs to graph. Current graph commit: {self.synced_commit}")
@@ -433,7 +433,7 @@ class CodebaseGraph:
 
         # Step 5: Add new files as nodes to graph (does not yet add edges)
         for filepath in files_to_sync[SyncType.ADD]:
-            content = filepath.read_text(errors="ignore")
+            content = self.io.read_text(filepath)
             # TODO: this is wrong with context changes
             if filepath.suffix in self.extensions:
                 file_cls = self.node_classes.file_cls
@@ -674,7 +674,7 @@ class CodebaseGraph:
 
         # Write files if requested
         if sync_file:
-            self.file_tracker.write_files(files)
+            self.io.save_files(files)
 
         # Sync the graph if requested
         if sync_graph and len(self.pending_syncs) > 0:

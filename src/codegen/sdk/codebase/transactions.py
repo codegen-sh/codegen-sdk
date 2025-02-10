@@ -266,7 +266,7 @@ class FileRenameTransaction(Transaction):
 
     def execute(self) -> None:
         """Renames the file"""
-        self.file.G.file_tracker.save_files({self.file.path})
+        self.file.G.io.save_files({self.file.path})
         self.file_path.rename(self.new_file_path)
 
     def get_diff(self) -> DiffLite:
@@ -291,7 +291,7 @@ class FileRemoveTransaction(Transaction):
 
     def execute(self) -> None:
         """Removes the file"""
-        self.file.G.file_tracker.delete_file(self.file.path)
+        self.file.G.io.delete_file(self.file.path)
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
