@@ -37,6 +37,9 @@ class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
             node = children[0].ts_node
         super().__init__(node, file_node_id, G, parent)
 
+    def __repr__(self) -> str:
+        return f"Collection({self.symbols})" if self.symbols is not None else super().__repr__()
+
     def _init_children(self): ...
 
     @repr_func  # HACK
