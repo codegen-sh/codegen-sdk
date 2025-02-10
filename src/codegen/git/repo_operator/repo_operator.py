@@ -159,15 +159,11 @@ class RepoOperator(ABC):
     def clean_repo(self) -> None:
         """Cleans the repo by:
         1. Discards any changes (tracked/untracked)
-        2. Checks out the default branch (+ makes sure it's up to date with the remote)
-        3. Deletes all branches except the default branch
-        4. Deletes all remotes except origin
-
-        Used in SetupOption.PULL_OR_CLONE to allow people to re-use existing repos and start from a clean state.
+        2. Deletes all branches except the checked out branch
+        3. Deletes all remotes except origin
         """
         logger.info(f"Cleaning repo at {self.repo_path} ...")
         self.discard_changes()
-        self.checkout_branch(self.default_branch)  # TODO(CG-9440): add back remote=True
         self.clean_branches()
         self.clean_remotes()
 
@@ -276,20 +272,6 @@ class RepoOperator(ABC):
         if self.git_cli.head.is_detached:
             return False
         return self.git_cli.active_branch.name == branch_name
-
-    def delete_local_branch(self, branch_name: str) -> None:
-        if branch_name not in self.git_cli.branches:
-            logger.info(f"Branch {branch_name} does not exist locally. Skipping delete_local_branch.")
-            return
-        if branch_name is self.default_branch:
-            msg = "Deleting the default branch is not implemented yet."
-            raise NotImplementedError(msg)
-
-        if self.is_branch_checked_out(branch_name):
-            self.checkout_branch(self.default_branch)
-
-        logger.info(f"Deleting local branch: {branch_name} ...")
-        self.git_cli.delete_head(branch_name, force=True)  # force deletes even if the branch has unmerged changes
 
     def checkout_branch(self, branch_name: str | None, *, remote: bool = False, remote_name: str = "origin", create_if_missing: bool = True) -> CheckoutResult:
         """Attempts to check out the branch in the following order:

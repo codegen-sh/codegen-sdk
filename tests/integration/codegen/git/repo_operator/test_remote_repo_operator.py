@@ -12,7 +12,12 @@ shallow_options = [True, False]
 
 @pytest.fixture
 def op(repo_config, request, tmpdir):
-    op = RemoteRepoOperator(repo_config, shallow=request.param, base_dir=tmpdir, bot_commit=False)
+    op = RemoteRepoOperator(
+        repo_config,
+        shallow=request.param if hasattr(request, "param") else True,
+        base_dir=tmpdir,
+        bot_commit=False,
+    )
     yield op
 
 
@@ -76,3 +81,24 @@ def test_checkout_branch_remote_already_checked_out_resets_branch(mock_git_clien
     assert res == CheckoutResult.SUCCESS
     assert len(op.git_cli.heads) == 1
     assert op.head_commit.hexsha == original_commit_head.hexsha
+
+
+def test_clean_repo(op: RemoteRepoOperator):
+    num_branches = len(op.git_cli.branches)
+    op.checkout_branch(branch_name="test_branch", create_if_missing=True)
+    with open(f"{op.repo_path}/test.txt", "w") as f:
+        f.write("test")
+    op.git_cli.git.add(A=True)
+    op.git_cli.create_remote(name="other-remote", url=op.clone_url)
+
+    assert op.git_cli.active_branch.name == "test_branch"
+    assert len(op.git_cli.branches) == num_branches + 1
+    assert len(op.git_cli.remotes) == 2
+    assert op.git_cli.is_dirty()
+
+    op.clean_repo()
+    assert not op.git_cli.is_dirty()  # discards changes
+    assert len(op.git_cli.branches) == 1  # deletes only the checked out branch
+    assert op.git_cli.active_branch.name == op.default_branch
+    assert len(op.git_cli.remotes) == 1  # deletes all remotes except origin
+    assert op.git_cli.remotes[0].name == "origin"
