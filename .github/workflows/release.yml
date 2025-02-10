@@ -84,6 +84,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      # TODO(CG-10743): clean-up once we remove LFS
+      - name: Remove pre-push hook
+        run: rm -f .git/hooks/pre-push
+
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
