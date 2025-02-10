@@ -22,9 +22,7 @@ logger = logging.getLogger(__name__)
 
 @apidoc
 class Directory(
-    HasSymbols[
-        TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport
-    ],
+    HasSymbols[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport],
     Generic[TFile, TSymbol, TImportStatement, TGlobalVar, TClass, TFunction, TImport],
 ):
     """Directory representation for codebase.
@@ -143,11 +141,7 @@ class Directory(
 
         if ignore_case:
             return next(
-                (
-                    f
-                    for name, f in self.items.items()
-                    if name.lower() == filename.lower() and isinstance(f, File)
-                ),
+                (f for name, f in self.items.items() if name.lower() == filename.lower() and isinstance(f, File)),
                 None,
             )
         return self.items.get(filename, None)
@@ -176,9 +170,7 @@ class Directory(
         old_path = self.dirpath
         new_path = new_filepath
         for file in self.files:
-            new_file_path = os.path.join(
-                new_path, os.path.relpath(file.file_path, old_path)
-            )
+            new_file_path = os.path.join(new_path, os.path.relpath(file.file_path, old_path))
             file.update_filepath(new_file_path)
 
     def remove(self) -> None:
