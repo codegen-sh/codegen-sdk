@@ -126,11 +126,16 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     @noapidoc
     @override
     def _resolved_types(self) -> Generator[ResolutionStack[Self], None, None]:
+        from codegen.sdk.typescript.namespace import TSNamespace
+
         if not self.G.config.feature_flags.method_usages:
             return
         if res := self.file.valid_import_names.get(self.full_name, None):
             # Module imports
             yield from self.with_resolution_frame(res)
+            return
+        # HACK: This is a hack to skip the resolved types for namespaces
+        if isinstance(self.object, TSNamespace):
             return
         for resolved_type in self.object.resolved_type_frames:
             top = resolved_type.top
