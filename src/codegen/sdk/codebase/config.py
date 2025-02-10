@@ -50,7 +50,7 @@ class GSFeatureFlags(BaseModel):
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)
 
-TestFlags = GSFeatureFlags(debug=True, verify_graph=True, full_range_index=True)
+TestFlags = GSFeatureFlags(debug=True, track_graph=True, verify_graph=True, full_range_index=True)
 LintFlags = GSFeatureFlags(method_usages=False)
 ParseTestFlags = GSFeatureFlags(debug=False, track_graph=False)
 

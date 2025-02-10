@@ -1,3 +1,4 @@
+import logging
 from itertools import groupby
 
 import rich
@@ -25,6 +26,9 @@ def list_command():
         for key, value in data.items():
             full_key = f"{prefix}{key}" if prefix else key
             if isinstance(value, dict):
+                # Always include dictionary fields, even if empty
+                if not value:
+                    items[full_key] = "{}"
                 items.update(flatten_dict(value, f"{full_key}."))
             else:
                 items[full_key] = value
@@ -71,9 +75,12 @@ def set_command(key: str, value: str):
         rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
         return
 
-    if cur_value.lower() == value.lower():
-        rich.print(f"[yellow]Warning: Configuration key '{key}' already set to '{value}'[/yellow]")
-        return
+    if cur_value.lower() != value.lower():
+        try:
+            config.set(key, value)
+        except Exception as e:
+            logging.exception(e)
+            rich.print(f"[red]{e}[/red]")
+            return
 
-    config.set(key, value)
     rich.print(f"[green]Successfully set {key}=[magenta]{value}[/magenta] and saved to config.toml[/green]")

@@ -30,7 +30,8 @@ def _load_from_toml(config_path: Path) -> Config:
     if config_path.exists():
         with open(config_path, "rb") as f:
             toml_config = tomllib.load(f)
-            return Config.model_validate(toml_config)
+            return Config.model_validate(toml_config, strict=False)
+
     return Config()
 
 
