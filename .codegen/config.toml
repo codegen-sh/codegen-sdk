@@ -12,14 +12,15 @@ syntax_highlight_enabled = false
 [feature_flags.codebase]
 debug = false
 verify_graph = false
-track_graph = true
+track_graph = false
 method_usages = true
 sync_enabled = true
 full_range_index = false
 ignore_process_errors = true
 disable_graph = false
 generics = true
-import_resolution_overrides = {}
+
+[feature_flags.codebase.import_resolution_overrides]
 
 [feature_flags.codebase.typescript]
 ts_dependency_manager = false

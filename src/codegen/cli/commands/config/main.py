@@ -66,9 +66,13 @@ def get_command(key: str):
 @click.argument("value")
 def set_command(key: str, value: str):
     """Set a configuration value and write to config.toml."""
-    value = config.get(key)
-    if value is None:
+    cur_value = config.get(key)
+    if cur_value is None:
         rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
+        return
+
+    if cur_value.lower() == value.lower():
+        rich.print(f"[yellow]Warning: Configuration key '{key}' already set to '{value}'[/yellow]")
         return
 
     config.set(key, value)

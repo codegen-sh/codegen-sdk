@@ -35,7 +35,7 @@ class GSFeatureFlags(BaseModel):
     model_config = ConfigDict(frozen=True)
     debug: bool = False
     verify_graph: bool = False
-    track_graph: bool = True  # Track the initial graph state
+    track_graph: bool = False  # Track the initial graph state
     method_usages: bool = True
     sync_enabled: bool = True
     ts_dependency_manager: bool = False  # Enable Typescript Dependency Manager
