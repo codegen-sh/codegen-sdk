@@ -70,19 +70,19 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
             return sort_editables(deps, by_file=True)
         else:
             # Recursive implementation for max_depth
-            dependency_map: dict[Self, list[Union["Symbol", "Import"]]] = {}
-            
+            dependency_map: dict[Self, list[Union[Symbol, Import]]] = {}
+
             def _collect_dependencies(current_symbol: Self, current_depth: int) -> None:
                 # Get direct dependencies
                 from codegen.sdk.core.symbol import Symbol
 
                 direct_deps = [dep for dep in current_symbol.dependencies(usage_types=usage_types) if isinstance(dep, Symbol)]
-                
+
                 # Add current symbol and its dependencies to the map if not already present
                 # or if present but with empty dependencies (from max depth)
                 if current_symbol not in dependency_map or not dependency_map[current_symbol]:
                     dependency_map[current_symbol] = direct_deps
-                
+
                 # Process dependencies if not at max depth
                 if current_depth < max_depth:
                     for dep in direct_deps:
@@ -95,7 +95,7 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
 
             # Start recursive collection from depth 1
             _collect_dependencies(self, 1)
-            
+
             # Return all unique dependencies found
             all_deps = set()
             for deps in dependency_map.values():

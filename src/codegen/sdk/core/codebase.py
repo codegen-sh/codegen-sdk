@@ -655,7 +655,6 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             raise ValueError(msg)
         return matches[0]
 
-
     @noapidoc
     @staticmethod
     def _remove_extension(filename: str) -> str:
