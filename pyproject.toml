@@ -26,6 +26,7 @@ dependencies = [
   "watchfiles<1.1.0,>=1.0.0",
   "rich<14.0.0,>=13.7.1",
   "pydantic<3.0.0,>=2.9.2",
+  "pydantic-settings>=2.0.0",
   "docstring-parser<1.0,>=0.16",
   "plotly>=5.24.0,<7.0.0",
   "humanize<5.0.0,>=4.10.0",
