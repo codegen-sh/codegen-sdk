@@ -2,7 +2,7 @@
 
 import itertools
 
-from codegen.sdk.codebase.codebase_context import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import EdgeType
 
@@ -33,7 +33,7 @@ class MySubClass(MyClass):
     """
     with get_codebase_session(tmpdir=tmpdir, files={"test.py": content}) as codebase:
         assert codebase is not None
-        assert isinstance(codebase.G, CodebaseGraph)
+        assert isinstance(codebase.G, CodebaseContext)
         # assert set(codebase.G.nodes) == {
         #     "<PyAssignment>test.py::global_var_1:51-67",
         #     "<PyAssignment>test.py::global_var_2:68-84",

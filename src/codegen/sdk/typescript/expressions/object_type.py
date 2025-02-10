@@ -12,7 +12,7 @@ from codegen.sdk.typescript.symbol_groups.dict import TSDict, TSPair
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 import logging
 
@@ -72,7 +72,7 @@ class TSObjectType(TSDict, Type[Parent], Generic[Parent]):
     in TypeScript code.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent, delimiter=";", pair_type=TSObjectPair)
 
     def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):

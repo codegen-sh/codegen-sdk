@@ -9,7 +9,7 @@ from codegen.shared.decorators.docs import py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as PyNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class PyMatchStatement(SwitchStatement["PyCodeBlock", "PyCodeBlock", PyMatchCase]):
     """Abstract representation of the match block"""
 
-    def __init__(self, ts_node: PyNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyCodeBlock, pos: int | None = None) -> None:
+    def __init__(self, ts_node: PyNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int | None = None) -> None:
         super().__init__(ts_node, file_node_id, G, parent, pos)
         self.value = self.child_by_field_name("subject")
         code_block = self.ts_node.child_by_field_name("body")

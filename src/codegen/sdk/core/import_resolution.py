@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     import rich.repr
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.interfaces.has_name import HasName
@@ -84,7 +84,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseGraph,
+        G: CodebaseContext,
         parent: ImportStatement,
         module_node: TSNode | None,
         name_node: TSNode | None,

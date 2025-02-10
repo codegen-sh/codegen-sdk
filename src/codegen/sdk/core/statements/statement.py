@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import rich.repr
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.interfaces.has_name import HasName
@@ -81,7 +81,7 @@ class Statement(Expression[Parent], Generic[Parent]):
     statement_type: StatementType = StatementType.UNSPECIFIED
     _pos: int
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, pos: int | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int | None = None) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self._pos = pos
 

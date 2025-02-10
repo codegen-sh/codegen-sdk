@@ -23,7 +23,7 @@ from codegen.sdk.utils import calculate_base_path, find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.typescript.symbol import TSSymbol
@@ -356,7 +356,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         return None
 
     @noapidoc
-    def get_import_module_name_for_file(self, filepath: str, G: CodebaseGraph) -> str:
+    def get_import_module_name_for_file(self, filepath: str, G: CodebaseContext) -> str:
         """Returns the module name that this file gets imported as"""
         # TODO: support relative and absolute module path
         import_path = filepath

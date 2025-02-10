@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 from tree_sitter import Node as TSNode
 
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.codebase.codebase_context import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.range_index import RangeIndex
 from codegen.sdk.codebase.span import Range
 from codegen.sdk.core.autocommit import commiter, mover, reader, remover, writer
@@ -72,7 +72,7 @@ class File(Editable[None]):
     _binary: bool = False
     _range_index: RangeIndex
 
-    def __init__(self, filepath: PathLike, G: CodebaseGraph, ts_node: TSNode | None = None, binary: bool = False) -> None:
+    def __init__(self, filepath: PathLike, G: CodebaseContext, ts_node: TSNode | None = None, binary: bool = False) -> None:
         if ts_node is None:
             # TODO: this is a temp hack to deal with all symbols needing a TSNode.
             parser = get_parser_by_filepath_or_extension(".py")
@@ -109,7 +109,7 @@ class File(Editable[None]):
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str | Path, content: str | bytes, G: CodebaseGraph, sync: bool = False, binary: bool = False) -> Self | None:
+    def from_content(cls, filepath: str | Path, content: str | bytes, G: CodebaseContext, sync: bool = False, binary: bool = False) -> Self | None:
         """Creates a new file from content."""
         if sync:
             logger.warn("Creating & Syncing non-source files are not supported. Ignoring sync...")
@@ -332,7 +332,7 @@ class File(Editable[None]):
         # =====[ Change the file on disk ]=====
         self.transaction_manager.add_file_rename_transaction(self, new_filepath)
 
-    def parse(self, G: "CodebaseGraph") -> None:
+    def parse(self, G: "CodebaseContext") -> None:
         """Parses the file representation into the graph.
 
         This method is called during file initialization to parse the file and build its graph representation within the codebase graph.
@@ -446,7 +446,7 @@ class SourceFile(
     code_block: TCodeBlock
     _nodes: list[Importable]
 
-    def __init__(self, ts_node: TSNode, filepath: PathLike, G: CodebaseGraph) -> None:
+    def __init__(self, ts_node: TSNode, filepath: PathLike, G: CodebaseContext) -> None:
         self.node_id = G.add_node(self)
         self._nodes = []
         super().__init__(filepath, G, ts_node=ts_node)
@@ -472,7 +472,7 @@ class SourceFile(
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         self.__dict__.pop("_source", None)
         # Add self to the graph
         self.code_block = self._parse_code_block(self.ts_node)
@@ -587,7 +587,7 @@ class SourceFile(
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str | PathLike | Path, content: str, G: CodebaseGraph, sync: bool = True, verify_syntax: bool = True) -> Self | None:
+    def from_content(cls, filepath: str | PathLike | Path, content: str, G: CodebaseContext, sync: bool = True, verify_syntax: bool = True) -> Self | None:
         """Creates a new file from content and adds it to the graph."""
         path = G.to_absolute(filepath)
         ts_node = parse_file(path, content)
@@ -609,7 +609,7 @@ class SourceFile(
 
     @classmethod
     @noapidoc
-    def create_from_filepath(cls, filepath: str, G: CodebaseGraph) -> Self | None:
+    def create_from_filepath(cls, filepath: str, G: CodebaseContext) -> Self | None:
         """Makes a new empty file and adds it to the graph.
 
         Graph-safe.
@@ -920,7 +920,7 @@ class SourceFile(
     @classmethod
     @abstractmethod
     @noapidoc
-    def get_import_module_name_for_file(cls, filepath: str, G: CodebaseGraph) -> str: ...
+    def get_import_module_name_for_file(cls, filepath: str, G: CodebaseContext) -> str: ...
 
     @abstractmethod
     def remove_unused_exports(self) -> None:

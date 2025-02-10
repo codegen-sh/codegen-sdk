@@ -14,7 +14,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -35,7 +35,7 @@ class ExportStatement(Statement["TSCodeBlock"], Generic[TExport]):
     exports: Collection[TExport, Self]
     statement_type = StatementType.EXPORT_STATEMENT
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock, pos: int):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int):
         super().__init__(ts_node, parent.file_node_id, parent.G, parent, pos)
         export_node = self.ts_node
         if node := self.child_by_field_types(["export_clause", "export_statement"]):

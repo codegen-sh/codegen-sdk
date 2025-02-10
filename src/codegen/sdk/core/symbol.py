@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     import rich.repr
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.file import SourceFile
@@ -54,7 +54,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         self,
         ts_node: TSNode,
         file_id: NodeId,
-        G: CodebaseGraph,
+        G: CodebaseContext,
         parent: Statement[CodeBlock[Parent, ...]],
         name_node: TSNode | None = None,
         name_node_type: type[Name] = DefinedName,
@@ -233,7 +233,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         """Adds itself as a symbol node in the graph, and an edge from the parent file to itself."""
 
     ####################################################################################################################

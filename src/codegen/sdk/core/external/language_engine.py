@@ -5,7 +5,7 @@ from codegen.sdk.core.external.external_process import ExternalProcess
 from codegen.sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.interfaces.editable import Editable
 
 
@@ -21,7 +21,7 @@ class LanguageEngine(ExternalProcess):
         pass
 
 
-def get_language_engine(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph", use_ts: bool = False, use_v8: bool = False) -> LanguageEngine | None:
+def get_language_engine(language: ProgrammingLanguage, codebase_graph: "CodebaseContext", use_ts: bool = False, use_v8: bool = False) -> LanguageEngine | None:
     from codegen.sdk.typescript.external.ts_analyzer_engine import NodeTypescriptEngine, V8TypescriptEngine
 
     use_ts = use_ts or codebase_graph.config.feature_flags.ts_language_engine

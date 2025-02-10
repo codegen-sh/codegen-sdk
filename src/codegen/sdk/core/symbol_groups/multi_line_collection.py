@@ -10,7 +10,7 @@ from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 
 Child = TypeVar("Child", bound=Editable)
@@ -33,7 +33,7 @@ class MultiLineCollection(Collection[Child, Parent], Generic[Child, Parent]):
         self,
         children: list[Child],
         file_node_id: NodeId,
-        G: "CodebaseGraph",
+        G: "CodebaseContext",
         parent: Parent,
         node: TSNode,
         indent_size: int,

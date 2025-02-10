@@ -17,7 +17,7 @@ from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.interfaces.importable import Importable
 
 
@@ -35,7 +35,7 @@ class Pair(Editable[Parent], HasValue, Generic[TExpression, Parent]):
 
     key: TExpression
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.key, self._value_node = self._get_key_value()
         if self.key is None:
@@ -88,7 +88,7 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
     _underlying: Collection[Pair[TExpression, Self] | Unpack[Self], Parent]
     unpack: Unpack[Self] | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = Pair) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = Pair) -> None:
         # TODO: handle spread_element
         super().__init__(ts_node, file_node_id, G, parent)
         children = [pair_type(child, file_node_id, G, self) for child in ts_node.named_children if child.type not in (None, "comment", "spread_element", "dictionary_splat") and not child.is_error]

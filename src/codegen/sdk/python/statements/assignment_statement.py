@@ -11,7 +11,7 @@ from codegen.shared.decorators.docs import py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
     from codegen.sdk.python.interfaces.has_block import PyHasBlock
@@ -31,7 +31,7 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
     assignment_types = {"assignment", "augmented_assignment", "named_expression"}
 
     @classmethod
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyCodeBlock, pos: int, assignment_node: TSNode) -> PyAssignmentStatement:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int, assignment_node: TSNode) -> PyAssignmentStatement:
         """Creates a PyAssignmentStatement instance from a TreeSitter assignment node.
 
         Factory method to create appropriate assignment statement objects based on the node type and parent context.

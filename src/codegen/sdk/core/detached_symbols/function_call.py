@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.interfaces.callable import Callable
@@ -48,7 +48,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
 
     _arg_list: Collection[Argument, Self]
 
-    def __init__(self, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
+    def __init__(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
         super().__init__(node, file_node_id, G, parent)
         # =====[ Grab the function name ]=====
         self._name_node = self.child_by_field_name("function", default=Name) or self.child_by_field_name("constructor", default=Name)

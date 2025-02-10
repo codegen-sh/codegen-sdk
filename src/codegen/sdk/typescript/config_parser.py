@@ -7,7 +7,7 @@ from codegen.sdk.enums import NodeType
 from codegen.sdk.typescript.ts_config import TSConfig
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.typescript.file import TSFile
 
 import os
@@ -17,9 +17,9 @@ from functools import cache
 class TSConfigParser(ConfigParser):
     # Cache of path names to TSConfig objects
     config_files: dict[Path, TSConfig]
-    G: "CodebaseGraph"
+    G: "CodebaseContext"
 
-    def __init__(self, codebase_graph: "CodebaseGraph", default_config_name: str = "tsconfig.json"):
+    def __init__(self, codebase_graph: "CodebaseContext", default_config_name: str = "tsconfig.json"):
         super().__init__()
         self.config_files = dict()
         self.G = codebase_graph

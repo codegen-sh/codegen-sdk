@@ -11,7 +11,7 @@ from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.importable import Importable
 
@@ -26,7 +26,7 @@ class UnionType(Collection[Type, Parent], Type[Parent], Generic[TType, Parent]):
     For example `str | None` or `string | number`.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent):
         super().__init__(ts_node, file_node_id, G, parent, delimiter=" |")
         elements = list(self._get_types(ts_node))
         self._init_children(elements)

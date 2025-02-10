@@ -12,7 +12,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.node_id_factory import NodeId
@@ -183,7 +183,7 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
             if module_node.type == "dotted_name":
@@ -199,7 +199,7 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         module_node = import_statement.child_by_field_name("module_name")
         import_symbols = import_statement.children_by_field_name("name")
         if len(import_symbols) == 0:
@@ -225,7 +225,7 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
             imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.SIDE_EFFECT)
@@ -286,7 +286,7 @@ class PyImport(Import["PyFile"]):
 
 
 class PyExternalImportResolver(ExternalImportResolver):
-    def __init__(self, from_alias: str, to_context: CodebaseGraph) -> None:
+    def __init__(self, from_alias: str, to_context: CodebaseContext) -> None:
         self.from_alias = from_alias
         self.to_context = to_context
 

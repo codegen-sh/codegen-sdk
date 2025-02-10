@@ -11,7 +11,7 @@ from codegen.shared.decorators.docs import ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
     from codegen.sdk.typescript.file import TSFile
@@ -30,7 +30,7 @@ class TSImportStatement(ImportStatement["TSFile", TSImport, "TSCodeBlock"], Buil
         imports (Collection): A collection of TypeScript imports contained within the statement.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock, pos: int, *, source_node: TSNode | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int, *, source_node: TSNode | None = None) -> None:
         super().__init__(ts_node, file_node_id, G, parent, pos)
         imports = []
         if ts_node.type == "import_statement":

@@ -10,7 +10,7 @@ from codegen.shared.decorators.docs import apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
 
@@ -43,7 +43,7 @@ class TSIfBlockStatement(IfBlockStatement[Parent, "TSIfBlockStatement"], Generic
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseGraph,
+        G: CodebaseContext,
         parent: Parent,
         pos: int,
         else_clause_node: TSNode | None = None,

@@ -27,7 +27,7 @@ from codegen.git.utils.pr_review import CodegenPR
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
-from codegen.sdk.codebase.codebase_context import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
+from codegen.sdk.codebase.codebase_context import GLOBAL_FILE_IGNORE_LIST, CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
@@ -174,7 +174,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._op = main_project.repo_operator
         self.viz = VisualizationManager(op=self._op)
         self.repo_path = Path(self._op.repo_path)
-        self.G = CodebaseGraph(projects, config=config)
+        self.G = CodebaseContext(projects, config=config)
         self.console = Console(record=True, soft_wrap=True)
 
     @noapidoc

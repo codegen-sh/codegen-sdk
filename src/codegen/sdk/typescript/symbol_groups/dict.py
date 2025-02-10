@@ -14,7 +14,7 @@ from codegen.sdk.extensions.autocommit import reader
 from codegen.shared.decorators.docs import apidoc, noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 Parent = TypeVar("Parent", bound="Editable")
 TExpression = TypeVar("TExpression", bound=Expression)
@@ -37,7 +37,7 @@ class TSPair(Pair):
 
     shorthand: bool
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent)
         self.shorthand = ts_node.type == "shorthand_property_identifier"
 
@@ -74,7 +74,7 @@ class TSPair(Pair):
 class TSDict(Dict, HasAttribute):
     """A typescript dict object. You can use standard operations to operate on this dict (IE len, del, set, get, etc)"""
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = TSPair) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = TSPair) -> None:
         super().__init__(ts_node, file_node_id, G, parent, delimiter=delimiter, pair_type=pair_type)
 
     def __getitem__(self, __key: str) -> TExpression:

@@ -12,7 +12,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
     from codegen.sdk.typescript.interfaces.has_block import TSHasBlock
@@ -31,7 +31,7 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
     @classmethod
     @reader
     @noapidoc
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock, pos: int, assignment_node: TSNode) -> TSAssignmentStatement:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int, assignment_node: TSNode) -> TSAssignmentStatement:
         """Creates an assignment statement node from a TreeSitter assignment node.
 
         This class method constructs a TSAssignmentStatement from a TreeSitter node representing an assignment. The method validates that the assignment node type is

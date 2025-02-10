@@ -13,7 +13,7 @@ from codegen.visualizations.enums import VizNode
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.expressions.name import Name
@@ -39,7 +39,7 @@ class ExternalModule(
     node_type: Literal[NodeType.EXTERNAL] = NodeType.EXTERNAL
     _import: Import | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, import_name: Name, import_node: Import | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, import_name: Name, import_node: Import | None = None) -> None:
         self.node_id = G.add_node(self)
         super().__init__(ts_node, file_node_id, G, None)
         self._name_node = import_name
@@ -54,7 +54,7 @@ class ExternalModule(
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         msg = f"{type(self)} is not part of the graph at the moment"
         raise NotImplementedError(msg)
 

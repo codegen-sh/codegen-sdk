@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 
 class ConfigParser(ABC):
@@ -12,10 +12,10 @@ class ConfigParser(ABC):
         pass
 
     @abstractmethod
-    def parse_configs(self, codebase_graph: "CodebaseGraph"): ...
+    def parse_configs(self, codebase_graph: "CodebaseContext"): ...
 
 
-def get_config_parser_for_language(language: ProgrammingLanguage, codebase_graph: "CodebaseGraph") -> ConfigParser | None:
+def get_config_parser_for_language(language: ProgrammingLanguage, codebase_graph: "CodebaseContext") -> ConfigParser | None:
     from codegen.sdk.typescript.config_parser import TSConfigParser
 
     if language == ProgrammingLanguage.TYPESCRIPT:

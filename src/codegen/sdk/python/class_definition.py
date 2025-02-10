@@ -2,7 +2,7 @@ from typing import Self
 
 from tree_sitter import Node as TSNode
 
-from codegen.sdk.codebase.codebase_context import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.dataclasses.usage import UsageKind
@@ -34,7 +34,7 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
     _decorated_node: TSNode | None
     constructor_keyword = "__init__"
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseGraph, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
         super().__init__(ts_node, file_id, G, parent)
         self._decorated_node = decorated_node
 

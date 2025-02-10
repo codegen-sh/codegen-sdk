@@ -11,7 +11,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.typescript.statements.assignment_statement import TSAssignmentStatement
@@ -30,7 +30,7 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
 
     @noapidoc
     @classmethod
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSAssignmentStatement) -> MultiExpression[TSAssignmentStatement, TSAssignment]:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSAssignmentStatement) -> MultiExpression[TSAssignmentStatement, TSAssignment]:
         if ts_node.type not in ["assignment_expression", "augmented_assignment_expression"]:
             msg = f"Unknown assignment type: {ts_node.type}"
             raise ValueError(msg)
@@ -41,7 +41,7 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
         return MultiExpression(ts_node, file_node_id, G, parent, assignments)
 
     @classmethod
-    def from_named_expression(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSAssignmentStatement) -> MultiExpression[TSAssignmentStatement, TSAssignment]:
+    def from_named_expression(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSAssignmentStatement) -> MultiExpression[TSAssignmentStatement, TSAssignment]:
         """Creates a MultiExpression object from a TypeScript named expression node.
 
         Constructs assignments from a TypeScript named expression node (variable declarator, public field definition, or property signature) by extracting the left (name) and right (value) nodes.

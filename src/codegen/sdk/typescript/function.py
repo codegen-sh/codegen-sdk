@@ -21,7 +21,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.import_resolution import Import, WildcardImport
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -39,7 +39,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         super().parse(G)
 
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
@@ -110,7 +110,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @classmethod
     @noapidoc
-    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: SymbolStatement | ExportStatement) -> TSFunction:
+    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: SymbolStatement | ExportStatement) -> TSFunction:
         """Creates a TSFunction object from a function declaration."""
         if ts_node.type not in [function_type.value for function_type in TSFunctionTypeNames]:
             msg = f"Node type={ts_node.type} is not a function declaration"

@@ -10,7 +10,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -63,7 +63,7 @@ class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
     @noapidoc
     @classmethod
     @reader
-    def from_expression_statement(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Statement, code_block: TCodeBlock, pos: int, comment_node: TSNode) -> Comment:
+    def from_expression_statement(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Statement, code_block: TCodeBlock, pos: int, comment_node: TSNode) -> Comment:
         return cls(ts_node, file_node_id, G, code_block, pos)
 
     @property

@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
     from tree_sitter import Point, Range
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.codebase.flagging.code_flag import CodeFlag
     from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.codebase.transaction_manager import TransactionManager
@@ -113,13 +113,13 @@ class Editable(JSONable, Generic[Parent]):
 
     ts_node: TSNode
     file_node_id: NodeId
-    G: CodebaseGraph
+    G: CodebaseContext
     parent: Parent
     node_type: NodeType
     _file: File | None = None
     _hash: int | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
         self.ts_node = ts_node
         self.file_node_id = file_node_id
         self.G = G

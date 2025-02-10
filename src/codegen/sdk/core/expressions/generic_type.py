@@ -14,7 +14,7 @@ from codegen.sdk.extensions.resolution import ResolutionStack
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.interfaces.editable import Editable
 
@@ -31,7 +31,7 @@ class GenericType(NamedType[Parent], Generic[TType, Parent]):
 
     _parameters: Collection[TType, Self]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent):
         super().__init__(ts_node, file_node_id, G, parent)
         self._parameters = self._get_parameters()
 

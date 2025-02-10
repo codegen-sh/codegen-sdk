@@ -11,7 +11,7 @@ from codegen.shared.decorators.docs import py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.file import PyFile
 
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class PyImportStatement(ImportStatement["PyFile", PyImport, PyCodeBlock]):
     """An abstract representation of a python import statement."""
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyCodeBlock, pos: int) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int) -> None:
         super().__init__(ts_node, file_node_id, G, parent, pos)
         imports = []
         if ts_node.type == "import_statement":

@@ -17,7 +17,7 @@ from codegen.sdk.core.node_id_factory import NodeId
 from codegen.sdk.extensions.autocommit import update_dict
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.file import File
     from codegen.sdk.core.import_resolution import Import
     from codegen.sdk.core.symbol import Symbol
@@ -73,11 +73,11 @@ class AutoCommit:
     state: AutoCommitState | None = None
     _files: dict[Path, NodeId | None]
     _nodes: dict[NodeId, AutoCommitNode]
-    G: "CodebaseGraph"
+    G: "CodebaseContext"
     _locked_files: set[str]
     _lock_all: bool = False
 
-    def __init__(self, G: "CodebaseGraph") -> None:
+    def __init__(self, G: "CodebaseContext") -> None:
         self.G = G
         self._files = {}
         self._nodes = {}

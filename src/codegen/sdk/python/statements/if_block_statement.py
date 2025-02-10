@@ -10,7 +10,7 @@ from codegen.shared.decorators.docs import apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.detached_symbols.code_block import PyCodeBlock
 
@@ -34,7 +34,7 @@ class PyIfBlockStatement(IfBlockStatement[Parent, "PyIfBlockStatement"], Generic
 
     statement_type = StatementType.IF_BLOCK_STATEMENT
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, pos: int, main_if_block: PyIfBlockStatement | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int, main_if_block: PyIfBlockStatement | None = None) -> None:
         super().__init__(ts_node, file_node_id, G, parent, pos)
         self._main_if_block = main_if_block
         self.condition = self.child_by_field_name("condition")

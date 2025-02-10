@@ -13,7 +13,7 @@ from codegen.sdk.utils import find_first_function_descendant
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.interfaces.editable import Editable
@@ -28,7 +28,7 @@ Parent = TypeVar("Parent", bound="Editable")
 
 
 class CanParse(Protocol, Generic[Parent]):
-    def __init__(self, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None: ...
+    def __init__(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None: ...
 
 
 Expression = TypeVar("Expression", bound="CanParse")
@@ -60,7 +60,7 @@ class Parser(Generic[Expression]):
     def from_node_classes(cls, node_classes: NodeClasses, log_parse_warnings: bool = False) -> Self:
         return cls(symbol_map=node_classes.symbol_map, expressions=node_classes.expression_map, types=node_classes.type_map, type_node=node_classes.type_node_type, _should_log=log_parse_warnings)
 
-    def parse_expression(self, node: TSNode | None, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, *args, default: type[Expression] = Value, **kwargs) -> Expression[Parent] | None:
+    def parse_expression(self, node: TSNode | None, file_node_id: NodeId, G: CodebaseContext, parent: Parent, *args, default: type[Expression] = Value, **kwargs) -> Expression[Parent] | None:
         if node is None:
             return None
         if node.type == self.type_node:
@@ -85,7 +85,7 @@ class Parser(Generic[Expression]):
             self._uncovered_nodes.add(node.type)
             self.log(f"Encountered unimplemented node {node.type} with text {node.text.decode('utf-8')}")
 
-    def parse_type(self, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> Type:
+    def parse_type(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> Type:
         if node.type == self.type_node:
             return self.parse_type(node.named_children[0], file_node_id, G, parent)
         if expr_type := self.types.get(node.type, None):
@@ -96,7 +96,7 @@ class Parser(Generic[Expression]):
 
         return PlaceholderType(node, file_node_id, G, parent)
 
-    def parse_ts_statements(self, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSCodeBlock) -> list[Statement]:
+    def parse_ts_statements(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock) -> list[Statement]:
         from codegen.sdk.core.statements.export_statement import ExportStatement
         from codegen.sdk.core.statements.expression_statement import ExpressionStatement
         from codegen.sdk.core.statements.return_statement import ReturnStatement
@@ -193,7 +193,7 @@ class Parser(Generic[Expression]):
 
         return statements
 
-    def parse_py_statements(self, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyCodeBlock) -> list[Statement]:
+    def parse_py_statements(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock) -> list[Statement]:
         from codegen.sdk.core.statements.expression_statement import ExpressionStatement
         from codegen.sdk.core.statements.raise_statement import RaiseStatement
         from codegen.sdk.core.statements.return_statement import ReturnStatement

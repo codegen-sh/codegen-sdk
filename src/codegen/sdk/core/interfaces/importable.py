@@ -14,7 +14,7 @@ from codegen.sdk.extensions.sort import sort_editables
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.import_resolution import Import
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.symbol import Symbol
@@ -33,7 +33,7 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
 
     node_id: int
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         if not hasattr(self, "node_id"):
             self.node_id = G.add_node(self)
         super().__init__(ts_node, file_node_id, G, parent)

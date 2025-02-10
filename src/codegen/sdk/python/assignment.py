@@ -12,7 +12,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement
 
@@ -26,7 +26,7 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
 
     @noapidoc
     @classmethod
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyAssignmentStatement) -> MultiExpression[PyAssignmentStatement, PyAssignment]:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyAssignmentStatement) -> MultiExpression[PyAssignmentStatement, PyAssignment]:
         if ts_node.type not in ["assignment", "augmented_assignment"]:
             msg = f"Unknown assignment type: {ts_node.type}"
             raise ValueError(msg)
@@ -37,7 +37,7 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         return MultiExpression(ts_node, file_node_id, G, parent, assignments)
 
     @classmethod
-    def from_named_expression(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: PyAssignmentStatement) -> MultiExpression[PyAssignmentStatement, PyAssignment]:
+    def from_named_expression(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyAssignmentStatement) -> MultiExpression[PyAssignmentStatement, PyAssignment]:
         """Creates a MultiExpression from a Python named expression.
 
         Creates assignments from a named expression node ('walrus operator' :=) by parsing its name and value fields.

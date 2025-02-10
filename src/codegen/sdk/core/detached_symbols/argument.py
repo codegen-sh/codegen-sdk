@@ -14,7 +14,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.function_call import FunctionCall
     from codegen.sdk.core.detached_symbols.parameter import Parameter
@@ -61,7 +61,7 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
 
     @noapidoc
     @classmethod
-    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
+    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
         args = [Argument(x, file_node_id, G, parent, i) for i, x in enumerate(node.named_children) if x.type != "comment"]
         return MultiExpression(node, file_node_id, G, parent, expressions=args)
 

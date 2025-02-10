@@ -13,7 +13,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.assignment import Assignment
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.expressions import Expression
@@ -47,7 +47,7 @@ class AssignmentStatement(Statement[TCodeBlock], HasValue, Generic[TCodeBlock, T
     left: Expression[TAssignment]
     right: Expression[TAssignment] | None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TCodeBlock, pos: int, assignment_node: TSNode) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TCodeBlock, pos: int, assignment_node: TSNode) -> None:
         super().__init__(ts_node, file_node_id, G, parent, pos=pos)
         self.assignments = self._DEPRECATED_parse_assignments().expressions
         if len(self.assignments) == 0:

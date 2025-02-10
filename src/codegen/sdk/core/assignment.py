@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.expressions.type import Type
     from codegen.sdk.core.interfaces.editable import Editable
@@ -58,7 +58,7 @@ class Assignment(Symbol[Parent, ...], Typeable[Parent, ...], HasValue, Generic[P
     _left: Expression[Self]
     symbol_type = SymbolType.GlobalVar
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, left: TSNode, value: TSNode, name_node: TSNode, type: Type | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, left: TSNode, value: TSNode, name_node: TSNode, type: Type | None = None) -> None:
         self._unique_node = name_node  # HACK: This prevents deduplication of Assignments
         super().__init__(ts_node, file_node_id, G, parent=parent, name_node=name_node, name_node_type=Name)
         self._left = self._parse_expression(left, default=Name)
@@ -68,7 +68,7 @@ class Assignment(Symbol[Parent, ...], Typeable[Parent, ...], HasValue, Generic[P
             self._init_type()
 
     @classmethod
-    def _from_left_and_right_nodes(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, left_node: TSNode, right_node: TSNode) -> list[Assignment]:
+    def _from_left_and_right_nodes(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, left_node: TSNode, right_node: TSNode) -> list[Assignment]:
         left = G.parser.parse_expression(left_node, file_node_id, G, parent)
         value = G.parser.parse_expression(right_node, file_node_id, G, parent)
 
@@ -83,7 +83,7 @@ class Assignment(Symbol[Parent, ...], Typeable[Parent, ...], HasValue, Generic[P
 
     @classmethod
     def _from_value_expression(
-        cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, left: Expression[Self], value: Expression[Self] | list[Expression], name_node: TSNode
+        cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, left: Expression[Self], value: Expression[Self] | list[Expression], name_node: TSNode
     ) -> list[Assignment]:
         assignments = [cls(ts_node, file_node_id, G, parent, left, value, name_node)]
         if value and isinstance(value, MultiExpression) and isinstance(value.expressions[0], Assignment):

@@ -24,7 +24,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.core.statements.symbol_statement import SymbolStatement
     from codegen.sdk.typescript.detached_symbols.code_block import TSCodeBlock
@@ -49,7 +49,7 @@ class TSClass(Class[TSFunction, TSDecorator, "TSCodeBlock", TSParameter, TSType]
     Representation of a Class in JavaScript/TypeScript
     """
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseGraph, parent: SymbolStatement) -> None:
+    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: SymbolStatement) -> None:
         super().__init__(ts_node, file_id, G, parent)
         if superclasses_node := self.child_by_field_types("class_heritage"):
             if extends_clause := superclasses_node.child_by_field_types(["extends_clause", "implements_clause"]):

@@ -15,7 +15,7 @@ from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnT
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.typescript.expressions.type import TSType
 
 
@@ -38,7 +38,7 @@ class TSFunctionType(Type[Parent], Generic[Parent]):
     _parameters: Collection[TSParameter, Self]
     name: None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent):
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent):
         super().__init__(ts_node, file_node_id, G, parent)
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         params_node = self.ts_node.child_by_field_name("parameters")

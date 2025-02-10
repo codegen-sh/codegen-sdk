@@ -76,7 +76,7 @@ def get_node_classes(programming_language: ProgrammingLanguage) -> NodeClasses:
         raise ValueError(msg)
 
 
-class CodebaseGraph:
+class CodebaseContext:
     """MultiDiGraph Wrapper with TransactionManager"""
 
     # =====[ __init__ attributes ]=====

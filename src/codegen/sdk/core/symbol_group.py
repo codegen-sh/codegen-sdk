@@ -11,7 +11,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -30,7 +30,7 @@ class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
 
     _symbols: list[Child]
 
-    def __init__(self, file_node_id: NodeId, G: CodebaseGraph, parent: Parent, node: TSNode | None = None, children: list[Child] | None = None) -> None:
+    def __init__(self, file_node_id: NodeId, G: CodebaseContext, parent: Parent, node: TSNode | None = None, children: list[Child] | None = None) -> None:
         self._symbols = children
         if node is None:
             # For backwards compatibility, assure that the first node is the main node

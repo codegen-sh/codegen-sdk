@@ -14,7 +14,7 @@ from codegen.sdk.extensions.autocommit import commiter
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 
 Parent = TypeVar("Parent", bound="Expression")
@@ -34,7 +34,7 @@ class String(Expression[Parent], Builtin, Generic[Parent]):
     content_nodes: Collection[Expression[Editable], Self]  # string content is a collection of string_fragments and escape_sequences in TS and a single string_content in Python
     expressions: list[Expression[Editable]]  # expressions in the string, only applicable for template strings
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
         super().__init__(ts_node, file_node_id, G, parent=parent)
         content_children = list(self.children_by_field_types({"string_content", "string_fragment", "escape_sequence"}))
         self.content_nodes = Collection(ts_node, self.file_node_id, self.G, self, delimiter="", children=content_children)

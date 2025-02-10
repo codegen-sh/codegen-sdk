@@ -32,7 +32,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.interfaces.has_name import HasName
@@ -62,7 +62,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         ts_node: TSNode,
         file_node_id: NodeId,
         parent: Collection[TSExport, ExportStatement[TSExport]],
-        G: CodebaseGraph,
+        G: CodebaseContext,
         name_node: TSNode | None = None,
         declared_symbol: TSSymbol | TSImport | None = None,
         exported_symbol: TSNode | None = None,
@@ -86,7 +86,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
 
     @classmethod
     @noapidoc
-    def from_export_statement_with_declaration(cls, export_statement: TSNode, declaration: TSNode, file_id: NodeId, G: CodebaseGraph, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
+    def from_export_statement_with_declaration(cls, export_statement: TSNode, declaration: TSNode, file_id: NodeId, G: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
         declared_symbols = []
 
         # =====[ Symbol Definitions ]=====
@@ -131,7 +131,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
 
     @classmethod
     @noapidoc
-    def from_export_statement_with_value(cls, export_statement: TSNode, value: TSNode, file_id: NodeId, G: CodebaseGraph, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
+    def from_export_statement_with_value(cls, export_statement: TSNode, value: TSNode, file_id: NodeId, G: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
         declared_symbols = []
         exported_name_and_symbol = []  # tuple of export name node and export symbol name
         detached_value_node = None
@@ -185,7 +185,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         pass
 
     @noapidoc

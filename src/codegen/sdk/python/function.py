@@ -21,7 +21,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.import_resolution import Import, WildcardImport
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -36,7 +36,7 @@ class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, P
 
     _decorated_node: TSNode | None
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseGraph, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
         super().__init__(ts_node, file_id, G, parent)
         self._decorated_node = decorated_node
 
@@ -131,7 +131,7 @@ class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, P
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
+    def parse(self, G: CodebaseContext) -> None:
         super().parse(G)
         self.return_type = self.child_by_field_name("return_type", placeholder=PyReturnTypePlaceholder)
         if parameters_node := self.ts_node.child_by_field_name("parameters"):

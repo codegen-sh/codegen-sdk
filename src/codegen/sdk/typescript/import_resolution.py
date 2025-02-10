@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.external_module import ExternalModule
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.node_id_factory import NodeId
@@ -288,7 +288,7 @@ class TSImport(Import["TSFile"], Exportable):
 
     @classmethod
     @noapidoc
-    def from_export_statement(cls, source_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSImportStatement) -> list[TSImport]:
+    def from_export_statement(cls, source_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
         """Constructs import objects defined from an export statement"""
         export_statement_node = find_first_ancestor(source_node, ["export_statement"])
         imports = []
@@ -326,7 +326,7 @@ class TSImport(Import["TSFile"], Exportable):
 
     @classmethod
     @noapidoc
-    def from_import_statement(cls, import_statement_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: TSImportStatement) -> list[TSImport]:
+    def from_import_statement(cls, import_statement_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
         source_node = import_statement_node.child_by_field_name("source")
         import_clause = next((x for x in import_statement_node.named_children if x.type == "import_clause"), None)
         if import_clause is None:
@@ -390,7 +390,7 @@ class TSImport(Import["TSFile"], Exportable):
 
     @classmethod
     @noapidoc
-    def from_dynamic_import_statement(cls, import_call_node: TSNode, module_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[TSImport]:
+    def from_dynamic_import_statement(cls, import_call_node: TSNode, module_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[TSImport]:
         """Parses a dynamic import statement, given a reference to the `import`/`require` node and `module` node.
         e.g.
         const myModule = await import('./someFile')`;

@@ -14,7 +14,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_context import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.expressions import Expression
     from codegen.sdk.core.interfaces.has_name import HasName
@@ -44,7 +44,7 @@ class TSEnum(TSHasBlock, TSSymbol, HasAttribute[TSAttribute]):
         self,
         ts_node: TSNode,
         file_id: NodeId,
-        G: CodebaseGraph,
+        G: CodebaseContext,
         parent: Statement[CodeBlock[Parent, ...]],
     ) -> None:
         name_node = ts_node.child_by_field_name("name")
