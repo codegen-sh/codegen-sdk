@@ -35,8 +35,8 @@ def repo_config() -> Generator[RepoConfig, None, None]:
 
 
 @pytest.fixture
-def op(repo_config: RepoConfig) -> Generator[RemoteRepoOperator, None, None]:
-    yield RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
+def op(repo_config: RepoConfig, tmpdir) -> Generator[RemoteRepoOperator, None, None]:
+    yield RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN, base_dir=tmpdir)
 
 
 @pytest.fixture
