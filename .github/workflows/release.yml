@@ -71,22 +71,59 @@ jobs:
 
   auto-release:
     if: github.ref_name == 'develop'
+    environment: release
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      checks: read # to wait for required checks
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
 
       - name: Setup environment
         uses: ./.github/actions/setup-environment
 
+      - name: Wait for required checks
+        uses: poseidon/wait-for-status-checks@v0.6.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          match_pattern: "(unit-tests|integration-tests)"
+
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+          pattern: wheels-*
+
+      - name: Github semantic release
+        uses: codfish/semantic-release-action@v3
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release PyPI
+        if: ${{ steps.semantic.outputs.new-release-published == 'true' }}
+        uses: ./.github/actions/release-pypi
+        with:
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Slack notification
+        if: ${{ steps.semantic.outputs.new-release-published == 'true' }}
+        uses: ./.github/actions/release-slack-bot
+        with:
+          release-tag: ${{ steps.semantic.outputs.release-version }}
+          slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
+
   manual-release:
     if: startsWith(github.ref, 'refs/tags/')
+    environment: release
     needs: build
     runs-on: ubuntu-latest
-    environment: release
     permissions:
       contents: write # grants permission to create a release on github
     steps:
@@ -103,10 +140,9 @@ jobs:
           pattern: wheels-*
 
       - name: Release PyPI
-        run: |
-          export UV_PUBLISH_PASSWORD="${{ secrets.PYPI_TOKEN }}"
-          export UV_PUBLISH_USERNAME="__token__"
-          uv publish --publish-url https://upload.pypi.org/legacy/
+        uses: ./.github/actions/release-pypi
+        with:
+          pypi-token: ${{ secrets.PYPI_TOKEN }}
 
       - name: Github release
         id: github-release
@@ -116,18 +152,9 @@ jobs:
           fail_on_unmatched_files: true
           generate_release_notes: true
 
-      # TODO: use python exec instead
-      - uses: slackapi/slack-github-action@v2.0.0
+      - name: Slack notification
         if: always()
+        uses: ./.github/actions/release-slack-bot
         with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          payload: |
-            username: ${{ job.status == 'success' && format('Released codegen@{0}', github.ref_name) || format('Failed to release codegen@{0}', github.ref_name) }}
-            channel: "#release"
-            icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
-            text: |
-              Actor: `${{ github.triggering_actor }}`
-              Author: `${{ github.event.head_commit.author.username }}`
-              ${{ format('Commit: <{0}/{1}/commit/{2}|{1}@{2}>', github.server_url, github.repository, github.sha) || ''}}
-              View <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|GHA logs>
+          release-tag: ${{ github.ref_name }}
+          slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
