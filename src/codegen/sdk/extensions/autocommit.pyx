@@ -92,8 +92,8 @@ class AutoCommitMixin:
     autocommit_cache: dict[str, Any]
     removed: bool = False
 
-    def __init__(self, G: "CodebaseGraph"):
-        self._generation = G.generation
+    def __init__(self, codebase_context: "CodebaseContext"):
+        self._generation = codebase_context.generation
         self.autocommit_cache = {}
 
     def update_generation(self: "Editable", generation: int | None = None) -> None:
@@ -196,12 +196,12 @@ def commiter(wrapped: Callable[P, T] | None = None, *, reset: bool = False) -> C
         return functools.partial(commiter, reset=reset)
 
     @wrapt.decorator(enabled=enabled)
-    def wrapper(wrapped: Callable[P, T], instance: Union["Editable", "CodebaseGraph", None] = None, args: P.args = None, kwargs: P.kwargs = None) -> T:
+    def wrapper(wrapped: Callable[P, T], instance: Union["Editable", "CodebaseContext", None] = None, args: P.args = None, kwargs: P.kwargs = None) -> T:
         if instance is None:
             instance = args[0]
-        from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+        from codegen.sdk.codebase.codebase_context import CodebaseContext
 
-        if isinstance(instance, CodebaseGraph):
+        if isinstance(instance, CodebaseContext):
             autocommit = instance._autocommit
         else:
             autocommit = instance.ctx._autocommit
