@@ -9,21 +9,21 @@ from codegen.shared.configs.constants import CONFIG_PATH, ENV_PATH
 
 
 class TypescriptConfig(BaseModel):
-    ts_dependency_manager: bool = False
-    ts_language_engine: bool = False
-    v8_ts_engine: bool = False
+    ts_dependency_manager: bool | None = None
+    ts_language_engine: bool | None = None
+    v8_ts_engine: bool | None = None
 
 
 class CodebaseFeatureFlags(BaseModel):
-    debug: bool = False
-    verify_graph: bool = False
-    track_graph: bool = False
-    method_usages: bool = True
-    sync_enabled: bool = True
-    full_range_index: bool = False
-    ignore_process_errors: bool = True
-    disable_graph: bool = False
-    generics: bool = True
+    debug: bool | None = None
+    verify_graph: bool | None = None
+    track_graph: bool | None = None
+    method_usages: bool | None = None
+    sync_enabled: bool | None = None
+    full_range_index: bool | None = None
+    ignore_process_errors: bool | None = None
+    disable_graph: bool | None = None
+    generics: bool | None = None
     import_resolution_overrides: dict[str, str] = Field(default_factory=lambda: {})
     typescript: TypescriptConfig = Field(default_factory=TypescriptConfig)
 

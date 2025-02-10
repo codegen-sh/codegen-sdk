@@ -5,3 +5,21 @@ openai_api_key = ""
 [repository]
 organization_name = "codegen-sh"
 repo_name = "codegen-sdk"
+
+[feature_flags.codebase]
+debug = false
+verify_graph = false
+track_graph = false
+method_usages = true
+sync_enabled = true
+full_range_index = false
+ignore_process_errors = true
+disable_graph = false
+generics = true
+
+[feature_flags.codebase.import_resolution_overrides]
+
+[feature_flags.codebase.typescript]
+ts_dependency_manager = false
+ts_language_engine = false
+v8_ts_engine = false
