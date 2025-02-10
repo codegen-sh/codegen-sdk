@@ -1,7 +1,7 @@
 {
 	"private": true,
 	"release": {
-		"branches": ["develop", "fix-auto-reease-flow"],
+		"branches": ["develop"],
 		"plugins": [
 			"@semantic-release/commit-analyzer",
 			"@semantic-release/release-notes-generator",
