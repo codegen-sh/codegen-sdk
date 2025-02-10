@@ -19,10 +19,10 @@ class TSConfigParser(ConfigParser):
     config_files: dict[Path, TSConfig]
     G: "CodebaseContext"
 
-    def __init__(self, codebase_graph: "CodebaseContext", default_config_name: str = "tsconfig.json"):
+    def __init__(self, codebase_context: "CodebaseContext", default_config_name: str = "tsconfig.json"):
         super().__init__()
         self.config_files = dict()
-        self.ctx = codebase_graph
+        self.ctx = codebase_context
         self.default_config_name = default_config_name
 
     def get_config(self, config_path: os.PathLike) -> TSConfig | None:
