@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   release:
+    if: false # TODO(CG-10755): merge this with release.yml
     name: Release
     runs-on: ubuntu-latest
     permissions:
