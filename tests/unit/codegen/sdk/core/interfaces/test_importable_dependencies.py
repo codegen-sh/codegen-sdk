@@ -166,4 +166,4 @@ def use_both():
         deps_with_types = use_both.dependencies(max_depth=2)
         assert len(deps_with_types) == 2
         assert a_class in deps_with_types
-        assert b_class in deps_with_types 
+        assert b_class in deps_with_types
