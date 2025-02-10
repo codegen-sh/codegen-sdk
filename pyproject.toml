@@ -151,6 +151,7 @@ dev-dependencies = [
   "loguru>=0.7.3",
   "httpx<0.28.2,>=0.28.1",
   "jupyterlab>=4.3.5",
+  "modal>=0.73.25",
 ]
 
 

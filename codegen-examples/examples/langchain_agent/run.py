@@ -1,15 +1,7 @@
 """Demo implementation of an agent with Codegen tools."""
 
-from langchain import hub
-from langchain.agents import AgentExecutor
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
-from langchain_core.chat_history import ChatMessageHistory
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_openai import ChatOpenAI
-
 from codegen import Codebase
-
-from .tools import (
+from codegen.extensions.langchain.tools import (
     CommitTool,
     CreateFileTool,
     DeleteFileTool,
@@ -22,6 +14,13 @@ from .tools import (
     SemanticEditTool,
     ViewFileTool,
 )
+from codegen.sdk.enums import ProgrammingLanguage
+from langchain import hub
+from langchain.agents import AgentExecutor
+from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
+from langchain_core.chat_history import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+from langchain_openai import ChatOpenAI
 
 
 def create_codebase_agent(
@@ -89,3 +88,20 @@ def create_codebase_agent(
         input_messages_key="input",
         history_messages_key="chat_history",
     )
+
+
+if __name__ == "__main__":
+    # Initialize codebase
+    print("Initializing codebase...")
+    codebase = Codebase.from_repo("fastapi/fastapi", programming_language=ProgrammingLanguage.PYTHON)
+
+    # Create agent with history
+    print("Creating agent...")
+    agent = create_codebase_agent(codebase)
+
+    print("\nAsking agent to analyze symbol relationships...")
+    result = agent.invoke(
+        {"input": "What are the dependencies of the reveal_symbol function?"},
+        config={"configurable": {"session_id": "demo"}},
+    )
+    print("Messages:", result["messages"])
