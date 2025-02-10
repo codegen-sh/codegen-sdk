@@ -23,7 +23,7 @@ def get_free_port():
 
 
 @pytest.fixture(autouse=True)
-def repo_config() -> RepoConfig:
+def repo_config() -> Generator[RepoConfig, None, None]:
     yield RepoConfig(
         id=321,
         name="Kevin-s-Adventure-Game",
@@ -34,17 +34,17 @@ def repo_config() -> RepoConfig:
     )
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def op(repo_config: RepoConfig) -> Generator[RemoteRepoOperator, None, None]:
     yield RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
 
 
-@pytest.fixture(autouse=True)
-def git_repo_client(repo_config: RepoConfig) -> GitRepoClient:
+@pytest.fixture
+def git_repo_client(repo_config: RepoConfig) -> Generator[GitRepoClient, None, None]:
     yield GitRepoClient(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def sandbox_client(repo_config: RepoConfig, get_free_port, tmpdir) -> Generator[SandboxClient, None, None]:
     # Use the pre-determined free port and a temporary directory
     repo_config.base_dir = str(tmpdir)
