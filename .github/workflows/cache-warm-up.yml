@@ -27,7 +27,7 @@ jobs:
         with:
           ref: develop # Ensure we're operating on the 'develop' branch
 
-      - name: Setup backend
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
 
   warm-up-cache:
@@ -46,7 +46,7 @@ jobs:
         with:
           ref: develop # Ensure we're operating on the 'develop' branch
 
-      - name: Setup backend
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
 
       - name: Cache oss-repos

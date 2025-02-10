@@ -22,7 +22,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.REPO_SCOPED_TOKEN }}
 
-      - name: Setup backend
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
 
       - name: Setup-pre-commit

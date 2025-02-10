@@ -69,7 +69,20 @@ jobs:
           name: wheels-${{ matrix.os }}-3.${{ matrix.python }}
           path: ./wheelhouse/*.whl
 
-  release:
+  auto-release:
+    if: github.ref_name == 'develop'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+
+      - name: Setup environment
+        uses: ./.github/actions/setup-environment
+
+  manual-release:
     if: startsWith(github.ref, 'refs/tags/')
     needs: build
     runs-on: ubuntu-latest
@@ -79,7 +92,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup backend
+      - name: Setup environment
         uses: ./.github/actions/setup-environment
 
       - name: Download All Artifacts
