@@ -12,7 +12,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.codebase.flagging.code_flag import CodeFlag
     from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.core.interfaces.has_block import HasBlock

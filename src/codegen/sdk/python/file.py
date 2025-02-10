@@ -19,7 +19,7 @@ from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.import_resolution import WildcardImport
     from codegen.sdk.python.symbol import PySymbol
 

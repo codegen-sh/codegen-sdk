@@ -23,7 +23,7 @@ from codegen.sdk.utils import calculate_base_path, find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.typescript.symbol import TSSymbol

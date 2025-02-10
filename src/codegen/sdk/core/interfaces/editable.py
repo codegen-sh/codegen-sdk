@@ -29,7 +29,7 @@ if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
     from tree_sitter import Point, Range
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.codebase.flagging.code_flag import CodeFlag
     from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.codebase.transaction_manager import TransactionManager

@@ -14,7 +14,7 @@ from codegen.sdk.extensions.sort import sort_editables
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.import_resolution import Import
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.symbol import Symbol

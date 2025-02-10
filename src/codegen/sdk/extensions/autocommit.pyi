@@ -1,7 +1,7 @@
 from collections.abc import Callable
 from typing import Any, ParamSpec, TypeVar, overload
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.core.interfaces.editable import Editable
 
 P = ParamSpec("P")

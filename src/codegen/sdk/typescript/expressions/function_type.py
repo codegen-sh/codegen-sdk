@@ -15,7 +15,7 @@ from codegen.sdk.typescript.placeholder.placeholder_return_type import TSReturnT
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.typescript.expressions.type import TSType
 
 

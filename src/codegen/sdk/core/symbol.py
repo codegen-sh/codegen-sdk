@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     import rich.repr
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.export import Export
     from codegen.sdk.core.file import SourceFile

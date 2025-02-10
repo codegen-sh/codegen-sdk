@@ -4,7 +4,7 @@ from typing import Generic
 
 from typing_extensions import TypeVar
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.core.dataclasses.usage import UsageKind, UsageType
 from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName

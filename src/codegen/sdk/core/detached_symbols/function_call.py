@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.function import Function
     from codegen.sdk.core.interfaces.callable import Callable

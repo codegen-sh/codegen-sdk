@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, override
 
 from tree_sitter import Node as TSNode
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.core.autocommit import reader, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Expression

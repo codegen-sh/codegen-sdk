@@ -8,7 +8,7 @@ from codegen.sdk.typescript.expressions.named_type import TSNamedType
 from codegen.shared.decorators.docs import ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.interfaces.editable import Editable
 
 Parent = TypeVar("Parent", bound="Editable")

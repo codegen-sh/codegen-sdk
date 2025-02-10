@@ -8,7 +8,7 @@ from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.node_id_factory import NodeId
 
 Parent = TypeVar("Parent")

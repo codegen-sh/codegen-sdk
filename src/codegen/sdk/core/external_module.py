@@ -13,7 +13,7 @@ from codegen.visualizations.enums import VizNode
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.parameter import Parameter
     from codegen.sdk.core.expressions.name import Name

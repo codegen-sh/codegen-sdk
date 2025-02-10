@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.codebase.resolution_stack import ResolutionStack
     from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
     from codegen.sdk.core.expressions.name import Name

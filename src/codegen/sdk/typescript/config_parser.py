@@ -7,7 +7,7 @@ from codegen.sdk.enums import NodeType
 from codegen.sdk.typescript.ts_config import TSConfig
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.typescript.file import TSFile
 
 import os

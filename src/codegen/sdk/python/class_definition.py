@@ -2,7 +2,7 @@ from typing import Self
 
 from tree_sitter import Node as TSNode
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.class_definition import Class
 from codegen.sdk.core.dataclasses.usage import UsageKind

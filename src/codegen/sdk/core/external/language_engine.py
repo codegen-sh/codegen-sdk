@@ -5,7 +5,7 @@ from codegen.sdk.core.external.external_process import ExternalProcess
 from codegen.sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
     from codegen.sdk.core.interfaces.editable import Editable
 
 

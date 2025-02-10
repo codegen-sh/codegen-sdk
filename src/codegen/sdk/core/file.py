@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 from tree_sitter import Node as TSNode
 
 from codegen.sdk._proxy import proxy_property
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.codebase.range_index import RangeIndex
 from codegen.sdk.codebase.span import Range
 from codegen.sdk.core.autocommit import commiter, mover, reader, remover, writer

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.enums import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
 
 
 class ConfigParser(ABC):

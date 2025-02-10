@@ -2,7 +2,7 @@
 
 import itertools
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseGraph
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import EdgeType
 

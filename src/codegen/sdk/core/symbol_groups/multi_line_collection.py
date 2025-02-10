@@ -10,7 +10,7 @@ from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseGraph
 
 
 Child = TypeVar("Child", bound=Editable)

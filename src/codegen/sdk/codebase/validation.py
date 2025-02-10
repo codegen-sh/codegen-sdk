@@ -30,7 +30,7 @@ class PostInitValidationStatus(StrEnum):
 
 def post_init_validation(codebase: CodebaseType) -> PostInitValidationStatus:
     """Post codebase._init_graph verifies that the built graph is valid."""
-    from codegen.sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST
+    from codegen.sdk.codebase.codebase_context import GLOBAL_FILE_IGNORE_LIST
 
     # Verify the graph has nodes
     if len(codebase.G.nodes) == 0:
