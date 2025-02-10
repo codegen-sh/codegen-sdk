@@ -1,4 +1,6 @@
+import tree_sitter
 from lsprotocol.types import Position, Range
+from pygls.workspace import TextDocument
 
 from codegen.sdk.core.interfaces.editable import Editable
 
@@ -14,4 +16,17 @@ def get_range(node: Editable) -> Range:
     return Range(
         start=Position(line=start_point.row, character=start_point.column),
         end=Position(line=end_point.row, character=end_point.column),
+    )
+
+
+def get_tree_sitter_range(range: Range, document: TextDocument) -> tree_sitter.Range:
+    start_pos = tree_sitter.Point(row=range.start.line, column=range.start.character)
+    end_pos = tree_sitter.Point(row=range.end.line, column=range.end.character)
+    start_byte = document.offset_at_position(range.start)
+    end_byte = document.offset_at_position(range.end)
+    return tree_sitter.Range(
+        start_point=start_pos,
+        end_point=end_pos,
+        start_byte=start_byte,
+        end_byte=end_byte,
     )

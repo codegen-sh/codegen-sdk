@@ -23,8 +23,8 @@ async def client(lsp_client: LanguageClient, codebase: Codebase):
     response = await lsp_client.initialize_session(
         InitializeParams(
             capabilities=client_capabilities("visual-studio-code"),
-            root_uri="file://" + str(codebase.repo_path),
-            root_path=str(codebase.repo_path),
+            root_uri="file://" + str(codebase.repo_path.resolve()),
+            root_path=str(codebase.repo_path.resolve()),
         )
     )
 
