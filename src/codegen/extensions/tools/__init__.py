@@ -13,6 +13,7 @@ from .file_operations import (
 from .reveal_symbol import reveal_symbol
 from .search import search
 from .semantic_edit import semantic_edit
+from .semantic_search import semantic_search
 
 __all__ = [
     "commit",
@@ -29,5 +30,6 @@ __all__ = [
     "search",
     # Semantic edit
     "semantic_edit",
+    "semantic_search",
     "view_file",
 ]

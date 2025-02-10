@@ -8,7 +8,6 @@ from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
 from codegen import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
 
 from .tools import (
     CommitTool,
@@ -27,7 +26,7 @@ from .tools import (
 
 def create_codebase_agent(
     codebase: Codebase,
-    model_name: str = "gpt-4",
+    model_name: str = "gpt-4o",
     temperature: float = 0,
     verbose: bool = True,
 ) -> RunnableWithMessageHistory:
@@ -90,20 +89,3 @@ def create_codebase_agent(
         input_messages_key="input",
         history_messages_key="chat_history",
     )
-
-
-if __name__ == "__main__":
-    # Initialize codebase
-    print("Initializing codebase...")
-    codebase = Codebase.from_repo("fastapi/fastapi", programming_language=ProgrammingLanguage.PYTHON)
-
-    # Create agent with history
-    print("Creating agent...")
-    agent = create_codebase_agent(codebase)
-
-    print("\nAsking agent to analyze symbol relationships...")
-    result = agent.invoke(
-        {"input": "What are the dependencies of the reveal_symbol function?"},
-        config={"configurable": {"session_id": "demo"}},
-    )
-    print("Messages:", result["messages"])
