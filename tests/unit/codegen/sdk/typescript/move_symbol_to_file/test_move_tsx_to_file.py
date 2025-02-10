@@ -1,6 +1,7 @@
+import pytest
+
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.enums import ProgrammingLanguage
-import pytest
 
 
 def test_move_component_with_dependencies(tmpdir) -> None:

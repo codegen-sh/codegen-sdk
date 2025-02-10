@@ -4,7 +4,6 @@ import os
 from typing import TYPE_CHECKING
 
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
-from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interfaces.exportable import Exportable
 from codegen.sdk.enums import ImportType, ProgrammingLanguage, SymbolType
