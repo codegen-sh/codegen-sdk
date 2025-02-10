@@ -1,4 +1,3 @@
-import os
 from collections.abc import Callable
 from difflib import unified_diff
 from enum import IntEnum
@@ -267,7 +266,7 @@ class FileRenameTransaction(Transaction):
 
     def execute(self) -> None:
         """Renames the file"""
-        self.file.write_pending_content()
+        self.file.G.file_tracker.save_files({self.file.path})
         self.file_path.rename(self.new_file_path)
 
     def get_diff(self) -> DiffLite:
@@ -292,8 +291,7 @@ class FileRemoveTransaction(Transaction):
 
     def execute(self) -> None:
         """Removes the file"""
-        os.remove(self.file_path)
-        self.file._pending_content_bytes = None
+        self.file.G.file_tracker.delete_file(self.file.path)
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""

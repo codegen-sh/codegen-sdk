@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Generic, Literal, Self, TypeVar, override
 
 from tree_sitter import Node as TSNode
+from typing_extensions import deprecated
 
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.codebase.codebase_graph import CodebaseGraph
@@ -45,10 +46,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-class BadWriteError(Exception):
-    pass
-
-
 @apidoc
 class File(Editable[None]):
     """Represents a generic file.
@@ -66,7 +63,6 @@ class File(Editable[None]):
     file_path: str
     path: Path
     node_type: Literal[NodeType.FILE] = NodeType.FILE
-    _pending_content_bytes: bytes | None = None
     _directory: Directory | None
     _pending_imports: set[str]
     _binary: bool = False
@@ -117,10 +113,8 @@ class File(Editable[None]):
         if not path.exists():
             update_graph = True
             path.parent.mkdir(parents=True, exist_ok=True)
-            if not binary:
-                path.write_text(content)
-            else:
-                path.write_bytes(content)
+            G.file_tracker.write_file(path, content)
+            G.file_tracker.save_files({path})
 
         new_file = cls(filepath, G, ts_node=None, binary=binary)
         return new_file
@@ -133,10 +127,7 @@ class File(Editable[None]):
 
         TODO: move rest of graph sitter to operate in bytes to prevent multi byte character issues?
         """
-        # Check against None due to possibility of empty byte
-        if self._pending_content_bytes is None:
-            return self.path.read_bytes()
-        return self._pending_content_bytes
+        return self.G.file_tracker.read_bytes(self.path)
 
     @property
     @reader
@@ -162,31 +153,18 @@ class File(Editable[None]):
 
     @noapidoc
     def write(self, content: str | bytes, to_disk: bool = False) -> None:
-        """Writes string contents to the file."""
-        self.write_bytes(content.encode("utf-8") if isinstance(content, str) else content, to_disk=to_disk)
-
-    @noapidoc
-    def write_bytes(self, content_bytes: bytes, to_disk: bool = False) -> None:
-        self._pending_content_bytes = content_bytes
-        self.G.pending_files.add(self)
+        """Writes contents to the file."""
+        self.G.file_tracker.write_file(self.path, content)
         if to_disk:
-            self.write_pending_content()
+            self.G.file_tracker.save_files({self.path})
             if self.ts_node.start_byte == self.ts_node.end_byte:
                 # TS didn't parse anything, register a write to make sure the transaction manager can restore the file later.
                 self.edit("")
 
     @noapidoc
-    def write_pending_content(self) -> None:
-        if self._pending_content_bytes is not None:
-            self.path.write_bytes(self._pending_content_bytes)
-            self._pending_content_bytes = None
-            logger.debug("Finished write_pending_content")
-
-    @noapidoc
-    @writer
-    def check_changes(self) -> None:
-        if self._pending_content_bytes is not None:
-            logger.error(BadWriteError("Directly called file write without calling commit_transactions"))
+    @deprecated("Use write instead")
+    def write_bytes(self, content_bytes: bytes, to_disk: bool = False) -> None:
+        self.write(content_bytes, to_disk=to_disk)
 
     @property
     @reader
@@ -272,7 +250,7 @@ class File(Editable[None]):
             None
         """
         self.transaction_manager.add_file_remove_transaction(self)
-        self._pending_content_bytes = None
+        self.G.file_tracker.write_file(self.path, None)
 
     @property
     def filepath(self) -> str:

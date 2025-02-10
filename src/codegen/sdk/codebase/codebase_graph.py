@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import Counter, defaultdict
-from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from enum import IntEnum, auto, unique
 from functools import lru_cache
@@ -48,6 +47,8 @@ if TYPE_CHECKING:
 
 import logging
 
+from codegen.sdk.codebase.io.file_tracker import FileTracker
+
 logger = logging.getLogger(__name__)
 
 
@@ -92,7 +93,6 @@ class CodebaseGraph:
     pending_syncs: list[DiffLite]  # Diffs that have been applied to disk, but not the graph (to be used for sync graph)
     all_syncs: list[DiffLite]  # All diffs that have been applied to the graph (to be used for graph reset)
     _autocommit: AutoCommit
-    pending_files: set[SourceFile]
     generation: int
     parser: Parser[Expression]
     synced_commit: GitCommit | None
@@ -110,6 +110,7 @@ class CodebaseGraph:
     session_options: SessionOptions = SessionOptions()
     projects: list[ProjectConfig]
     unapplied_diffs: list[DiffLite]
+    file_tracker: FileTracker[SourceFile]
 
     def __init__(
         self,
@@ -165,7 +166,7 @@ class CodebaseGraph:
         self.pending_syncs = []
         self.all_syncs = []
         self.unapplied_diffs = []
-        self.pending_files = set()
+        self.file_tracker = FileTracker()
         self.flags = Flags()
 
     def __repr__(self):
@@ -270,7 +271,7 @@ class CodebaseGraph:
     def undo_applied_diffs(self) -> None:
         self.transaction_manager.clear_transactions()
         self.reset_codebase()
-        self.check_changes()
+        self.file_tracker.check_changes()
         self.pending_syncs.clear()  # Discard pending changes
         if len(self.all_syncs) > 0:
             logger.info(f"Unapplying {len(self.all_syncs)} diffs to graph. Current graph commit: {self.synced_commit}")
@@ -634,17 +635,6 @@ class CodebaseGraph:
                     continue
             self._graph.remove_edge_from_index(edge)
 
-    def check_changes(self) -> None:
-        for file in self.pending_files:
-            file.check_changes()
-        self.pending_files.clear()
-
-    def write_files(self, files: set[Path] | None = None) -> None:
-        to_write = set(filter(lambda f: f.filepath in files, self.pending_files)) if files is not None else self.pending_files
-        with ThreadPoolExecutor() as exec:
-            exec.map(lambda f: f.write_pending_content(), to_write)
-        self.pending_files.difference_update(to_write)
-
     @lru_cache(maxsize=10000)
     def to_absolute(self, filepath: PathLike | str) -> Path:
         path = Path(filepath)
@@ -684,7 +674,7 @@ class CodebaseGraph:
 
         # Write files if requested
         if sync_file:
-            self.write_files(files)
+            self.file_tracker.write_files(files)
 
         # Sync the graph if requested
         if sync_graph and len(self.pending_syncs) > 0:
