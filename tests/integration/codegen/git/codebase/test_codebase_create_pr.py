@@ -11,9 +11,14 @@ from codegen.shared.configs.config import config
 
 
 @pytest.fixture
-def codebase(repo_config, tmpdir):
+def op(repo_config, tmpdir):
     clone_repo(repo_path=f"{tmpdir}/{repo_config.name}", clone_url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token))
     op = LocalRepoOperator(repo_config=repo_config, github_api_key=config.secrets.github_token)
+    yield op
+
+
+@pytest.fixture
+def codebase(op: LocalRepoOperator):
     project_config = ProjectConfig(repo_operator=op)
     codebase = Codebase(projects=[project_config])
     yield codebase
