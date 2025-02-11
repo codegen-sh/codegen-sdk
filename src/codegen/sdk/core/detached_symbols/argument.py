@@ -14,7 +14,7 @@ from codegen.shared.decorators.docs import apidoc, noapidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.dataclasses.usage import UsageKind
     from codegen.sdk.core.detached_symbols.function_call import FunctionCall
     from codegen.sdk.core.detached_symbols.parameter import Parameter
@@ -33,7 +33,7 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
     _pos: int
 
     def __init__(self, node: TSNode, positional_idx: int, parent: FunctionCall) -> None:
-        super().__init__(node, parent.file_node_id, parent.G, parent)
+        super().__init__(node, parent.file_node_id, parent.ctx, parent)
         self._pos = positional_idx
 
         # TODO: Make the python and typescript implementations into different classes
@@ -61,9 +61,9 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
 
     @noapidoc
     @classmethod
-    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
-        args = [Argument(x, file_node_id, G, parent, i) for i, x in enumerate(node.named_children) if x.type != "comment"]
-        return MultiExpression(node, file_node_id, G, parent, expressions=args)
+    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
+        args = [Argument(x, file_node_id, ctx, parent, i) for i, x in enumerate(node.named_children) if x.type != "comment"]
+        return MultiExpression(node, file_node_id, ctx, parent, expressions=args)
 
     @property
     @reader

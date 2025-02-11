@@ -31,10 +31,10 @@ from codegen.sdk.python.expressions.union_type import PyUnionType
 from codegen.sdk.python.statements.import_statement import PyImportStatement
 
 
-def parse_subscript(node: TSNode, file_node_id, G, parent):
+def parse_subscript(node: TSNode, file_node_id, ctx, parent):
     if (node.prev_named_sibling and node.prev_named_sibling.text.decode("utf-8") == "TypeAlias") or isinstance(parent, Type):
-        return PyGenericType(node, file_node_id, G, parent)
-    return SubscriptExpression(node, file_node_id, G, parent)
+        return PyGenericType(node, file_node_id, ctx, parent)
+    return SubscriptExpression(node, file_node_id, ctx, parent)
 
 
 PyExpressionMap = {

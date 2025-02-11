@@ -35,11 +35,11 @@ class PyGenericType(PyNamedType[Parent], GenericType["PyType", Parent], Generic[
     def _get_parameters(self) -> Collection["PyType", Self] | None:
         if self.ts_node_type == "subscript":
             types = [self._parse_type(child) for child in self.ts_node.children_by_field_name("subscript")]
-            return Collection(node=self.ts_node, file_node_id=self.file_node_id, G=self.G, parent=self, children=types)
+            return Collection(node=self.ts_node, file_node_id=self.file_node_id, ctx=self.ctx, parent=self, children=types)
         elif self.ts_node_type == "generic_type":
             type_parameter = self.ts_node.named_children[1]
             assert type_parameter.type == "type_parameter"
             types = [self._parse_type(child) for child in type_parameter.named_children]
-            return Collection(node=type_parameter, file_node_id=self.file_node_id, G=self.G, parent=self, children=types)
+            return Collection(node=type_parameter, file_node_id=self.file_node_id, ctx=self.ctx, parent=self, children=types)
         logger.warning(f"Type {self.ts_node_type} not implemented")
         return None

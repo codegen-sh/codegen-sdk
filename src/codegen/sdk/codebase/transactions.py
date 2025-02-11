@@ -261,12 +261,12 @@ class FileRenameTransaction(Transaction):
         priority: int = 0,
     ) -> None:
         super().__init__(0, 0, file.path, priority=priority, new_content=new_file_path)
-        self.new_file_path = file.G.to_absolute(new_file_path)
+        self.new_file_path = file.ctx.to_absolute(new_file_path)
         self.file = file
 
     def execute(self) -> None:
         """Renames the file"""
-        self.file.G.io.save_files({self.file.path})
+        self.file.ctx.io.save_files({self.file.path})
         self.file_path.rename(self.new_file_path)
 
     def get_diff(self) -> DiffLite:
@@ -291,7 +291,7 @@ class FileRemoveTransaction(Transaction):
 
     def execute(self) -> None:
         """Removes the file"""
-        self.file.G.io.delete_file(self.file.path)
+        self.file.ctx.io.delete_file(self.file.path)
 
     def get_diff(self) -> DiffLite:
         """Gets the diff produced by this transaction"""
