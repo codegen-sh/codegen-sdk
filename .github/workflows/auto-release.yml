@@ -36,6 +36,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
+    if: ${{ needs.semantic-version.outputs.tag }}
     needs: semantic-version
     uses: ./.github/workflows/release.yml
     permissions:
