@@ -9,8 +9,8 @@ from codegen.runner.sandbox.executor import SandboxExecutor
 from codegen.runner.sandbox.runner import SandboxRunner
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 @pytest.fixture

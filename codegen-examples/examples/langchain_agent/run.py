@@ -14,7 +14,7 @@ from codegen.extensions.langchain.tools import (
     SemanticEditTool,
     ViewFileTool,
 )
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from langchain import hub
 from langchain.agents import AgentExecutor
 from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent

@@ -11,9 +11,9 @@ from codegen.runner.sandbox.executor import SandboxExecutor
 from codegen.sdk.codebase.config import ProjectConfig, SessionOptions
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
 from codegen.shared.configs.config import config
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.shared.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)

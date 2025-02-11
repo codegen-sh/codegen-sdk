@@ -14,6 +14,7 @@ from git import Diff, GitCommandError, InvalidGitRepositoryError, Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
 
+from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
@@ -29,16 +30,22 @@ class RepoOperator(ABC):
     repo_config: RepoConfig
     base_dir: str
     bot_commit: bool = True
+    access_token: str | None = None
+
+    # lazy attributes
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
+    _remote_git_repo: GitRepoClient | None = None
 
     def __init__(
         self,
         repo_config: RepoConfig,
+        access_token: str | None = None,
         bot_commit: bool = True,
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
+        self.access_token = access_token
         self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
 
@@ -53,6 +60,12 @@ class RepoOperator(ABC):
     @property
     def repo_path(self) -> str:
         return os.path.join(self.base_dir, self.repo_name)
+
+    @property
+    def remote_git_repo(self) -> GitRepoClient:
+        if not self._remote_git_repo:
+            self._remote_git_repo = GitRepoClient(self.repo_config, access_token=self.access_token)
+        return self._remote_git_repo
 
     @property
     def clone_url(self) -> str:

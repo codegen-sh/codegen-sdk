@@ -7,9 +7,6 @@ from codegen.shared.performance.stopwatch_utils import subprocess_with_stopwatch
 logger = logging.getLogger(__name__)
 
 
-# return os.path.join(repo_path, repo_name), clone_url
-
-
 # TODO: update to use GitPython instead + move into LocalRepoOperator
 def clone_repo(
     repo_path: str,

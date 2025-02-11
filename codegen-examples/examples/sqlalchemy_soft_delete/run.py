@@ -1,7 +1,7 @@
 import codegen
 from codegen import Codebase
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 import shutil
 import subprocess
 from pathlib import Path

@@ -8,8 +8,8 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase, CodebaseType
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.decorators.docs import DocumentedObject, apidoc_objects, no_apidoc_objects, py_apidoc_objects, ts_apidoc_objects
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 logger = logging.getLogger(__name__)
 

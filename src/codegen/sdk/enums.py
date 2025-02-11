@@ -80,6 +80,7 @@ class ImportType(IntEnum):
     UNKNOWN = auto()  # TODO: get rid of this - mostly used to set default value. we should just set to None.
 
 
+# TODO: move to codegen.shared.enums
 class ProgrammingLanguage(StrEnum):
     PYTHON = "PYTHON"
     TYPESCRIPT = "TYPESCRIPT"

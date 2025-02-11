@@ -7,7 +7,6 @@ from codeowners import CodeOwners as CodeOwnersParser
 from git import GitCommandError, Remote
 from git.remote import PushInfoList
 
-from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
 from codegen.git.schemas.repo_config import RepoConfig
@@ -23,16 +22,6 @@ logger = logging.getLogger(__name__)
 class RemoteRepoOperator(RepoOperator):
     """A wrapper around GitPython to make it easier to interact with a cloned lowside repo."""
 
-    # __init__ attributes
-    repo_config: RepoConfig
-    base_dir: str
-    access_token: str | None = None
-
-    # lazy attributes
-    _remote_git_repo: GitRepoClient | None = None
-    _codeowners_parser: CodeOwnersParser | None = None
-    _default_branch: str | None = None
-
     # TODO: allow setting the access scope level of the lowside repo (currently it's always WRITE)
     def __init__(
         self,
@@ -42,8 +31,7 @@ class RemoteRepoOperator(RepoOperator):
         bot_commit: bool = True,
         access_token: str | None = None,
     ) -> None:
-        super().__init__(repo_config=repo_config, bot_commit=bot_commit)
-        self.access_token = access_token
+        super().__init__(repo_config=repo_config, access_token=access_token, bot_commit=bot_commit)
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
     ####################################################################################################################
@@ -55,12 +43,6 @@ class RemoteRepoOperator(RepoOperator):
         if self.access_token:
             return get_authenticated_clone_url_for_repo_config(repo=self.repo_config, token=self.access_token)
         return super().clone_url
-
-    @property
-    def remote_git_repo(self) -> GitRepoClient:
-        if not self._remote_git_repo:
-            self._remote_git_repo = GitRepoClient(self.repo_config, access_token=self.access_token)
-        return self._remote_git_repo
 
     @property
     def default_branch(self) -> str:

@@ -1,5 +1,5 @@
 import codegen
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen import Codebase
 
 

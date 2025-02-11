@@ -8,9 +8,10 @@ from pydantic.fields import Field
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.git.utils.file_utils import split_git_path
+from codegen.git.utils.language import determine_project_language
 from codegen.sdk.secrets import Secrets
-from codegen.sdk.utils import determine_project_language, split_git_path
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 HARD_MAX_AI_LIMIT = 500  # Global limit for AI requests
 
