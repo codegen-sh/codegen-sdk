@@ -41,5 +41,6 @@ jobs:
     uses: ./.github/workflows/release.yml
     permissions:
       contents: write
+    secrets: inherit
     with:
       tag: ${{ needs.semantic-version.outputs.tag }}
