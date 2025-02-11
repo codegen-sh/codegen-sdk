@@ -87,6 +87,7 @@ class CodeOwner(
 
     @property
     def name(self) -> str:
+        """The name of the code owner."""
         return self.owner_value
 
     def __iter__(self) -> Iterator[TFile]:
