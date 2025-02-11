@@ -10,14 +10,17 @@ This example demonstrates how to analyze the cyclomatic complexity of Python cod
 The script (`run.py`) performs the complexity analysis in several key steps:
 
 1. **Codebase Loading**
+
    ```python
    codebase = Codebase.from_repo("fastapi/fastapi")
    ```
+
    - Loads any Python codebase into Codegen's analysis engine
    - Works with local or remote Git repositories
    - Supports analyzing specific commits
 
-2. **Complexity Calculation**
+1. **Complexity Calculation**
+
    ```python
    def calculate_cyclomatic_complexity(code_block):
        complexity = 1  # Base complexity
@@ -25,31 +28,37 @@ The script (`run.py`) performs the complexity analysis in several key steps:
            if isinstance(statement, IfBlockStatement):
                complexity += 1 + len(statement.elif_statements)
    ```
+
    - Analyzes control flow structures (if/elif/else, loops, try/except)
    - Calculates complexity based on decision points
    - Handles nested structures appropriately
 
-3. **Function Analysis**
+1. **Function Analysis**
+
    ```python
    callables = codebase.functions + [m for c in codebase.classes for m in c.methods]
    for function in callables:
        complexity = calculate_cyclomatic_complexity(function.code_block)
    ```
+
    - Processes both standalone functions and class methods
    - Calculates complexity for each callable
    - Tracks file locations and function names
 
-4. **Report Generation**
+1. **Report Generation**
+
    ```python
    print("\n📊 Cyclomatic Complexity Analysis")
    print(f"  • Total Functions: {total_functions}")
    print(f"  • Average Complexity: {average:.2f}")
    ```
+
    - Provides comprehensive complexity statistics
    - Shows distribution of complexity across functions
    - Identifies the most complex functions
 
 ## Output
+
 ```
 📊 Cyclomatic Complexity Analysis
 ============================================================
@@ -83,6 +92,7 @@ The script (`run.py`) performs the complexity analysis in several key steps:
 The analyzer tracks several key metrics:
 
 ### Complexity Sources
+
 - If statements (+1)
 - Elif statements (+1 each)
 - Else statements (+1)
@@ -90,6 +100,7 @@ The analyzer tracks several key metrics:
 - Try-except blocks (+1 per except)
 
 ### Complexity Categories
+
 - Low (1-5): Generally clean and maintainable code
 - Medium (6-10): Moderate complexity, may need attention
 - High (>10): Complex code that should be reviewed

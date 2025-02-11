@@ -5,13 +5,15 @@ This example demonstrates how to use Codegen to automatically generate comprehen
 ## Overview
 
 The script uses Codegen's symbol analysis capabilities to:
+
 1. Identify functions without docstrings
-2. Analyze their dependencies and usages up to N degrees deep
-3. Generate contextually aware docstrings using AI
+1. Analyze their dependencies and usages up to N degrees deep
+1. Generate contextually aware docstrings using AI
 
 ## Key Features
 
 ### Recursive Context Collection
+
 The script recursively collects both dependencies and usages to provide comprehensive context for docstring generation:
 
 ```python
@@ -33,6 +35,7 @@ def get_extended_context(symbol: Symbol, degree: int) -> tuple[set[Symbol], set[
 ```
 
 ### Import Resolution
+
 The script intelligently resolves imports to find the actual symbol definitions:
 
 ```python
@@ -54,14 +57,16 @@ python run.py
 ```
 
 The script will:
-   - Process each function in the codebase
-   - Skip functions that already have docstrings
-   - Generate contextually aware docstrings for undocumented functions
-   - Commit changes incrementally for safe early termination
+
+- Process each function in the codebase
+- Skip functions that already have docstrings
+- Generate contextually aware docstrings for undocumented functions
+- Commit changes incrementally for safe early termination
 
 ## Example Output
 
 The script provides detailed progress information:
+
 ```
 [1/150] Skipping my_function - already has docstring
 [2/150] Generating docstring for process_data at src/utils.py

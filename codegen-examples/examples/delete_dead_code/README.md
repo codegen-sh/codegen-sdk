@@ -10,13 +10,16 @@ This example demonstrates how to identify and remove dead code from a codebase u
 The script (`run.py`) performs the dead code removal in several key steps:
 
 1. **Codebase Loading**
+
    ```python
    codebase = Codebase.from_repo("tox-dev/tox", programming_language=ProgrammingLanguage.PYTHON)
    ```
+
    - Loads a codebase using the `Codebase.from_repo` method
    - This example uses the `tox-dev/tox` repository because it is mostly self-contained
 
-2. **Function Removal**
+1. **Function Removal**
+
    ```python
    for function in codebase.functions:
        if "test" in function.file.filepath:
@@ -27,10 +30,12 @@ The script (`run.py`) performs the dead code removal in several key steps:
            print(f"🗑️ Removing unused function: {function.name}")
            function.remove()
    ```
+
    - Skips test files and decorated functions
    - Removes functions with no usages or call sites
 
-3. **Variable Cleanup**
+1. **Variable Cleanup**
+
    ```python
    for func in codebase.functions:
        for var_assignments in func.code_block.local_var_assignments:
@@ -38,6 +43,7 @@ The script (`run.py`) performs the dead code removal in several key steps:
                print(f"🧹 Removing unused variable: {var_assignments.name}")
                var_assignments.remove()
    ```
+
    - Iterates through local variable assignments
    - Removes variables with no local usages
 
@@ -65,7 +71,6 @@ python run.py
 🔧 Total functions removed: 2
 📦 Total variables removed: 240
 ```
-
 
 ## Learn More
 
