@@ -35,7 +35,7 @@ class GSFeatureFlags(BaseModel):
     model_config = ConfigDict(frozen=True)
     debug: bool = False
     verify_graph: bool = False
-    track_graph: bool = True  # Track the initial graph state
+    track_graph: bool = False  # Track the initial graph state
     method_usages: bool = True
     sync_enabled: bool = True
     ts_dependency_manager: bool = False  # Enable Typescript Dependency Manager
@@ -50,7 +50,7 @@ class GSFeatureFlags(BaseModel):
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)
 
-TestFlags = GSFeatureFlags(debug=True, verify_graph=True, full_range_index=True)
+TestFlags = GSFeatureFlags(debug=True, track_graph=True, verify_graph=True, full_range_index=True)
 LintFlags = GSFeatureFlags(method_usages=False)
 ParseTestFlags = GSFeatureFlags(debug=False, track_graph=False)
 

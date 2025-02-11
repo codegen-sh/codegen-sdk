@@ -79,18 +79,19 @@ repos:
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.29"
+    rev: "0.5.30"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
 
   - repo: "local"
     hooks:
-      - id: disallowed-words-check
-        name: Check for disallowed words
-        entry: scripts/disallowed-words-check.sh
-        language: script
-        files: ''  # Check all files
+      # Disabled as part of LFS removal.
+      # - id: disallowed-words-check
+      #   name: Check for disallowed words
+      #   entry: scripts/disallowed-words-check.sh
+      #   language: script
+      #   files: ''  # Check all files
       - id: generate-runner-imports
         name: Generate Runner Imports
         entry: bash -c "uv run --frozen python -m codegen.gscli.cli generate runner-imports src/codegen/shared/compilation/function_imports.py"

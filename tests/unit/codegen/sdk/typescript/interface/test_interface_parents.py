@@ -35,8 +35,8 @@ export class Labrador implements Dog {
   }
 }
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": file}) as G:
-        file = G.get_file("test.ts")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": file}) as ctx:
+        file = ctx.get_file("test.ts")
         symbols = file.symbols
         assert len(symbols) == 3
         assert symbols[0].parent_interfaces is None

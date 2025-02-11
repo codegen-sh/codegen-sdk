@@ -6,7 +6,7 @@ from typing import Literal, overload
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import BaseRepoConfig
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig, SessionOptions, TestFlags
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseFactory
 from codegen.sdk.core.codebase import Codebase, PyCodebaseType, TSCodebaseType
@@ -108,12 +108,12 @@ def get_codebase_graph_session(
     files: dict[str, str] = {},
     sync_graph: bool = True,
     session_options: SessionOptions = SessionOptions(),
-) -> Generator[CodebaseGraph, None, None]:
+) -> Generator[CodebaseContext, None, None]:
     """Gives you a Codebase2 operating on the files you provided as a dict"""
     op = LocalRepoOperator.create_from_files(repo_path=tmpdir, files=files)
     config = CodebaseConfig(feature_flags=TestFlags)
     projects = [ProjectConfig(repo_operator=op, programming_language=programming_language)]
-    graph = CodebaseGraph(projects=projects, config=config)
+    graph = CodebaseContext(projects=projects, config=config)
     with graph.session(sync_graph=sync_graph, session_options=session_options):
         try:
             yield graph

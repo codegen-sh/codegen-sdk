@@ -69,6 +69,6 @@ class CodemodRunMiddleware[TRequest, TResponse](BaseHTTPMiddleware):
         if is_exception:
             # TODO: instead of committing transactions, we should just rollback
             logger.info("Committing pending transactions due to exception")
-            self.runner.codebase.G.commit_transactions(sync_graph=False)
+            self.runner.codebase.ctx.commit_transactions(sync_graph=False)
         self.runner.reset_runner()
         self.server_info.is_running_codemod = False

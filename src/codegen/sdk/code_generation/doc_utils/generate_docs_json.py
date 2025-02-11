@@ -8,7 +8,7 @@ from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.placeholder.placeholder_type import TypePlaceholder
 
 ATTRIBUTES_TO_IGNORE = [
-    "G",
+    "ctx",
     "node_id",
     "angular",
     "model_config",
@@ -19,7 +19,6 @@ ATTRIBUTES_TO_IGNORE = [
     "node_type",
     "ts_node",
     "file_node_id",
-    "G",
     "statement_type",
     "assignment_types",
 ]

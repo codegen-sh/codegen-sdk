@@ -3,15 +3,13 @@ on:
   push:
     branches:
       - develop
-  workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
-  release:
-    name: Release
+  semantic-version:
+    name: Semantic version
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.semantic.outputs.release-version }}
     permissions:
       checks: read # to wait for required checks
       contents: write # to be able to publish a GitHub release
@@ -36,3 +34,12 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    if: ${{ needs.semantic-version.outputs.tag }}
+    needs: semantic-version
+    uses: ./.github/workflows/release.yml
+    permissions:
+      contents: write
+    with:
+      tag: ${{ needs.semantic-version.outputs.tag }}

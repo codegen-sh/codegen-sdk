@@ -3,7 +3,7 @@ name = "codegen-examples"
 version = "0.0.0"
 readme = "README.md"
 requires-python = ">=3.12, <3.14"
-dependencies = ["codegen==0.5.30"]
+dependencies = ["codegen==0.6.2"]
 license = { file = "LICENSE" }
 classifiers = [
   "License :: OSI Approved :: Apache Software License",
