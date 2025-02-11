@@ -4,9 +4,7 @@ from functools import cached_property
 from typing import Self, override
 
 from codeowners import CodeOwners as CodeOwnersParser
-from git import Remote
 from git import Repo as GitCLI
-from git.remote import PushInfoList
 from github import Github
 from github.PullRequest import PullRequest
 from github.Repository import Repository
@@ -18,8 +16,6 @@ from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
-from codegen.git.utils.remote_progress import CustomRemoteProgress
-from codegen.shared.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
 
@@ -197,43 +193,6 @@ class LocalRepoOperator(RepoOperator):
     def default_branch(self) -> str:
         origin_prefix = "origin"  # TODO: convert to property?
         return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
-
-    @stopwatch
-    def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:
-        """Push the changes to the given refspec of the remote.
-
-        Args:
-            refspec (str | None): refspec to push. If None, the current active branch is used.
-            remote (Remote | None): Remote to push too. Defaults to 'origin'.
-            force (bool): If True, force push the changes. Defaults to False.
-        """
-        # Use default remote if not provided
-        if not remote:
-            remote = self.git_cli.remote(name="origin")
-
-        # Use the current active branch if no branch is specified
-        if not refspec:
-            # TODO: doesn't work with detached HEAD state
-            refspec = self.git_cli.active_branch.name
-
-        res = remote.push(refspec=refspec, force=force, progress=CustomRemoteProgress())
-        for push_info in res:
-            if push_info.flags & push_info.ERROR:
-                # Handle the error case
-                logger.warning(f"Error pushing {refspec}: {push_info.summary}")
-            elif push_info.flags & push_info.FAST_FORWARD:
-                # Successful fast-forward push
-                logger.info(f"{refspec} pushed successfully (fast-forward).")
-            elif push_info.flags & push_info.NEW_HEAD:
-                # Successful push of a new branch
-                logger.info(f"{refspec} pushed successfully as a new branch.")
-            elif push_info.flags & push_info.NEW_TAG:
-                # Successful push of a new tag (if relevant)
-                logger.info("New tag pushed successfully.")
-            else:
-                # Successful push, general case
-                logger.info(f"{refspec} pushed successfully.")
-        return res
 
     @override
     def pull_repo(self) -> None:
