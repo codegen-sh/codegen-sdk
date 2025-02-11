@@ -38,6 +38,7 @@ pip install modal-client codegen slack-bolt openai
    - Add bot token scopes:
      - `app_mentions:read`
      - `chat:write`
+     - `reactions:write`
    - Install the app to your workspace
    - Copy the Bot User OAuth Token and App-Level Token
 

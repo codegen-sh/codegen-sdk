@@ -12,6 +12,9 @@ from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 from tokens import OPENAI_API_KEY, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
 
+secrets = modal.Secret.from_dotenv()
+print(secrets.get("OPENAI_API_KEY"))
+
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
 
