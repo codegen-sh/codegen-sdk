@@ -16,7 +16,7 @@ from git.remote import PushInfoList
 
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.schemas.repo_config import RepoConfig
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.shared.performance.time_utils import humanize_duration
 
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class RepoOperator(ABC):
     """A wrapper around GitPython to make it easier to interact with a repo."""
 
-    repo_config: BaseRepoConfig
+    repo_config: RepoConfig
     base_dir: str
     bot_commit: bool = True
     _codeowners_parser: CodeOwnersParser | None = None
@@ -34,13 +34,12 @@ class RepoOperator(ABC):
 
     def __init__(
         self,
-        repo_config: BaseRepoConfig,
-        base_dir: str = "/tmp",
+        repo_config: RepoConfig,
         bot_commit: bool = True,
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
-        self.base_dir = base_dir
+        self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
 
     ####################################################################################################################

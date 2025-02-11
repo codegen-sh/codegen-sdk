@@ -36,7 +36,7 @@ class SandboxRunner:
         repo_config: RepoConfig,
     ) -> None:
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config=repo_config, base_dir=repo_config.base_dir, access_token=config.GITHUB_TOKEN)
+        self.op = RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:

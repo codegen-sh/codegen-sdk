@@ -3,7 +3,6 @@ import inspect
 import textwrap
 from collections.abc import Callable
 
-from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.codebase import CodebaseType
 from codegen.sdk.enums import ProgrammingLanguage
@@ -55,8 +54,7 @@ class SkillImplementation:
 
     def run_test_cases(self, tmpdir: str, get_diff: bool = False, snapshot=None) -> str | None:
         for test_case in self.test_cases:
-            repo_config = BaseRepoConfig()
-            with get_codebase_session(tmpdir=tmpdir, programming_language=self.language, files=test_case.to_input_dict(), repo_config=repo_config, verify_output=False) as codebase:
+            with get_codebase_session(tmpdir=tmpdir, programming_language=self.language, files=test_case.to_input_dict(), verify_output=False) as codebase:
                 self._skill_func(codebase)
                 codebase.commit()
                 diff = verify_skill_output(codebase, self, test_case, get_diff, snapshot)

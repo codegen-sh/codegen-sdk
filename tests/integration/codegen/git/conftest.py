@@ -17,10 +17,8 @@ def mock_config():
 @pytest.fixture(autouse=True)
 def repo_config():
     repo_config = RepoConfig(
-        id=321,
         name="Kevin-s-Adventure-Game",
         full_name="codegen-sh/Kevin-s-Adventure-Game",
-        organization_id=123,
         organization_name="codegen-sh",
     )
     yield repo_config
