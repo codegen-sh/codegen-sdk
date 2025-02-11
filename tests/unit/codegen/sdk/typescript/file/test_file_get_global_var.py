@@ -9,8 +9,8 @@ const MyComponent = (props) => {
     return <>Hello World</>;
 };
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as G:
-        file = G.get_file("test.tsx")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as ctx:
+        file = ctx.get_file("test.tsx")
 
         # =====[ Count symbols ]=====
         symbols = file.symbols
@@ -38,8 +38,8 @@ export class CopyButton extends React.Component<CopyButtonProps, CopyButtonState
     };
 }
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as G:
-        file = G.get_file("test.tsx")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as ctx:
+        file = ctx.get_file("test.tsx")
         cls = file.get_class("CopyButton")
         assert cls is not None
         assert cls.name == "CopyButton"

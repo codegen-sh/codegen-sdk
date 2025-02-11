@@ -12,7 +12,7 @@ from codegen.shared.decorators.docs import noapidoc, py_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.interfaces.editable import Editable
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.node_id_factory import NodeId
@@ -83,7 +83,7 @@ class PyImport(Import["PyFile"]):
     @noapidoc
     @reader
     def resolve_import(self, base_path: str | None = None, *, add_module_name: str | None = None) -> ImportResolution[PyFile] | None:
-        base_path = base_path or self.G.projects[0].base_path or ""
+        base_path = base_path or self.ctx.projects[0].base_path or ""
         module_source = self.module.source if self.module else ""
         symbol_name = self.symbol_name.source if self.symbol_name else ""
         if add_module_name:
@@ -104,11 +104,11 @@ class PyImport(Import["PyFile"]):
                 base_path,
                 module_source.replace(".", "/") + "/" + symbol_name + ".py",
             )
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             return ImportResolution(from_file=file, symbol=None, imports_file=True)
 
         filepath = filepath.replace(".py", "/__init__.py")
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             # TODO - I think this is another edge case, due to `dao/__init__.py` etc.
             # You can't do `from a.b.c import foo` => `foo.utils.x` right now since `foo` is just a file...
             return ImportResolution(from_file=file, symbol=None, imports_file=True)
@@ -116,13 +116,13 @@ class PyImport(Import["PyFile"]):
         # =====[ Check if `module.py` file exists in the graph ]=====
         filepath = module_source.replace(".", "/") + ".py"
         filepath = os.path.join(base_path, filepath)
-        if file := self.G.get_file(filepath):
+        if file := self.ctx.get_file(filepath):
             symbol = file.get_node_by_name(symbol_name)
             return ImportResolution(from_file=file, symbol=symbol)
 
         # =====[ Check if `module/__init__.py` file exists in the graph ]=====
         filepath = filepath.replace(".py", "/__init__.py")
-        if from_file := self.G.get_file(filepath):
+        if from_file := self.ctx.get_file(filepath):
             symbol = from_file.get_node_by_name(symbol_name)
             return ImportResolution(from_file=from_file, symbol=symbol)
 
@@ -135,13 +135,13 @@ class PyImport(Import["PyFile"]):
             return self.resolve_import(base_path="test", add_module_name=add_module_name)
 
         # if not G_override:
-        #     for resolver in G.import_resolvers:
+        #     for resolver in ctx.import_resolvers:
         #         if imp := resolver.resolve(self):
         #             return imp
 
         return None
         # # =====[ Check if we are importing an external module in the graph ]=====
-        # if ext := self.G.get_external_module(self.source, self._unique_node.source):
+        # if ext := self.ctx.get_external_module(self.source, self._unique_node.source):
         #     return ImportResolution(symbol=ext)
         # # Implies we are not importing the symbol from the current repo.
         # # In these cases, consider the import as an ExternalModule and add to graph
@@ -183,23 +183,23 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
             if module_node.type == "dotted_name":
-                imports.append(cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.MODULE))
+                imports.append(cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.MODULE))
             elif module_node.type == "aliased_import":
                 module = module_node.child_by_field_name("name")
                 symbol_name = module
                 alias = module_node.child_by_field_name("alias")
-                imports.append(cls(import_statement, file_node_id, G, parent, module_node=module, name_node=symbol_name, alias_node=alias, import_type=ImportType.MODULE))
+                imports.append(cls(import_statement, file_node_id, ctx, parent, module_node=module, name_node=symbol_name, alias_node=alias, import_type=ImportType.MODULE))
             else:
                 logger.error(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
         return imports
 
     @classmethod
     @noapidoc
-    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         module_node = import_statement.child_by_field_name("module_name")
         import_symbols = import_statement.children_by_field_name("name")
         if len(import_symbols) == 0:
@@ -207,16 +207,16 @@ class PyImport(Import["PyFile"]):
             if wildcard_import is None:
                 msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
                 raise ValueError(msg)
-            return [cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
+            return [cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
 
         imports = []
         for import_symbol in import_symbols:
             if import_symbol.type == "dotted_name":
-                imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=import_symbol, alias_node=import_symbol, import_type=ImportType.NAMED_EXPORT)
+                imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=import_symbol, alias_node=import_symbol, import_type=ImportType.NAMED_EXPORT)
             elif import_symbol.type == "aliased_import":
                 symbol_name = import_symbol.child_by_field_name("name")
                 alias = import_symbol.child_by_field_name("alias")
-                imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
+                imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
             else:
                 msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
                 raise ValueError(msg)
@@ -225,10 +225,10 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: ImportStatement) -> list[PyImport]:
+    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
-            imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.SIDE_EFFECT)
+            imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.SIDE_EFFECT)
             imports.append(imp)
         return imports
 
@@ -252,7 +252,7 @@ class PyImport(Import["PyFile"]):
             else:
                 is_match = self.symbol_name.source == import_specifier.text.decode("utf-8")
             if is_match:
-                return Name(import_specifier, self.file_node_id, self.G, self)
+                return Name(import_specifier, self.file_node_id, self.ctx, self)
 
     @reader
     def get_import_string(
@@ -286,7 +286,7 @@ class PyImport(Import["PyFile"]):
 
 
 class PyExternalImportResolver(ExternalImportResolver):
-    def __init__(self, from_alias: str, to_context: CodebaseGraph) -> None:
+    def __init__(self, from_alias: str, to_context: CodebaseContext) -> None:
         self.from_alias = from_alias
         self.to_context = to_context
 

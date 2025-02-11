@@ -36,8 +36,8 @@ class SandboxExecutor:
         """Runs the execute_func in find_mode to find flags"""
         self.codebase.set_find_mode(True)
         await self._execute_with_try_catch(execute_func, commit=False)
-        code_flags = self.codebase.G.flags._flags
-        logger.info(f"> Found {len(self.codebase.G.flags._flags)} CodeFlags")
+        code_flags = self.codebase.ctx.flags._flags
+        logger.info(f"> Found {len(self.codebase.ctx.flags._flags)} CodeFlags")
         return code_flags
 
     async def find_flag_groups(self, code_flags: list[CodeFlag], grouping_config: GroupingConfig) -> list[Group]:
@@ -77,7 +77,7 @@ class SandboxExecutor:
             run_results.append(run_result)
             head_branches.append(created_branch)
 
-        self.codebase.G.flags._flags.clear()
+        self.codebase.ctx.flags._flags.clear()
         return run_results, head_branches
 
     async def execute(self, execute_func: Callable, group: Group | None = None, session_options: SessionOptions = SessionOptions()) -> CodemodRunResult:
@@ -155,7 +155,7 @@ class SandboxExecutor:
                 "messageType": str(flag.message_type),
                 "messageRecipient": flag.message_recipient,
             }
-            for flag in self.codebase.G.flags._flags
+            for flag in self.codebase.ctx.flags._flags
         ]
         result.flags = flags
         if result.observation_meta is None:
