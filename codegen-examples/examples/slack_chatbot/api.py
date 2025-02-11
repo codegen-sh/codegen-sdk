@@ -6,105 +6,36 @@ from typing import Any
 import modal
 from codegen import Codebase
 from codegen.extensions import VectorIndex
+from codegen.sdk.enums import ProgrammingLanguage
 from fastapi import FastAPI, Request
 from openai import OpenAI
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
-from tokens import OPENAI_API_KEY, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
-
-secrets = modal.Secret.from_dotenv()
-print(secrets.get("OPENAI_API_KEY"))
-
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-
 
 ########################################################
-# Modal & Slack Setup
-########################################################
-
-volume = modal.Volume.from_name("repo-cache", create_if_missing=True)
-# Create image with dependencies
-image = (
-    modal.Image.debian_slim(python_version="3.13")
-    .apt_install("git")
-    .pip_install(
-        "slack-bolt>=1.18.0",
-        "codegen>=0.6.1",
-        "openai>=1.1.0",
-    )
-)
-
-# Create Modal app and stub
-app = modal.App("codegen-slack-demo")
-web_app = FastAPI()
-
-# Initialize Slack app with signing secret
-slack_app = App(
-    token=SLACK_BOT_TOKEN,
-    signing_secret=SLACK_SIGNING_SECRET,
-)
-
-# Create FastAPI app
-handler = SlackRequestHandler(slack_app)
-
-########################################################
-# Slackbot Verification Endpoint
+# Core RAG logic
 ########################################################
 
 
-@web_app.post("/slack/verify")  # you will need to rename this to do proper verification
-async def verify(request: Request):
-    """Handle Slack URL verification challenge."""
-    data = await request.json()
-
-    # Handle the URL verification challenge
-    if data["type"] == "url_verification":
-        return {"challenge": data["challenge"]}
-
-    # For other event types, pass to the Slack handler
-    return await handler.handle(request)
-
-
-@web_app.post("/")
-async def endpoint(request: Request):
-    """Handle Slack events and verify requests."""
-    return await handler.handle(request)
-
-
-@app.function(image=image)
-@modal.asgi_app()
-def fastapi_app():
-    return web_app
-
-
-########################################################
-# LLM Processing
-########################################################
-
-
-def format_response(answer: str, context: list[dict[str, str]]) -> str:
+def format_response(answer: str, context: list[tuple[str, int]]) -> str:
     """Format the response for Slack with file links."""
     response = f"*Answer:*\n{answer}\n\n*Relevant Files:*\n"
-
-    # Add file links
-    for ctx in context:
-        # Create GitHub link to the file
-        github_link = f"https://github.com/tiangolo/fastapi/blob/master/{ctx['filepath']}"
-        response += f"• <{github_link}|`{ctx['filepath']}`>\n"
-
+    for filename, score in context:
+        github_link = f"https://github.com/codegen-sh/codegen-sdk/blob/develop/{filename}"
+        response += f"• <{github_link}|{filename}>\n"
     return response
 
 
 def answer_question(query: str) -> tuple[str, list[dict[str, str]]]:
     """Use RAG to answer a question about FastAPI."""
-    # Initialize codebase
-    codebase = Codebase.from_repo("fastapi/fastapi", tmp_dir="/root")
+    # Initialize codebase. Smart about caching.
+    codebase = Codebase.from_repo("codegen-sh/codegen-sdk", programming_language=ProgrammingLanguage.PYTHON, tmp_dir="/root")
 
     # Initialize vector index
     index = VectorIndex(codebase)
 
     # Try to load existing index or create new one
-    index_path = "/root/fastapi_index.pkl"
+    index_path = "/root/E.pkl"
     try:
         index.load(index_path)
     except FileNotFoundError:
@@ -116,99 +47,125 @@ def answer_question(query: str) -> tuple[str, list[dict[str, str]]]:
     results = index.similarity_search(query, k=10)
 
     # Collect context from relevant files
-    context = []
+    context = ""
     for filepath, score in results:
-        if "#chunk" in filepath:
-            filepath = filepath.split("#chunk")[0]
         file = codebase.get_file(filepath)
-        context.append(
-            {
-                "filepath": file.filepath,
-                "snippet": file.content[:1000],  # First 1000 chars as preview
-            }
-        )
-
-    # Format context for prompt
-    context_str = "\n\n".join([f"File: {c['filepath']}\n```\n{c['snippet']}\n```" for c in context])
+        context += f"File: {file.filepath}\n```\n{file.content}\n```\n\n"
 
     # Create prompt for OpenAI
     prompt = f"""You are an expert on FastAPI. Given the following code context and question, provide a clear and accurate answer.
 Focus on the specific code shown in the context and FastAPI's implementation details.
 
+Note that your response will be rendered in Slack, so make sure to use Slack markdown. Keep it short + sweet, like 2 paragraphs + some code blocks max.
+
 Question: {query}
 
 Relevant FastAPI code:
-{context_str}
+{context}
 
 Answer:"""
 
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    client = OpenAI()
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a FastAPI expert. Answer questions about FastAPI's implementation accurately and concisely based on the provided code context."},
+            {"role": "system", "content": "You are a code expert. Answer questions about the given repo based on RAG'd results."},
             {"role": "user", "content": prompt},
         ],
         temperature=0,
     )
 
-    return response.choices[0].message.content, [{"filepath": c["filepath"], "snippet": c["snippet"]} for c in context]
+    return response.choices[0].message.content, results
 
-
-responded = {}
 
 ########################################################
-# Main Event Handler
+# Modal + Slack Setup
 ########################################################
 
+# Create image with dependencies
+image = (
+    modal.Image.debian_slim(python_version="3.13")
+    .apt_install("git")
+    .pip_install(
+        "slack-bolt>=1.18.0",
+        "codegen>=0.6.1",
+        "openai>=1.1.0",
+    )
+)
 
-@slack_app.event("app_mention")
-def handle_mention(event: dict[str, Any], say: Any) -> None:
-    """Handle mentions of the bot in channels."""
-    print("event", event)
+# Create Modal app
+app = modal.App("codegen-slack-demo")
 
-    # Skip if we've already answered this question
-    if event["ts"] in responded:
-        return
-    else:
+
+@app.function(
+    image=image,
+    secrets=[modal.Secret.from_dotenv()],
+    timeout=3600,
+)
+@modal.asgi_app()
+def fastapi_app():
+    """Create FastAPI app with Slack handlers."""
+    # Initialize Slack app with secrets from environment
+    slack_app = App(
+        token=os.environ["SLACK_BOT_TOKEN"],
+        signing_secret=os.environ["SLACK_SIGNING_SECRET"],
+    )
+
+    # Create FastAPI app
+    web_app = FastAPI()
+    handler = SlackRequestHandler(slack_app)
+
+    # Store responded messages to avoid duplicates
+    responded = {}
+
+    @slack_app.event("app_mention")
+    def handle_mention(event: dict[str, Any], say: Any) -> None:
+        """Handle mentions of the bot in channels."""
+        print("#####[ Received Event ]#####")
+        print(event)
+
+        # Skip if we've already answered this question
+        # Seems like Slack likes to double-send events while debugging (?)
+        if event["ts"] in responded:
+            return
         responded[event["ts"]] = True
 
-    # Get message text without the bot mention
-    query = event["text"].split(">", 1)[1].strip()
-    if not query:
-        say("Please ask a question about FastAPI!")
-        return
-
-    if "!" not in event["text"]:
-        say("include `!` in your message to ask a question")
-        return
-
-    try:
-        # Add typing indicator emoji
-        slack_app.client.reactions_add(
-            channel=event["channel"],
-            timestamp=event["ts"],
-            name="writing_hand",
-        )
-
+        # Get message text without the bot mention
+        query = event["text"].split(">", 1)[1].strip()
         if not query:
             say("Please ask a question about FastAPI!")
             return
 
-        # Get answer using RAG
-        answer, context = answer_question(query)
+        try:
+            # Add typing indicator emoji
+            slack_app.client.reactions_add(
+                channel=event["channel"],
+                timestamp=event["ts"],
+                name="writing_hand",
+            )
 
-        # Format and send response in thread
-        response = format_response(answer, context)
-        say(text=response, thread_ts=event["ts"])
+            # Get answer using RAG
+            answer, context = answer_question(query)
 
-        # Remove typing indicator emoji
-        slack_app.client.reactions_remove(
-            channel=event["channel"],
-            timestamp=event["ts"],
-            name="writing_hand",
-        )
+            # Format and send response in thread
+            response = format_response(answer, context)
+            say(text=response, thread_ts=event["ts"])
 
-    except Exception as e:
-        # Send error message in thread
-        say(text=f"Error: {str(e)}", thread_ts=event["ts"])
+        except Exception as e:
+            # Send error message in thread
+            say(text=f"Error: {str(e)}", thread_ts=event["ts"])
+
+    @web_app.post("/")
+    async def endpoint(request: Request):
+        """Handle Slack events and verify requests."""
+        return await handler.handle(request)
+
+    @web_app.post("/slack/verify")
+    async def verify(request: Request):
+        """Handle Slack URL verification challenge."""
+        data = await request.json()
+        if data["type"] == "url_verification":
+            return {"challenge": data["challenge"]}
+        return await handler.handle(request)
+
+    return web_app
