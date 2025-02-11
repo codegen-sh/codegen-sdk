@@ -62,7 +62,7 @@ Note that your response will be rendered in Slack, so make sure to use Slack mar
 
 Question: {query}
 
-Relevant FastAPI code:
+Relevant code:
 {context}
 
 Answer:"""
