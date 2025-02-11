@@ -15,7 +15,6 @@ from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
-from codegen.shared.configs.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +40,7 @@ class LocalRepoOperator(RepoOperator):
         github_api_key: str | None = None,
         bot_commit: bool = False,
     ) -> None:
-        self._github_api_key = github_api_key or config.secrets.github_token
+        self._github_api_key = github_api_key
         self._remote_git_repo = None
         super().__init__(repo_config, bot_commit)
         os.makedirs(self.repo_path, exist_ok=True)

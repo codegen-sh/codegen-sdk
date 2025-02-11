@@ -59,6 +59,7 @@ extend-generics = [
   "codegen.sdk.core.assignment.Assignment",
   "codegen.sdk.core.class_definition.Class",
   "codegen.sdk.core.codebase.Codebase",
+  "codegen.sdk.core.codeowner.CodeOwner",
   "codegen.sdk.core.dataclasses.usage.Usage",
   "codegen.sdk.core.dataclasses.usage.UsageType",
   "codegen.sdk.core.dataclasses.usage.UsageKind",

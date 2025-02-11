@@ -28,14 +28,17 @@ def codebase(tmp_path, original: dict[str, str], programming_language: Programmi
 
 @pytest.fixture
 def assert_expected(expected: dict[str, str], tmp_path):
-    def assert_expected(codebase: Codebase) -> None:
-        codebase.commit()
+    def assert_expected(codebase: Codebase, check_codebase: bool = True) -> None:
+        if check_codebase:
+            codebase.commit()
         for file in expected:
             assert tmp_path.joinpath(file).exists()
             assert tmp_path.joinpath(file).read_text() == expected[file]
-            assert codebase.get_file(file).content.strip() == expected[file].strip()
-        for file in codebase.files:
-            if file.file.path.exists():
-                assert file.filepath in expected
+            if check_codebase:
+                assert codebase.get_file(file).content.strip() == expected[file].strip()
+        if check_codebase:
+            for file in codebase.files:
+                if file.file.path.exists():
+                    assert file.filepath in expected
 
     return assert_expected

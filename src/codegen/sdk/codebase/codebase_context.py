@@ -115,6 +115,7 @@ class CodebaseContext:
         self,
         projects: list[ProjectConfig],
         config: CodebaseConfig = DefaultConfig,
+        io: IO | None = None,
     ) -> None:
         """Initializes codebase graph and TransactionManager"""
         from codegen.sdk.core.parser import Parser
@@ -134,7 +135,7 @@ class CodebaseContext:
 
         # =====[ __init__ attributes ]=====
         self.projects = projects
-        self.io = FileIO()
+        self.io = io or FileIO()
         context = projects[0]
         self.node_classes = get_node_classes(context.programming_language)
         self.config = config
