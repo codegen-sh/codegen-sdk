@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self, override
 
 from codegen.sdk.core.autocommit import reader
 from codegen.sdk.core.expressions import Name
 from codegen.sdk.core.import_resolution import ExternalImportResolver, Import, ImportResolution
 from codegen.sdk.enums import ImportType, NodeType
+from codegen.sdk.extensions.resolution import ResolutionStack
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from tree_sitter import Node as TSNode
 
     from codegen.sdk.codebase.codebase_context import CodebaseContext
@@ -27,6 +30,10 @@ logger = logging.getLogger(__name__)
 @py_apidoc
 class PyImport(Import["PyFile"]):
     """Extends Import for Python codebases."""
+
+    def __init__(self, ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type = ImportType.UNKNOWN):
+        super().__init__(ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type)
+        self.requesting_names=set()
 
     @reader
     def is_module_import(self) -> bool:
@@ -237,6 +244,29 @@ class PyImport(Import["PyFile"]):
             imports.append(imp)
         return imports
 
+
+    @reader
+    @noapidoc
+    @override
+    def _resolved_types(self) -> Generator[ResolutionStack[Self], None, None]:
+        """Resolve the types used by this import."""
+        ix_seen = set()
+
+        aliased = self.is_aliased_import()
+        if imported := self._imported_symbol(resolve_exports=True):
+            if getattr(imported,"is_wildcard_import",False):
+                imported.set_requesting_names(self)
+            yield from self.with_resolution_frame(imported, direct=False, aliased=aliased)
+        else:
+            yield ResolutionStack(self, aliased=aliased)
+
+        if self.is_wildcard_import():
+            for name,wildcard_import in  self.names:
+                if name in self.requesting_names:
+                    yield from [frame.parent_frame for frame in wildcard_import.resolved_type_frames]
+
+
+
     @property
     @reader
     def import_specifier(self) -> Editable:
@@ -258,6 +288,13 @@ class PyImport(Import["PyFile"]):
                 is_match = self.symbol_name.source == import_specifier.text.decode("utf-8")
             if is_match:
                 return Name(import_specifier, self.file_node_id, self.ctx, self)
+
+    @noapidoc
+    def set_requesting_names(self,requester:PyImport):
+        if requester.is_wildcard_import():
+            self.requesting_names.update(requester.requesting_names)
+        else:
+            self.requesting_names.add(requester.name)
 
     @reader
     def get_import_string(

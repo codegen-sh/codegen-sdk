@@ -216,19 +216,79 @@ def func_1():
 
 
 def test_import_resolution_init_wildcard(tmpdir: str) -> None:
-    """Tests function.usages returns usages from file imports"""
+    """Tests that named import from a file with wildcard resolves properly"""
     # language=python
-    content1 = """TEST_CONST=2"""
-    content2 = """from testdir.test1 import *
-    test2=5
+    content1="""TEST_CONST=2
+    foo=9
+    """
+    content2="""from testdir.test1 import *
+    bar=foo
     test=TEST_CONST"""
-    content3 = """from testdir import TEST_CONST
+    content3="""from testdir import TEST_CONST
     test3=TEST_CONST"""
-    with get_codebase_session(tmpdir=tmpdir, files={"testdir/test1.py": content1, "testdir/__init__.py": content2, "test3.py": content3}) as codebase:
+    with get_codebase_session(tmpdir=tmpdir, files={"testdir/test1.py": content1,"testdir/__init__.py": content2,"test3.py": content3}) as codebase:
         file1: SourceFile = codebase.get_file("testdir/test1.py")
         file2: SourceFile = codebase.get_file("testdir/__init__.py")
-        symb = file1.get_symbol("TEST_CONST")
-        assert symb.usages
+        file3: SourceFile = codebase.get_file("test3.py")
+
+        symb = file1.get_symbol('TEST_CONST')
+        test= file2.get_symbol('test')
+        test3= file3.get_symbol('test3')
+        test3_import= file3.get_import('TEST_CONST')
+
+        assert len(symb.usages)==3
+        assert symb.symbol_usages==[test,test3,test3_import]
+
+def test_import_resolution_chaining_wildcards(tmpdir: str) -> None:
+    """Tests that chaining wildcard imports resolves properly"""
+    # language=python
+    content1="""TEST_CONST=2
+    foo=9
+    """
+    content2="""from testdir.test1 import *
+    bar=foo
+    test=TEST_CONST"""
+    content3="""from testdir import *
+    test3=TEST_CONST"""
+    with get_codebase_session(tmpdir=tmpdir, files={"testdir/test1.py": content1,"testdir/__init__.py": content2,"test3.py": content3}) as codebase:
+        file1: SourceFile = codebase.get_file("testdir/test1.py")
+        file2: SourceFile = codebase.get_file("testdir/__init__.py")
+        file3: SourceFile = codebase.get_file("test3.py")
+
+
+        symb = file1.get_symbol('TEST_CONST')
+        test= file2.get_symbol('test')
+        bar= file2.get_symbol('bar')
+        mid_import=file2.get_import('testdir.test1')
+        test3= file3.get_symbol('test3')
+
+        assert len(symb.usages)==2
+        assert symb.symbol_usages==[test,test3]
+        assert mid_import.symbol_usages==[test,bar,test3]
+
+
+
+def test_import_nested_installable_resolution(tmpdir: str) -> None:
+    """Tests that a nested installable resolves internally instead of as external"""
+    # language=python
+    content1="""
+        TEST_CONST=5
+    """
+    content2="""from test_pack.test import TEST_CONST
+    test=TEST_CONST"""
+    with get_codebase_session(tmpdir=tmpdir, files={"test_pack/test_pack/test.py": content1,"test1.py": content2}) as codebase:
+        file1: SourceFile = codebase.get_file("test_pack/test_pack/test.py")
+        file2: SourceFile = codebase.get_file("test1.py")
+
+
+        symb = file1.get_symbol('TEST_CONST')
+        test = file2.get_symbol('test')
+        test_import = file2.get_import('TEST_CONST')
+
+        assert len(symb.usages)==2
+        assert symb.symbol_usages==[test,test_import]
+
+
 
 
 def test_import_resolution_circular(tmpdir: str) -> None:
