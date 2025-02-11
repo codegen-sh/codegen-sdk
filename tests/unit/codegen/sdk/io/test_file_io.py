@@ -63,5 +63,3 @@ def test_delete_file(file_io, tmp_path):
 
     assert not test_file.exists()
     assert test_file not in file_io.files
-
-
