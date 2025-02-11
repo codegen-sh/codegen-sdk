@@ -1,5 +1,8 @@
 from typing import Annotated, Any
 
+from codegen.cli.mcp.agent.docs_expert import create_sdk_expert_agent
+from codegen.extensions.vector_index import VectorIndex
+from codegen.sdk.core.codebase import Codebase
 from mcp.server.fastmcp import Context, FastMCP
 
 from codegen.cli.api.client import RestAPI
@@ -37,6 +40,22 @@ def get_service_config() -> dict[str, Any]:
 
 
 # ----- TOOLS -----
+
+
+@mcp.tool()
+def ask_codegen_sdk(query: Annotated[str, "Ask a question to an exper agent for details about any aspect of the codegen sdk core set of classes and utilities"]):
+    codebase = Codebase("../../sdk/core")
+    agent = create_sdk_expert_agent(
+        codebase=codebase
+    )
+
+    result = agent.invoke({
+        "input": query
+    },       
+    config={"configurable": {"session_id": "demo"}},
+)
+
+    return result['output']
 
 
 @mcp.tool()

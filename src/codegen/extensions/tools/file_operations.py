@@ -17,10 +17,18 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
     Returns:
         Dict containing file contents and metadata, or error information if file not found
     """
+    file = None
+
     try:
         file = codebase.get_file(filepath)
     except ValueError:
-        return {"error": f"File not found: {filepath}"}
+        pass
+
+    if not file:
+        for f in codebase.files:
+            if f.file_path.endswith(filepath):
+                file = f
+                break
 
     if not file:
         return {"error": f"File not found: {filepath}"}
