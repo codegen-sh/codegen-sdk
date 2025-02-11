@@ -22,7 +22,7 @@ def get_free_port():
         return port
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture()
 def repo_config(tmpdir) -> Generator[RepoConfig, None, None]:
     yield RepoConfig(
         name="Kevin-s-Adventure-Game",
