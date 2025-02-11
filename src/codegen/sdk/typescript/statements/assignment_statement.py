@@ -40,7 +40,7 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
         Args:
             ts_node (TSNode): The TreeSitter node representing the entire statement.
             file_node_id (NodeId): The identifier for the file containing this node.
-            G (CodebaseGraph): The codebase graph being constructed.
+            ctx (CodebaseContext): The codebase graph being constructed.
             parent (TSHasBlock): The parent block containing this statement.
             code_block (TSCodeBlock): The code block containing this statement.
             pos (int): The position of this statement within its code block.

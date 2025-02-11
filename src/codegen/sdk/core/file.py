@@ -338,7 +338,7 @@ class File(Editable[None]):
         This method is called during file initialization to parse the file and build its graph representation within the codebase graph.
 
         Args:
-            G (CodebaseGraph): The codebase graph that the file belongs to.
+            ctx (CodebaseContext): The codebase graph that the file belongs to.
 
         Returns:
             None

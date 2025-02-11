@@ -35,7 +35,7 @@ class Exportable(Usable[Parent], Generic[Parent]):
     def export(self) -> Export | None:
         """Returns the export object that exports this symbol.
 
-        Retrieves the export object by examining incoming EXPORT edges in the CodebaseGraph.
+        Retrieves the export object by examining incoming EXPORT edges in the CodebaseContext.
 
         Args:
             None

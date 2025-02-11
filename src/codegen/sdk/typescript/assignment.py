@@ -49,7 +49,7 @@ class TSAssignment(Assignment["TSAssignmentStatement | ExportStatement"], TSSymb
         Args:
             ts_node (TSNode): The TypeScript node representing the named expression.
             file_node_id (NodeId): The unique identifier for the file containing this node.
-            G (CodebaseGraph): The graph representation of the codebase.
+            ctx (CodebaseContext): The graph representation of the codebase.
             parent (Parent): The parent node containing this expression.
 
         Returns:
