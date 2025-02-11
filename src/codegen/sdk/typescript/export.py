@@ -86,7 +86,15 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
 
     @classmethod
     @noapidoc
-    def from_export_statement_with_declaration(cls, export_statement: TSNode, declaration: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
+    def from_export_statement_with_declaration(
+        cls,
+        export_statement: TSNode,
+        declaration: TSNode,
+        file_id: NodeId,
+        ctx: CodebaseContext,
+        parent: ExportStatement[TSExport],
+        pos: int,
+    ) -> list[TSExport]:
         declared_symbols = []
 
         # =====[ Symbol Definitions ]=====
