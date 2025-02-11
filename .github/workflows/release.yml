@@ -1,52 +1,32 @@
 name: Build & Release
 
 on:
+  workflow_call:
+    inputs:
+      tag:
+        required: true
+        type: string
+        description: Tag to release
+  workflow_dispatch:
+    inputs:
+      tag:
+        required: true
+        type: string
+        description: Tag to release # TODO: create if it does not exist
   push:
     tags:
       - v*
-    branches:
-      - develop
   pull_request:
     branches:
       - develop
-  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  setup:
-    if: github.ref_name == 'develop'
-    runs-on: ubuntu-latest
-    outputs:
-      semantic-release-version: ${{ steps.semantic.outputs.release-version }}
-      semantic-release-notes: ${{ steps.semantic.outputs.release-notes }}
-    steps:
-      - name: Github context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Wait for required checks
-        uses: poseidon/wait-for-status-checks@v0.6.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          match_pattern: "(unit-tests|integration-tests)"
-
-      - name: Github semantic release
-        uses: codfish/semantic-release-action@v3
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   build:
     name: Build 3.${{ matrix.python }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    needs: setup
     strategy:
       fail-fast: false
       matrix:
@@ -70,7 +50,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ needs.setup.outputs.semantic-release-version || github.event.pull_request.head.ref || github.ref }}
+          ref: ${{ inputs.tag || github.event.pull_request.head.ref || github.ref }}
 
       - name: Install UV
         uses: astral-sh/setup-uv@v5.2
@@ -98,57 +78,17 @@ jobs:
           name: wheels-${{ matrix.os }}-3.${{ matrix.python }}
           path: ./wheelhouse/*.whl
 
-  auto-release:
-    if: github.ref_name == 'develop'
-    environment: release
+  release:
+    if: ${{ inputs.tag || startsWith(github.ref, 'refs/tags/') }}
     needs: build
     runs-on: ubuntu-latest
-    permissions:
-      checks: read # to wait for required checks
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Wait for required checks
-        uses: poseidon/wait-for-status-checks@v0.6.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          match_pattern: "(unit-tests|integration-tests)"
-
-      - name: Github semantic release
-        uses: codfish/semantic-release-action@v3
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Release PyPI
-        if: ${{ steps.semantic.outputs.new-release-published == 'true' }}
-        uses: ./.github/actions/release-pypi
-        with:
-          pypi-token: ${{ secrets.PYPI_TOKEN }}
-
-      - name: Slack notification
-        if: ${{ steps.semantic.outputs.new-release-published == 'true' }}
-        uses: ./.github/actions/release-slack-bot
-        with:
-          release-tag: ${{ steps.semantic.outputs.release-version }}
-          slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
-
-  manual-release:
-    if: startsWith(github.ref, 'refs/tags/')
     environment: release
-    needs: build
-    runs-on: ubuntu-latest
     permissions:
       contents: write # grants permission to create a release on github
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup environment
+      - name: Setup backend
         uses: ./.github/actions/setup-environment
 
       - name: Download All Artifacts
@@ -167,9 +107,10 @@ jobs:
         id: github-release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
           files: dist/*
           fail_on_unmatched_files: true
-          generate_release_notes: true
+          generate_release_notes: ${{ startsWith(github.ref, 'refs/tags/') }}
 
       - name: Slack notification
         if: always()

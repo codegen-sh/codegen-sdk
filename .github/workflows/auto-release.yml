@@ -9,10 +9,12 @@ permissions:
   contents: read
 
 jobs:
-  release:
+  semantic-version:
     if: false # TODO(CG-10755): merge this with release.yml
-    name: Release
+    name: Semantic version
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.semantic.outputs.release-version }}
     permissions:
       checks: read # to wait for required checks
       contents: write # to be able to publish a GitHub release
@@ -37,3 +39,9 @@ jobs:
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    needs: semantic-version
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.semantic-version.outputs.tag }}
