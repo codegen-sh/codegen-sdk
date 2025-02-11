@@ -173,13 +173,6 @@ class LocalRepoOperator(RepoOperator):
         if remote := next(iter(self.git_cli.remotes), None):
             return url_to_github(remote.url, self.get_active_branch_or_commit())
 
-    @property
-    def default_branch(self) -> str:
-        origin_prefix = "origin"  # TODO: convert to property?
-        if f"{origin_prefix}/HEAD" not in self.git_cli.refs:
-            return self.git_cli.active_branch.name
-        return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
-
     @override
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""

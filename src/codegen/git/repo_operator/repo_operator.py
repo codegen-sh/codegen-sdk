@@ -138,7 +138,17 @@ class RepoOperator(ABC):
 
     @property
     def default_branch(self) -> str:
-        return self._default_branch or self.git_cli.active_branch.name
+        # Priority 1: If default branch has been set
+        if self._default_branch:
+            return self._default_branch
+
+        # Priority 2: If origin/HEAD ref exists
+        origin_prefix = "origin"
+        if f"{origin_prefix}/HEAD" in self.git_cli.refs:
+            return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
+
+        # Priority 3: Fallback to the active branch
+        return self.git_cli.active_branch.name
 
     @abstractmethod
     def codeowners_parser(self) -> CodeOwnersParser | None: ...
