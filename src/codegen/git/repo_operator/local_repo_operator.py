@@ -4,11 +4,10 @@ from functools import cached_property
 from typing import Self, override
 
 from codeowners import CodeOwners as CodeOwnersParser
-from git import Remote
 from git import Repo as GitCLI
-from git.remote import PushInfoList
 from github import Github
 from github.PullRequest import PullRequest
+from github.Repository import Repository
 
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
@@ -16,6 +15,7 @@ from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
+from codegen.shared.configs.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class LocalRepoOperator(RepoOperator):
         github_api_key: str | None = None,
         bot_commit: bool = False,
     ) -> None:
-        self._github_api_key = github_api_key
+        self._github_api_key = github_api_key or config.secrets.github_token
         self._remote_git_repo = None
         super().__init__(repo_config, bot_commit)
         os.makedirs(self.repo_path, exist_ok=True)
@@ -52,7 +52,7 @@ class LocalRepoOperator(RepoOperator):
     ####################################################################################################################
 
     @property
-    def remote_git_repo(self) -> GitRepoClient:
+    def remote_git_repo(self) -> Repository:
         if self._remote_git_repo is None:
             if not self._github_api_key:
                 return None
@@ -172,10 +172,6 @@ class LocalRepoOperator(RepoOperator):
     def base_url(self) -> str | None:
         if remote := next(iter(self.git_cli.remotes), None):
             return url_to_github(remote.url, self.get_active_branch_or_commit())
-
-    @override
-    def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:
-        raise OperatorIsLocal()
 
     @override
     def pull_repo(self) -> None:
