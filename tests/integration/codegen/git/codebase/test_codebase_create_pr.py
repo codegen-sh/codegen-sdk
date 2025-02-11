@@ -1,3 +1,4 @@
+import os
 import uuid
 
 import pytest
@@ -11,8 +12,8 @@ from codegen.shared.configs.config import config
 
 
 @pytest.fixture
-def op(repo_config, tmpdir):
-    clone_repo(repo_path=f"{tmpdir}/{repo_config.name}", clone_url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token))
+def op(repo_config):
+    clone_repo(repo_path=os.path.join(repo_config.base_dir, repo_config.name), clone_url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token))
     op = LocalRepoOperator(repo_config=repo_config, github_api_key=config.secrets.github_token)
     yield op
 
