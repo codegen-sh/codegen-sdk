@@ -93,20 +93,6 @@ def document_symbol(server: CodegenLanguageServer, params: types.DocumentSymbolP
 
 
 @server.feature(
-    types.TEXT_DOCUMENT_HOVER,
-)
-def hover(server: CodegenLanguageServer, params: types.HoverParams) -> types.HoverResponse:
-    pass
-
-
-@server.feature(
-    types.TEXT_DOCUMENT_COMPLETION,
-)
-def completion(server: CodegenLanguageServer, params: types.CompletionParams):
-    pass
-
-
-@server.feature(
     types.TEXT_DOCUMENT_DEFINITION,
 )
 def definition(server: CodegenLanguageServer, params: types.DefinitionParams):
