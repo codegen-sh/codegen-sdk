@@ -15,11 +15,11 @@ def foo(bar):
         new_filepath = "new_file.py"
         new_file = file.create_from_filepath(new_filepath, codebase.ctx)
 
-    G = codebase.ctx
-    assert G.get_node(file.node_id) == file
-    assert G.get_node(new_file.node_id) == new_file
-    assert G.has_node(file.node_id)
-    assert G.has_node(new_file.node_id)
+    ctx = codebase.ctx
+    assert ctx.get_node(file.node_id) == file
+    assert ctx.get_node(new_file.node_id) == new_file
+    assert ctx.has_node(file.node_id)
+    assert ctx.has_node(new_file.node_id)
     assert os.path.exists(tmpdir / file.filepath)
     assert os.path.exists(tmpdir / new_file.filepath)
 

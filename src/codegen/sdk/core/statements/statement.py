@@ -81,8 +81,8 @@ class Statement(Expression[Parent], Generic[Parent]):
     statement_type: StatementType = StatementType.UNSPECIFIED
     _pos: int
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self._pos = pos
 
     def __rich_repr__(self) -> rich.repr.Result:

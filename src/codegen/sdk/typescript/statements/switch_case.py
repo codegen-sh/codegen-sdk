@@ -23,7 +23,7 @@ class TSSwitchCase(SwitchCase[TSCodeBlock["TSSwitchStatement"]], TSBlockStatemen
 
     default: bool
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: TSCodeBlock, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: TSCodeBlock, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         self.condition = self.child_by_field_name("value")
         self.default = self.ts_node.type == "switch_default"

@@ -30,12 +30,12 @@ class SymbolGroup(Editable[Parent], Collection[Child], Generic[Child, Parent]):
 
     _symbols: list[Child]
 
-    def __init__(self, file_node_id: NodeId, G: CodebaseContext, parent: Parent, node: TSNode | None = None, children: list[Child] | None = None) -> None:
+    def __init__(self, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, node: TSNode | None = None, children: list[Child] | None = None) -> None:
         self._symbols = children
         if node is None:
             # For backwards compatibility, assure that the first node is the main node
             node = children[0].ts_node
-        super().__init__(node, file_node_id, G, parent)
+        super().__init__(node, file_node_id, ctx, parent)
 
     def __repr__(self) -> str:
         return f"Collection({self.symbols})" if self.symbols is not None else super().__repr__()

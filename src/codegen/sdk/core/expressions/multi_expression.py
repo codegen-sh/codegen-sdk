@@ -29,8 +29,8 @@ class MultiExpression(Expression[Parent], Generic[Parent, TExpression]):
 
     expressions: list[TExpression]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, expressions: list[TExpression]) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, expressions: list[TExpression]) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self.expressions = expressions
 
     @noapidoc

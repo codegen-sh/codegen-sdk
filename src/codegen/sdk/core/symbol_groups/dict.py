@@ -35,8 +35,8 @@ class Pair(Editable[Parent], HasValue, Generic[TExpression, Parent]):
 
     key: TExpression
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self.key, self._value_node = self._get_key_value()
         if self.key is None:
             self._log_parse(f"{self} {self.ts_node} in {self.filepath} has no key")
@@ -88,10 +88,10 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
     _underlying: Collection[Pair[TExpression, Self] | Unpack[Self], Parent]
     unpack: Unpack[Self] | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = Pair) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent, delimiter: str = ",", pair_type: type[Pair] = Pair) -> None:
         # TODO: handle spread_element
-        super().__init__(ts_node, file_node_id, G, parent)
-        children = [pair_type(child, file_node_id, G, self) for child in ts_node.named_children if child.type not in (None, "comment", "spread_element", "dictionary_splat") and not child.is_error]
+        super().__init__(ts_node, file_node_id, ctx, parent)
+        children = [pair_type(child, file_node_id, ctx, self) for child in ts_node.named_children if child.type not in (None, "comment", "spread_element", "dictionary_splat") and not child.is_error]
         if unpack := self.child_by_field_types({"spread_element", "dictionary_splat"}):
             children.append(unpack)
             self.unpack = unpack
@@ -99,7 +99,7 @@ class Dict(Expression[Parent], Builtin, MutableMapping[str, TExpression], Generi
             first_child = children[0].ts_node.end_byte - ts_node.start_byte
             second_child = children[1].ts_node.start_byte - ts_node.start_byte
             delimiter = ts_node.text[first_child:second_child].decode("utf-8").rstrip()
-        self._underlying = Collection(ts_node, file_node_id, G, parent, delimiter=delimiter, children=children)
+        self._underlying = Collection(ts_node, file_node_id, ctx, parent, delimiter=delimiter, children=children)
 
     def __bool__(self) -> bool:
         return True

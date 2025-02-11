@@ -106,25 +106,25 @@ class Editable(JSONable, Generic[Parent]):
     Attributes:
         ts_node: The TreeSitter node associated with this Editable instance.
         file_node_id: The unique identifier for the file node.
-        G: The codebase graph that this Editable instance is part of.
+        ctx: The codebase graph that this Editable instance is part of.
         parent: The parent node of this Editable instance.
         node_type: The type of node this Editable instance represents.
     """
 
     ts_node: TSNode
     file_node_id: NodeId
-    G: CodebaseContext
+    ctx: CodebaseContext
     parent: Parent
     node_type: NodeType
     _file: File | None = None
     _hash: int | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
         self.ts_node = ts_node
         self.file_node_id = file_node_id
-        self.ctx = G
+        self.ctx = ctx
         self.parent = parent
-        if G.config.feature_flags.debug:
+        if ctx.config.feature_flags.debug:
             seen = set()
             while parent is not None:
                 assert (parent.ts_node, parent.__class__) not in seen

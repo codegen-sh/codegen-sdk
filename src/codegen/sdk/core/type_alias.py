@@ -45,10 +45,10 @@ class TypeAlias(SupportsGenerics, HasValue, HasBlock, HasAttribute[TAttribute], 
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseContext,
+        ctx: CodebaseContext,
         parent: Statement[CodeBlock[Parent, ...]],
     ) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+        super().__init__(ts_node, file_node_id, ctx, parent)
         value_node = self.ts_node.child_by_field_name("value")
         self._value_node = self._parse_type(value_node) if value_node else None
         self.type_parameters = self.child_by_field_name("type_parameters")

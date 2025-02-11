@@ -34,8 +34,8 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
     _decorated_node: TSNode | None
     constructor_keyword = "__init__"
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
+        super().__init__(ts_node, file_id, ctx, parent)
         self._decorated_node = decorated_node
 
         if superclasses_node := self.ts_node.child_by_field_name("superclasses"):
@@ -76,7 +76,7 @@ class PyClass(Class[PyFunction, PyDecorator, PyCodeBlock, PyParameter, PyType], 
         else:
             # Set start byte at column=0 of start of the code block
             start_byte = block_node.start_byte - block_node.start_point[1]
-        return MultiLineCollection(children=methods, file_node_id=self.file_node_id, G=self.ctx, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte)
+        return MultiLineCollection(children=methods, file_node_id=self.file_node_id, ctx=self.ctx, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte)
 
     ####################################################################################################################
     # MANIPULATIONS

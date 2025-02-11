@@ -356,7 +356,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         return None
 
     @noapidoc
-    def get_import_module_name_for_file(self, filepath: str, G: CodebaseContext) -> str:
+    def get_import_module_name_for_file(self, filepath: str, ctx: CodebaseContext) -> str:
         """Returns the module name that this file gets imported as"""
         # TODO: support relative and absolute module path
         import_path = filepath

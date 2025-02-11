@@ -39,10 +39,10 @@ class TSNamespace(TSSymbol, TSHasBlock, HasName):
     symbol_type = SymbolType.Namespace
     code_block: TSCodeBlock
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: Statement, namespace_node: TSNode | None = None) -> None:
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: Statement, namespace_node: TSNode | None = None) -> None:
         ts_node = namespace_node or ts_node
         name_node = ts_node.child_by_field_name("name")
-        super().__init__(ts_node, file_id, G, parent, name_node=name_node)
+        super().__init__(ts_node, file_id, ctx, parent, name_node=name_node)
 
     @noapidoc
     @commiter

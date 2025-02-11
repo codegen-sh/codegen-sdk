@@ -39,8 +39,8 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
-        super().parse(G)
+    def parse(self, ctx: CodebaseContext) -> None:
+        super().parse(ctx)
 
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         if parameters_node := self.ts_node.child_by_field_name("parameters"):
@@ -110,15 +110,15 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @classmethod
     @noapidoc
-    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: SymbolStatement | ExportStatement) -> TSFunction:
+    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: SymbolStatement | ExportStatement) -> TSFunction:
         """Creates a TSFunction object from a function declaration."""
         if ts_node.type not in [function_type.value for function_type in TSFunctionTypeNames]:
             msg = f"Node type={ts_node.type} is not a function declaration"
             raise ValueError(msg)
-        file = G.get_node(file_node_id)
+        file = ctx.get_node(file_node_id)
         if canonical := file._range_index.get_canonical_for_range(ts_node.range, ts_node.kind_id):
             return canonical
-        return cls(ts_node, file_node_id, G, parent=parent)
+        return cls(ts_node, file_node_id, ctx, parent=parent)
 
     @staticmethod
     @noapidoc

@@ -62,7 +62,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         ts_node: TSNode,
         file_node_id: NodeId,
         parent: Collection[TSExport, ExportStatement[TSExport]],
-        G: CodebaseContext,
+        ctx: CodebaseContext,
         name_node: TSNode | None = None,
         declared_symbol: TSSymbol | TSImport | None = None,
         exported_symbol: TSNode | None = None,
@@ -73,7 +73,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
             msg = "The exported symbol name must match the declared symbol name"
             raise ValueError(msg)
 
-        super().__init__(ts_node, file_node_id, G, parent)
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self._name_node = self._parse_expression(name_node, default=Name)
         self._declared_symbol = declared_symbol
         self._exported_symbol = self._parse_expression(exported_symbol, default=Name)
@@ -81,57 +81,57 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         #     self.node_id = NodeIdFactory.export_node_id(name=f"wildcard_export_<{self._declared_symbol.node_id}>", file_id=self.file_node_id, is_default=self.is_default_export())
         # else:
         #     self.node_id = NodeIdFactory.export_node_id(name=self.name, file_id=self.file_node_id, is_default=self.is_default_export())
-        self.parse(G)
+        self.parse(ctx)
         self._value_node = self._parse_expression(value_node)
 
     @classmethod
     @noapidoc
-    def from_export_statement_with_declaration(cls, export_statement: TSNode, declaration: TSNode, file_id: NodeId, G: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
+    def from_export_statement_with_declaration(cls, export_statement: TSNode, declaration: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
         declared_symbols = []
 
         # =====[ Symbol Definitions ]=====
         if declaration.type in ["function_declaration", "generator_function_declaration"]:
             # e.g. export function* namedGenerator() {}
-            declared_symbols.append(TSFunction(declaration, file_id, G, parent))
+            declared_symbols.append(TSFunction(declaration, file_id, ctx, parent))
         elif declaration.type == "class_declaration":
             # e.g. export class NamedClass {}
-            declared_symbols.append(TSClass(declaration, file_id, G, parent))
+            declared_symbols.append(TSClass(declaration, file_id, ctx, parent))
         elif declaration.type in ["variable_declaration", "lexical_declaration"]:
             if len(arrow_functions := find_all_descendants(declaration, {"arrow_function"}, max_depth=2)) > 0:
                 # e.g. export const arrowFunction = () => {}, but not export const a = { func: () => null }
                 for arrow_func in arrow_functions:
-                    declared_symbols.append(TSFunction.from_function_type(arrow_func, file_id, G, parent))
+                    declared_symbols.append(TSFunction.from_function_type(arrow_func, file_id, ctx, parent))
             else:
                 # e.g. export const a = value;
                 for child in declaration.named_children:
                     if child.type in TSAssignmentStatement.assignment_types:
-                        s = TSAssignmentStatement.from_assignment(declaration, file_id, G, parent.parent, pos, assignment_node=child)
+                        s = TSAssignmentStatement.from_assignment(declaration, file_id, ctx, parent.parent, pos, assignment_node=child)
                         declared_symbols.extend(s.assignments)
         elif declaration.type == "interface_declaration":
             # e.g. export interface MyInterface {}
-            declared_symbols.append(TSInterface(declaration, file_id, G, parent))
+            declared_symbols.append(TSInterface(declaration, file_id, ctx, parent))
         elif declaration.type == "type_alias_declaration":
             # e.g. export type MyType = {}
-            declared_symbols.append(TSTypeAlias(declaration, file_id, G, parent))
+            declared_symbols.append(TSTypeAlias(declaration, file_id, ctx, parent))
         elif declaration.type == "enum_declaration":
             # e.g. export enum MyEnum {}
-            declared_symbols.append(TSEnum(declaration, file_id, G, parent))
+            declared_symbols.append(TSEnum(declaration, file_id, ctx, parent))
         elif declaration.type == "internal_module":
             # e.g. export namespace MyNamespace {}
-            declared_symbols.append(TSNamespace(declaration, file_id, G, parent))
+            declared_symbols.append(TSNamespace(declaration, file_id, ctx, parent))
         else:
             declared_symbols.append(None)
 
         exports = []
         for declared_symbol in declared_symbols:
             name_node = declared_symbol._name_node.ts_node if declared_symbol and declared_symbol._name_node else declaration
-            export = cls(ts_node=declaration, file_node_id=file_id, G=G, name_node=name_node, declared_symbol=declared_symbol, parent=parent.exports)
+            export = cls(ts_node=declaration, file_node_id=file_id, ctx=ctx, name_node=name_node, declared_symbol=declared_symbol, parent=parent.exports)
             exports.append(export)
         return exports
 
     @classmethod
     @noapidoc
-    def from_export_statement_with_value(cls, export_statement: TSNode, value: TSNode, file_id: NodeId, G: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
+    def from_export_statement_with_value(cls, export_statement: TSNode, value: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: ExportStatement[TSExport], pos: int) -> list[TSExport]:
         declared_symbols = []
         exported_name_and_symbol = []  # tuple of export name node and export symbol name
         detached_value_node = None
@@ -153,9 +153,9 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
                     key_value = child.child_by_field_name("key")
                     pair_value = child.child_by_field_name("value")
                     if pair_value.type in [function_type.value for function_type in TSFunctionTypeNames]:
-                        declared_symbols.append(TSFunction(pair_value, file_id, G, parent))
+                        declared_symbols.append(TSFunction(pair_value, file_id, ctx, parent))
                     elif pair_value.type == "class":
-                        declared_symbols.append(TSClass(pair_value, file_id, G, parent))
+                        declared_symbols.append(TSClass(pair_value, file_id, ctx, parent))
                     else:
                         exported_name_and_symbol.append((key_value, pair_value))
                 elif child.type == "shorthand_property_identifier":
@@ -163,7 +163,7 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
         elif value.type == "assignment_expression":
             left = value.child_by_field_name("left")
             right = value.child_by_field_name("right")
-            assignment = TSAssignment(value, file_id, G, parent, left, right, left)
+            assignment = TSAssignment(value, file_id, ctx, parent, left, right, left)
             declared_symbols.append(assignment)
         else:
             # Other values are detached symbols: array, number, string, true, null, undefined, new_expression, call_expression
@@ -177,15 +177,15 @@ class TSExport(Export["Collection[TSExport, ExportStatement[TSExport]]"], HasVal
                 name_node = value
             else:
                 name_node = declared_symbol._name_node.ts_node if declared_symbol._name_node else declared_symbol.ts_node
-            export = cls(ts_node=export_statement, file_node_id=file_id, G=G, name_node=name_node, declared_symbol=declared_symbol, value_node=detached_value_node, parent=parent.exports)
+            export = cls(ts_node=export_statement, file_node_id=file_id, ctx=ctx, name_node=name_node, declared_symbol=declared_symbol, value_node=detached_value_node, parent=parent.exports)
             exports.append(export)
         for name_node, symbol_name_node in exported_name_and_symbol:
-            exports.append(cls(ts_node=export_statement, file_node_id=file_id, G=G, name_node=name_node, exported_symbol=symbol_name_node, value_node=detached_value_node, parent=parent.exports))
+            exports.append(cls(ts_node=export_statement, file_node_id=file_id, ctx=ctx, name_node=name_node, exported_symbol=symbol_name_node, value_node=detached_value_node, parent=parent.exports))
         return exports
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
+    def parse(self, ctx: CodebaseContext) -> None:
         pass
 
     @noapidoc

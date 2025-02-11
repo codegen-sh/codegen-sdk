@@ -20,9 +20,9 @@ class CommentGroup(SymbolGroup[Comment, Parent]):
 
     _indentation: int  # Indentation level of the comment block
 
-    def __init__(self, children: list[Comment], file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
+    def __init__(self, children: list[Comment], file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
         assert len(children) > 0, "CommentGroup must have at least one symbol"
-        super().__init__(file_node_id, G, parent, node=children[0].ts_node, children=children)
+        super().__init__(file_node_id, ctx, parent, node=children[0].ts_node, children=children)
         self._indentation = self._calculate_indentation()
 
     @property

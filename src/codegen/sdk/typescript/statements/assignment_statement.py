@@ -31,7 +31,7 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
     @classmethod
     @reader
     @noapidoc
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int, assignment_node: TSNode) -> TSAssignmentStatement:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSCodeBlock, pos: int, assignment_node: TSNode) -> TSAssignmentStatement:
         """Creates an assignment statement node from a TreeSitter assignment node.
 
         This class method constructs a TSAssignmentStatement from a TreeSitter node representing an assignment. The method validates that the assignment node type is
@@ -56,7 +56,7 @@ class TSAssignmentStatement(AssignmentStatement["TSCodeBlock", TSAssignment]):
             msg = f"Invalid assignment node type: {assignment_node.type}"
             raise ValueError(msg)
 
-        return cls(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
+        return cls(ts_node, file_node_id, ctx, parent, pos, assignment_node=assignment_node)
 
     def _parse_assignments(self, assignment_node: TSNode) -> MultiExpression[Self, TSAssignment]:
         if assignment_node.type in ["assignment_expression", "augmented_assignment_expression"]:

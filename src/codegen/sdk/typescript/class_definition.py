@@ -49,8 +49,8 @@ class TSClass(Class[TSFunction, TSDecorator, "TSCodeBlock", TSParameter, TSType]
     Representation of a Class in JavaScript/TypeScript
     """
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: SymbolStatement) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: SymbolStatement) -> None:
+        super().__init__(ts_node, file_id, ctx, parent)
         if superclasses_node := self.child_by_field_types("class_heritage"):
             if extends_clause := superclasses_node.child_by_field_types(["extends_clause", "implements_clause"]):
                 self.parent_classes = Parents(extends_clause.ts_node, self.file_node_id, self.ctx, self)
@@ -98,7 +98,7 @@ class TSClass(Class[TSFunction, TSDecorator, "TSCodeBlock", TSParameter, TSType]
         else:
             start_byte = block_node.start_byte - block_node.start_point[1]
         return MultiLineCollection(
-            children=methods, file_node_id=self.file_node_id, G=self.ctx, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte, end_byte=block_node.end_byte - 1
+            children=methods, file_node_id=self.file_node_id, ctx=self.ctx, parent=self, node=self.code_block.ts_node, indent_size=indent_size, start_byte=start_byte, end_byte=block_node.end_byte - 1
         )
 
     @property

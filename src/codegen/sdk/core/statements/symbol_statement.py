@@ -37,9 +37,9 @@ class SymbolStatement(Statement[Parent], Generic[Parent, Child]):
     statement_type = StatementType.SYMBOL_STATEMENT
     symbol: Child
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int, symbol_node: TSNode | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
-        self.symbol = self.ctx.parser.parse_expression(symbol_node or ts_node, file_node_id, G, parent=self)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, pos: int, symbol_node: TSNode | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
+        self.symbol = self.ctx.parser.parse_expression(symbol_node or ts_node, file_node_id, ctx, parent=self)
 
     def _compute_dependencies(self, usage_type: UsageKind, dest: HasName | None = None) -> None:
         pass

@@ -31,7 +31,7 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
     assignment_types = {"assignment", "augmented_assignment", "named_expression"}
 
     @classmethod
-    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int, assignment_node: TSNode) -> PyAssignmentStatement:
+    def from_assignment(cls, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: PyCodeBlock, pos: int, assignment_node: TSNode) -> PyAssignmentStatement:
         """Creates a PyAssignmentStatement instance from a TreeSitter assignment node.
 
         Factory method to create appropriate assignment statement objects based on the node type and parent context.
@@ -61,8 +61,8 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
         if isinstance(parent, PyClass):
             from codegen.sdk.python.statements.attribute import PyAttribute
 
-            return PyAttribute(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
-        return cls(ts_node, file_node_id, G, parent, pos, assignment_node=assignment_node)
+            return PyAttribute(ts_node, file_node_id, ctx, parent, pos, assignment_node=assignment_node)
+        return cls(ts_node, file_node_id, ctx, parent, pos, assignment_node=assignment_node)
 
     def _parse_assignments(self, assignment_node: TSNode) -> MultiExpression[PyHasBlock, PyAssignment]:
         if assignment_node.type in ["assignment", "augmented_assignment"]:

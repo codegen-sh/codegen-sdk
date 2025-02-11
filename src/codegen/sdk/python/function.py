@@ -36,8 +36,8 @@ class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, P
 
     _decorated_node: TSNode | None
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: PyHasBlock, decorated_node: TSNode | None = None) -> None:
+        super().__init__(ts_node, file_id, ctx, parent)
         self._decorated_node = decorated_node
 
     @cached_property
@@ -131,8 +131,8 @@ class PyFunction(Function["PyFunction", PyDecorator, PyCodeBlock, PyParameter, P
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
-        super().parse(G)
+    def parse(self, ctx: CodebaseContext) -> None:
+        super().parse(ctx)
         self.return_type = self.child_by_field_name("return_type", placeholder=PyReturnTypePlaceholder)
         if parameters_node := self.ts_node.child_by_field_name("parameters"):
             params = [

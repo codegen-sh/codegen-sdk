@@ -72,8 +72,8 @@ class TSObjectType(TSDict, Type[Parent], Generic[Parent]):
     in TypeScript code.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, delimiter=";", pair_type=TSObjectPair)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, delimiter=";", pair_type=TSObjectPair)
 
     def _compute_dependencies(self, usage_type: UsageKind, dest: Importable):
         for child in self.values():

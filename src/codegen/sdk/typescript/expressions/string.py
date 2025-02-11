@@ -26,8 +26,8 @@ class TSString(String, Generic[Parent]):
             Empty for regular string literals.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent=parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent=parent)
         if ts_node.type == "template_string":
             substitutions = [x for x in ts_node.named_children if x.type == "template_substitution"]
             self.expressions = [self._parse_expression(x.named_children[0]) for x in substitutions]

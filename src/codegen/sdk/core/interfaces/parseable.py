@@ -7,5 +7,5 @@ if TYPE_CHECKING:
 
 class Parseable(ABC):
     @abstractmethod
-    def parse(self, G: "CodebaseContext") -> None:
+    def parse(self, ctx: "CodebaseContext") -> None:
         """Adds itself and its children to the codebase graph."""

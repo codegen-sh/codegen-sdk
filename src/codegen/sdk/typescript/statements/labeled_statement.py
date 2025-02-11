@@ -44,9 +44,9 @@ class TSLabeledStatement(Statement[Parent], HasName, Generic[Parent]):
     statement_type = StatementType.LABELED_STATEMENT
     body: Expression | None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
-        self._name_node = Name(ts_node.child_by_field_name("label"), file_node_id, G, self)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, pos: int) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
+        self._name_node = Name(ts_node.child_by_field_name("label"), file_node_id, ctx, self)
         body_node = self.ts_node.child_by_field_name("body")
         self.body = self._parse_expression(body_node) if body_node else None
 

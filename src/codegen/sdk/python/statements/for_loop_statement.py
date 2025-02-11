@@ -32,8 +32,8 @@ class PyForLoopStatement(ForLoopStatement["PyCodeBlock"], PyBlockStatement):
     item: Expression[PyForLoopStatement]
     iterable: Expression[PyForLoopStatement]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: PyCodeBlock, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         self.item = self.child_by_field_name("left")
         self.iterable = self.child_by_field_name("right")
 

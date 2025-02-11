@@ -72,13 +72,13 @@ class File(Editable[None]):
     _binary: bool = False
     _range_index: RangeIndex
 
-    def __init__(self, filepath: PathLike, G: CodebaseContext, ts_node: TSNode | None = None, binary: bool = False) -> None:
+    def __init__(self, filepath: PathLike, ctx: CodebaseContext, ts_node: TSNode | None = None, binary: bool = False) -> None:
         if ts_node is None:
             # TODO: this is a temp hack to deal with all symbols needing a TSNode.
             parser = get_parser_by_filepath_or_extension(".py")
             ts_node = parser.parse(bytes("", "utf-8")).root_node
         self._range_index = RangeIndex()
-        super().__init__(ts_node, getattr(self, "node_id", None), G, None)
+        super().__init__(ts_node, getattr(self, "node_id", None), ctx, None)
         self.path = self.ctx.to_absolute(filepath)
         self.file_path = str(self.ctx.to_relative(self.path))
         self.name = self.path.stem
@@ -109,11 +109,11 @@ class File(Editable[None]):
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str | Path, content: str | bytes, G: CodebaseContext, sync: bool = False, binary: bool = False) -> Self | None:
+    def from_content(cls, filepath: str | Path, content: str | bytes, ctx: CodebaseContext, sync: bool = False, binary: bool = False) -> Self | None:
         """Creates a new file from content."""
         if sync:
             logger.warn("Creating & Syncing non-source files are not supported. Ignoring sync...")
-        path = G.to_absolute(filepath)
+        path = ctx.to_absolute(filepath)
         if not path.exists():
             update_graph = True
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -122,7 +122,7 @@ class File(Editable[None]):
             else:
                 path.write_bytes(content)
 
-        new_file = cls(filepath, G, ts_node=None, binary=binary)
+        new_file = cls(filepath, ctx, ts_node=None, binary=binary)
         return new_file
 
     @property
@@ -332,7 +332,7 @@ class File(Editable[None]):
         # =====[ Change the file on disk ]=====
         self.transaction_manager.add_file_rename_transaction(self, new_filepath)
 
-    def parse(self, G: "CodebaseContext") -> None:
+    def parse(self, ctx: "CodebaseContext") -> None:
         """Parses the file representation into the graph.
 
         This method is called during file initialization to parse the file and build its graph representation within the codebase graph.
@@ -446,16 +446,16 @@ class SourceFile(
     code_block: TCodeBlock
     _nodes: list[Importable]
 
-    def __init__(self, ts_node: TSNode, filepath: PathLike, G: CodebaseContext) -> None:
-        self.node_id = G.add_node(self)
+    def __init__(self, ts_node: TSNode, filepath: PathLike, ctx: CodebaseContext) -> None:
+        self.node_id = ctx.add_node(self)
         self._nodes = []
-        super().__init__(filepath, G, ts_node=ts_node)
+        super().__init__(filepath, ctx, ts_node=ts_node)
         self._nodes.clear()
         self.ctx.filepath_idx[self.file_path] = self.node_id
         self._directory = None
         self._pending_imports = set()
         try:
-            self.parse(G)
+            self.parse(ctx)
         except RecursionError as e:
             logger.exception(f"RecursionError parsing file {filepath}: {e} at depth {sys.getrecursionlimit()} and {resource.getrlimit(resource.RLIMIT_STACK)}")
             raise e
@@ -472,7 +472,7 @@ class SourceFile(
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
+    def parse(self, ctx: CodebaseContext) -> None:
         self.__dict__.pop("_source", None)
         # Add self to the graph
         self.code_block = self._parse_code_block(self.ts_node)
@@ -587,9 +587,9 @@ class SourceFile(
 
     @classmethod
     @noapidoc
-    def from_content(cls, filepath: str | PathLike | Path, content: str, G: CodebaseContext, sync: bool = True, verify_syntax: bool = True) -> Self | None:
+    def from_content(cls, filepath: str | PathLike | Path, content: str, ctx: CodebaseContext, sync: bool = True, verify_syntax: bool = True) -> Self | None:
         """Creates a new file from content and adds it to the graph."""
-        path = G.to_absolute(filepath)
+        path = ctx.to_absolute(filepath)
         ts_node = parse_file(path, content)
         if ts_node.has_error and verify_syntax:
             logger.info("Failed to parse file %s", filepath)
@@ -602,19 +602,19 @@ class SourceFile(
             path.write_text(content)
 
         if update_graph and sync:
-            G.add_single_file(path)
-            return G.get_file(filepath)
+            ctx.add_single_file(path)
+            return ctx.get_file(filepath)
         else:
-            return cls(ts_node, Path(filepath), G)
+            return cls(ts_node, Path(filepath), ctx)
 
     @classmethod
     @noapidoc
-    def create_from_filepath(cls, filepath: str, G: CodebaseContext) -> Self | None:
+    def create_from_filepath(cls, filepath: str, ctx: CodebaseContext) -> Self | None:
         """Makes a new empty file and adds it to the graph.
 
         Graph-safe.
         """
-        if filepath in G.filepath_idx:
+        if filepath in ctx.filepath_idx:
             msg = f"File already exists in graph: {filepath}"
             raise ValueError(msg)
 
@@ -623,7 +623,7 @@ class SourceFile(
             logger.info("Failed to parse file %s", filepath)
             raise SyntaxError
 
-        file = cls(ts_node, filepath, G)
+        file = cls(ts_node, filepath, ctx)
         file.write("", to_disk=True)
         return file
 
@@ -920,7 +920,7 @@ class SourceFile(
     @classmethod
     @abstractmethod
     @noapidoc
-    def get_import_module_name_for_file(cls, filepath: str, G: CodebaseContext) -> str: ...
+    def get_import_module_name_for_file(cls, filepath: str, ctx: CodebaseContext) -> str: ...
 
     @abstractmethod
     def remove_unused_exports(self) -> None:

@@ -48,8 +48,8 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
 
     _arg_list: Collection[Argument, Self]
 
-    def __init__(self, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
-        super().__init__(node, file_node_id, G, parent)
+    def __init__(self, node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
+        super().__init__(node, file_node_id, ctx, parent)
         # =====[ Grab the function name ]=====
         self._name_node = self.child_by_field_name("function", default=Name) or self.child_by_field_name("constructor", default=Name)
         if self._name_node is not None and self._name_node.ts_node.type in ("unary_expression", "await_expression"):

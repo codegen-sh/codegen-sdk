@@ -73,12 +73,12 @@ class AutoCommit:
     state: AutoCommitState | None = None
     _files: dict[Path, NodeId | None]
     _nodes: dict[NodeId, AutoCommitNode]
-    G: "CodebaseContext"
+    ctx: "CodebaseContext"
     _locked_files: set[str]
     _lock_all: bool = False
 
-    def __init__(self, G: "CodebaseContext") -> None:
-        self.ctx = G
+    def __init__(self, ctx: "CodebaseContext") -> None:
+        self.ctx = ctx
         self._files = {}
         self._nodes = {}
         self._locked_files = set()

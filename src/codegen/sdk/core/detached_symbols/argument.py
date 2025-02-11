@@ -61,9 +61,9 @@ class Argument(Expression[Parent], HasName, HasValue, Generic[Parent, TParameter
 
     @noapidoc
     @classmethod
-    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
-        args = [Argument(x, file_node_id, G, parent, i) for i, x in enumerate(node.named_children) if x.type != "comment"]
-        return MultiExpression(node, file_node_id, G, parent, expressions=args)
+    def from_argument_list(cls, node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: FunctionCall) -> MultiExpression[Parent, Argument]:
+        args = [Argument(x, file_node_id, ctx, parent, i) for i, x in enumerate(node.named_children) if x.type != "comment"]
+        return MultiExpression(node, file_node_id, ctx, parent, expressions=args)
 
     @property
     @reader

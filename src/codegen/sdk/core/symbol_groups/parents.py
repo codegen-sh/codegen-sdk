@@ -29,8 +29,8 @@ Parent = TypeVar("Parent", bound="Inherits")
 class Parents(Collection["TType", Parent], Generic[TType, Parent]):
     type_arguments: list[Type]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self._init_children([self._parse_type(child) for child in ts_node.named_children if child.type != "type_arguments"])
         self.type_arguments = [self._parse_type(child) for child in ts_node.children if child.type == "type_arguments"]
 

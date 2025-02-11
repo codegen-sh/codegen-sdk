@@ -12,7 +12,7 @@ function foo(bar: number): number {
     with get_codebase_session(tmpdir=tmpdir, files={"test.ts": content}, programming_language=ProgrammingLanguage.TYPESCRIPT) as codebase:
         file = codebase.get_file("test.ts")
 
-        G = codebase.ctx
-        assert G.has_node(file.node_id)
-        assert G.get_node(file.node_id) == file
-        assert G.has_node(file.node_id)
+        ctx = codebase.ctx
+        assert ctx.has_node(file.node_id)
+        assert ctx.get_node(file.node_id) == file
+        assert ctx.has_node(file.node_id)

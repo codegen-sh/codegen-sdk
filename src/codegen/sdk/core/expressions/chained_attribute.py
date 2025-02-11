@@ -36,8 +36,8 @@ class ChainedAttribute(Expression[Parent], Resolvable, Generic[Object, Attribute
     _object: Object
     _attribute: Attribute
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent, object: TSNode, attribute: TSNode):
-        super().__init__(ts_node, file_node_id, G, parent=parent)
+    def __init__(self, ts_node, file_node_id, ctx, parent: Parent, object: TSNode, attribute: TSNode):
+        super().__init__(ts_node, file_node_id, ctx, parent=parent)
         self._object = self._parse_expression(object, default=Name)
         if self.ctx.parser._should_log:
             if not isinstance(self._object, Chainable):

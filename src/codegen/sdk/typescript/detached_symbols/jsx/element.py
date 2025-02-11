@@ -30,8 +30,8 @@ class JSXElement(Expression[Parent], HasName, Generic[Parent]):
 
     _name_node: Name | None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         open_tag = self.ts_node.child_by_field_name("open_tag") or self.ts_node
         name_node = open_tag.child_by_field_name("name")
         self._name_node = self._parse_expression(name_node, default=Name)

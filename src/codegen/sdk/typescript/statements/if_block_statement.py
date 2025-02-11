@@ -43,13 +43,13 @@ class TSIfBlockStatement(IfBlockStatement[Parent, "TSIfBlockStatement"], Generic
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseContext,
+        ctx: CodebaseContext,
         parent: Parent,
         pos: int,
         else_clause_node: TSNode | None = None,
         main_if_block: TSIfBlockStatement | None = None,
     ) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         self._else_clause_node = else_clause_node
         self._main_if_block = main_if_block
         # Call .value to unwrap the parenthesis

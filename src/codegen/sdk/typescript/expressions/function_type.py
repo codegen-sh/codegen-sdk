@@ -38,12 +38,12 @@ class TSFunctionType(Type[Parent], Generic[Parent]):
     _parameters: Collection[TSParameter, Self]
     name: None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent):
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent):
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         params_node = self.ts_node.child_by_field_name("parameters")
         params = [TSParameter(child, idx, self) for idx, child in enumerate(params_node.named_children) if child.type != "comment"]
-        self._parameters = Collection(params_node, file_node_id, G, self, children=params)
+        self._parameters = Collection(params_node, file_node_id, ctx, self, children=params)
 
     @property
     @reader

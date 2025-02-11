@@ -54,19 +54,19 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
         self,
         ts_node: TSNode,
         file_id: NodeId,
-        G: CodebaseContext,
+        ctx: CodebaseContext,
         parent: Statement[CodeBlock[Parent, ...]],
         name_node: TSNode | None = None,
         name_node_type: type[Name] = DefinedName,
     ) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+        super().__init__(ts_node, file_id, ctx, parent)
         name_node = self._get_name_node(ts_node) if name_node is None else name_node
         self._name_node = self._parse_expression(name_node, default=name_node_type)
         from codegen.sdk.core.interfaces.has_block import HasBlock
 
         if isinstance(self, HasBlock):
             self.code_block = self._parse_code_block()
-        self.parse(G)
+        self.parse(ctx)
         if isinstance(self, HasBlock):
             self.code_block.parse()
 
@@ -233,7 +233,7 @@ class Symbol(Usable[Statement["CodeBlock[Parent, ...]"]], Generic[Parent, TCodeB
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
+    def parse(self, ctx: CodebaseContext) -> None:
         """Adds itself as a symbol node in the graph, and an edge from the parent file to itself."""
 
     ####################################################################################################################

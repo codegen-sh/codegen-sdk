@@ -30,7 +30,7 @@ class PyCodeBlock(CodeBlock[Parent, "PyAssignment"], Generic[Parent]):
         collection = MultiLineCollection(
             children=statements,
             file_node_id=self.file_node_id,
-            G=self.ctx,
+            ctx=self.ctx,
             parent=self,
             node=self.ts_node,
             indent_size=self.start_point[1],

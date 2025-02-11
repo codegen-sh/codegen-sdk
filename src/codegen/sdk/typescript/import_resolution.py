@@ -288,7 +288,7 @@ class TSImport(Import["TSFile"], Exportable):
 
     @classmethod
     @noapidoc
-    def from_export_statement(cls, source_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
+    def from_export_statement(cls, source_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
         """Constructs import objects defined from an export statement"""
         export_statement_node = find_first_ancestor(source_node, ["export_statement"])
         imports = []
@@ -299,7 +299,7 @@ class TSImport(Import["TSFile"], Exportable):
                 name = export_specifier.child_by_field_name("name")
                 alias = export_specifier.child_by_field_name("alias") or name
                 import_type = ImportType.DEFAULT_EXPORT if (name and name.text.decode("utf-8") == "default") else ImportType.NAMED_EXPORT
-                imp = cls(ts_node=export_statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=source_node, name_node=name, alias_node=alias, import_type=import_type)
+                imp = cls(ts_node=export_statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=source_node, name_node=name, alias_node=alias, import_type=import_type)
                 imports.append(imp)
         else:
             # ==== [ Wildcard export import ] ====
@@ -310,7 +310,7 @@ class TSImport(Import["TSFile"], Exportable):
                 imp = cls(
                     ts_node=export_statement_node,
                     file_node_id=file_node_id,
-                    G=G,
+                    ctx=ctx,
                     parent=parent,
                     module_node=source_node,
                     name_node=namespace_export,
@@ -320,19 +320,19 @@ class TSImport(Import["TSFile"], Exportable):
                 imports.append(imp)
             else:
                 # No alias wildcard export (e.g. export * from './m';)
-                imp = cls(ts_node=export_statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=source_node, name_node=None, alias_node=None, import_type=ImportType.WILDCARD)
+                imp = cls(ts_node=export_statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=source_node, name_node=None, alias_node=None, import_type=ImportType.WILDCARD)
                 imports.append(imp)
         return imports
 
     @classmethod
     @noapidoc
-    def from_import_statement(cls, import_statement_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
+    def from_import_statement(cls, import_statement_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSImportStatement) -> list[TSImport]:
         source_node = import_statement_node.child_by_field_name("source")
         import_clause = next((x for x in import_statement_node.named_children if x.type == "import_clause"), None)
         if import_clause is None:
             # === [ Side effect module import ] ===
             # Will not have any import usages in the file! (e.g. import './module';)
-            return [cls(ts_node=import_statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=source_node, name_node=None, alias_node=None, import_type=ImportType.SIDE_EFFECT)]
+            return [cls(ts_node=import_statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=source_node, name_node=None, alias_node=None, import_type=ImportType.SIDE_EFFECT)]
 
         imports = []
         for import_type_node in import_clause.named_children:
@@ -342,7 +342,7 @@ class TSImport(Import["TSFile"], Exportable):
                 imp = cls(
                     ts_node=import_statement_node,
                     file_node_id=file_node_id,
-                    G=G,
+                    ctx=ctx,
                     parent=parent,
                     module_node=source_node,
                     name_node=import_type_node,
@@ -363,7 +363,7 @@ class TSImport(Import["TSFile"], Exportable):
                     imp = cls(
                         ts_node=import_statement_node,
                         file_node_id=file_node_id,
-                        G=G,
+                        ctx=ctx,
                         parent=parent,
                         module_node=source_node,
                         name_node=name_node,
@@ -378,7 +378,7 @@ class TSImport(Import["TSFile"], Exportable):
                 imp = cls(
                     ts_node=import_statement_node,
                     file_node_id=file_node_id,
-                    G=G,
+                    ctx=ctx,
                     module_node=source_node,
                     parent=parent,
                     name_node=import_type_node,
@@ -390,7 +390,7 @@ class TSImport(Import["TSFile"], Exportable):
 
     @classmethod
     @noapidoc
-    def from_dynamic_import_statement(cls, import_call_node: TSNode, module_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[TSImport]:
+    def from_dynamic_import_statement(cls, import_call_node: TSNode, module_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[TSImport]:
         """Parses a dynamic import statement, given a reference to the `import`/`require` node and `module` node.
         e.g.
         const myModule = await import('./someFile')`;
@@ -423,7 +423,7 @@ class TSImport(Import["TSFile"], Exportable):
         if import_statement_node.type == "expression_statement":
             # ==== [ Side effect module import ] ====
             # Will not have any import usages in the file! (e.g. await import('./module');)
-            imp = cls(ts_node=import_statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=module_node, name_node=None, alias_node=None, import_type=ImportType.SIDE_EFFECT)
+            imp = cls(ts_node=import_statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=module_node, name_node=None, alias_node=None, import_type=ImportType.SIDE_EFFECT)
             imports.append(imp)
         else:
             if import_statement_node.type == "member_expression":
@@ -445,7 +445,7 @@ class TSImport(Import["TSFile"], Exportable):
             if name_node is None:
                 alias_node = import_statement_node.child_by_field_name("name") or import_statement_node.child_by_field_name("left")
                 imp = cls(
-                    ts_node=import_statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=module_node, name_node=None, alias_node=alias_node, import_type=ImportType.SIDE_EFFECT
+                    ts_node=import_statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=module_node, name_node=None, alias_node=alias_node, import_type=ImportType.SIDE_EFFECT
                 )
                 imports.append(imp)
                 return imports
@@ -463,12 +463,12 @@ class TSImport(Import["TSFile"], Exportable):
                 else:
                     alias_node = name_node
                 import_type = ImportType.DEFAULT_EXPORT if name_node.text.decode("utf-8") == "default" else ImportType.NAMED_EXPORT
-                imp = cls(ts_node=statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=module_node, name_node=name_node, alias_node=alias_node, import_type=import_type)
+                imp = cls(ts_node=statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=module_node, name_node=name_node, alias_node=alias_node, import_type=import_type)
                 imports.append(imp)
             elif name_node.type == "identifier":
                 # ==== [ Aliased module import ] ====
                 # Imports both default and named exports (e.g. const moduleImp = await import('./module');)
-                imp = cls(ts_node=statement_node, file_node_id=file_node_id, G=G, parent=parent, module_node=module_node, name_node=name_node, alias_node=name_node, import_type=ImportType.MODULE)
+                imp = cls(ts_node=statement_node, file_node_id=file_node_id, ctx=ctx, parent=parent, module_node=module_node, name_node=name_node, alias_node=name_node, import_type=ImportType.MODULE)
                 imports.append(imp)
             elif name_node.type == "object_pattern":
                 # ==== [ Deconstructed import ] ====
@@ -479,7 +479,7 @@ class TSImport(Import["TSFile"], Exportable):
                         imp = cls(
                             ts_node=statement_node,
                             file_node_id=file_node_id,
-                            G=G,
+                            ctx=ctx,
                             parent=parent,
                             module_node=module_node,
                             name_node=imported_symbol,
@@ -495,7 +495,7 @@ class TSImport(Import["TSFile"], Exportable):
                         imp = cls(
                             ts_node=statement_node,
                             file_node_id=file_node_id,
-                            G=G,
+                            ctx=ctx,
                             parent=parent,
                             module_node=module_node,
                             name_node=name_node,

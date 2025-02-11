@@ -26,7 +26,7 @@ class TSWhileStatement(WhileStatement["TSCodeBlock"], TSHasBlock):
         condition (str | None): The condition expression of the while loop.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSCodeBlock, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         condition = self.child_by_field_name("condition")
         self.condition = condition.value if condition else None

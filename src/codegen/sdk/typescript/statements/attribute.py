@@ -23,8 +23,8 @@ if TYPE_CHECKING:
 class TSAttribute(Attribute[TSCodeBlock, TSAssignment], TSAssignmentStatement):
     """Typescript implementation of Attribute detached symbol."""
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos=pos, assignment_node=ts_node)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSCodeBlock, pos: int) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos=pos, assignment_node=ts_node)
         self.type = self.assignments[0].type
 
     @reader

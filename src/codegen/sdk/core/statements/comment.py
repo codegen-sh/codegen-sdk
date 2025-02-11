@@ -63,8 +63,8 @@ class Comment(Statement[TCodeBlock], Generic[TCodeBlock]):
     @noapidoc
     @classmethod
     @reader
-    def from_expression_statement(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Statement, code_block: TCodeBlock, pos: int, comment_node: TSNode) -> Comment:
-        return cls(ts_node, file_node_id, G, code_block, pos)
+    def from_expression_statement(cls, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Statement, code_block: TCodeBlock, pos: int, comment_node: TSNode) -> Comment:
+        return cls(ts_node, file_node_id, ctx, code_block, pos)
 
     @property
     @reader

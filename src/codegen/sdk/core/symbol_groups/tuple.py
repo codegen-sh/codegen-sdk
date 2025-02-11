@@ -21,8 +21,8 @@ class Tuple(Collection["Expression[Self, None]", Parent], Expression[Parent], Bu
     You can use standard operations to operate on this list (IE len, del, append, insert, etc)
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent)
         self._init_children([self._parse_expression(child) for child in ts_node.named_children if child.type])
 
     @property

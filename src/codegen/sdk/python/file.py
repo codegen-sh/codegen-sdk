@@ -69,12 +69,12 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     ####################################################################################################################
 
     @noapidoc
-    def get_import_module_name_for_file(self, filepath: str, G: CodebaseContext) -> str:
+    def get_import_module_name_for_file(self, filepath: str, ctx: CodebaseContext) -> str:
         """Returns the module name that this file gets imported as
 
         For example, `my/package/name.py` => `my.package.name`
         """
-        base_path = G.projects[0].base_path
+        base_path = ctx.projects[0].base_path
         module = filepath.replace(".py", "")
         if module.endswith("__init__"):
             module = "/".join(module.split("/")[:-1])

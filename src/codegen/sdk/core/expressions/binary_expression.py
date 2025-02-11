@@ -33,8 +33,8 @@ class BinaryExpression(Expression[Parent], Chainable, Generic[Parent]):
     left: Expression[Self] | None
     right: Expression[Self] | None
 
-    def __init__(self, ts_node, file_node_id, G, parent: Parent) -> None:
-        super().__init__(ts_node, file_node_id, G, parent=parent)
+    def __init__(self, ts_node, file_node_id, ctx, parent: Parent) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent=parent)
         self.left = self.child_by_field_name("left")
         self.right = self.child_by_field_name("right")
 

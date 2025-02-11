@@ -30,17 +30,17 @@ class TSImportStatement(ImportStatement["TSFile", TSImport, "TSCodeBlock"], Buil
         imports (Collection): A collection of TypeScript imports contained within the statement.
     """
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TSCodeBlock, pos: int, *, source_node: TSNode | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TSCodeBlock, pos: int, *, source_node: TSNode | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         imports = []
         if ts_node.type == "import_statement":
-            imports.extend(TSImport.from_import_statement(ts_node, file_node_id, G, self))
+            imports.extend(TSImport.from_import_statement(ts_node, file_node_id, ctx, self))
         elif ts_node.type == "call_expression":
             import_call_node = ts_node.child_by_field_name("function")
             arguments = ts_node.child_by_field_name("arguments")
-            imports.extend(TSImport.from_dynamic_import_statement(import_call_node, arguments, file_node_id, G, self))
+            imports.extend(TSImport.from_dynamic_import_statement(import_call_node, arguments, file_node_id, ctx, self))
         elif ts_node.type == "export_statement":
-            imports.extend(TSImport.from_export_statement(source_node, file_node_id, G, self))
-        self.imports = Collection(ts_node, file_node_id, G, self, delimiter="\n", children=imports)
+            imports.extend(TSImport.from_export_statement(source_node, file_node_id, ctx, self))
+        self.imports = Collection(ts_node, file_node_id, ctx, self, delimiter="\n", children=imports)
         for imp in self.imports:
             imp.import_statement = self

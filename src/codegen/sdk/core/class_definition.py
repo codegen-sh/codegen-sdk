@@ -64,8 +64,8 @@ class Class(Inherits[TType], HasBlock[TCodeBlock, TDecorator], Callable[TParamet
     parent_classes: Parents[TType, Self] | None = None
     _methods: MultiLineCollection[TFunction, Self] | None = None
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: SymbolStatement) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: SymbolStatement) -> None:
+        super().__init__(ts_node, file_id, ctx, parent)
         self._methods = self._parse_methods()
         self._parameters = []
 

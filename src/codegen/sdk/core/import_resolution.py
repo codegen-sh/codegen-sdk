@@ -84,7 +84,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseContext,
+        ctx: CodebaseContext,
         parent: ImportStatement,
         module_node: TSNode | None,
         name_node: TSNode | None,
@@ -92,10 +92,10 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         import_type: ImportType = ImportType.UNKNOWN,
     ) -> None:
         self.to_file_id = file_node_id
-        super().__init__(ts_node, file_node_id, G, parent)
-        self.module = self.ctx.parser.parse_expression(module_node, self.file_node_id, G, self, default=Name) if module_node else None
-        self.alias = self.ctx.parser.parse_expression(alias_node, self.file_node_id, G, self, default=Name) if alias_node else None
-        self.symbol_name = self.ctx.parser.parse_expression(name_node, self.file_node_id, G, self, default=Name) if name_node else None
+        super().__init__(ts_node, file_node_id, ctx, parent)
+        self.module = self.ctx.parser.parse_expression(module_node, self.file_node_id, ctx, self, default=Name) if module_node else None
+        self.alias = self.ctx.parser.parse_expression(alias_node, self.file_node_id, ctx, self, default=Name) if alias_node else None
+        self.symbol_name = self.ctx.parser.parse_expression(name_node, self.file_node_id, ctx, self, default=Name) if name_node else None
         self._name_node = self._parse_expression(name_node, default=Name)
         self.import_type = import_type
 

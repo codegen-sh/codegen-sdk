@@ -135,7 +135,7 @@ class PyImport(Import["PyFile"]):
             return self.resolve_import(base_path="test", add_module_name=add_module_name)
 
         # if not G_override:
-        #     for resolver in G.import_resolvers:
+        #     for resolver in ctx.import_resolvers:
         #         if imp := resolver.resolve(self):
         #             return imp
 
@@ -183,23 +183,23 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
+    def from_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
             if module_node.type == "dotted_name":
-                imports.append(cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.MODULE))
+                imports.append(cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.MODULE))
             elif module_node.type == "aliased_import":
                 module = module_node.child_by_field_name("name")
                 symbol_name = module
                 alias = module_node.child_by_field_name("alias")
-                imports.append(cls(import_statement, file_node_id, G, parent, module_node=module, name_node=symbol_name, alias_node=alias, import_type=ImportType.MODULE))
+                imports.append(cls(import_statement, file_node_id, ctx, parent, module_node=module, name_node=symbol_name, alias_node=alias, import_type=ImportType.MODULE))
             else:
                 logger.error(f"Unsupported import statement: {import_statement.text.decode('utf-8')}")
         return imports
 
     @classmethod
     @noapidoc
-    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
+    def from_import_from_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         module_node = import_statement.child_by_field_name("module_name")
         import_symbols = import_statement.children_by_field_name("name")
         if len(import_symbols) == 0:
@@ -207,16 +207,16 @@ class PyImport(Import["PyFile"]):
             if wildcard_import is None:
                 msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
                 raise ValueError(msg)
-            return [cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
+            return [cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.WILDCARD)]
 
         imports = []
         for import_symbol in import_symbols:
             if import_symbol.type == "dotted_name":
-                imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=import_symbol, alias_node=import_symbol, import_type=ImportType.NAMED_EXPORT)
+                imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=import_symbol, alias_node=import_symbol, import_type=ImportType.NAMED_EXPORT)
             elif import_symbol.type == "aliased_import":
                 symbol_name = import_symbol.child_by_field_name("name")
                 alias = import_symbol.child_by_field_name("alias")
-                imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
+                imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=symbol_name, alias_node=alias, import_type=ImportType.NAMED_EXPORT)
             else:
                 msg = f"Unsupported import statement: {import_statement.text.decode('utf-8')}"
                 raise ValueError(msg)
@@ -225,10 +225,10 @@ class PyImport(Import["PyFile"]):
 
     @classmethod
     @noapidoc
-    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
+    def from_future_import_statement(cls, import_statement: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: ImportStatement) -> list[PyImport]:
         imports = []
         for module_node in import_statement.children_by_field_name("name"):
-            imp = cls(import_statement, file_node_id, G, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.SIDE_EFFECT)
+            imp = cls(import_statement, file_node_id, ctx, parent, module_node=module_node, name_node=module_node, alias_node=module_node, import_type=ImportType.SIDE_EFFECT)
             imports.append(imp)
         return imports
 

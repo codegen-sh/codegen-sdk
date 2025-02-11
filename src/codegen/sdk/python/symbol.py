@@ -27,9 +27,9 @@ class PySymbol(Symbol["PyHasBlock", "PyCodeBlock"]):
 
     @classmethod
     @noapidoc
-    def from_decorated_definition(cls, ts_node: TSNode, file_id: NodeId, G: CodebaseContext, parent: HasBlock) -> Symbol:
+    def from_decorated_definition(cls, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: HasBlock) -> Symbol:
         definition = ts_node.child_by_field_name("definition")
-        return G.parser.parse_expression(definition, file_id, G, parent, decorated_node=ts_node)
+        return ctx.parser.parse_expression(definition, file_id, ctx, parent, decorated_node=ts_node)
 
     @property
     @reader

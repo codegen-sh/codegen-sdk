@@ -39,9 +39,9 @@ class ExternalModule(
     node_type: Literal[NodeType.EXTERNAL] = NodeType.EXTERNAL
     _import: Import | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, import_name: Name, import_node: Import | None = None) -> None:
-        self.node_id = G.add_node(self)
-        super().__init__(ts_node, file_node_id, G, None)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, import_name: Name, import_node: Import | None = None) -> None:
+        self.node_id = ctx.add_node(self)
+        super().__init__(ts_node, file_node_id, ctx, None)
         self._name_node = import_name
         self.return_type = StubPlaceholder(parent=self)
         assert self._idx_key not in self.ctx._ext_module_idx
@@ -54,7 +54,7 @@ class ExternalModule(
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseContext) -> None:
+    def parse(self, ctx: CodebaseContext) -> None:
         msg = f"{type(self)} is not part of the graph at the moment"
         raise NotImplementedError(msg)
 

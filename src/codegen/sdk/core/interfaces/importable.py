@@ -33,10 +33,10 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
 
     node_id: int
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: "CodebaseContext", parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent) -> None:
         if not hasattr(self, "node_id"):
-            self.node_id = G.add_node(self)
-        super().__init__(ts_node, file_node_id, G, parent)
+            self.node_id = ctx.add_node(self)
+        super().__init__(ts_node, file_node_id, ctx, parent)
         if self.file:
             self.file._nodes.append(self)
 

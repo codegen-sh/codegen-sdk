@@ -35,8 +35,8 @@ class ImportStatement(Statement[TCodeBlock], Generic[TSourceFile, TImport, TCode
 
     imports: Collection[TImport, Self]
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TCodeBlock, pos: int) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TCodeBlock, pos: int) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
 
     @noapidoc
     @commiter

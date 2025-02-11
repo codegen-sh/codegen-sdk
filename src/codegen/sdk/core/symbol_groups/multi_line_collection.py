@@ -33,7 +33,7 @@ class MultiLineCollection(Collection[Child, Parent], Generic[Child, Parent]):
         self,
         children: list[Child],
         file_node_id: NodeId,
-        G: "CodebaseContext",
+        ctx: "CodebaseContext",
         parent: Parent,
         node: TSNode,
         indent_size: int,
@@ -42,7 +42,7 @@ class MultiLineCollection(Collection[Child, Parent], Generic[Child, Parent]):
         start_byte: int | None = None,
         end_byte: int | None = None,
     ) -> None:
-        super().__init__(node, file_node_id, G, parent, trailing_delimiter, children=children, bracket_size=0)
+        super().__init__(node, file_node_id, ctx, parent, trailing_delimiter, children=children, bracket_size=0)
         self._inserts_max_size = defaultdict(lambda: 0)
         self._leading_delimiter = leading_delimiter
         self._trailing_delimiter = trailing_delimiter

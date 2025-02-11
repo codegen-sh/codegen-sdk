@@ -47,8 +47,8 @@ class WithStatement(Statement["PyCodeBlock"], PyHasBlock):
     code_block: PyCodeBlock[WithStatement]
     clause: ExpressionGroup
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: PyCodeBlock, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: PyCodeBlock, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         self.code_block = self._parse_code_block()
         self.code_block.parse()
         clause = next(x for x in self.ts_node.children if x.type == "with_clause")

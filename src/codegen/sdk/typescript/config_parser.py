@@ -17,7 +17,7 @@ from functools import cache
 class TSConfigParser(ConfigParser):
     # Cache of path names to TSConfig objects
     config_files: dict[Path, TSConfig]
-    G: "CodebaseContext"
+    ctx: "CodebaseContext"
 
     def __init__(self, codebase_context: "CodebaseContext", default_config_name: str = "tsconfig.json"):
         super().__init__()

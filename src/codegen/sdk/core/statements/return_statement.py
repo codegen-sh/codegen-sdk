@@ -37,8 +37,8 @@ class ReturnStatement(Statement, HasValue, Generic[Parent, TCodeBlock]):
 
     statement_type = StatementType.RETURN_STATEMENT
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: Parent, pos: int | None = None) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent, pos: int | None = None) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos)
         value_node = self._get_value_node()
         self._value_node = self._parse_expression(value_node) if value_node else None
 

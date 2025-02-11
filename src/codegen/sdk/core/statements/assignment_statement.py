@@ -47,8 +47,8 @@ class AssignmentStatement(Statement[TCodeBlock], HasValue, Generic[TCodeBlock, T
     left: Expression[TAssignment]
     right: Expression[TAssignment] | None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseContext, parent: TCodeBlock, pos: int, assignment_node: TSNode) -> None:
-        super().__init__(ts_node, file_node_id, G, parent, pos=pos)
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: TCodeBlock, pos: int, assignment_node: TSNode) -> None:
+        super().__init__(ts_node, file_node_id, ctx, parent, pos=pos)
         self.assignments = self._DEPRECATED_parse_assignments().expressions
         if len(self.assignments) == 0:
             msg = f"No assignments found: {self.ts_node}\n\n{self.source}"
