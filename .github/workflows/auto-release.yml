@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - develop
-  workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   semantic-version:
@@ -43,5 +39,7 @@ jobs:
   release:
     needs: semantic-version
     uses: ./.github/workflows/release.yml
+    permissions:
+      contents: write
     with:
       tag: ${{ needs.semantic-version.outputs.tag }}
