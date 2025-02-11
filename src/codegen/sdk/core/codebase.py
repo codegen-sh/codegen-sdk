@@ -15,6 +15,7 @@ import rich.repr
 from git import Commit as GitCommit
 from git import Diff
 from git.remote import PushInfoList
+from github.PullRequest import PullRequest
 from networkx import Graph
 from rich.console import Console
 from typing_extensions import deprecated
@@ -871,6 +872,18 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     def restore_stashed_changes(self):
         """Restore the most recent stash in the codebase."""
         self._op.stash_pop()
+
+    ####################################################################################################################
+    # GITHUB
+    ####################################################################################################################
+
+    def create_pr(self, title: str, body: str) -> PullRequest:
+        if self._op.git_cli.head.is_detached:
+            msg = "Cannot make a PR from a detached HEAD"
+            raise ValueError(msg)
+        self._op.stage_and_commit_all_changes(message=title)
+        self._op.push_changes()
+        return self._op.remote_git_repo.create_pull(head=self._op.git_cli.active_branch.name, base=self._op.default_branch, title=title, body=body)
 
     ####################################################################################################################
     # GRAPH VISUALIZATION
