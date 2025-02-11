@@ -36,13 +36,12 @@ class LocalRepoOperator(RepoOperator):
         access_token: str | None = None,
         bot_commit: bool = False,
     ) -> None:
-        self._local_git_repo = LocalGitRepo(repo_path=repo_config.repo_path)
-        if repo_config.full_name is None:
-            repo_config.full_name = self._local_git_repo.full_name
-
         super().__init__(repo_config=repo_config, access_token=access_token, bot_commit=bot_commit)
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
+        self._local_git_repo = LocalGitRepo(repo_path=repo_config.repo_path)
+        if repo_config.full_name is None:
+            repo_config.full_name = self._local_git_repo.full_name
 
     ####################################################################################################################
     # PROPERTIES
