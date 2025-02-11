@@ -10,12 +10,12 @@ from github.PullRequest import PullRequest
 from github.Repository import Repository
 
 from codegen.git.clients.git_repo_client import GitRepoClient
-from codegen.git.configs.config import config
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
+from codegen.shared.configs.config import config
 
 logger = logging.getLogger(__name__)
 
@@ -31,28 +31,21 @@ class LocalRepoOperator(RepoOperator):
     - Creating "fake" repos from a dictionary of files contents
     """
 
-    _repo_path: str
-    _repo_name: str
     _git_cli: GitCLI
-    repo_config: BaseRepoConfig
     _github_api_key: str | None
     _remote_git_repo: GitRepoClient | None = None
 
     def __init__(
         self,
-        repo_path: str,  # full path to the repo
+        repo_config: RepoConfig,
         github_api_key: str | None = None,
-        repo_config: BaseRepoConfig | None = None,
         bot_commit: bool = False,
     ) -> None:
-        self._repo_path = repo_path
-        self._repo_name = os.path.basename(repo_path)
-        self._github_api_key = github_api_key or config.GITHUB_TOKEN
+        self._github_api_key = github_api_key or config.secrets.github_token
         self._remote_git_repo = None
+        super().__init__(repo_config, bot_commit)
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
-        repo_config = repo_config or BaseRepoConfig()
-        super().__init__(repo_config, self.repo_path, bot_commit)
 
     ####################################################################################################################
     # PROPERTIES
@@ -86,7 +79,7 @@ class LocalRepoOperator(RepoOperator):
     # CLASS METHODS
     ####################################################################################################################
     @classmethod
-    def create_from_files(cls, repo_path: str, files: dict[str, str], bot_commit: bool = True, repo_config: BaseRepoConfig = BaseRepoConfig()) -> "LocalRepoOperator":
+    def create_from_files(cls, repo_path: str, files: dict[str, str], bot_commit: bool = True) -> "LocalRepoOperator":
         """Used when you want to create a directory from a set of files and then create a LocalRepoOperator that points to that directory.
         Use cases:
         - Unit testing
@@ -96,14 +89,13 @@ class LocalRepoOperator(RepoOperator):
         Args:
             repo_path (str): The path to the directory to create.
             files (dict[str, str]): A dictionary of file names and contents to create in the directory.
-            repo_config (BaseRepoConfig): The configuration of the repo.
         """
         # Step 1: Create dir (if not exists) + files
         os.makedirs(repo_path, exist_ok=True)
         create_files(base_dir=repo_path, files=files)
 
         # Step 2: Init git repo
-        op = cls(repo_path=repo_path, bot_commit=bot_commit, repo_config=repo_config)
+        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=bot_commit)
         if op.stage_and_commit_all_changes("[Codegen] initial commit"):
             op.checkout_branch(None, create_if_missing=True)
         return op
@@ -118,7 +110,7 @@ class LocalRepoOperator(RepoOperator):
             url (str): Git URL of the repository
             github_api_key (str | None): Optional GitHub API key for operations that need GitHub access
         """
-        op = cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
+        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
         op.discard_changes()
         if op.get_active_branch_or_commit() != commit:
             op.create_remote("origin", url)
@@ -149,7 +141,7 @@ class LocalRepoOperator(RepoOperator):
                     remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
                     # If up to date, use existing repo
                     if local_head.hexsha == remote_head.hexsha:
-                        return cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
+                        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
             except Exception:
                 # If any git operations fail, fallback to fresh clone
                 pass
@@ -166,19 +158,11 @@ class LocalRepoOperator(RepoOperator):
         # Initialize with the cloned repo
         git_cli = GitCLI(repo_path)
 
-        return cls(repo_path=repo_path, bot_commit=False, github_api_key=github_api_key)
+        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
 
     ####################################################################################################################
     # PROPERTIES
     ####################################################################################################################
-
-    @property
-    def repo_name(self) -> str:
-        return self._repo_name
-
-    @property
-    def repo_path(self) -> str:
-        return self._repo_path
 
     @property
     def codeowners_parser(self) -> CodeOwnersParser | None:
