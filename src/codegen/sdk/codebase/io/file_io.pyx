@@ -19,16 +19,20 @@ class FileIO(IO):
         self.files[path] = content
 
     def read_bytes(self, path: Path) -> bytes:
-        if path not in self.files:
-            self.files[path] = path.read_bytes()
-        return self.files[path]
+        if path in self.files:
+            return self.files[path]
+        else:
+            return path.read_bytes()
 
     def save_files(self, files: set[Path] | None = None) -> None:
-        to_save = set(filter(lambda f: f in files, self.files)) if files is not None else self.files
+        to_save = set(filter(lambda f: f in files, self.files)) if files is not None else self.files.keys()
         with ThreadPoolExecutor() as exec:
             exec.map(lambda path: path.write_bytes(self.files[path]), to_save)
-        for path in to_save:
-            del self.files[path]
+        if files is None:
+            self.files.clear()
+        else:
+            for path in to_save:
+                del self.files[path]
 
     def check_changes(self) -> None:
         if self.files:

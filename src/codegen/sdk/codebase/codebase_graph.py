@@ -23,7 +23,6 @@ from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
 from codegen.sdk.core.external.language_engine import LanguageEngine, get_language_engine
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
-from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
@@ -260,7 +259,11 @@ class CodebaseGraph:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
         logger.info(f"Writing {len(files_to_write)} files to disk and removing {len(files_to_remove)} files")
-        write_changes(files_to_remove, files_to_write)
+        for file in files_to_remove:
+            self.io.delete_file(file)
+        for file, content in files_to_write:
+            self.io.write_file(file, content)
+        self.io.save_files(set(files_to_write))
 
     @stopwatch
     def reset_codebase(self) -> None:
