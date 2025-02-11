@@ -4,6 +4,7 @@ from typing import Any, Optional
 
 from lsprotocol.types import Position, Range
 from pygls.lsp.server import LanguageServer
+from pygls.uris import to_fs_path
 
 from codegen.extensions.lsp.range import get_tree_sitter_range
 from codegen.sdk.codebase.flagging.code_flag import Symbol
@@ -20,8 +21,11 @@ class CodegenLanguageServer(LanguageServer):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+    def get_path(self, uri: str) -> Path:
+        return Path(to_fs_path(uri)).absolute()
+
     def get_file(self, uri: str) -> SourceFile | File:
-        path = Path(uri)
+        path = self.get_path(uri)
         return self.codebase.get_file(path.name)
 
     def get_symbol(self, uri: str, position: Position) -> Symbol | None:

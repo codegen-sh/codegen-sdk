@@ -33,6 +33,7 @@ from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import FlagKwargs
 from codegen.sdk.codebase.flagging.group import Group
+from codegen.sdk.codebase.io.io import IO
 from codegen.sdk.codebase.span import Span
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
@@ -126,6 +127,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         programming_language: None = None,
         projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
+        io: IO | None = None,
     ) -> None: ...
 
     @overload
@@ -136,6 +138,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         programming_language: ProgrammingLanguage | None = None,
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
+        io: IO | None = None,
     ) -> None: ...
 
     def __init__(
@@ -145,6 +148,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         programming_language: ProgrammingLanguage | None = None,
         projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
+        io: IO | None = None,
     ) -> None:
         # Sanity check inputs
         if repo_path is not None and projects is not None:
@@ -174,7 +178,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._op = main_project.repo_operator
         self.viz = VisualizationManager(op=self._op)
         self.repo_path = Path(self._op.repo_path)
-        self.ctx = CodebaseContext(projects, config=config)
+        self.ctx = CodebaseContext(projects, config=config, io=io)
         self.console = Console(record=True, soft_wrap=True)
 
     @noapidoc
