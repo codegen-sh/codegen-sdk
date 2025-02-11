@@ -3,7 +3,7 @@
 from langchain import hub
 from langchain.agents import AgentExecutor
 from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
-from langchain_core.chat_history import ChatMessageHistory
+from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 
@@ -21,6 +21,7 @@ from .tools import (
     SearchTool,
     SemanticEditTool,
     ViewFileTool,
+    SemanticSearchTool,
 )
 
 
@@ -59,6 +60,7 @@ def create_codebase_agent(
         MoveSymbolTool(codebase),
         RevealSymbolTool(codebase),
         SemanticEditTool(codebase),
+        SemanticSearchTool(codebase),
         CommitTool(codebase),
     ]
 
