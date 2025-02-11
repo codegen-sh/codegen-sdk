@@ -5,6 +5,8 @@ from pathlib import Path
 
 import rich
 import rich_click as click
+from github import BadCredentialsException
+from github.MainClass import Github
 
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.commands.init.render import get_success_message
@@ -12,7 +14,7 @@ from codegen.cli.rich.codeblocks import format_command
 from codegen.cli.workspace.initialize_workspace import initialize_codegen
 from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.shared.configs.config import config
-from codegen.shared.configs.constants import CODEGEN_DIR_NAME
+from codegen.shared.configs.constants import CONFIG_PATH
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
@@ -34,8 +36,14 @@ def init_command(path: str | None = None, token: str | None = None, language: st
         rich.print("[white]Please run this command from within a git repository.[/white]")
         rich.print("\n[dim]To initialize a new git repository:[/dim]")
         rich.print(format_command("git init"))
-        rich.print(format_command("git remote add origin <your-repo-url>"))
         rich.print(format_command("codegen init"))
+        sys.exit(1)
+
+    if local_git.origin_remote is None:
+        rich.print("\n[bold red]Error:[/bold red] No remote found for repository")
+        rich.print("[white]Please add a remote to the repository.[/white]")
+        rich.print("\n[dim]To add a remote to the repository:[/dim]")
+        rich.print(format_command("git remote add origin <your-repo-url>"))
         sys.exit(1)
 
     if token is None:
@@ -49,6 +57,14 @@ def init_command(path: str | None = None, token: str | None = None, language: st
         rich.print(format_command("export CODEGEN_SECRETS__GITHUB_TOKEN=<your-token>"))
         rich.print("Or pass in as a parameter:")
         rich.print(format_command("codegen init --token <your-token>"))
+    else:
+        # Validate that the token is valid for the repo path.
+        try:
+            Github(login_or_token=token).get_repo(local_git.full_name)
+        except BadCredentialsException:
+            rich.print(format_command(f"\n[bold red]Error:[/bold red] Invalid GitHub token={token} for repo={local_git.full_name}"))
+            rich.print("[white]Please provide a valid GitHub token for this repository.[/white]")
+            sys.exit(1)
 
     # Save repo config
     config.repository.repo_path = local_git.repo_path
@@ -56,13 +72,13 @@ def init_command(path: str | None = None, token: str | None = None, language: st
     config.repository.full_name = local_git.full_name
     config.repository.user_name = local_git.user_name
     config.repository.user_email = local_git.user_email
-    config.repository.language = ProgrammingLanguage(language or local_git.get_language(access_token=token).upper())
+    config.repository.language = (language or local_git.get_language(access_token=token)).upper()
     config.save()
 
     session = CodegenSession()
-    action = "Updating" if CODEGEN_DIR_NAME.exists() else "Initializing"
+    action = "Updating" if CONFIG_PATH.exists() else "Initializing"
     rich.print("")
-    codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs, programming_language=config.repository.language)
+    codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs, programming_language=ProgrammingLanguage(config.repository.language))
 
     # Print success message
     rich.print(f"✅ {action} complete\n")

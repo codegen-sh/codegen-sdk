@@ -49,7 +49,7 @@ class SandboxRunner:
 
     async def _build_graph(self) -> Codebase:
         logger.info("> Building graph...")
-        programming_language = ProgrammingLanguage(self.op.repo_config.language.upper())
+        programming_language = self.op.repo_config.language
         projects = [ProjectConfig(programming_language=programming_language, repo_operator=self.op, base_path=self.op.repo_config.base_path, subdirectories=self.op.repo_config.subdirectories)]
         return Codebase(projects=projects, config=get_codebase_config())
 

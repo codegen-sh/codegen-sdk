@@ -26,15 +26,11 @@ class LocalGitRepo:
 
     @cached_property
     def full_name(self) -> str | None:
-        if not self.has_remote():
+        if not self.origin_remote:
             return None
 
-        with self.git_cli.config_reader() as reader:
-            if reader.has_option("remote", "origin"):
-                url_segments = reader.get("remote.origin", "url").split("/")
-                return f"{url_segments[-2]}/{url_segments[-1]}"
-
-        return None
+        url_segments = self.origin_remote.url.split("/")
+        return f"{url_segments[-2]}/{url_segments[-1].replace('.git', '')}"
 
     @cached_property
     def origin_remote(self) -> Remote | None:
@@ -67,7 +63,9 @@ class LocalGitRepo:
         if access_token is None:
             return str(determine_project_language(self.repo_path))
 
-        remote_git = GitRepoClient(repo_config=RepoConfig.from_repo_path(self.repo_path), access_token=access_token)
+        repo_config = RepoConfig.from_repo_path(repo_path=self.repo_path)
+        repo_config.full_name = self.full_name
+        remote_git = GitRepoClient(repo_config=repo_config, access_token=access_token)
         return remote_git.repo.language.upper()
 
     def has_remote(self) -> bool:

@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from codegen.shared.configs.constants import CONFIG_PATH, ENV_PATH
-from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 class TypescriptConfig(BaseModel):
@@ -39,7 +38,7 @@ class RepositoryConfig(BaseModel):
     full_name: str | None = None
     user_name: str | None = None
     user_email: str | None = None
-    language: ProgrammingLanguage | None = None
+    language: str | None = None
 
 
 class SecretsConfig(BaseSettings):
