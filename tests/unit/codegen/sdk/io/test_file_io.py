@@ -26,7 +26,6 @@ def test_read_bytes_nonexistent_file(file_io, tmp_path):
 
     # Reading should load from disk
     assert file_io.read_bytes(test_file) == test_content
-    assert test_file in file_io.files
 
 
 def test_save_file(file_io, tmp_path):
@@ -34,11 +33,10 @@ def test_save_file(file_io, tmp_path):
     content = b"test content"
 
     file_io.write_bytes(test_file, content)
-    file_io.save_file(test_file)
+    file_io.save_files({test_file})
 
     assert test_file.exists()
     assert test_file.read_bytes() == content
-    assert test_file not in file_io.files
 
 
 def test_check_changes_with_pending_changes(file_io, tmp_path, caplog):
