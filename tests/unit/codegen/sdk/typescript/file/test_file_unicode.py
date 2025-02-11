@@ -47,14 +47,14 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
+        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=False)
 
     assert file1.content == content1
     # language=typescript
     assert (
         file2.content
         == """
-export { bar } from 'file3'
+export { bar } from 'file3';
 import { externalDep } from "./file1";
 
 function foo(): string {

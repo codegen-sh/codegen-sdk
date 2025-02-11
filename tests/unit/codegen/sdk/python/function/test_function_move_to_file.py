@@ -46,8 +46,6 @@ def external_dep():
 
     # language=python
     EXPECTED_FILE_2_CONTENT = """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1
 
@@ -68,7 +66,6 @@ def bar():
     return external_dep() + bar_dep()
 """
     # ===============================
-    # TODO: [low] Should maybe remove unused external_dep?
     # TODO: [low] Missing newline after import
 
     with get_codebase_session(
@@ -84,7 +81,7 @@ def bar():
         file3 = codebase.get_file("file3.py")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="update_all_imports")
+        bar.move_to_file(file3, include_dependencies=True, strategy="update_all_imports", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -171,7 +168,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -266,7 +263,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -321,8 +318,6 @@ def external_dep():
 
     # language=python
     EXPECTED_FILE_2_CONTENT = """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1
 
@@ -360,7 +355,7 @@ def bar():
         file3 = codebase.get_file("file3.py")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
+        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -449,7 +444,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -546,7 +541,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -601,8 +596,6 @@ def external_dep():
 
     # language=python
     EXPECTED_FILE_2_CONTENT = """
-from file1 import external_dep
-
 def foo():
     return foo_dep() + 1
 
@@ -638,7 +631,7 @@ def bar():
         file3 = codebase.get_file("file3.py")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies")
+        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -732,7 +725,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -833,7 +826,7 @@ def baz():
         file3 = codebase.get_file("file3.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -873,13 +866,10 @@ GLOBAL = thing1(thing2, arg=thing3)
 
     # language=python
     EXPECTED_FILE_2_CONTENT = """
-from import1 import thing1
-from import2 import thing2, thing3
 """
 
     # ===============================
     # TODO: [medium] Space messed up in file1
-    # TODO: [low] Dangling / unused import in file2
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -892,7 +882,7 @@ from import2 import thing2, thing3
         file2 = codebase.get_file("file2.py")
 
         global_symbol = file2.get_symbol("GLOBAL")
-        global_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
+        global_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -957,7 +947,7 @@ def baz():
         file2 = codebase.get_file("file2.py")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1032,7 +1022,7 @@ def baz():
 
         bar_func_symbol = file2.get_symbol("bar_func")
         assert bar_func_symbol
-        bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
+        bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1091,7 +1081,6 @@ def bar_func():
 
     # language=python
     EXPECTED_FILE_2_CONTENT = """
-from app.file1 import foo_func
 from typing import Optional
 """
 
@@ -1107,6 +1096,7 @@ def baz():
 
     # ===============================
     # TODO: [!HIGH!] Corrupted output in file3
+    # TODO: [medium] Self import of foo_func in file1
     # TODO: [low] Unused imports in file2
 
     with get_codebase_session(
@@ -1123,7 +1113,7 @@ def baz():
 
         bar_func_symbol = file2.get_symbol("bar_func")
         assert bar_func_symbol
-        bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
+        bar_func_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1174,7 +1164,7 @@ def foo():
         assert foo in bar.dependencies
 
         file2 = codebase.create_file("file2.py", "")
-        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge")
+        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1268,8 +1258,8 @@ def external_dep2():
 
         d1 = file1.get_function("external_dep")
         d2 = file1.get_function("external_dep2")
-        d1.move_to_file(file3, include_dependencies=True, strategy="update_all_imports")
-        d2.move_to_file(file4, include_dependencies=True, strategy="update_all_imports")
+        d1.move_to_file(file3, include_dependencies=True, strategy="update_all_imports", remove_unused_imports=True)
+        d2.move_to_file(file4, include_dependencies=True, strategy="update_all_imports", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()

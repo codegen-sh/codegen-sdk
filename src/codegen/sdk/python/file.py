@@ -174,10 +174,38 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
         else:
             self.insert_before(import_string, priority=1)
 
-    @noapidoc
+    def remove_unused_imports(self) -> None:
+        """Removes unused imports from the file.
+
+        Handles different Python import styles:
+        - Single imports (import x)
+        - From imports (from y import z)
+        - Multi-imports (from y import (a, b as c))
+        - Wildcard imports (from x import *)
+        - Type imports (from typing import List)
+        - Future imports (from __future__ import annotations)
+
+        Preserves:
+        - Comments and whitespace where possible
+        - Future imports even if unused
+        - Type hints and annotations
+        """
+        # Process each import statement
+        for import_stmt in self.imports:
+            # Always preserve __future__ and star imports since we can't track their usage
+            if import_stmt.is_future_import or import_stmt.is_wildcard_import():
+                continue
+
+            import_stmt.remove_if_unused()
+
+        self.G.commit_transactions()
+
     def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file. NO-OP for python"""
-        pass
+        """Removes unused exports from the file.
+        In Python this is equivalent to removing unused imports since Python doesn't have
+        explicit export statements. Calls remove_unused_imports() internally.
+        """
+        self.remove_unused_imports()
 
     @cached_property
     @noapidoc

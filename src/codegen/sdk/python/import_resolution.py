@@ -284,6 +284,55 @@ class PyImport(Import["PyFile"]):
         else:
             return f"from {import_module} import {self.name}"
 
+    @property
+    def module_name(self) -> str:
+        """Gets the module name for this import.
+
+        For 'import x' returns 'x'
+        For 'from x import y' returns 'x'
+        For 'from .x import y' returns '.x'
+
+        Returns:
+            str: The module name for this import.
+        """
+        if self.ts_node.type == "import_from_statement":
+            module_node = self.ts_node.child_by_field_name("module_name")
+            return module_node.text.decode("utf-8") if module_node else ""
+        return self.ts_node.child_by_field_name("name").text.decode("utf-8")
+
+    def is_from_import(self) -> bool:
+        """Determines if this is a from-style import statement.
+
+        Checks if the import uses 'from' syntax (e.g., 'from module import symbol')
+        rather than direct import syntax (e.g., 'import module').
+
+        Returns True for imports like:
+        - from x import y
+        - from .x import y
+        - from x import (a, b, c)
+        - from x import *
+
+        Returns False for:
+        - import x
+        - import x as y
+
+        Returns:
+            bool: True if this is a from-style import, False otherwise.
+        """
+        return self.import_type in [ImportType.NAMED_EXPORT, ImportType.WILDCARD]
+
+    @property
+    def is_future_import(self) -> bool:
+        """Determines if this is a __future__ import.
+
+        Returns True for imports like:
+        - from __future__ import annotations
+
+        Returns:
+            bool: True if this is a __future__ import, False otherwise
+        """
+        return self.ts_node.type == "future_import_statement"
+
 
 class PyExternalImportResolver(ExternalImportResolver):
     def __init__(self, from_alias: str, to_context: CodebaseContext) -> None:

@@ -83,8 +83,6 @@ export function externalDep() {
 
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
-import { externalDep } from 'file1';
-
 function foo() {
     return fooDep() + 1;
 }
@@ -130,7 +128,7 @@ export function bar() {
         file3 = codebase.get_file("file3.ts")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="update_all_imports")
+        bar.move_to_file(file3, include_dependencies=True, strategy="update_all_imports", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -227,7 +225,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -331,7 +329,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="update_all_imports", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -393,9 +391,7 @@ export function externalDep() {
 
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
-export { bar } from 'file3'
-import { externalDep } from 'file1';
-
+export { bar } from 'file3';
 function foo() {
     return fooDep() + 1;
 }
@@ -408,8 +404,6 @@ function fooDep() {
     # language=typescript
     EXPECTED_FILE_3_CONTENT = """
 import { externalDep } from 'file1';
-import { bar } from 'file2';
-
 export function baz() {
     return bar() + 1;
 }
@@ -424,9 +418,9 @@ export function bar() {
 """
 
     # ===============================
-    # TODO: [!HIGH!] Creates circular import for bar between file2 and file3
-    # TODO: [medium] Missing semicolon in import on file3
     # TODO: [medium] Why did barDep get changed to export?
+    # TODO: [low] Missing newline after import
+    # TODO: [low] Unused import of bar in file3
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -442,7 +436,7 @@ export function bar() {
         file3 = codebase.get_file("file3.ts")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge")
+        bar.move_to_file(file3, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -506,7 +500,8 @@ export function bar(): string {
 
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
-export { bar } from 'file1'
+import { bar } from 'file1';
+export { bar };
 
 function xyz(): number {
     // should stay
@@ -525,8 +520,8 @@ function baz(): string {
 """
 
     # ===============================
-    # TODO: [medium] Missing semicolon in import on file2
     # TODO: [medium] Why is abc exported?
+    # TODO: [low] Import and export should be changed to a re-export
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -542,7 +537,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -609,7 +604,8 @@ export function bar(): string {
 
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
-export { bar } from 'file1'
+import { bar } from 'file1';
+export { bar };
 
 export function abc(): string {
     // dependency, DOES NOT GET MOVED
@@ -633,7 +629,7 @@ function baz(): string {
 """
 
     # ===============================
-    # TODO: [medium] Missing semicolon in import on file2
+    # TODO: [low] Import and export should be changed to a re-export
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -649,7 +645,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="add_back_edge", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -711,8 +707,6 @@ export function externalDep() {
 
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
-import { externalDep } from 'file1';
-
 function foo() {
     return fooDep() + 1;
 }
@@ -720,17 +714,11 @@ function foo() {
 function fooDep() {
     return 24;
 }
-
-export function bar() {
-    return externalDep() + barDep();
-}
 """
 
     # language=typescript
     EXPECTED_FILE_3_CONTENT = """
 import { externalDep } from 'file1';
-import { bar } from 'file2';
-
 export function baz() {
     return bar() + 1;
 }
@@ -745,7 +733,6 @@ export function bar() {
 """
 
     # ===============================
-    # TODO: [!HIGH!] Incorrect deletion of bar's import and dependency
     # TODO: [medium] Why is barDep exported?
 
     with get_codebase_session(
@@ -762,7 +749,7 @@ export function bar() {
         file3 = codebase.get_file("file3.ts")
 
         bar = file2.get_function("bar")
-        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies")
+        bar.move_to_file(file3, include_dependencies=True, strategy="duplicate_dependencies", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -866,7 +853,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True)
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=True, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -975,7 +962,7 @@ function baz(): string {
         file3 = codebase.get_file("file3.ts")
 
         bar_symbol = file2.get_symbol("bar")
-        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False)
+        bar_symbol.move_to_file(file1, strategy="duplicate_dependencies", include_dependencies=False, remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1036,7 +1023,7 @@ const value3 = targetFunction();
         usage_file = codebase.get_file("usage.ts")
 
         target_function = source_file.get_function("targetFunction")
-        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports")
+        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports", remove_unused_imports=True)
 
     assert usage_file.content.strip() == EXPECTED_USAGE_FILE_CONTENT.strip()
 
@@ -1085,7 +1072,7 @@ const value = targetFunction();
         usage_file = codebase.get_file("usage.ts")
 
         target_function = source_file.get_function("targetFunction")
-        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports")
+        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports", remove_unused_imports=True)
 
     assert usage_file.content.strip() == EXPECTED_USAGE_FILE_CONTENT.strip()
 
@@ -1209,7 +1196,7 @@ export function targetFunction(input: TypeA): TypeB {
         dest_file = codebase.get_file("destination.ts")
 
         target_function = source_file.get_function("targetFunction")
-        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports")
+        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports", remove_unused_imports=True)
 
     assert normalize_imports(dest_file.content.strip()) == normalize_imports(EXPECTED_DEST_FILE_CONTENT.strip())
 
@@ -1264,7 +1251,7 @@ export function helperFunction(x: number): number {
         dest_file = codebase.get_file("destination.ts")
 
         target_function = source_file.get_function("targetFunction")
-        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports")
+        target_function.move_to_file(dest_file, include_dependencies=False, strategy="update_all_imports", remove_unused_imports=True)
 
     assert normalize_imports(dest_file.content.strip()) == normalize_imports(EXPECTED_DEST_FILE_CONTENT.strip())
     assert normalize_imports(source_file.content.strip()) == normalize_imports(EXPECTED_SOURCE_FILE_CONTENT.strip())
@@ -1286,8 +1273,8 @@ export function bar(): number {
     # ========== [ AFTER ] ==========
     # language=typescript
     EXPECTED_FILE_1_CONTENT = """
-export { bar } from 'file2'
-export { foo } from 'file2'
+export { bar } from 'file2';
+export { foo } from 'file2';
 """
     # language=typescript
     EXPECTED_FILE_2_CONTENT = """
@@ -1301,7 +1288,6 @@ export function foo(): number {
 """
 
     # ===============================
-    # TODO: [low] Missing semicolons
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -1315,7 +1301,7 @@ export function foo(): number {
         assert foo in bar.dependencies
 
         file2 = codebase.create_file("file2.ts", "")
-        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge")
+        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1338,8 +1324,8 @@ export function bar(): number {
     # ========== [ AFTER ] ==========
     # language=typescript
     EXPECTED_FILE_1_CONTENT = """
-export { bar } from 'File1'
-export { foo } from 'File1'
+export { bar } from 'File1';
+export { foo } from 'File1';
 """
 
     # language=typescript
@@ -1354,7 +1340,6 @@ export function foo(): number {
 """
 
     # ===============================
-    # TODO: [low] Missing semicolons
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -1368,7 +1353,7 @@ export function foo(): number {
         assert foo in bar.dependencies
 
         file2 = codebase.create_file("File1.ts", "")
-        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge")
+        foo.move_to_file(file2, include_dependencies=True, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1391,7 +1376,7 @@ export function bar(): number {
     # language=typescript
     EXPECTED_FILE_1_CONTENT = """
 import { foo } from 'File2';
-export { foo }
+export { foo };
 
 export function bar(): number {
     return foo() + 1;
@@ -1409,8 +1394,7 @@ export function foo(): number {
 
     # ===============================
     # TODO: [medium] Is the extra new lines here expected behavior?
-    # TODO: [low] Missing semicolons
-    # TOOD: [low] Import and export should be changed to a re-export
+    # TODO: [low] Import and export should be changed to a re-export
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -1424,7 +1408,7 @@ export function foo(): number {
         assert foo in bar.dependencies
 
         file2 = codebase.create_file("File2.ts", "")
-        foo.move_to_file(file2, include_dependencies=False, strategy="add_back_edge")
+        foo.move_to_file(file2, include_dependencies=False, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()
@@ -1448,7 +1432,7 @@ export function bar(): number {
     # language=typescript
     EXPECTED_FILE_1_CONTENT = """
 import { foo } from 'File1';
-export { foo }
+export { foo };
 
 export function bar(): number {
     return foo() + 1;
@@ -1467,8 +1451,7 @@ export function foo(): number {
 
     # ===============================
     # TODO: [medium] Is the extra new lines here expected behavior?
-    # TODO: [low] Missing semicolons
-    # TOOD: [low] Import and export should be changed to a re-export
+    # TODO: [low] Import and export should be changed to a re-export
 
     with get_codebase_session(
         tmpdir=tmpdir,
@@ -1482,7 +1465,7 @@ export function foo(): number {
         assert foo in bar.dependencies
 
         file2 = codebase.create_file("File1.ts", "")
-        foo.move_to_file(file2, include_dependencies=False, strategy="add_back_edge")
+        foo.move_to_file(file2, include_dependencies=False, strategy="add_back_edge", remove_unused_imports=True)
 
     assert file1.content.strip() == EXPECTED_FILE_1_CONTENT.strip()
     assert file2.content.strip() == EXPECTED_FILE_2_CONTENT.strip()

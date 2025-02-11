@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.core.autocommit import commiter, mover, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.enums import ImportType, NodeType, ProgrammingLanguage, SymbolType
+from codegen.sdk.enums import ImportType, ProgrammingLanguage, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import cached_property
 from codegen.sdk.typescript.assignment import TSAssignment
@@ -238,63 +238,6 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
                 if function.type == "import" or (function.type == "identifier" and function.text.decode("utf-8") == "require"):
                     TSImportStatement(import_node, self.node_id, self.ctx, self.code_block, 0)
 
-    @writer
-    def remove_unused_exports(self) -> None:
-        """Removes unused exports from the file.
-
-        Analyzes all exports in the file and removes any that are not used. An export is considered unused if it has no direct
-        symbol usages and no re-exports that are used elsewhere in the codebase.
-
-        When removing unused exports, the method also cleans up any related unused imports. For default exports, it removes
-        the 'export default' keyword, and for named exports, it removes the 'export' keyword or the entire export statement.
-
-        Args:
-            None
-
-        Returns:
-            None
-        """
-        for export in self.exports:
-            symbol_export_unused = True
-            symbols_to_remove = []
-
-            exported_symbol = export.resolved_symbol
-            for export_usage in export.symbol_usages:
-                if export_usage.node_type == NodeType.IMPORT or (export_usage.node_type == NodeType.EXPORT and export_usage.resolved_symbol != exported_symbol):
-                    # If the import has no usages then we can add the import to the list of symbols to remove
-                    reexport_usages = export_usage.symbol_usages
-                    if len(reexport_usages) == 0:
-                        symbols_to_remove.append(export_usage)
-                        break
-
-                    # If any of the import's usages are valid symbol usages, export is used.
-                    if any(usage.node_type == NodeType.SYMBOL for usage in reexport_usages):
-                        symbol_export_unused = False
-                        break
-
-                    symbols_to_remove.append(export_usage)
-
-                elif export_usage.node_type == NodeType.SYMBOL:
-                    symbol_export_unused = False
-                    break
-
-            # export is not used, remove it
-            if symbol_export_unused:
-                # remove the unused imports
-                for imp in symbols_to_remove:
-                    imp.remove()
-
-                if exported_symbol == exported_symbol.export.declared_symbol:
-                    # change this to be more robust
-                    if exported_symbol.source.startswith("export default "):
-                        exported_symbol.replace("export default ", "")
-                    else:
-                        exported_symbol.replace("export ", "")
-                else:
-                    exported_symbol.export.remove()
-                if exported_symbol.export != export:
-                    export.remove()
-
     @noapidoc
     def _get_export_data(self, relative_path: str, export_type: str = "EXPORT") -> tuple[tuple[str, str], dict[str, callable]]:
         quoted_paths = (f"'{relative_path}'", f'"{relative_path}"')
@@ -394,11 +337,27 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
     def valid_import_names(self) -> dict[str, Symbol | TSImport]:
         """Returns a dict mapping name => Symbol (or import) in this file that can be imported from another file"""
         valid_export_names = {}
+
+        # Handle default exports
         if len(self.default_exports) == 1:
             valid_export_names["default"] = self.default_exports[0]
+
+        # Handle named exports and their aliases
         for export in self.exports:
             for name, dest in export.names:
+                # Track both original name and alias if present
                 valid_export_names[name] = dest
+                if hasattr(dest, "alias") and dest.alias:
+                    valid_export_names[dest.alias] = dest
+
+        # # Handle imports and their aliases
+        # for import_stmt in self.imports:
+        #     for name, symbol in import_stmt.imported_symbols.items():
+        #         valid_export_names[name] = symbol
+        #         # Also track the alias if present
+        #         if hasattr(symbol, "alias") and symbol.alias:
+        #             valid_export_names[symbol.alias] = symbol
+
         return valid_export_names
 
     ####################################################################################################################
@@ -445,3 +404,84 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
             TSNamespace | None: The namespace with the specified name if found, None otherwise.
         """
         return next((x for x in self.symbols if isinstance(x, TSNamespace) and x.name == name), None)
+
+    @writer
+    def remove_unused_imports(self) -> None:
+        """Removes unused imports from the file.
+
+        Handles different TypeScript import styles:
+        - Single imports (import x from 'y')
+        - Named imports (import { x } from 'y')
+        - Multi-imports (import { a, b as c } from 'y')
+        - Type imports (import type { X } from 'y')
+        - Side effect imports (import 'y')
+        - Wildcard imports (import * as x from 'y')
+
+        Preserves:
+        - Comments and whitespace where possible
+        - Side effect imports (e.g., CSS imports)
+        - Type imports used in type annotations
+        """
+        # Process each import statement
+        for import_stmt in self.imports:
+            # Always preserve side effect imports since we can't track their usage
+            if import_stmt.import_type == ImportType.SIDE_EFFECT:
+                continue
+
+            # Check if all imports in this statement are unused
+            import_stmt.remove_if_unused()
+
+        self.G.commit_transactions()
+
+    def _is_export_used(self, export: TSExport) -> bool:
+        # Get all symbol usages
+        usages = export.symbol_usages()
+
+        # If there are any usages, the export is used
+        if usages:
+            return True
+
+        # Check if this is a re-export that's used elsewhere
+        if export.is_reexport():
+            # Get the original symbol
+            original = export.resolved_symbol
+            if original:
+                # Check usages of the original symbol
+                return bool(original.symbol_usages())
+
+        return False
+
+    @writer
+    def remove_unused_exports(self) -> None:
+        """Removes unused exports from the file.
+
+        Handles different TypeScript export styles:
+        - Default exports (export default x)
+        - Named exports (export function x, export const x)
+        - Re-exports (export { x } from 'y')
+        - Type exports (export type X, export interface X)
+
+        Preserves:
+        - Type exports (these may be used in type positions)
+        - Default exports (these are often used dynamically)
+        - Exports used by other files through imports
+        - Exports used within the same file
+        """
+        exports_to_remove = []
+
+        for export in self.exports:
+            # Skip type exports
+            if export.is_type_export() or export.is_default_export():
+                continue
+
+            # Check if export is used
+            if self._is_export_used(export):
+                continue
+
+            exports_to_remove.append(export)
+
+        # Remove unused exports
+        for export in exports_to_remove:
+            export.remove()
+
+        self.G.commit_transactions()
