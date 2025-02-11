@@ -68,7 +68,7 @@ class Importable(Expression[Parent], HasName, Generic[Parent]):
             # For max_depth > 1, recursively collect dependencies
             seen = set(deps)
             for dep in list(deps):  # Create a copy of deps to iterate over
-                if hasattr(dep, "dependencies"):
+                if isinstance(dep, Importable):
                     next_deps = dep.dependencies(usage_types=usage_types, max_depth=max_depth - 1)
                     for next_dep in next_deps:
                         if next_dep not in seen:
