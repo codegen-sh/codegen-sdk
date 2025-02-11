@@ -31,7 +31,13 @@ def install_package(package: str, *args: str) -> None:
 
 
 @click.command(name="update")
-@click.option("--list", "-l", "list_", is_flag=True, help="List all supported versions of the codegen")
+@click.option(
+    "--list",
+    "-l",
+    "list_",
+    is_flag=True,
+    help="List all supported versions of the codegen",
+)
 @click.option("--version", "-v", type=str, help="Update to a specific version of the codegen")
 def update_command(list_: bool = False, version: str | None = None):
     """Update Codegen to the latest or specified version
@@ -51,8 +57,9 @@ def update_command(list_: bool = False, version: str | None = None):
         filtered_releases = filter_versions([Version(r) for r in releases], current_version, num_prev_minor_version=2)
         for release in filtered_releases:
             if release.release == current_version.release:
-                release = f"[bold]{release}[/bold] (current)"
-            rich.print(release)
+                rich.print(f"[bold]{release}[/bold] (current)")
+            else:
+                rich.print(release)
     elif version:
         install_package(f"{package_info.name}=={version}")
     else:
