@@ -44,11 +44,13 @@ def answer_question(query: str) -> tuple[str, list[tuple[str, int]]]:
         index.save(index_path)
 
     # Find relevant files
-    results = index.similarity_search(query, k=10)
+    results = index.similarity_search(query, k=5)
 
     # Collect context from relevant files
     context = ""
     for filepath, score in results:
+        if "#chunk" in filepath:
+            filepath = filepath.split("#chunk")[0]
         file = codebase.get_file(filepath)
         context += f"File: {file.filepath}\n```\n{file.content}\n```\n\n"
 
