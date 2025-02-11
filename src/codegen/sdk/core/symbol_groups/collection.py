@@ -12,7 +12,7 @@ from codegen.sdk.core.symbol_group import SymbolGroup
 from codegen.shared.decorators.docs import noapidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
 
 
 Child = TypeVar("Child", bound="Editable")
@@ -36,8 +36,8 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
     _container_start_byte: int
     _container_end_byte: int
 
-    def __init__(self, node: TSNode, file_node_id: NodeId, G: "CodebaseGraph", parent: Parent, delimiter: str = ",", children: list[Child] | None = None, *, bracket_size: int = 1) -> None:
-        super().__init__(file_node_id, G, parent, node)
+    def __init__(self, node: TSNode, file_node_id: NodeId, ctx: "CodebaseContext", parent: Parent, delimiter: str = ",", children: list[Child] | None = None, *, bracket_size: int = 1) -> None:
+        super().__init__(file_node_id, ctx, parent, node)
         self._delimiter = delimiter
         self._reversed = set()
         self._inserts = defaultdict(lambda: 0)
@@ -94,7 +94,7 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         return self._elements + self._inserts_till()
 
     @writer
-    def remove(self, value: Child | None, *args, **kwargs) -> None:
+    def remove(self, value: Child | None = None, *args, **kwargs) -> None:
         """Removes an element from a Collection.
 
         Deletes the specified element from the Collection by calling its remove method. If no value is specified,
@@ -112,7 +112,9 @@ class Collection(SymbolGroup[Child, Parent], MutableSequence[Child], Generic[Chi
         # For example, let's remove all occurrences of the value instead of just the first one
         if value is None:
             super().remove(*args, **kwargs)
-        value.remove(*args, **kwargs)
+            Editable.remove(self, *args, **kwargs)
+        else:
+            value.remove(*args, **kwargs)
 
     def _inserts_till(self, max_idx: int | None = None) -> int:
         """Find the number of pending inserts until max_idx."""

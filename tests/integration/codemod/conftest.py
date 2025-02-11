@@ -2,6 +2,7 @@ import logging
 import shutil
 from collections.abc import Generator
 from pathlib import Path
+from typing import TYPE_CHECKING
 from unittest.mock import MagicMock
 
 import filelock
@@ -13,11 +14,13 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codemods.codemod import Codemod
 from tests.shared.codemod.constants import DIFF_FILEPATH
 from tests.shared.codemod.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
 from tests.shared.codemod.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
 from tests.shared.utils.recursion import set_recursion_limit
+
+if TYPE_CHECKING:
+    from codemods.codemod import Codemod
 
 logger = logging.getLogger(__name__)
 
@@ -54,18 +57,6 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     size = list(map(Size, metafunc.config.getoption("--size")))
 
     match metafunc.definition.name:
-        # case "test_codemods_diffs":
-        #     cases = []
-        #     for case in find_codemod_test_cases(repos):
-        #         cases.append(case)
-
-        #     metafunc.parametrize(
-        #         "raw_codemod,repo,expected",
-        #         [pytest.param(i.codemod_metadata.codemod, i.repo, i.test_dir, marks=pytest.mark.xdist_group(i.repo.name)) for i in cases],
-        #         indirect=["repo", "expected"],
-        #         ids=[f"{i.codemod_metadata.name}-{i.repo.name}" for i in cases],
-        #         scope="session",
-        #     )
         case "test_codemods_cloned_repos":
             cases = []
             for case in find_codemod_test_cases(repos):
@@ -201,7 +192,7 @@ def codemod(raw_codemod: type["Codemod"]):
 
 
 @pytest.fixture
-def verified_codemod(codemod_metadata: CodemodMetadata, expected: Path) -> YieldFixture[Codemod]:
+def verified_codemod(codemod_metadata: CodemodMetadata, expected: Path) -> YieldFixture["Codemod"]:
     # write the diff to the file
     diff_path = expected
     diff_path.parent.mkdir(parents=True, exist_ok=True)

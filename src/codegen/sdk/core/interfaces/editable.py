@@ -22,14 +22,14 @@ from codegen.sdk.utils import descendant_for_byte_range, find_all_descendants, f
 from codegen.shared.decorators.docs import apidoc, noapidoc
 
 if TYPE_CHECKING:
-    from collections.abc import Callable, Generator, Iterable
+    from collections.abc import Callable, Generator, Iterable, Sequence
 
     import rich.repr
     from rich.console import Console, ConsoleOptions, RenderResult
     from tree_sitter import Node as TSNode
     from tree_sitter import Point, Range
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.codebase.flagging.code_flag import CodeFlag
     from codegen.sdk.codebase.flagging.enums import FlagKwargs
     from codegen.sdk.codebase.transaction_manager import TransactionManager
@@ -64,7 +64,7 @@ def _is_empty_container(text: str) -> bool:
 
 
 _EXCLUDE_FROM_REPR: list[str] = [
-    "G",
+    "ctx",
     "autocommit_cache",
     "parent",
     "file_node_id",
@@ -75,6 +75,10 @@ _EXCLUDE_FROM_REPR: list[str] = [
     "resolved_types",
     "valid_symbol_names",
     "valid_import_names",
+    "predecessor",
+    "successor",
+    "base",
+    "call_chain",
     "code_block",
     "parent_statement",
     "symbol_usages",
@@ -102,31 +106,31 @@ class Editable(JSONable, Generic[Parent]):
     Attributes:
         ts_node: The TreeSitter node associated with this Editable instance.
         file_node_id: The unique identifier for the file node.
-        G: The codebase graph that this Editable instance is part of.
+        ctx: The codebase context that this Editable instance is part of.
         parent: The parent node of this Editable instance.
         node_type: The type of node this Editable instance represents.
     """
 
     ts_node: TSNode
     file_node_id: NodeId
-    G: CodebaseGraph
+    ctx: CodebaseContext
     parent: Parent
     node_type: NodeType
     _file: File | None = None
     _hash: int | None = None
 
-    def __init__(self, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: Parent) -> None:
+    def __init__(self, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: Parent) -> None:
         self.ts_node = ts_node
         self.file_node_id = file_node_id
-        self.G = G
+        self.ctx = ctx
         self.parent = parent
-        if G.config.feature_flags.debug:
+        if ctx.config.feature_flags.debug:
             seen = set()
             while parent is not None:
                 assert (parent.ts_node, parent.__class__) not in seen
                 seen.add((parent.ts_node, parent.__class__))
                 parent = parent.parent
-        if self.file and self.G.config.feature_flags.full_range_index:
+        if self.file and self.ctx.config.feature_flags.full_range_index:
             self._add_to_index
 
     def __hash__(self):
@@ -157,7 +161,7 @@ class Editable(JSONable, Generic[Parent]):
     def __rich_repr__(self) -> rich.repr.Result:
         yield escape(self.filepath)
 
-    __rich_repr__.angular = ANGULAR_STYLE
+    __rich_repr__.angular = ANGULAR_STYLE  # type: ignore
 
     def __rich_console__(self, console: Console, options: ConsoleOptions) -> RenderResult:
         yield Pretty(self, max_string=MAX_STRING_LENGTH)
@@ -168,10 +172,10 @@ class Editable(JSONable, Generic[Parent]):
     def __eq__(self, other: object):
         if other is None:
             return False
-        if isinstance(other, str):
-            return self.source == other
         if isinstance(other, Editable):
             return self.filepath == other.filepath and self.ts_node.kind_id == other.ts_node.kind_id and self.range == other.range
+        if isinstance(other, str):
+            return self.source == other
         return False
 
     @reader
@@ -183,7 +187,7 @@ class Editable(JSONable, Generic[Parent]):
     @property
     @noapidoc
     def transaction_manager(self) -> TransactionManager:
-        return self.G.transaction_manager
+        return self.ctx.transaction_manager
 
     @cached_property
     @noapidoc
@@ -283,7 +287,7 @@ class Editable(JSONable, Generic[Parent]):
         """
         from codegen.sdk.core.symbol_group import SymbolGroup
 
-        return SymbolGroup(self.file_node_id, self.G, self.parent, children=self.extended_nodes)
+        return SymbolGroup(self.file_node_id, self.ctx, self.parent, children=self.extended_nodes)
 
     @property
     @reader
@@ -315,14 +319,14 @@ class Editable(JSONable, Generic[Parent]):
     @property
     @reader
     @noapidoc
-    def children(self) -> list[Editable]:
+    def children(self) -> list[Editable[Self]]:
         """List of Editable instances that are children of this node."""
         return [self._parse_expression(child) for child in self.ts_node.named_children]
 
     @property
     @reader
     @noapidoc
-    def _anonymous_children(self) -> list[Editable]:
+    def _anonymous_children(self) -> list[Editable[Self]]:
         """All anonymous children of an editable."""
         return [self._parse_expression(child) for child in self.ts_node.children if not child.is_named]
 
@@ -343,7 +347,7 @@ class Editable(JSONable, Generic[Parent]):
     @property
     @reader
     @noapidoc
-    def next_named_sibling(self) -> Editable | None:
+    def next_named_sibling(self) -> Editable[Parent] | None:
         if self.ts_node is None:
             return None
 
@@ -351,12 +355,12 @@ class Editable(JSONable, Generic[Parent]):
         if next_named_sibling_node is None:
             return None
 
-        return self._parse_expression(next_named_sibling_node)
+        return self.parent._parse_expression(next_named_sibling_node)
 
     @property
     @reader
     @noapidoc
-    def previous_named_sibling(self) -> Editable | None:
+    def previous_named_sibling(self) -> Editable[Parent] | None:
         if self.ts_node is None:
             return None
 
@@ -364,7 +368,7 @@ class Editable(JSONable, Generic[Parent]):
         if previous_named_sibling_node is None:
             return None
 
-        return self._parse_expression(previous_named_sibling_node)
+        return self.parent._parse_expression(previous_named_sibling_node)
 
     @property
     def file(self) -> SourceFile:
@@ -376,8 +380,8 @@ class Editable(JSONable, Generic[Parent]):
             File: The File object containing this Editable instance.
         """
         if self._file is None:
-            self._file = self.G.get_node(self.file_node_id)
-        return self._file
+            self._file = self.ctx.get_node(self.file_node_id)
+        return self._file  # type: ignore
 
     @property
     def filepath(self) -> str:
@@ -391,7 +395,7 @@ class Editable(JSONable, Generic[Parent]):
         return self.file.file_path
 
     @reader
-    def find_string_literals(self, strings_to_match: list[str], fuzzy_match: bool = False) -> list[Editable]:
+    def find_string_literals(self, strings_to_match: list[str], fuzzy_match: bool = False) -> list[Editable[Self]]:
         """Returns a list of string literals within this node's source that match any of the given
         strings.
 
@@ -400,19 +404,20 @@ class Editable(JSONable, Generic[Parent]):
             fuzzy_match (bool): If True, matches substrings within string literals. If False, only matches exact strings. Defaults to False.
 
         Returns:
-            list[Editable]: A list of Editable objects representing the matching string literals.
+            list[Editable[Self]]: A list of Editable objects representing the matching string literals.
         """
-        matches = []
+        matches: list[Editable[Self]] = []
         for node in self.extended_nodes:
             matches.extend(node._find_string_literals(strings_to_match, fuzzy_match))
         return matches
 
     @noapidoc
     @reader
-    def _find_string_literals(self, strings_to_match: list[str], fuzzy_match: bool = False) -> list[Editable]:
+    def _find_string_literals(self, strings_to_match: list[str], fuzzy_match: bool = False) -> Sequence[Editable[Self]]:
         all_string_nodes = find_all_descendants(self.ts_node, type_names={"string"})
         editables = []
         for string_node in all_string_nodes:
+            assert string_node.text is not None
             full_string = string_node.text.strip(b'"').strip(b"'")
             if fuzzy_match:
                 if not any([str_to_match.encode("utf-8") in full_string for str_to_match in strings_to_match]):
@@ -461,7 +466,7 @@ class Editable(JSONable, Generic[Parent]):
         if not is_regex:
             old = re.escape(old)
 
-        for match in re.finditer(old.encode("utf-8"), self.ts_node.text):
+        for match in re.finditer(old.encode("utf-8"), self.ts_node.text):  # type: ignore
             start_byte = self.ts_node.start_byte + match.start()
             end_byte = self.ts_node.start_byte + match.end()
             t = EditTransaction(
@@ -538,7 +543,7 @@ class Editable(JSONable, Generic[Parent]):
 
         pattern = re.compile(regex_pattern.encode("utf-8"))
         start_byte_offset = self.ts_node.byte_range[0]
-        for match in pattern.finditer(string):
+        for match in pattern.finditer(string):  # type: ignore
             matching_byte_ranges.append((match.start() + start_byte_offset, match.end() + start_byte_offset))
 
         matches: list[Editable] = []
@@ -673,7 +678,7 @@ class Editable(JSONable, Generic[Parent]):
     @remover
     @noapidoc
     def remove_byte_range(self, start_byte: int, end_byte: int) -> None:
-        if self.G.config.feature_flags.debug:
+        if self.ctx.config.feature_flags.debug:
             assert start_byte < end_byte
         t = RemoveTransaction(start_byte, end_byte, self.file)
         self.transaction_manager.add_transaction(t)
@@ -738,7 +743,7 @@ class Editable(JSONable, Generic[Parent]):
         # Delete the node
         t = RemoveTransaction(removed_start_byte, removed_end_byte, self.file, priority=priority, exec_func=exec_func)
         if self.transaction_manager.add_transaction(t, dedupe=dedupe):
-            if exec_func:
+            if exec_func is not None:
                 self.parent._removed_child()
 
         # If there are sibling nodes, delete the surrounding whitespace & formatting (commas)
@@ -844,7 +849,7 @@ class Editable(JSONable, Generic[Parent]):
         Returns:
             None
         """
-        self.G.commit_transactions(files={self.file.path})
+        self.ctx.commit_transactions(files={self.file.path})
 
     @noapidoc
     def _removed_child(self) -> None:
@@ -873,11 +878,13 @@ class Editable(JSONable, Generic[Parent]):
                 Editable corresponds to a TreeSitter node instance where the variable
                 is referenced.
         """
-        usages = []
+        usages: Sequence[Editable[Self]] = []
         identifiers = get_all_identifiers(self.ts_node)
         for identifier in identifiers:
             # Excludes function names
             parent = identifier.parent
+            if parent is None:
+                continue
             if parent.type in ["call", "call_expression"]:
                 continue
             # Excludes local import statements
@@ -899,7 +906,7 @@ class Editable(JSONable, Generic[Parent]):
         return usages
 
     @reader
-    def get_variable_usages(self, var_name: str, fuzzy_match: bool = False) -> list[Editable]:
+    def get_variable_usages(self, var_name: str, fuzzy_match: bool = False) -> Sequence[Editable[Self]]:
         """Returns Editables for all TreeSitter nodes corresponding to instances of variable usage
         that matches the given variable name.
 
@@ -917,11 +924,17 @@ class Editable(JSONable, Generic[Parent]):
         else:
             return [usage for usage in self.variable_usages if var_name == usage.source]
 
+    @overload
+    def _parse_expression(self, node: TSNode, **kwargs) -> Expression[Self]: ...
+
+    @overload
+    def _parse_expression(self, node: TSNode | None, **kwargs) -> Expression[Self] | None: ...
+
     def _parse_expression(self, node: TSNode | None, **kwargs) -> Expression[Self] | None:
-        return self.G.parser.parse_expression(node, self.file_node_id, self.G, self, **kwargs)
+        return self.ctx.parser.parse_expression(node, self.file_node_id, self.ctx, self, **kwargs)
 
     def _parse_type(self, node: TSNode) -> Type[Self] | None:
-        return self.G.parser.parse_type(node, self.file_node_id, self.G, self)
+        return self.ctx.parser.parse_type(node, self.file_node_id, self.ctx, self)
 
     def flag(self, **kwargs: Unpack[FlagKwargs]) -> CodeFlag[Self]:
         """Adds a visual flag comment to the end of this Editable's source text.
@@ -934,7 +947,7 @@ class Editable(JSONable, Generic[Parent]):
             None
         """
         # TODO: remove this once the frontend can process code flags
-        return self.G.flags.flag_instance(self, **kwargs)
+        return self.ctx.flags.flag_instance(self, **kwargs)
 
     @noapidoc
     @abstractmethod
@@ -959,7 +972,7 @@ class Editable(JSONable, Generic[Parent]):
     @commiter
     @noapidoc
     def _add_all_identifier_usages(self, usage_type: UsageKind, dest: HasName | None = None) -> None:
-        id_types = self.G.node_classes.resolvables
+        id_types = self.ctx.node_classes.resolvables
         # Skip identifiers that are part of a property
         identifiers = find_all_descendants(self.ts_node, id_types, nested=False)
         return self._add_symbol_usages(identifiers, usage_type, dest)
@@ -968,14 +981,14 @@ class Editable(JSONable, Generic[Parent]):
     @noapidoc
     def add_all_identifier_usages_for_child_node(self, usage_type: UsageKind, child: TSNode, dest=None) -> None:
         # Interim hack. Don't use
-        id_types = self.G.node_classes.resolvables
+        id_types = self.ctx.node_classes.resolvables
         # Skip identifiers that are part of a property
         identifiers = find_all_descendants(child, id_types, nested=False)
         return self._add_symbol_usages(identifiers, usage_type, dest)
 
     @noapidoc
     def _log_parse(self, msg: str, *args, **kwargs):
-        self.G.parser.log(msg, *args, **kwargs)
+        self.ctx.parser.log(msg, *args, **kwargs)
 
     @property
     @noapidoc
@@ -1030,7 +1043,7 @@ class Editable(JSONable, Generic[Parent]):
     def reduce_condition(self, bool_condition: bool, node: Editable | None = None) -> None:
         """Reduces an editable to the following condition"""
         if node is not None:
-            node.edit(self.G.node_classes.bool_conversion[bool_condition])
+            node.edit(self.ctx.node_classes.bool_conversion[bool_condition])
         else:
             self.parent.reduce_condition(bool_condition, self)
 
@@ -1132,7 +1145,7 @@ class Editable(JSONable, Generic[Parent]):
             if isinstance(val, Editable):
                 names[val] = name
         for child in self.file._range_index.get_children(self):
-            if self.G.config.feature_flags.debug:
+            if self.ctx.config.feature_flags.debug:
                 assert child != self, child
             elif child == self:
                 continue

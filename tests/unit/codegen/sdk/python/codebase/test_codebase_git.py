@@ -17,7 +17,7 @@ def test_codebase_git(tmpdir, commit: bool, sync: bool) -> None:
         sync_graph=sync,
     ) as codebase:
         default_branch = codebase.default_branch
-        c1 = codebase.G.synced_commit
+        c1 = codebase.ctx.synced_commit
         codebase.checkout(branch=other, create_if_missing=True)
         codebase.get_file("dir/file0.py").insert_after("a = 1")
     c2 = codebase.git_commit("boop")

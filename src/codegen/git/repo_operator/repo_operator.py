@@ -28,9 +28,9 @@ class RepoOperator(ABC):
 
     repo_config: BaseRepoConfig
     base_dir: str
+    bot_commit: bool = True
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
-    bot_commit: bool = True
 
     def __init__(
         self,
@@ -54,6 +54,10 @@ class RepoOperator(ABC):
     @property
     def repo_path(self) -> str:
         return os.path.join(self.base_dir, self.repo_name)
+
+    @property
+    def clone_url(self) -> str:
+        return f"https://github.com/{self.repo_config.full_name}.git"
 
     @property
     def viz_path(self) -> str:
@@ -155,15 +159,11 @@ class RepoOperator(ABC):
     def clean_repo(self) -> None:
         """Cleans the repo by:
         1. Discards any changes (tracked/untracked)
-        2. Checks out the default branch (+ makes sure it's up to date with the remote)
-        3. Deletes all branches except the default branch
-        4. Deletes all remotes except origin
-
-        Used in SetupOption.PULL_OR_CLONE to allow people to re-use existing repos and start from a clean state.
+        2. Deletes all branches except the checked out branch
+        3. Deletes all remotes except origin
         """
         logger.info(f"Cleaning repo at {self.repo_path} ...")
         self.discard_changes()
-        self.checkout_branch(self.default_branch)  # TODO(CG-9440): add back remote=True
         self.clean_branches()
         self.clean_remotes()
 
@@ -273,20 +273,6 @@ class RepoOperator(ABC):
             return False
         return self.git_cli.active_branch.name == branch_name
 
-    def delete_local_branch(self, branch_name: str) -> None:
-        if branch_name not in self.git_cli.branches:
-            logger.info(f"Branch {branch_name} does not exist locally. Skipping delete_local_branch.")
-            return
-        if branch_name is self.default_branch:
-            msg = "Deleting the default branch is not implemented yet."
-            raise NotImplementedError(msg)
-
-        if self.is_branch_checked_out(branch_name):
-            self.checkout_branch(self.default_branch)
-
-        logger.info(f"Deleting local branch: {branch_name} ...")
-        self.git_cli.delete_head(branch_name, force=True)  # force deletes even if the branch has unmerged changes
-
     def checkout_branch(self, branch_name: str | None, *, remote: bool = False, remote_name: str = "origin", create_if_missing: bool = True) -> CheckoutResult:
         """Attempts to check out the branch in the following order:
         - Check out the local branch by name
@@ -360,10 +346,6 @@ class RepoOperator(ABC):
                 logger.exception(f"Error with Git operations: {e}")
                 raise
 
-    def get_diff_files_from_ref(self, ref: str):
-        diff_from_ref_files = self.git_cli.git.diff(ref, name_only=True).split("\n")
-        return diff_from_ref_files
-
     def get_diffs(self, ref: str | GitCommit, reverse: bool = True) -> list[Diff]:
         """Gets all staged diffs"""
         self.git_cli.git.add(A=True)
@@ -390,12 +372,6 @@ class RepoOperator(ABC):
         else:
             logger.info("No changes to commit. Do nothing.")
             return False
-
-    def stage_and_commit_file(self, message: str, filepath: str) -> None:
-        """Stage all changes and commit them with the given message."""
-        logger.info(f"Staging and committing changes to {filepath}...")
-        self.git_cli.git.add(filepath)
-        self.git_cli.git.commit("-m", message)
 
     @abstractmethod
     def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:

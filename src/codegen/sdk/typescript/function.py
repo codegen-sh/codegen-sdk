@@ -21,7 +21,7 @@ from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.import_resolution import Import, WildcardImport
     from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
@@ -39,12 +39,12 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @noapidoc
     @commiter
-    def parse(self, G: CodebaseGraph) -> None:
-        super().parse(G)
+    def parse(self, ctx: CodebaseContext) -> None:
+        super().parse(ctx)
 
         self.return_type = self.child_by_field_name("return_type", placeholder=TSReturnTypePlaceholder)
         if parameters_node := self.ts_node.child_by_field_name("parameters"):
-            self._parameters = Collection(parameters_node, self.file_node_id, self.G, self)
+            self._parameters = Collection(parameters_node, self.file_node_id, self.ctx, self)
             params = [x for x in parameters_node.children if x.type in ("required_parameter", "optional_parameter")]
             symbols = None
             # Deconstructed object parameters
@@ -61,7 +61,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
                 symbols = [TSParameter(x, i, self._parameters) for (i, x) in enumerate(params)]
             self._parameters._init_children(symbols)
         elif parameters_node := self.ts_node.child_by_field_name("parameter"):
-            self._parameters = Collection(parameters_node, self.file_node_id, self.G, self)
+            self._parameters = Collection(parameters_node, self.file_node_id, self.ctx, self)
             self._parameters._init_children([TSParameter(parameters_node, 0, self._parameters)])
         else:
             logger.warning(f"Couldn't find parameters for {self!r}")
@@ -110,15 +110,15 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
 
     @classmethod
     @noapidoc
-    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, G: CodebaseGraph, parent: SymbolStatement | ExportStatement) -> TSFunction:
+    def from_function_type(cls, ts_node: TSNode, file_node_id: NodeId, ctx: CodebaseContext, parent: SymbolStatement | ExportStatement) -> TSFunction:
         """Creates a TSFunction object from a function declaration."""
         if ts_node.type not in [function_type.value for function_type in TSFunctionTypeNames]:
             msg = f"Node type={ts_node.type} is not a function declaration"
             raise ValueError(msg)
-        file = G.get_node(file_node_id)
+        file = ctx.get_node(file_node_id)
         if canonical := file._range_index.get_canonical_for_range(ts_node.range, ts_node.kind_id):
             return canonical
-        return cls(ts_node, file_node_id, G, parent=parent)
+        return cls(ts_node, file_node_id, ctx, parent=parent)
 
     @staticmethod
     @noapidoc
@@ -297,7 +297,7 @@ class TSFunction(Function["TSFunction", TSDecorator, "TSCodeBlock", TSParameter,
         if self.is_async:
             return
         self.add_keyword("async")
-        if self.return_type:
+        if self.return_type and self.return_type.name != "Promise":
             self.return_type.insert_before("Promise<", newline=False)
             self.return_type.insert_after(">", newline=False)
 
