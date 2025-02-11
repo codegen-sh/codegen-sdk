@@ -41,7 +41,8 @@ class FileIO(IO):
 
     def delete_file(self, path: Path) -> None:
         self.untrack_file(path)
-        path.unlink()
+        if path.exists():
+            path.unlink()
 
     def untrack_file(self, path: Path) -> None:
         self.files.pop(path, None)

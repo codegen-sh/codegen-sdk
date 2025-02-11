@@ -261,9 +261,11 @@ class CodebaseGraph:
         logger.info(f"Writing {len(files_to_write)} files to disk and removing {len(files_to_remove)} files")
         for file in files_to_remove:
             self.io.delete_file(file)
+        to_save = set()
         for file, content in files_to_write:
             self.io.write_file(file, content)
-        self.io.save_files(set(files_to_write))
+            to_save.add(file)
+        self.io.save_files(to_save)
 
     @stopwatch
     def reset_codebase(self) -> None:
