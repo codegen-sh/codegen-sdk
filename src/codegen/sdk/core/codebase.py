@@ -481,7 +481,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         def get_file_from_path(path: Path) -> File | None:
             try:
-                return File.from_content(path, self.G.io.read_bytes(path), self.G, sync=False)
+                return File.from_content(path, self.G.io.read_text(path), self.G, sync=False)
             except UnicodeDecodeError:
                 # Handle when file is a binary file
                 return File.from_content(path, self.G.io.read_bytes(path), self.G, sync=False, binary=True)

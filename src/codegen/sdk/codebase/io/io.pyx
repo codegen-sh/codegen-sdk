@@ -9,7 +9,7 @@ class BadWriteError(Exception):
 class IO(ABC):
     def write_file(self, path: Path, content: str | bytes | None) -> None:
         if content is None:
-            self.delete_file(path)
+            self.untrack_file(path)
         elif isinstance(content, str):
             self.write_text(path, content)
         else:
