@@ -1,6 +1,9 @@
 name: "Release Slack Bot"
 description: "Release Slack Bot"
 inputs:
+  release-tag:
+    required: true
+    description: "Release tag"
   slack-token:
     required: true
     description: "Slack token"
@@ -13,7 +16,7 @@ runs:
         method: chat.postMessage
         token: ${{ inputs.slack-token }}
         payload: |
-          username: ${{ job.status == 'success' && format('Released codegen@{0}', github.ref_name) || format('Failed to release codegen@{0}', github.ref_name) }}
+          username: ${{ job.status == 'success' && format('Released codegen@{0}', inputs.release-tag) || format('Failed to release codegen@{0}', inputs.release-tag) }}
           channel: "#release"
           icon_emoji: "${{ job.status == 'success' && ':white_check_mark:' || ':x:' }}"
           text: |

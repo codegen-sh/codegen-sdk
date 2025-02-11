@@ -345,10 +345,6 @@ class RepoOperator(ABC):
                 logger.exception(f"Error with Git operations: {e}")
                 raise
 
-    def get_diff_files_from_ref(self, ref: str):
-        diff_from_ref_files = self.git_cli.git.diff(ref, name_only=True).split("\n")
-        return diff_from_ref_files
-
     def get_diffs(self, ref: str | GitCommit, reverse: bool = True) -> list[Diff]:
         """Gets all staged diffs"""
         self.git_cli.git.add(A=True)
@@ -375,12 +371,6 @@ class RepoOperator(ABC):
         else:
             logger.info("No changes to commit. Do nothing.")
             return False
-
-    def stage_and_commit_file(self, message: str, filepath: str) -> None:
-        """Stage all changes and commit them with the given message."""
-        logger.info(f"Staging and committing changes to {filepath}...")
-        self.git_cli.git.add(filepath)
-        self.git_cli.git.commit("-m", message)
 
     @abstractmethod
     def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:

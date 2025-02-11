@@ -481,17 +481,17 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         def get_file_from_path(path: Path) -> File | None:
             try:
-                return File.from_content(path, path.read_text(), self.ctx, sync=False)
+                return File.from_content(path, self.ctx.io.read_text(path), self.ctx, sync=False)
             except UnicodeDecodeError:
                 # Handle when file is a binary file
-                return File.from_content(path, path.read_bytes(), self.ctx, sync=False, binary=True)
+                return File.from_content(path, self.ctx.io.read_bytes(path), self.ctx, sync=False, binary=True)
 
         # Try to get the file from the graph first
         file = self.ctx.get_file(filepath, ignore_case=ignore_case)
         if file is not None:
             return file
         absolute_path = self.ctx.to_absolute(filepath)
-        if absolute_path.exists():
+        if self.ctx.io.file_exists(absolute_path):
             return get_file_from_path(absolute_path)
         elif ignore_case:
             parent = absolute_path.parent

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import Counter, defaultdict
-from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from enum import IntEnum, auto, unique
 from functools import lru_cache
@@ -16,6 +15,7 @@ from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectCo
 from codegen.sdk.codebase.config_parser import ConfigParser, get_config_parser_for_language
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
 from codegen.sdk.codebase.flagging.flags import Flags
+from codegen.sdk.codebase.io.file_io import FileIO
 from codegen.sdk.codebase.transaction_manager import TransactionManager
 from codegen.sdk.codebase.validation import get_edges, post_reset_validation
 from codegen.sdk.core.autocommit import AutoCommit, commiter
@@ -23,7 +23,6 @@ from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
 from codegen.sdk.core.external.language_engine import LanguageEngine, get_language_engine
 from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
-from codegen.sdk.extensions.io import write_changes
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
@@ -37,6 +36,7 @@ if TYPE_CHECKING:
     from git import Commit as GitCommit
 
     from codegen.git.repo_operator.repo_operator import RepoOperator
+    from codegen.sdk.codebase.io.io import IO
     from codegen.sdk.codebase.node_classes.node_classes import NodeClasses
     from codegen.sdk.core.dataclasses.usage import Usage
     from codegen.sdk.core.expressions import Expression
@@ -92,7 +92,6 @@ class CodebaseContext:
     pending_syncs: list[DiffLite]  # Diffs that have been applied to disk, but not the graph (to be used for sync graph)
     all_syncs: list[DiffLite]  # All diffs that have been applied to the graph (to be used for graph reset)
     _autocommit: AutoCommit
-    pending_files: set[SourceFile]
     generation: int
     parser: Parser[Expression]
     synced_commit: GitCommit | None
@@ -110,6 +109,7 @@ class CodebaseContext:
     session_options: SessionOptions = SessionOptions()
     projects: list[ProjectConfig]
     unapplied_diffs: list[DiffLite]
+    io: IO
 
     def __init__(
         self,
@@ -134,6 +134,7 @@ class CodebaseContext:
 
         # =====[ __init__ attributes ]=====
         self.projects = projects
+        self.io = FileIO()
         context = projects[0]
         self.node_classes = get_node_classes(context.programming_language)
         self.config = config
@@ -165,7 +166,6 @@ class CodebaseContext:
         self.pending_syncs = []
         self.all_syncs = []
         self.unapplied_diffs = []
-        self.pending_files = set()
         self.flags = Flags()
 
     def __repr__(self):
@@ -259,7 +259,13 @@ class CodebaseContext:
                 files_to_remove.append(sync.path)
                 modified_files.add(sync.path)
         logger.info(f"Writing {len(files_to_write)} files to disk and removing {len(files_to_remove)} files")
-        write_changes(files_to_remove, files_to_write)
+        for file in files_to_remove:
+            self.io.delete_file(file)
+        to_save = set()
+        for file, content in files_to_write:
+            self.io.write_file(file, content)
+            to_save.add(file)
+        self.io.save_files(to_save)
 
     @stopwatch
     def reset_codebase(self) -> None:
@@ -270,7 +276,7 @@ class CodebaseContext:
     def undo_applied_diffs(self) -> None:
         self.transaction_manager.clear_transactions()
         self.reset_codebase()
-        self.check_changes()
+        self.io.check_changes()
         self.pending_syncs.clear()  # Discard pending changes
         if len(self.all_syncs) > 0:
             logger.info(f"Unapplying {len(self.all_syncs)} diffs to graph. Current graph commit: {self.synced_commit}")
@@ -432,7 +438,7 @@ class CodebaseContext:
 
         # Step 5: Add new files as nodes to graph (does not yet add edges)
         for filepath in files_to_sync[SyncType.ADD]:
-            content = filepath.read_text(errors="ignore")
+            content = self.io.read_text(filepath)
             # TODO: this is wrong with context changes
             if filepath.suffix in self.extensions:
                 file_cls = self.node_classes.file_cls
@@ -634,17 +640,6 @@ class CodebaseContext:
                     continue
             self._graph.remove_edge_from_index(edge)
 
-    def check_changes(self) -> None:
-        for file in self.pending_files:
-            file.check_changes()
-        self.pending_files.clear()
-
-    def write_files(self, files: set[Path] | None = None) -> None:
-        to_write = set(filter(lambda f: f.filepath in files, self.pending_files)) if files is not None else self.pending_files
-        with ThreadPoolExecutor() as exec:
-            exec.map(lambda f: f.write_pending_content(), to_write)
-        self.pending_files.difference_update(to_write)
-
     @lru_cache(maxsize=10000)
     def to_absolute(self, filepath: PathLike | str) -> Path:
         path = Path(filepath)
@@ -684,7 +679,7 @@ class CodebaseContext:
 
         # Write files if requested
         if sync_file:
-            self.write_files(files)
+            self.io.save_files(files)
 
         # Sync the graph if requested
         if sync_graph and len(self.pending_syncs) > 0:
