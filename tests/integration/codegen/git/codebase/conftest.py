@@ -11,7 +11,7 @@ from codegen.sdk.core.codebase import Codebase
 from codegen.shared.configs.config import config
 
 
-@pytest.fixture()
+@pytest.fixture
 def repo_config(tmpdir):
     repo_config = RepoConfig(
         name="Kevin-s-Adventure-Game",
@@ -24,6 +24,7 @@ def repo_config(tmpdir):
 
 @pytest.fixture
 def op(repo_config):
+    os.chdir(repo_config.base_dir)
     GitRepo.clone_from(url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token), to_path=os.path.join(repo_config.base_dir, repo_config.name), depth=1)
     op = LocalRepoOperator(repo_config=repo_config, github_api_key=config.secrets.github_token)
     yield op
