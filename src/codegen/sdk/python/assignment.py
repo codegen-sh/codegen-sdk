@@ -108,7 +108,7 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         if len(self.parent.assignments) >= 2:
             for assigment_sibling in self.parent.assignments:
                 if assigment_sibling.name != self.name:
-                    self.G.add_edge(
+                    self.ctx.add_edge(
                         self.node_id,
                         assigment_sibling.node_id,
                         EdgeType.SYMBOL_USAGE,
@@ -140,17 +140,17 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
 
         assert self.node_id is not None
         usages_to_return = []
-        in_edges = self.G.in_edges(self.node_id)
+        in_edges = self.ctx.in_edges(self.node_id)
         for edge in in_edges:
             meta_data = edge[2]
             if meta_data.type == EdgeType.SYMBOL_USAGE:
-                usage = meta_data.usage
-                if usage.kind == UsageKind.ASSIGNMENT_SIBLING:
-                    sibling = self.G.get_node(edge[0])
-                    for s_edge in self.G.in_edges(sibling.node_id):
-                        if s_edge[2].usage.kind != UsageKind.ASSIGNMENT_SIBLING:
-                            usages_to_return.append(usage)
-                            break
-                elif usage_types is None or usage.usage_type in usage_types:
-                    usages_to_return.append(usage)
+                if usage := meta_data.usage:
+                    if usage.kind == UsageKind.ASSIGNMENT_SIBLING:
+                        sibling = self.ctx.get_node(edge[0])
+                        for s_edge in self.ctx.in_edges(sibling.node_id):
+                            if s_edge[2].usage.kind != UsageKind.ASSIGNMENT_SIBLING:
+                                usages_to_return.append(usage)
+                                break
+                    elif usage_types is None or usage.usage_type in usage_types:
+                        usages_to_return.append(usage)
         return sorted(dict.fromkeys(usages_to_return), key=lambda x: x.match.ts_node.start_byte if x.match else x.usage_symbol.ts_node.start_byte, reverse=True)
