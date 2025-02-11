@@ -6,7 +6,6 @@ on:
 
 jobs:
   semantic-version:
-    if: false # TODO(CG-10755): merge this with release.yml
     name: Semantic version
     runs-on: ubuntu-latest
     outputs:
