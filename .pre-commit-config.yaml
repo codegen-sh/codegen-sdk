@@ -79,7 +79,7 @@ repos:
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: "0.5.29"
+    rev: "0.5.30"
     hooks:
       - id: uv-sync
         args: ["--frozen", "--all-packages", "--all-extras"]
