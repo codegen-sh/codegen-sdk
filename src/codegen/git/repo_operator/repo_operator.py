@@ -16,7 +16,8 @@ from git.remote import PushInfoList
 
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
-from codegen.git.schemas.repo_config import BaseRepoConfig
+from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.remote_progress import CustomRemoteProgress
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.shared.performance.time_utils import humanize_duration
 
@@ -26,7 +27,7 @@ logger = logging.getLogger(__name__)
 class RepoOperator(ABC):
     """A wrapper around GitPython to make it easier to interact with a repo."""
 
-    repo_config: BaseRepoConfig
+    repo_config: RepoConfig
     base_dir: str
     bot_commit: bool = True
     _codeowners_parser: CodeOwnersParser | None = None
@@ -34,13 +35,12 @@ class RepoOperator(ABC):
 
     def __init__(
         self,
-        repo_config: BaseRepoConfig,
-        base_dir: str = "/tmp",
+        repo_config: RepoConfig,
         bot_commit: bool = True,
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
-        self.base_dir = base_dir
+        self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
 
     ####################################################################################################################
@@ -138,7 +138,17 @@ class RepoOperator(ABC):
 
     @property
     def default_branch(self) -> str:
-        return self._default_branch or self.git_cli.active_branch.name
+        # Priority 1: If default branch has been set
+        if self._default_branch:
+            return self._default_branch
+
+        # Priority 2: If origin/HEAD ref exists
+        origin_prefix = "origin"
+        if f"{origin_prefix}/HEAD" in self.git_cli.refs:
+            return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
+
+        # Priority 3: Fallback to the active branch
+        return self.git_cli.active_branch.name
 
     @abstractmethod
     def codeowners_parser(self) -> CodeOwnersParser | None: ...
@@ -373,14 +383,42 @@ class RepoOperator(ABC):
             logger.info("No changes to commit. Do nothing.")
             return False
 
-    @abstractmethod
+    @stopwatch
     def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:
-        """Push the changes to the given refspec of the remote repository.
+        """Push the changes to the given refspec of the remote.
 
         Args:
             refspec (str | None): refspec to push. If None, the current active branch is used.
             remote (Remote | None): Remote to push too. Defaults to 'origin'.
+            force (bool): If True, force push the changes. Defaults to False.
         """
+        # Use default remote if not provided
+        if not remote:
+            remote = self.git_cli.remote(name="origin")
+
+        # Use the current active branch if no branch is specified
+        if not refspec:
+            # TODO: doesn't work with detached HEAD state
+            refspec = self.git_cli.active_branch.name
+
+        res = remote.push(refspec=refspec, force=force, progress=CustomRemoteProgress())
+        for push_info in res:
+            if push_info.flags & push_info.ERROR:
+                # Handle the error case
+                logger.warning(f"Error pushing {refspec}: {push_info.summary}")
+            elif push_info.flags & push_info.FAST_FORWARD:
+                # Successful fast-forward push
+                logger.info(f"{refspec} pushed successfully (fast-forward).")
+            elif push_info.flags & push_info.NEW_HEAD:
+                # Successful push of a new branch
+                logger.info(f"{refspec} pushed successfully as a new branch.")
+            elif push_info.flags & push_info.NEW_TAG:
+                # Successful push of a new tag (if relevant)
+                logger.info("New tag pushed successfully.")
+            else:
+                # Successful push, general case
+                logger.info(f"{refspec} pushed successfully.")
+        return res
 
     def relpath(self, abspath) -> str:
         # TODO: check if the path is an abspath (i.e. contains self.repo_path)
