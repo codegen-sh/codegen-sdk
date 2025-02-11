@@ -64,7 +64,7 @@ def _is_empty_container(text: str) -> bool:
 
 
 _EXCLUDE_FROM_REPR: list[str] = [
-    "G",
+    "ctx",
     "autocommit_cache",
     "parent",
     "file_node_id",
