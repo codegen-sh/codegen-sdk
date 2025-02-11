@@ -8,7 +8,9 @@ from codegen.extensions.lsp.document_symbol import get_document_symbol
 from codegen.extensions.lsp.protocol import CodegenLanguageServerProtocol
 from codegen.extensions.lsp.range import get_range
 from codegen.extensions.lsp.server import CodegenLanguageServer
+from codegen.extensions.lsp.utils import get_path
 from codegen.sdk.codebase.diff_lite import ChangeType, DiffLite
+from codegen.sdk.core.file import SourceFile
 
 version = getattr(codegen, "__version__", "v0.1")
 server = CodegenLanguageServer("codegen", version, protocol_cls=CodegenLanguageServerProtocol)
@@ -21,6 +23,11 @@ def did_open(server: CodegenLanguageServer, params: types.DidOpenTextDocumentPar
     logger.info(f"Document opened: {params.text_document.uri}")
     # The document is automatically added to the workspace by pygls
     # We can perform any additional processing here if needed
+    path = get_path(params.text_document.uri)
+    file = server.codebase.get_file(str(path), optional=True)
+    if not isinstance(file, SourceFile) and path.suffix in server.codebase.ctx.extensions:
+        sync = DiffLite(change_type=ChangeType.Added, path=path)
+        server.codebase.ctx.apply_diffs([sync])
 
 
 @server.feature(types.TEXT_DOCUMENT_DID_CHANGE)
@@ -29,7 +36,7 @@ def did_change(server: CodegenLanguageServer, params: types.DidChangeTextDocumen
     logger.info(f"Document changed: {params.text_document.uri}")
     # The document is automatically updated in the workspace by pygls
     # We can perform any additional processing here if needed
-    path = server.get_path(params.text_document.uri)
+    path = get_path(params.text_document.uri)
     sync = DiffLite(change_type=ChangeType.Modified, path=path)
     server.codebase.ctx.apply_diffs([sync])
 
@@ -37,8 +44,8 @@ def did_change(server: CodegenLanguageServer, params: types.DidChangeTextDocumen
 @server.feature(types.WORKSPACE_TEXT_DOCUMENT_CONTENT)
 def workspace_text_document_content(server: CodegenLanguageServer, params: types.TextDocumentContentParams) -> types.TextDocumentContentResult:
     """Handle workspace text document content notification."""
-    logger.info(f"Workspace text document content: {params.uri}")
-    path = server.get_path(params.uri)
+    logger.debug(f"Workspace text document content: {params.uri}")
+    path = get_path(params.uri)
     if not server.io.file_exists(path):
         logger.warning(f"File does not exist: {path}")
         return types.TextDocumentContentResult(
@@ -61,7 +68,7 @@ def did_close(server: CodegenLanguageServer, params: types.DidCloseTextDocumentP
 @server.feature(
     types.TEXT_DOCUMENT_RENAME,
 )
-def rename(server: CodegenLanguageServer, params: types.RenameParams):
+def rename(server: CodegenLanguageServer, params: types.RenameParams) -> types.RenameResult:
     symbol = server.get_symbol(params.text_document.uri, params.position)
     if symbol is None:
         logger.warning(f"No symbol found at {params.text_document.uri}:{params.position}")
@@ -69,6 +76,9 @@ def rename(server: CodegenLanguageServer, params: types.RenameParams):
     logger.info(f"Renaming symbol {symbol.name} to {params.new_name}")
     symbol.rename(params.new_name)
     server.codebase.commit()
+    return types.WorkspaceEdit(
+        document_changes=server.io.get_document_changes(),
+    )
 
 
 @server.feature(

@@ -6,6 +6,7 @@ from codegen.sdk.core.file import File
 from codegen.sdk.core.function import Function
 from codegen.sdk.core.interface import Interface
 from codegen.sdk.core.interfaces.editable import Editable
+from codegen.sdk.core.statements.attribute import Attribute
 from codegen.sdk.typescript.namespace import TSNamespace
 
 kinds = {
@@ -15,6 +16,7 @@ kinds = {
     Assignment: SymbolKind.Variable,
     Interface: SymbolKind.Interface,
     TSNamespace: SymbolKind.Namespace,
+    Attribute: SymbolKind.Variable,
 }
 
 
@@ -25,5 +27,5 @@ def get_kind(node: Editable) -> SymbolKind:
     for kind in kinds:
         if isinstance(node, kind):
             return kinds[kind]
-    msg = f"No kind found for {node}"
+    msg = f"No kind found for {node}, {type(node)}"
     raise ValueError(msg)

@@ -1,12 +1,12 @@
 import logging
-from pathlib import Path
 from typing import Any, Optional
 
 from lsprotocol.types import Position, Range
 from pygls.lsp.server import LanguageServer
-from pygls.uris import to_fs_path
 
+from codegen.extensions.lsp.io import LSPIO
 from codegen.extensions.lsp.range import get_tree_sitter_range
+from codegen.extensions.lsp.utils import get_path
 from codegen.sdk.codebase.flagging.code_flag import Symbol
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.file import File, SourceFile
@@ -17,25 +17,20 @@ logger = logging.getLogger(__name__)
 
 class CodegenLanguageServer(LanguageServer):
     codebase: Optional[Codebase]
+    io: Optional[LSPIO]
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    def get_path(self, uri: str) -> Path:
-        return Path(to_fs_path(uri)).absolute()
-
     def get_file(self, uri: str) -> SourceFile | File:
-        path = self.get_path(uri)
-        return self.codebase.get_file(path.name)
+        path = get_path(uri)
+        return self.codebase.get_file(str(path))
 
     def get_symbol(self, uri: str, position: Position) -> Symbol | None:
-        file = self.get_file(uri)
-        line = position.line
-        char = position.character
-        for symbol in file.symbols:
-            if symbol.start_point.row >= line and symbol.start_point.column >= char:
-                return symbol
-        return None
+        node = self.get_node_under_cursor(uri, position)
+        if node is None:
+            return None
+        return node.parent_symbol
 
     def get_node_under_cursor(self, uri: str, position: Position) -> Editable | None:
         file = self.get_file(uri)

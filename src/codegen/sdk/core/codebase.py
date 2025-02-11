@@ -495,6 +495,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if file is not None:
             return file
         absolute_path = self.ctx.to_absolute(filepath)
+        if absolute_path.suffix in self.ctx.extensions:
+            return None
         if self.ctx.io.file_exists(absolute_path):
             return get_file_from_path(absolute_path)
         elif ignore_case:
