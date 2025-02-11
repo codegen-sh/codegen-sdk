@@ -176,6 +176,8 @@ class LocalRepoOperator(RepoOperator):
     @property
     def default_branch(self) -> str:
         origin_prefix = "origin"  # TODO: convert to property?
+        if f"{origin_prefix}/HEAD" not in self.git_cli.refs:
+            return self.git_cli.active_branch.name
         return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
 
     @override

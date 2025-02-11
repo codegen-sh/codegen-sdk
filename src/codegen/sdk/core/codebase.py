@@ -878,6 +878,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     ####################################################################################################################
 
     def create_pr(self, title: str, body: str) -> PullRequest:
+        """Creates a PR from the current branch."""
         if self._op.git_cli.head.is_detached:
             msg = "Cannot make a PR from a detached HEAD"
             raise ValueError(msg)
