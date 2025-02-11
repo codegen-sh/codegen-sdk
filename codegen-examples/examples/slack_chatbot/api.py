@@ -26,7 +26,7 @@ def format_response(answer: str, context: list[tuple[str, int]]) -> str:
     return response
 
 
-def answer_question(query: str) -> tuple[str, list[dict[str, str]]]:
+def answer_question(query: str) -> tuple[str, list[tuple[str, int]]]:
     """Use RAG to answer a question about FastAPI."""
     # Initialize codebase. Smart about caching.
     codebase = Codebase.from_repo("codegen-sh/codegen-sdk", programming_language=ProgrammingLanguage.PYTHON, tmp_dir="/root")

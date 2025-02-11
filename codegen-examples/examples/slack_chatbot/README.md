@@ -1,4 +1,4 @@
-# FastAPI Slack Bot
+# Codegen Slack Bot
 
 <p align="center">
   <a href="https://docs.codegen.com">
@@ -7,7 +7,7 @@
 </p>
 
 <h2 align="center">
-  A Slack bot for answering questions about FastAPI's implementation
+  A Slack bot for answering questions about Codegen's implementation
 </h2>
 
 <div align="center">
@@ -17,11 +17,11 @@
 
 </div>
 
-This example demonstrates how to build a Slack chatbot that can answer questions about FastAPI's implementation using Codegen's VectorIndex for RAG. The bot:
+This example demonstrates how to build a Slack chatbot that can answer questions about Codegen's implementation using VectorIndex for RAG. The bot:
 
-1. Maintains an up-to-date index of FastAPI's source code
+1. Maintains an up-to-date index of Codegen's source code
 1. Uses semantic search to find relevant code snippets
-1. Generates detailed answers about FastAPI's internals using GPT-4
+1. Generates detailed answers about Codegen's internals using GPT-4
 
 ## Quick Start
 
@@ -34,20 +34,17 @@ pip install modal-client codegen slack-bolt openai
 2. Create a Slack app and get tokens:
 
    - Create a new Slack app at https://api.slack.com/apps
-   - Enable Socket Mode
    - Add bot token scopes:
      - `app_mentions:read`
      - `chat:write`
      - `reactions:write`
    - Install the app to your workspace
-   - Copy the Bot User OAuth Token and App-Level Token
 
-1. Create a Modal secret for Slack tokens:
+1. Set up environment:
 
 ```bash
-modal secret create slack-tokens \
-  SLACK_BOT_TOKEN="xoxb-your-bot-token" \
-  SLACK_APP_TOKEN="xapp-your-app-token"
+# Copy template and fill in your tokens
+cp .env.template .env
 ```
 
 4. Start the bot:
@@ -58,54 +55,47 @@ modal serve api.py
 
 ## Usage
 
-Just mention the bot in any channel and ask your question about FastAPI:
+Just mention the bot in any channel and ask your question about Codegen:
 
 ```
-@fastapi-bot How does FastAPI handle dependency injection?
-@fastapi-bot What's the implementation of path parameters?
-@fastapi-bot How does FastAPI validate request bodies?
+@your-bot-name How does the VectorIndex work?
+@your-bot-name What's the implementation of semantic search?
+@your-bot-name How does Codegen handle file operations?
 ```
 
 The bot will:
 
-1. Find the most relevant FastAPI source code
+1. Find the most relevant Codegen source code
 1. Generate a detailed explanation
-1. Show you the actual implementation
+1. Show you links to the actual implementation
 
 ## Response Format
 
 The bot responds with:
 
-1. A detailed answer about FastAPI's implementation
-1. Relevant code snippets with file paths
+1. A detailed answer about Codegen's implementation
+1. Links to relevant source files on GitHub
 1. Error messages if something goes wrong
 
 Example response:
 
-````
+```
 *Answer:*
-FastAPI handles dependency injection through its Depends class, which creates
-a dependency that can be injected into path operation functions...
+The VectorIndex class uses OpenAI's embeddings to create searchable vectors
+for all files in a codebase. It handles chunking large files and maintains
+a persistent index for faster subsequent queries.
 
-*Relevant Code:*
-*File:* `fastapi/dependencies/utils.py`
-```python
-def get_dependant(
-    path: str,
-    call: Callable,
-    name: str,
-    security_scopes: List[str] = None,
-    use_cache: bool = True,
-) -> Dependant:
-    ...
-````
+*Relevant Files:*
+• src/codegen/extensions/vector_index.py
+• src/codegen/extensions/tools/semantic_search.py
+```
 
 ## Environment Variables
 
-Required environment variables (set through Modal secrets):
+Required environment variables (in `.env`):
 
 - `SLACK_BOT_TOKEN`: Slack Bot User OAuth Token
-- `SLACK_APP_TOKEN`: Slack App-Level Token
+- `SLACK_SIGNING_SECRET`: Slack Signing Secret
 - `OPENAI_API_KEY`: OpenAI API key
 
 ## Development
@@ -113,7 +103,7 @@ Required environment variables (set through Modal secrets):
 The bot is built using:
 
 - Modal for serverless deployment
-- Codegen for FastAPI code analysis
+- Codegen for codebase analysis
 - Slack Bolt for the Slack integration
 - OpenAI for embeddings and Q&A
 
@@ -125,7 +115,7 @@ modal deploy api.py
 
 ## Learn More
 
-- [FastAPI Documentation](https://fastapi.tiangolo.com)
 - [Codegen Documentation](https://docs.codegen.com)
 - [Slack Bolt Python](https://slack.dev/bolt-python/concepts)
 - [Modal Documentation](https://modal.com/docs)
+- [VectorIndex Tutorial](https://docs.codegen.com/building-with-codegen/semantic-code-search)
