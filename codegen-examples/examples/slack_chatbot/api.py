@@ -4,7 +4,6 @@ import os
 from typing import Any
 
 import modal
-import openai
 from codegen import Codebase
 from codegen.extensions import VectorIndex
 from fastapi import FastAPI, Request
@@ -13,12 +12,14 @@ from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 from tokens import OPENAI_API_KEY, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
 
-volume = modal.Volume.from_name("repo-cache", create_if_missing=True)
-
-
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
-openai.api_key = OPENAI_API_KEY
 
+
+########################################################
+# Modal & Slack Setup
+########################################################
+
+volume = modal.Volume.from_name("repo-cache", create_if_missing=True)
 # Create image with dependencies
 image = (
     modal.Image.debian_slim(python_version="3.13")
@@ -42,6 +43,10 @@ slack_app = App(
 
 # Create FastAPI app
 handler = SlackRequestHandler(slack_app)
+
+########################################################
+# Slackbot Verification Endpoint
+########################################################
 
 
 @web_app.post("/slack/verify")  # you will need to rename this to do proper verification
@@ -69,10 +74,21 @@ def fastapi_app():
     return web_app
 
 
+########################################################
+# LLM Processing
+########################################################
+
+
 def format_response(answer: str, context: list[dict[str, str]]) -> str:
-    response = f"*Answer:*\n{answer}\n\n*Relevant Code:*\n"
+    """Format the response for Slack with file links."""
+    response = f"*Answer:*\n{answer}\n\n*Relevant Files:*\n"
+
+    # Add file links
     for ctx in context:
-        response += f"\n*File:* `{ctx['filepath']}`\n```python\n{ctx['snippet']}\n```\n"
+        # Create GitHub link to the file
+        github_link = f"https://github.com/tiangolo/fastapi/blob/master/{ctx['filepath']}"
+        response += f"• <{github_link}|`{ctx['filepath']}`>\n"
+
     return response
 
 
@@ -99,21 +115,18 @@ def answer_question(query: str) -> tuple[str, list[dict[str, str]]]:
     # Collect context from relevant files
     context = []
     for filepath, score in results:
-        try:
-            file = codebase.get_file(filepath)
-            if file:
-                context.append(
-                    {
-                        "filepath": filepath,
-                        "snippet": file.content[:1000],  # First 1000 chars as preview
-                        "score": f"{score:.3f}",
-                    }
-                )
-        except Exception as e:
-            print(f"Error reading file {filepath}: {e}")
+        if "#chunk" in filepath:
+            filepath = filepath.split("#chunk")[0]
+        file = codebase.get_file(filepath)
+        context.append(
+            {
+                "filepath": file.filepath,
+                "snippet": file.content[:1000],  # First 1000 chars as preview
+            }
+        )
 
     # Format context for prompt
-    context_str = "\n\n".join([f"File: {c['filepath']}\nScore: {c['score']}\n```\n{c['snippet']}\n```" for c in context])
+    context_str = "\n\n".join([f"File: {c['filepath']}\n```\n{c['snippet']}\n```" for c in context])
 
     # Create prompt for OpenAI
     prompt = f"""You are an expert on FastAPI. Given the following code context and question, provide a clear and accurate answer.
@@ -141,6 +154,10 @@ Answer:"""
 
 responded = {}
 
+########################################################
+# Main Event Handler
+########################################################
+
 
 @slack_app.event("app_mention")
 def handle_mention(event: dict[str, Any], say: Any) -> None:
@@ -153,13 +170,23 @@ def handle_mention(event: dict[str, Any], say: Any) -> None:
     else:
         responded[event["ts"]] = True
 
+    # Get message text without the bot mention
+    query = event["text"].split(">", 1)[1].strip()
+    if not query:
+        say("Please ask a question about FastAPI!")
+        return
+
     if "!" not in event["text"]:
         say("include `!` in your message to ask a question")
         return
 
     try:
-        # Get message text without the bot mention
-        query = event["text"].split(">", 1)[1].strip()
+        # Add typing indicator emoji
+        slack_app.client.reactions_add(
+            channel=event["channel"],
+            timestamp=event["ts"],
+            name="writing_hand",
+        )
 
         if not query:
             say("Please ask a question about FastAPI!")
@@ -168,9 +195,17 @@ def handle_mention(event: dict[str, Any], say: Any) -> None:
         # Get answer using RAG
         answer, context = answer_question(query)
 
-        # # Format and send response
+        # Format and send response in thread
         response = format_response(answer, context)
-        say(response)
+        say(text=response, thread_ts=event["ts"])
+
+        # Remove typing indicator emoji
+        slack_app.client.reactions_remove(
+            channel=event["channel"],
+            timestamp=event["ts"],
+            name="writing_hand",
+        )
 
     except Exception as e:
-        say(f"Error: {str(e)}")
+        # Send error message in thread
+        say(text=f"Error: {str(e)}", thread_ts=event["ts"])
