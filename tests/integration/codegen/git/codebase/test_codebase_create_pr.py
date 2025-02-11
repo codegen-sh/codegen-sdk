@@ -1,28 +1,8 @@
-import os
 import uuid
 
 import pytest
 
-from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen.git.utils.clone import clone_repo
-from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config
-from codegen.sdk.codebase.config import ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.shared.configs.config import config
-
-
-@pytest.fixture
-def op(repo_config):
-    clone_repo(repo_path=os.path.join(repo_config.base_dir, repo_config.name), clone_url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token))
-    op = LocalRepoOperator(repo_config=repo_config, github_api_key=config.secrets.github_token)
-    yield op
-
-
-@pytest.fixture
-def codebase(op: LocalRepoOperator):
-    project_config = ProjectConfig(repo_operator=op)
-    codebase = Codebase(projects=[project_config])
-    yield codebase
 
 
 def test_codebase_create_pr_active_branch(codebase: Codebase):
