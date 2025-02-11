@@ -9,9 +9,9 @@ from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig, SessionOptions, TestFlags
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseFactory
 from codegen.sdk.core.codebase import Codebase, PyCodebaseType, TSCodebaseType
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
 from codegen.sdk.tree_sitter_parser import print_errors
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 @overload

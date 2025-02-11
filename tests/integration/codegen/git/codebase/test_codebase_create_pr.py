@@ -13,7 +13,7 @@ def test_codebase_create_pr_active_branch(codebase: Codebase):
     pr = codebase.create_pr(title="test-create-pr title", body="test-create-pr body")
     assert pr.title == "test-create-pr title"
     assert pr.body == "test-create-pr body"
-    assert pr.draft is False
+    assert pr.draft is True
     assert pr.state == "open"
     assert pr.head.ref == head
     assert pr.base.ref == "main"

@@ -1,6 +1,6 @@
 import codegen
 from codegen import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 import networkx as nx
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.python.function import PyFunction

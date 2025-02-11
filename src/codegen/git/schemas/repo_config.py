@@ -5,6 +5,7 @@ import os.path
 from pydantic import BaseModel
 
 from codegen.git.schemas.enums import RepoVisibility
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +21,7 @@ class RepoConfig(BaseModel):
     # Codebase fields
     base_dir: str = "/tmp"  # parent directory of the git repo
     base_path: str | None = None  # root directory of the codebase within the repo
-    language: str | None = "PYTHON"
+    language: ProgrammingLanguage | None = ProgrammingLanguage.PYTHON
     subdirectories: list[str] | None = None
     respect_gitignore: bool = True
 
@@ -29,10 +30,10 @@ class RepoConfig(BaseModel):
         return f"{self.base_dir}/{self.name}"
 
     @classmethod
-    def from_repo_path(cls, repo_path: str, **kwargs) -> "RepoConfig":
+    def from_repo_path(cls, repo_path: str) -> "RepoConfig":
         name = os.path.basename(repo_path)
         base_dir = os.path.dirname(repo_path)
-        return cls(name=name, base_dir=base_dir, **kwargs)
+        return cls(name=name, base_dir=base_dir)
 
     # TODO: remove
     def encoded_json(self):

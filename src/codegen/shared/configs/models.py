@@ -35,8 +35,10 @@ class RepositoryConfig(BaseModel):
 
     repo_path: str | None = None
     repo_name: str | None = None
-    organization_name: str | None = None
-    access_token: str | None = None
+    full_name: str | None = None
+    user_name: str | None = None
+    user_email: str | None = None
+    language: str | None = None
 
 
 class SecretsConfig(BaseSettings):

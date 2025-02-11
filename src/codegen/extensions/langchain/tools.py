@@ -312,20 +312,18 @@ class MoveSymbolTool(BaseTool):
         return json.dumps(result, indent=2)
 
 
+class SemanticSearchInput(BaseModel):
+    query: str = Field(..., description="The natural language search query")
+    k: int = Field(default=5, description="Number of results to return")
+    preview_length: int = Field(default=200, description="Length of content preview in characters")
+
+
 class SemanticSearchTool(BaseTool):
     """Tool for semantic code search."""
 
     name: ClassVar[str] = "semantic_search"
     description: ClassVar[str] = "Search the codebase using natural language queries and semantic similarity"
-    args_schema: ClassVar[type[BaseModel]] = type(
-        "SemanticSearchInput",
-        (BaseModel,),
-        {
-            "query": (str, Field(..., description="The natural language search query")),
-            "k": (int, Field(default=5, description="Number of results to return")),
-            "preview_length": (int, Field(default=200, description="Length of content preview in characters")),
-        },
-    )
+    args_schema: ClassVar[type[BaseModel]] = SemanticSearchInput
     codebase: Codebase = Field(exclude=True)
 
     def __init__(self, codebase: Codebase) -> None:

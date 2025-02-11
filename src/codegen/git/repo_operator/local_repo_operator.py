@@ -5,15 +5,13 @@ from typing import Self, override
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Repo as GitCLI
-from github import Github
 from github.PullRequest import PullRequest
-from github.Repository import Repository
 
 from codegen.git.clients.git_repo_client import GitRepoClient
+from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
-from codegen.git.utils.clone_url import url_to_github
 from codegen.git.utils.file_utils import create_files
 
 logger = logging.getLogger(__name__)
@@ -30,49 +28,37 @@ class LocalRepoOperator(RepoOperator):
     - Creating "fake" repos from a dictionary of files contents
     """
 
-    _git_cli: GitCLI
-    _github_api_key: str | None
-    _remote_git_repo: GitRepoClient | None = None
+    _local_git_repo: LocalGitRepo
 
     def __init__(
         self,
         repo_config: RepoConfig,
-        github_api_key: str | None = None,
+        access_token: str | None = None,
         bot_commit: bool = False,
     ) -> None:
-        self._github_api_key = github_api_key
-        self._remote_git_repo = None
-        super().__init__(repo_config, bot_commit)
+        super().__init__(repo_config=repo_config, access_token=access_token, bot_commit=bot_commit)
         os.makedirs(self.repo_path, exist_ok=True)
         GitCLI.init(self.repo_path)
+        self._local_git_repo = LocalGitRepo(repo_path=repo_config.repo_path)
+        if repo_config.full_name is None:
+            repo_config.full_name = self._local_git_repo.full_name
 
     ####################################################################################################################
     # PROPERTIES
     ####################################################################################################################
 
     @property
-    def remote_git_repo(self) -> Repository:
-        if self._remote_git_repo is None:
-            if not self._github_api_key:
-                return None
+    def remote_git_repo(self) -> GitRepoClient | None:
+        """Get the remote GitRepoClient object for the current local repo."""
+        if not self.access_token:
+            msg = "Must initialize with access_token to get remote"
+            raise ValueError(msg)
 
-            if not (base_url := self.base_url):
-                msg = "Could not determine GitHub URL from remotes"
-                raise ValueError(msg)
+        if not self._local_git_repo.has_remote():
+            msg = "Cannot initialize remote GitRepoClient from local Git"
+            raise ValueError(msg)
 
-            # Extract owner and repo from the base URL
-            # Format: https://github.com/owner/repo
-            parts = base_url.split("/")
-            if len(parts) < 2:
-                msg = f"Invalid GitHub URL format: {base_url}"
-                raise ValueError(msg)
-
-            owner = parts[-4]
-            repo = parts[-3]
-
-            github = Github(self._github_api_key)
-            self._remote_git_repo = github.get_repo(f"{owner}/{repo}")
-        return self._remote_git_repo
+        return super().remote_git_repo
 
     ####################################################################################################################
     # CLASS METHODS
@@ -100,16 +86,16 @@ class LocalRepoOperator(RepoOperator):
         return op
 
     @classmethod
-    def create_from_commit(cls, repo_path: str, commit: str, url: str, github_api_key: str | None = None) -> Self:
+    def create_from_commit(cls, repo_path: str, commit: str, url: str, access_token: str | None = None) -> Self:
         """Do a shallow checkout of a particular commit to get a repository from a given remote URL.
 
         Args:
             repo_path (str): Path where the repo should be cloned
             commit (str): The commit hash to checkout
             url (str): Git URL of the repository
-            github_api_key (str | None): Optional GitHub API key for operations that need GitHub access
+            access_token (str | None): Optional GitHub API key for operations that need GitHub access
         """
-        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
+        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
         op.discard_changes()
         if op.get_active_branch_or_commit() != commit:
             op.create_remote("origin", url)
@@ -118,13 +104,13 @@ class LocalRepoOperator(RepoOperator):
         return op
 
     @classmethod
-    def create_from_repo(cls, repo_path: str, url: str, github_api_key: str | None = None) -> Self:
+    def create_from_repo(cls, repo_path: str, url: str, access_token: str | None = None) -> Self:
         """Create a fresh clone of a repository or use existing one if up to date.
 
         Args:
             repo_path (str): Path where the repo should be cloned
             url (str): Git URL of the repository
-            github_api_key (str | None): Optional GitHub API key for operations that need GitHub access
+            access_token (str | None): Optional GitHub API key for operations that need GitHub access
         """
         # Check if repo already exists
         if os.path.exists(repo_path):
@@ -140,7 +126,7 @@ class LocalRepoOperator(RepoOperator):
                     remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
                     # If up to date, use existing repo
                     if local_head.hexsha == remote_head.hexsha:
-                        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
+                        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
             except Exception:
                 # If any git operations fail, fallback to fresh clone
                 pass
@@ -157,7 +143,7 @@ class LocalRepoOperator(RepoOperator):
         # Initialize with the cloned repo
         git_cli = GitCLI(repo_path)
 
-        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, github_api_key=github_api_key)
+        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
 
     ####################################################################################################################
     # PROPERTIES
@@ -169,8 +155,7 @@ class LocalRepoOperator(RepoOperator):
 
     @cached_property
     def base_url(self) -> str | None:
-        if remote := next(iter(self.git_cli.remotes), None):
-            return url_to_github(remote.url, self.get_active_branch_or_commit())
+        return self._local_git_repo.base_url
 
     @override
     def pull_repo(self) -> None:

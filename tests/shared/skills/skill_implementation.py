@@ -5,8 +5,8 @@ from collections.abc import Callable
 
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.codebase import CodebaseType
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from tests.shared.skills.skill_test import SkillTestCase
 from tests.shared.skills.verify_skill_output import verify_skill_output
 

@@ -17,8 +17,6 @@ def load(config_path: Path | None = None) -> Config:
     # Merge configurations recursively
     config_dict = _merge_configs(env_config.model_dump(), toml_config.model_dump())
 
-    # Load from git
-
     return Config(**config_dict)
 
 

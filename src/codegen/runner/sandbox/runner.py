@@ -11,7 +11,6 @@ from codegen.runner.sandbox.executor import SandboxExecutor
 from codegen.sdk.codebase.config import ProjectConfig, SessionOptions
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
 from codegen.shared.configs.config import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
@@ -49,7 +48,7 @@ class SandboxRunner:
 
     async def _build_graph(self) -> Codebase:
         logger.info("> Building graph...")
-        programming_language = ProgrammingLanguage(self.op.repo_config.language.upper())
+        programming_language = self.op.repo_config.language
         projects = [ProjectConfig(programming_language=programming_language, repo_operator=self.op, base_path=self.op.repo_config.base_path, subdirectories=self.op.repo_config.subdirectories)]
         return Codebase(projects=projects, config=get_codebase_config())
 

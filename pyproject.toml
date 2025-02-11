@@ -160,7 +160,7 @@ dev-dependencies = [
 
 
 [tool.uv.workspace]
-members = ["codegen", "codegen-examples"]
+#members = ["codegen", "codegen-examples"]
 exclude = ["codegen-examples"]
 
 [tool.cython-lint]

@@ -8,8 +8,8 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase, CodebaseType
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.decorators.docs import DocumentedObject, apidoc_objects, no_apidoc_objects, py_apidoc_objects, ts_apidoc_objects
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,8 @@ def get_current_code_codebase(config: CodebaseConfig = DefaultConfig, subdirecto
     base_dir = get_codegen_codebase_base_path()
     logger.info(f"Creating codebase from repo at: {codegen_repo_path} with base_path {base_dir}")
 
-    repo_config = RepoConfig.from_repo_path(codegen_repo_path, respect_gitignore=False)
+    repo_config = RepoConfig.from_repo_path(codegen_repo_path)
+    repo_config.respect_gitignore = False
     op = LocalRepoOperator(repo_config=repo_config, bot_commit=False)
 
     config = config.model_copy(update={"base_path": base_dir})
