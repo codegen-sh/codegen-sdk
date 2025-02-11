@@ -40,11 +40,8 @@ class FileIO(IO):
         self.files.clear()
 
     def delete_file(self, path: Path) -> None:
-        del self.files[path]
+        self.files.pop(path, None)
         path.unlink()
-
-    def untrack_file(self, path: Path) -> None:
-        del self.files[path]
 
     def file_exists(self, path: Path) -> bool:
         return path.exists()

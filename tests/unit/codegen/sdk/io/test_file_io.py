@@ -65,12 +65,3 @@ def test_delete_file(file_io, tmp_path):
     assert test_file not in file_io.files
 
 
-def test_untrack_file(file_io, tmp_path):
-    test_file = tmp_path / "test.txt"
-    content = b"test content"
-
-    file_io.write_bytes(test_file, content)
-    assert test_file in file_io.files
-
-    file_io.untrack_file(test_file)
-    assert test_file not in file_io.files
