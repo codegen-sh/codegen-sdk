@@ -41,7 +41,7 @@ class SandboxRunner:
 
     async def warmup(self) -> None:
         """Warms up this runner by cloning the repo and parsing the graph."""
-        logger.info(f"===== Warming runner for {self.repo.full_name} (ID={self.repo.id}) =====")
+        logger.info(f"===== Warming runner for {self.repo.full_name or self.repo.name} =====")
         sys.setrecursionlimit(10000)  # for graph parsing
 
         self.codebase = await self._build_graph()

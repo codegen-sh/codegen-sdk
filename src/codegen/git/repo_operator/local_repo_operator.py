@@ -89,7 +89,6 @@ class LocalRepoOperator(RepoOperator):
         Args:
             repo_path (str): The path to the directory to create.
             files (dict[str, str]): A dictionary of file names and contents to create in the directory.
-            repo_config (RepoConfig): The configuration of the repo.
         """
         # Step 1: Create dir (if not exists) + files
         os.makedirs(repo_path, exist_ok=True)
