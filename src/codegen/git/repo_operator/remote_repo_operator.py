@@ -4,8 +4,7 @@ from functools import cached_property
 from typing import override
 
 from codeowners import CodeOwners as CodeOwnersParser
-from git import GitCommandError, Remote
-from git.remote import PushInfoList
+from git import GitCommandError
 
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.repo_operator import RepoOperator
@@ -37,13 +36,12 @@ class RemoteRepoOperator(RepoOperator):
     def __init__(
         self,
         repo_config: RepoConfig,
-        base_dir: str = "/tmp",
         setup_option: SetupOption = SetupOption.PULL_OR_CLONE,
         shallow: bool = True,
         bot_commit: bool = True,
         access_token: str | None = None,
     ) -> None:
-        super().__init__(repo_config=repo_config, base_dir=base_dir, bot_commit=bot_commit)
+        super().__init__(repo_config=repo_config, bot_commit=bot_commit)
         self.access_token = access_token
         self.setup_repo_dir(setup_option=setup_option, shallow=shallow)
 
@@ -165,43 +163,6 @@ class RemoteRepoOperator(RepoOperator):
         If the branch_name is already checked out, does nothing
         """
         return self.checkout_branch(branch_name, remote_name=remote_name, remote=True, create_if_missing=False)
-
-    @stopwatch
-    def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:
-        """Push the changes to the given refspec of the remote.
-
-        Args:
-            refspec (str | None): refspec to push. If None, the current active branch is used.
-            remote (Remote | None): Remote to push too. Defaults to 'origin'.
-            force (bool): If True, force push the changes. Defaults to False.
-        """
-        # Use default remote if not provided
-        if not remote:
-            remote = self.git_cli.remote(name="origin")
-
-        # Use the current active branch if no branch is specified
-        if not refspec:
-            # TODO: doesn't work with detached HEAD state
-            refspec = self.git_cli.active_branch.name
-
-        res = remote.push(refspec=refspec, force=force, progress=CustomRemoteProgress())
-        for push_info in res:
-            if push_info.flags & push_info.ERROR:
-                # Handle the error case
-                logger.warning(f"Error pushing {refspec}: {push_info.summary}")
-            elif push_info.flags & push_info.FAST_FORWARD:
-                # Successful fast-forward push
-                logger.info(f"{refspec} pushed successfully (fast-forward).")
-            elif push_info.flags & push_info.NEW_HEAD:
-                # Successful push of a new branch
-                logger.info(f"{refspec} pushed successfully as a new branch.")
-            elif push_info.flags & push_info.NEW_TAG:
-                # Successful push of a new tag (if relevant)
-                logger.info("New tag pushed successfully.")
-            else:
-                # Successful push, general case
-                logger.info(f"{refspec} pushed successfully.")
-        return res
 
     @cached_property
     def base_url(self) -> str | None:

@@ -23,7 +23,7 @@ def init_command(repo_name: str | None = None, organization_name: str | None = N
     """Initialize or update the Codegen folder."""
     # Print a message if not in a git repo
     try:
-        subprocess.run(["git", "rev-parse", "--is-inside-work-tree"], capture_output=True, check=True, text=True)
+        output = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, check=True, text=True)
     except (subprocess.CalledProcessError, FileNotFoundError):
         rich.print("\n[bold red]Error:[/bold red] Not in a git repository")
         rich.print("[white]Please run this command from within a git repository.[/white]")

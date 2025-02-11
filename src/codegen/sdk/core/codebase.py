@@ -7,6 +7,7 @@ import os
 import re
 from collections.abc import Generator
 from contextlib import contextmanager
+from functools import cached_property
 from pathlib import Path
 from typing import TYPE_CHECKING, Generic, Literal, TypeVar, Unpack, overload
 
@@ -15,6 +16,7 @@ import rich.repr
 from git import Commit as GitCommit
 from git import Diff
 from git.remote import PushInfoList
+from github.PullRequest import PullRequest
 from networkx import Graph
 from rich.console import Console
 from typing_extensions import deprecated
@@ -37,6 +39,7 @@ from codegen.sdk.codebase.io.io import IO
 from codegen.sdk.codebase.span import Span
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
+from codegen.sdk.core.codeowner import CodeOwner
 from codegen.sdk.core.detached_symbols.code_block import CodeBlock
 from codegen.sdk.core.detached_symbols.parameter import Parameter
 from codegen.sdk.core.directory import Directory
@@ -260,6 +263,17 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
                 files.append(self.get_file(filepath, optional=False))
         # Sort files alphabetically
         return sort_editables(files, alphabetical=True, dedupe=False)
+
+    @cached_property
+    def codeowners(self) -> list["CodeOwner[TSourceFile]"]:
+        """List all CodeOnwers in the codebase.
+
+        Returns:
+            list[CodeOwners]: A list of CodeOwners objects in the codebase.
+        """
+        if self.G.codeowners_parser is None:
+            return []
+        return CodeOwner.from_parser(self.G.codeowners_parser, lambda *args, **kwargs: self.files(*args, **kwargs))
 
     @property
     def directories(self) -> list[TDirectory]:
@@ -877,6 +891,19 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     def restore_stashed_changes(self):
         """Restore the most recent stash in the codebase."""
         self._op.stash_pop()
+
+    ####################################################################################################################
+    # GITHUB
+    ####################################################################################################################
+
+    def create_pr(self, title: str, body: str) -> PullRequest:
+        """Creates a PR from the current branch."""
+        if self._op.git_cli.head.is_detached:
+            msg = "Cannot make a PR from a detached HEAD"
+            raise ValueError(msg)
+        self._op.stage_and_commit_all_changes(message=title)
+        self._op.push_changes()
+        return self._op.remote_git_repo.create_pull(head=self._op.git_cli.active_branch.name, base=self._op.default_branch, title=title, body=body)
 
     ####################################################################################################################
     # GRAPH VISUALIZATION

@@ -29,8 +29,14 @@ class CodebaseFeatureFlags(BaseModel):
 
 
 class RepositoryConfig(BaseModel):
-    organization_name: str | None = None
+    """Configuration for the repository context to run codegen.
+    To populate this config, call `codegen init` from within a git repository.
+    """
+
+    repo_path: str | None = None
     repo_name: str | None = None
+    organization_name: str | None = None
+    access_token: str | None = None
 
 
 class SecretsConfig(BaseSettings):

@@ -5,7 +5,6 @@ from contextlib import AbstractContextManager, contextmanager
 from typing import Literal, overload
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen.git.schemas.repo_config import BaseRepoConfig
 from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig, SessionOptions, TestFlags
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseFactory
@@ -24,7 +23,6 @@ def get_codebase_session(
     sync_graph: bool = True,
     verify_input: bool = True,
     verify_output: bool = True,
-    repo_config: BaseRepoConfig | None = None,
     feature_flags: GSFeatureFlags = TestFlags,
     session_options: SessionOptions = SessionOptions(),
     secrets: Secrets = Secrets(),
@@ -40,7 +38,6 @@ def get_codebase_session(
     sync_graph: bool = True,
     verify_input: bool = True,
     verify_output: bool = True,
-    repo_config: BaseRepoConfig | None = None,
     feature_flags: GSFeatureFlags = TestFlags,
     session_options: SessionOptions = SessionOptions(),
     secrets: Secrets = Secrets(),
@@ -56,7 +53,6 @@ def get_codebase_session(
     sync_graph: bool = True,
     verify_input: bool = True,
     verify_output: bool = True,
-    repo_config: BaseRepoConfig | None = None,
     feature_flags: GSFeatureFlags = TestFlags,
     session_options: SessionOptions = SessionOptions(),
     secrets: Secrets = Secrets(),
@@ -72,14 +68,13 @@ def get_codebase_session(
     sync_graph: bool = True,
     verify_input: bool = True,
     verify_output: bool = True,
-    repo_config: BaseRepoConfig = BaseRepoConfig(),
     feature_flags: GSFeatureFlags = TestFlags,
     session_options: SessionOptions = SessionOptions(),
     secrets: Secrets = Secrets(),
 ) -> Generator[Codebase, None, None]:
     """Gives you a Codebase operating on the files you provided as a dict"""
     config = CodebaseConfig(feature_flags=feature_flags, secrets=secrets)
-    codebase = CodebaseFactory.get_codebase_from_files(repo_path=str(tmpdir), files=files, config=config, programming_language=programming_language, repo_config=repo_config)
+    codebase = CodebaseFactory.get_codebase_from_files(repo_path=str(tmpdir), files=files, config=config, programming_language=programming_language)
     with codebase.session(
         commit=commit,
         sync_graph=sync_graph,

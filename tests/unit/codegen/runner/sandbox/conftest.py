@@ -4,7 +4,6 @@ from unittest.mock import patch
 import pytest
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.configs import RunnerFeatureFlags
 from codegen.runner.sandbox.executor import SandboxExecutor
 from codegen.runner.sandbox.runner import SandboxRunner
@@ -15,10 +14,8 @@ from codegen.sdk.secrets import Secrets
 
 
 @pytest.fixture
-def codebase(tmpdir, request) -> Codebase:
-    repo_id = getattr(request, "param", 1)
-    repo_config = RepoConfig(id=repo_id, name="test-repo", full_name="test-org/test-repo", organization_id=1, organization_name="test-org")
-    op = LocalRepoOperator.create_from_files(repo_path=tmpdir, files={"test.py": "a = 1"}, bot_commit=True, repo_config=repo_config)
+def codebase(tmpdir) -> Codebase:
+    op = LocalRepoOperator.create_from_files(repo_path=f"{tmpdir}/test-repo", files={"test.py": "a = 1"}, bot_commit=True)
     projects = [ProjectConfig(repo_operator=op, programming_language=ProgrammingLanguage.PYTHON)]
     codebase = Codebase(projects=projects)
     return codebase
