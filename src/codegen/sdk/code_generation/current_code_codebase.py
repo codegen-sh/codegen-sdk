@@ -1,7 +1,6 @@
 # TODO: move out of graph sitter, useful for other projects
 import importlib
 import logging
-import os
 from pathlib import Path
 from typing import TypedDict
 
@@ -36,7 +35,7 @@ def get_codegen_codebase_base_path() -> str:
 def get_current_code_codebase(config: CodebaseConfig = DefaultConfig, subdirectories: list[str] | None = None) -> CodebaseType:
     """Returns a Codebase for the code that is *currently running* (i.e. the Codegen repo)"""
     codegen_repo_path = get_graphsitter_repo_path()
-    base_dir = os.path.dirname(codegen_repo_path)
+    base_dir = get_codegen_codebase_base_path()
     logger.info(f"Creating codebase from repo at: {codegen_repo_path} with base_path {base_dir}")
 
     repo_config = RepoConfig.from_repo_path(codegen_repo_path, respect_gitignore=False)
