@@ -3,7 +3,6 @@ import sys
 
 from git import Commit as GitCommit
 
-from codegen.git.configs.config import config
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
@@ -14,6 +13,7 @@ from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
+from codegen.shared.configs.config import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class SandboxRunner:
         repo_config: RepoConfig,
     ) -> None:
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config=repo_config, access_token=config.GITHUB_TOKEN)
+        self.op = RemoteRepoOperator(repo_config=repo_config, access_token=config.secrets.github_token)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:
