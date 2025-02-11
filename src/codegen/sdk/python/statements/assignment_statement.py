@@ -40,7 +40,7 @@ class PyAssignmentStatement(AssignmentStatement["PyCodeBlock", PyAssignment]):
         Args:
             ts_node (TSNode): The TreeSitter node representing the entire statement.
             file_node_id (NodeId): The ID of the file containing this node.
-            ctx (CodebaseContext): The codebase graph instance.
+            ctx (CodebaseContext): The codebase context instance.
             parent (PyHasBlock): The parent block containing this statement.
             code_block (PyCodeBlock): The code block containing this statement.
             pos (int): The position of this statement within its code block.

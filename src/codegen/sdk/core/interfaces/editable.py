@@ -106,7 +106,7 @@ class Editable(JSONable, Generic[Parent]):
     Attributes:
         ts_node: The TreeSitter node associated with this Editable instance.
         file_node_id: The unique identifier for the file node.
-        ctx: The codebase graph that this Editable instance is part of.
+        ctx: The codebase context that this Editable instance is part of.
         parent: The parent node of this Editable instance.
         node_type: The type of node this Editable instance represents.
     """

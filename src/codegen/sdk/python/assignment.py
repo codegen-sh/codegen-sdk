@@ -45,7 +45,7 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         Args:
             ts_node (TSNode): The TreeSitter node representing the named expression.
             file_node_id (NodeId): The identifier of the file containing this node.
-            ctx (CodebaseContext): The codebase graph instance.
+            ctx (CodebaseContext): The codebase context instance.
             parent (Parent): The parent node that contains this expression.
 
         Returns:
