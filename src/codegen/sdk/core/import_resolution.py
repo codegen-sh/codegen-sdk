@@ -559,8 +559,6 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
     def _removed_child(self) -> None:
         self.parent.imports._removed_child()
 
-
-
     @reader
     @noapidoc
     @override
@@ -595,8 +593,6 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
                     res[name] = WildcardImport(self, symbol)
         return res
 
-
-
     @property
     @noapidoc
     def names(self) -> Generator[tuple[str, Self | WildcardImport[Self]], None, None]:
@@ -612,7 +608,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
 
                 return
             elif self.resolved_symbol is None:
-                self._resolving_wildcards=False
+                self._resolving_wildcards = False
         yield self.name, self
 
     @property

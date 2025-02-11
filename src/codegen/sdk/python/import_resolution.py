@@ -31,9 +31,9 @@ logger = logging.getLogger(__name__)
 class PyImport(Import["PyFile"]):
     """Extends Import for Python codebases."""
 
-    def __init__(self, ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type = ImportType.UNKNOWN):
+    def __init__(self, ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type=ImportType.UNKNOWN):
         super().__init__(ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type)
-        self.requesting_names=set()
+        self.requesting_names = set()
 
     @reader
     def is_module_import(self) -> bool:
@@ -244,7 +244,6 @@ class PyImport(Import["PyFile"]):
             imports.append(imp)
         return imports
 
-
     @reader
     @noapidoc
     @override
@@ -254,18 +253,16 @@ class PyImport(Import["PyFile"]):
 
         aliased = self.is_aliased_import()
         if imported := self._imported_symbol(resolve_exports=True):
-            if getattr(imported,"is_wildcard_import",False):
+            if getattr(imported, "is_wildcard_import", False):
                 imported.set_requesting_names(self)
             yield from self.with_resolution_frame(imported, direct=False, aliased=aliased)
         else:
             yield ResolutionStack(self, aliased=aliased)
 
         if self.is_wildcard_import():
-            for name,wildcard_import in  self.names:
+            for name, wildcard_import in self.names:
                 if name in self.requesting_names:
                     yield from [frame.parent_frame for frame in wildcard_import.resolved_type_frames]
-
-
 
     @property
     @reader
@@ -290,7 +287,7 @@ class PyImport(Import["PyFile"]):
                 return Name(import_specifier, self.file_node_id, self.ctx, self)
 
     @noapidoc
-    def set_requesting_names(self,requester:PyImport):
+    def set_requesting_names(self, requester: PyImport):
         if requester.is_wildcard_import():
             self.requesting_names.update(requester.requesting_names)
         else:
