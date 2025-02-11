@@ -559,8 +559,6 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
     def _removed_child(self) -> None:
         self.parent.imports._removed_child()
 
-
-
     @reader
     @noapidoc
     @override
@@ -594,8 +592,6 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
                 for name, symbol in resolved.valid_import_names.items():
                     res[name] = WildcardImport(self, symbol)
         return res
-
-
 
     @property
     @noapidoc

@@ -18,7 +18,7 @@ _,symbol,_ = (a, b, c)
 
         symbol = file.get_symbol("symbol")
 
-        len(symbol.usages)==0
+        len(symbol.usages) == 0
 
 
 def test_unpacking_tuple_with_use(tmpdir) -> None:
@@ -39,14 +39,11 @@ test=symbol
 
         symbol_list: Tuple = symbol.value
 
-        len(symbol.usages)==1
-        symbol.usages[0].kind==UsageKind.BODY
+        len(symbol.usages) == 1
+        symbol.usages[0].kind == UsageKind.BODY
 
-        len(foo.usages)==1
-        foo.usages[0].kind==UsageKind.ASSIGNMENT_SIBLING
+        len(foo.usages) == 1
+        foo.usages[0].kind == UsageKind.ASSIGNMENT_SIBLING
 
-        len(bar.usages)==1
-        bar.usages[0].kind==UsageKind.ASSIGNMENT_SIBLING
-
-
-
+        len(bar.usages) == 1
+        bar.usages[0].kind == UsageKind.ASSIGNMENT_SIBLING
