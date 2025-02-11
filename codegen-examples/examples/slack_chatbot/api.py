@@ -1,14 +1,23 @@
 """Slack chatbot for answering questions about FastAPI using Codegen's VectorIndex."""
 
+import os
 from typing import Any
 
 import modal
+import openai
 from codegen import Codebase
 from codegen.extensions import VectorIndex
 from fastapi import FastAPI, Request
 from openai import OpenAI
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
+from tokens import OPENAI_API_KEY, SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET
+
+volume = modal.Volume.from_name("repo-cache", create_if_missing=True)
+
+
+os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+openai.api_key = OPENAI_API_KEY
 
 # Create image with dependencies
 image = (
@@ -16,7 +25,7 @@ image = (
     .apt_install("git")
     .pip_install(
         "slack-bolt>=1.18.0",
-        "codegen>=0.6.0",
+        "codegen>=0.6.1",
         "openai>=1.1.0",
     )
 )
@@ -26,7 +35,10 @@ app = modal.App("codegen-slack-demo")
 web_app = FastAPI()
 
 # Initialize Slack app with signing secret
-slack_app = App(token=modal.Secret.get("SLACK_BOT_TOKEN"), signing_secret=modal.Secret.get("SLACK_SIGNING_SECRET"))
+slack_app = App(
+    token=SLACK_BOT_TOKEN,
+    signing_secret=SLACK_SIGNING_SECRET,
+)
 
 # Create FastAPI app
 handler = SlackRequestHandler(slack_app)
@@ -67,13 +79,13 @@ def format_response(answer: str, context: list[dict[str, str]]) -> str:
 def answer_question(query: str) -> tuple[str, list[dict[str, str]]]:
     """Use RAG to answer a question about FastAPI."""
     # Initialize codebase
-    codebase = Codebase.from_repo("fastapi/fastapi")
+    codebase = Codebase.from_repo("fastapi/fastapi", tmp_dir="/root")
 
     # Initialize vector index
     index = VectorIndex(codebase)
 
     # Try to load existing index or create new one
-    index_path = "/tmp/fastapi_index.pkl"
+    index_path = "/root/fastapi_index.pkl"
     try:
         index.load(index_path)
     except FileNotFoundError:
@@ -114,7 +126,7 @@ Relevant FastAPI code:
 
 Answer:"""
 
-    client = OpenAI()
+    client = OpenAI(api_key=OPENAI_API_KEY)
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -127,9 +139,24 @@ Answer:"""
     return response.choices[0].message.content, [{"filepath": c["filepath"], "snippet": c["snippet"]} for c in context]
 
 
+responded = {}
+
+
 @slack_app.event("app_mention")
 def handle_mention(event: dict[str, Any], say: Any) -> None:
     """Handle mentions of the bot in channels."""
+    print("event", event)
+
+    # Skip if we've already answered this question
+    if event["ts"] in responded:
+        return
+    else:
+        responded[event["ts"]] = True
+
+    if "!" not in event["text"]:
+        say("include `!` in your message to ask a question")
+        return
+
     try:
         # Get message text without the bot mention
         query = event["text"].split(">", 1)[1].strip()
