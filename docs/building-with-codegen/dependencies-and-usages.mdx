@@ -11,7 +11,7 @@ Codegen pre-computes dependencies and usages for all symbols in the codebase, en
 
 Codegen provides two main ways to track relationships between symbols:
 
-- [.dependencies](/api-reference/core/Symbol#dependencies) / [.get_dependencies(...)](/api-reference/core/Symbol#get-dependencies) - What symbols does this symbol depend on?
+- [.dependencies](/api-reference/core/Symbol#dependencies) / - What symbols does this symbol depend on?
 - [.usages](/api-reference/core/Symbol#usages) / [.usages(...)](/api-reference/core/Symbol#usages) - Where is this symbol used?
 
 Dependencies and usages are inverses of each other. For example, given the following input code:
@@ -129,12 +129,12 @@ The dependencies API lets you find what symbols a given symbol depends on.
 
 ```python
 # Get all direct dependencies
-deps = my_class.dependencies  # Shorthand for get_dependencies(UsageType.DIRECT)
+deps = my_class.dependencies  # Shorthand for dependencies(UsageType.DIRECT)
 
 # Get dependencies of specific types
-direct_deps = my_class.get_dependencies(UsageType.DIRECT)
-chained_deps = my_class.get_dependencies(UsageType.CHAINED)
-indirect_deps = my_class.get_dependencies(UsageType.INDIRECT)
+direct_deps = my_class.dependencies(UsageType.DIRECT)
+chained_deps = my_class.dependencies(UsageType.CHAINED)
+indirect_deps = my_class.dependencies(UsageType.INDIRECT)
 ```
 
 ### Combining Usage Types
@@ -143,10 +143,10 @@ You can combine usage types using the bitwise OR operator:
 
 ```python
 # Get both direct and indirect dependencies
-deps = my_class.get_dependencies(UsageType.DIRECT | UsageType.INDIRECT)
+deps = my_class.dependencies(UsageType.DIRECT | UsageType.INDIRECT)
 
 # Get all types of dependencies
-deps = my_class.get_dependencies(
+deps = my_class.dependencies(
     UsageType.DIRECT | UsageType.CHAINED |
     UsageType.INDIRECT | UsageType.ALIASED
 )
@@ -178,25 +178,23 @@ class_imports = [dep for dep in my_class.dependencies if isinstance(dep, Import)
 
 # Get all imports used by a function, including indirect ones
 all_function_imports = [
-    dep for dep in my_function.get_dependencies(UsageType.DIRECT | UsageType.INDIRECT)
+    dep for dep in my_function.dependencies(UsageType.DIRECT | UsageType.INDIRECT)
     if isinstance(dep, Import)
 ]
 ```
 ## Traversing the Dependency Graph
 
-Sometimes you need to analyze not just direct dependencies, but the entire dependency graph up to a certain depth. The `get_symbol_dependencies` method allows you to traverse the dependency graph and collect all dependencies up to a specified depth level.
+Sometimes you need to analyze not just direct dependencies, but the entire dependency graph up to a certain depth. The `dependencies` method allows you to traverse the dependency graph and collect all dependencies up to a specified depth level.
 
 ### Basic Usage
 
 ```python
-# Get dependencies up to depth 2 (default)
-deps = codebase.get_symbol_dependencies(symbol)
 
 # Get only direct dependencies
-deps = codebase.get_symbol_dependencies(symbol, max_depth=1)
+deps = symbol.dependencies(max_depth=1)
 
 # Get deep dependencies (up to 5 levels)
-deps = codebase.get_symbol_dependencies(symbol, max_depth=5)
+deps = symbol.dependencies(max_depth=5)
 ```
 
 The method returns a dictionary mapping each symbol to its list of direct dependencies. This makes it easy to analyze the dependency structure:
@@ -209,7 +207,7 @@ for sym, direct_deps in deps.items():
 
 ### Example: Analyzing Class Inheritance
 
-Here's an example of using `get_symbol_dependencies` to analyze a class inheritance chain:
+Here's an example of using `dependencies` to analyze a class inheritance chain:
 
 ```python
 class A:
@@ -224,8 +222,8 @@ class C(B):
         self.method_b()
 
 # Get the full inheritance chain
-deps = codebase.get_symbol_dependencies(
-    codebase.get_class("C"), 
+symbol = codebase.get_class("C")
+deps = symbol.dependencies(
     max_depth=3
 )
 
@@ -249,9 +247,8 @@ class B:
         return A()
 
 # Get dependencies including cycles
-deps = codebase.get_symbol_dependencies(
-    codebase.get_class("A")
-)
+symbol = codebase.get_class("A")
+deps = symbol.dependencies()
 
 # Will show:
 # A depends on: [B]
