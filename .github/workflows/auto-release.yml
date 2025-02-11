@@ -9,7 +9,7 @@ jobs:
     name: Semantic version
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.semantic.outputs.git-tag }}
+      release-tag: ${{ steps.semantic.outputs.git-tag }}
     permissions:
       checks: read # to wait for required checks
       contents: write # to be able to publish a GitHub release
@@ -36,10 +36,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
-    if: ${{ needs.semantic-version.outputs.tag }}
+    if: ${{ needs.semantic-version.outputs.release-tag }}
     needs: semantic-version
     uses: ./.github/workflows/release.yml
     permissions:
       contents: write
     with:
-      tag: ${{ needs.semantic-version.outputs.tag }}
+      release-tag: ${{ needs.semantic-version.outputs.release-tag }}

@@ -3,7 +3,7 @@ name: Build & Release
 on:
   workflow_call:
     inputs:
-      tag:
+      release-tag:
         required: true
         type: string
         description: Tag to release
@@ -13,7 +13,7 @@ on:
   #     tag:
   #       required: true
   #       type: string
-  #       description: Tag to release # TODO: create if it does not exist
+  #       description: Tag to release
   push:
     tags:
       - v*
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ inputs.tag || github.event.pull_request.head.ref || github.ref }}
+          ref: ${{ inputs.release-tag || github.event.pull_request.head.ref || github.ref }}
 
       - name: Install UV
         uses: astral-sh/setup-uv@v5.2
@@ -80,7 +80,7 @@ jobs:
           path: ./wheelhouse/*.whl
 
   release:
-    if: ${{ inputs.tag || startsWith(github.ref, 'refs/tags/') }}
+    if: ${{ inputs.release-tag || startsWith(github.ref, 'refs/tags/') }}
     needs: build
     runs-on: ubuntu-latest
     environment: release
@@ -108,7 +108,7 @@ jobs:
         id: github-release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.tag || github.ref_name }}
+          tag_name: ${{ inputs.release-tag || github.ref_name }}
           files: dist/*
           fail_on_unmatched_files: true
           generate_release_notes: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -117,5 +117,5 @@ jobs:
         if: always()
         uses: ./.github/actions/release-slack-bot
         with:
-          release-tag: ${{ github.ref_name }}
+          release-tag: ${{ inputs.release-tag || github.ref_name }}
           slack-token: ${{ secrets.SLACK_BOT_TOKEN }}
