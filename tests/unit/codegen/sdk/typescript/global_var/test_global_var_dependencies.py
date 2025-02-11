@@ -19,8 +19,8 @@ const bar = {
     key: foo,
 } as const
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={filename: content}) as G:
-        file = G.get_file(filename)
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={filename: content}) as ctx:
+        file = ctx.get_file(filename)
 
         gvar: TSAssignment = file.get_global_var("bar")
         deps = gvar.dependencies
@@ -37,8 +37,8 @@ export const values = [
     ...helper(),
 ] as const
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={filename: content}) as G:
-        file = G.get_file(filename)
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={filename: content}) as ctx:
+        file = ctx.get_file(filename)
 
         gvar: TSAssignment = file.get_global_var("values")
         deps = gvar.dependencies
@@ -55,8 +55,8 @@ const d = 4, e = 5;
 let f = a + b + c;
 export const g = 6;
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": ts_code}) as G:
-        file = G.get_file("test.ts")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.ts": ts_code}) as ctx:
+        file = ctx.get_file("test.ts")
 
         # =====[ Count symbols ]=====
         symbols = file.symbols
@@ -78,8 +78,8 @@ function Component() {
 
 Container.SubComponent = Component
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as G:
-        file = G.get_file("test.tsx")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": ts_code}) as ctx:
+        file = ctx.get_file("test.tsx")
 
         # =====[ Count symbols ]=====
         symbol = file.get_symbol("Component")

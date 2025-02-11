@@ -95,7 +95,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         while (parent := new_ts_node.parent).type in ("export_statement", "lexical_declaration", "variable_declarator"):
             new_ts_node = parent
 
-        return [Value(new_ts_node, self.file_node_id, self.G, self.parent) if node.ts_node == self.ts_node else node for node in nodes]
+        return [Value(new_ts_node, self.file_node_id, self.ctx, self.parent) if node.ts_node == self.ts_node else node for node in nodes]
 
     @property
     @reader
@@ -224,7 +224,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
             if auto_format:
                 comment = "  " + TSComment.generate_comment(comment, TSCommentType.DOUBLE_SLASH)
             node = node or self.ts_node
-            Value(node, self.file_node_id, self.G, self).insert_after(comment, fix_indentation=False, newline=False)
+            Value(node, self.file_node_id, self.ctx, self).insert_after(comment, fix_indentation=False, newline=False)
 
     @property
     @reader
@@ -238,7 +238,7 @@ class TSSymbol(Symbol["TSHasBlock", "TSCodeBlock"], Exportable):
         """
         sibbling = self.ts_node.next_sibling
         if sibbling and sibbling.type == ";":
-            return Value(sibbling, self.file_node_id, self.G, self)
+            return Value(sibbling, self.file_node_id, self.ctx, self)
         return None
 
     @property

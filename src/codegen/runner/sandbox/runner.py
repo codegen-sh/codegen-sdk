@@ -112,5 +112,5 @@ class SandboxRunner:
         response.results = run_results
         response.branches = branches
 
-        self.codebase.G.flags._flags.clear()
+        self.codebase.ctx.flags._flags.clear()
         return response

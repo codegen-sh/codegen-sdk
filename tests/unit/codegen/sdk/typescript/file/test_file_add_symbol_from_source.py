@@ -17,14 +17,14 @@ function add_symbol_to_file() {
         file.add_symbol_from_source(source="export const c = 1")
 
     symbol = file.get_symbol("c")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
     assert symbol.name == "c"
     assert isinstance(symbol, Assignment)
     assert "export const c = 1" in file.content
     assert symbol.is_exported
 
     file.add_symbol_from_source(source="const b = 1")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
     symbol = file.get_symbol("b")
     assert symbol.name == "b"
     assert isinstance(symbol, Assignment)
@@ -40,7 +40,7 @@ function add_symbol_to_file() {
         """
 
     file.add_symbol_from_source(source=f"export {new_symbol_source}")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
     symbol = file.get_symbol("addSymbolToFile")
     assert symbol.name == "addSymbolToFile"
     assert symbol.is_exported

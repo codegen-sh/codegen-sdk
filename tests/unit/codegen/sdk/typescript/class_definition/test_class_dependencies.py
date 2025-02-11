@@ -40,8 +40,8 @@ export class ExampleClass extends Component<Props> {
     }
 }
 """
-    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": content}) as G:
-        file = G.get_file("test.tsx")
+    with get_codebase_graph_session(tmpdir=tmpdir, programming_language=ProgrammingLanguage.TYPESCRIPT, files={"test.tsx": content}) as ctx:
+        file = ctx.get_file("test.tsx")
         cls = file.get_class("ExampleClass")
         deps = cls.dependencies
 

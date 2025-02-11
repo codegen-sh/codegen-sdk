@@ -62,9 +62,9 @@ def test_file_get_config(tmpdir) -> None:
         files={parent_file_name: "", child_file_name: "", sibling_file_name: "", config_name: config_content, root_config_name: root_config_content, parent_config_name: parent_config_content},
         commit=True,
     ) as codebase:
-        config: TSConfig = codebase.G.config_parser.get_config(config_name)
-        root_config: TSConfig = codebase.G.config_parser.get_config(root_config_name)
-        parent_config: TSConfig = codebase.G.config_parser.get_config(parent_config_name)
+        config: TSConfig = codebase.ctx.config_parser.get_config(config_name)
+        root_config: TSConfig = codebase.ctx.config_parser.get_config(root_config_name)
+        parent_config: TSConfig = codebase.ctx.config_parser.get_config(parent_config_name)
 
         assert config is not None
         assert config.config_file.filepath == config_name

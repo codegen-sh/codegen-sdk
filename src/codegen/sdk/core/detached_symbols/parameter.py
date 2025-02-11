@@ -45,7 +45,7 @@ class Parameter(Usable[Parent], Typeable[TType, Parent], HasValue, Expression[Pa
     _name_node: Name | None = None
 
     def __init__(self, ts_node: TSNode, index: int, parent: Parent) -> None:
-        super().__init__(ts_node, parent.file_node_id, parent.G, parent)
+        super().__init__(ts_node, parent.file_node_id, parent.ctx, parent)
         self._pos = index
         name_node = self._get_name_node(ts_node)
         self._name_node = self._parse_expression(name_node, default=Name)
