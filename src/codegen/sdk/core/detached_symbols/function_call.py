@@ -601,7 +601,7 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
                 if isinstance(match, FunctionCall):
                     match._compute_dependencies(usage_type, dest)
                 for definition in self.function_definition_frames:
-                    definition.add_usage(match=self, dest=dest, usage_type=usage_type, codebase_context=self.ctx)
+                    definition.add_usage(self, usage_type, dest, self.ctx)
             else:
                 match._compute_dependencies(usage_type, dest)
 

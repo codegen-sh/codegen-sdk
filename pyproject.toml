@@ -63,6 +63,7 @@ dependencies = [
   "tomlkit>=0.13.2",
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
+  "packaging>=24.2",
   "langchain[openai]",
   "langchain_core",
   "langchain_openai",
@@ -114,6 +115,7 @@ types = [
   "types-requests>=2.32.0.20241016",
   "types-toml>=0.10.8.20240310",
 ]
+lsp = ["pygls>=2.0.0a2", "lsprotocol==2024.0.0b1"]
 [tool.uv]
 cache-keys = [{ git = { commit = true, tags = true } }]
 dev-dependencies = [
@@ -148,16 +150,17 @@ dev-dependencies = [
   "isort>=5.13.2",
   "emoji>=2.14.0",
   "pytest-benchmark[histogram]>=5.1.0",
-  "pytest-asyncio<1.0.0,>=0.21.1",
+  "pytest-asyncio>=0.21.1,<1.0.0",
   "loguru>=0.7.3",
   "httpx<0.28.2,>=0.28.1",
   "jupyterlab>=4.3.5",
   "modal>=0.73.25",
+  "pytest-lsp>=1.0.0b1",
 ]
 
 
 [tool.uv.workspace]
-members = ["codegen", "codegen-examples"]
+#members = ["codegen", "codegen-examples"]
 exclude = ["codegen-examples"]
 
 [tool.cython-lint]
@@ -211,6 +214,8 @@ xfail_strict = true
 junit_duration_report = "call"
 junit_logging = "all"
 tmp_path_retention_policy = "failed"
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 [build-system]
 requires = ["hatchling>=1.26.3", "hatch-vcs>=0.4.0", "setuptools-scm>=8.0.0"]
 build-backend = "hatchling.build"

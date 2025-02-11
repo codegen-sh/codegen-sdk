@@ -4,9 +4,7 @@ from functools import cached_property
 from typing import Self, override
 
 from codeowners import CodeOwners as CodeOwnersParser
-from git import Remote
 from git import Repo as GitCLI
-from git.remote import PushInfoList
 from github.PullRequest import PullRequest
 
 from codegen.git.clients.git_repo_client import GitRepoClient
@@ -159,10 +157,6 @@ class LocalRepoOperator(RepoOperator):
     @cached_property
     def base_url(self) -> str | None:
         return self._local_git_repo.base_url
-
-    @override
-    def push_changes(self, remote: Remote | None = None, refspec: str | None = None, force: bool = False) -> PushInfoList:
-        raise OperatorIsLocal()
 
     @override
     def pull_repo(self) -> None:

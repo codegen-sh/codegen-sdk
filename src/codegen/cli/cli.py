@@ -15,6 +15,7 @@ from codegen.cli.commands.reset.main import reset_command
 from codegen.cli.commands.run.main import run_command
 from codegen.cli.commands.run_on_pr.main import run_on_pr_command
 from codegen.cli.commands.style_debug.main import style_debug_command
+from codegen.cli.commands.update.main import update_command
 
 click.rich_click.USE_RICH_MARKUP = True
 install(show_locals=True)
@@ -40,6 +41,7 @@ main.add_command(style_debug_command)
 main.add_command(run_on_pr_command)
 main.add_command(notebook_command)
 main.add_command(reset_command)
+main.add_command(update_command)
 main.add_command(config_command)
 
 

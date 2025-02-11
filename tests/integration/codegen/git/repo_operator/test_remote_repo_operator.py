@@ -12,11 +12,7 @@ shallow_options = [True, False]
 
 @pytest.fixture
 def op(repo_config, request):
-    op = RemoteRepoOperator(
-        repo_config,
-        shallow=request.param if hasattr(request, "param") else True,
-        bot_commit=False,
-    )
+    op = RemoteRepoOperator(repo_config, shallow=request.param if hasattr(request, "param") else True, bot_commit=False)
     yield op
 
 
