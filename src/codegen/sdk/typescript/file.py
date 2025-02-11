@@ -23,7 +23,7 @@ from codegen.sdk.utils import calculate_base_path, find_all_descendants
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.statements.export_statement import ExportStatement
     from codegen.sdk.core.symbol import Symbol
     from codegen.sdk.typescript.symbol import TSSymbol
@@ -232,11 +232,11 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         import_nodes = find_all_descendants(self.ts_node, {"import_statement", "call_expression"})
         for import_node in import_nodes:
             if import_node.type == "import_statement":
-                TSImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
+                TSImportStatement(import_node, self.node_id, self.ctx, self.code_block, 0)
             elif import_node.type == "call_expression":
                 function = import_node.child_by_field_name("function")
                 if function.type == "import" or (function.type == "identifier" and function.text.decode("utf-8") == "require"):
-                    TSImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
+                    TSImportStatement(import_node, self.node_id, self.ctx, self.code_block, 0)
 
     @writer
     def remove_unused_exports(self) -> None:
@@ -356,7 +356,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
         return None
 
     @noapidoc
-    def get_import_module_name_for_file(self, filepath: str, G: CodebaseGraph) -> str:
+    def get_import_module_name_for_file(self, filepath: str, ctx: CodebaseContext) -> str:
         """Returns the module name that this file gets imported as"""
         # TODO: support relative and absolute module path
         import_path = filepath
@@ -418,7 +418,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
             None
         """
         # =====[ Add the new filepath as a new file node in the graph ]=====
-        new_file = self.G.node_classes.file_cls.from_content(new_filepath, self.content, self.G)
+        new_file = self.ctx.node_classes.file_cls.from_content(new_filepath, self.content, self.ctx)
         # =====[ Change the file on disk ]=====
         self.transaction_manager.add_file_rename_transaction(self, new_filepath)
         # =====[ Update all the inbound imports to point to the new module ]=====
@@ -426,7 +426,7 @@ class TSFile(SourceFile[TSImport, TSFunction, TSClass, TSAssignment, TSInterface
             existing_imp = imp.module.source.strip("'")
             new_module_name = new_file.import_module_name.strip("'")
             # Web specific hacks
-            if self.G.repo_name == "web":
+            if self.ctx.repo_name == "web":
                 if existing_imp.startswith("./"):
                     relpath = calculate_base_path(new_filepath, existing_imp)
                     new_module_name = new_module_name.replace(relpath, ".")

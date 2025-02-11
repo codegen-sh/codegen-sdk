@@ -111,7 +111,7 @@ class OpenAIHelper(AbstractAIHelper):
     def __init__(
         self,
         openai_key: str,
-        api_base: str = "https://oai.hconeai.com/v1",
+        api_base: str = "https://api.openai.com/v1",
         headers=None,
         cache: bool | None = True,
     ) -> None:
@@ -197,7 +197,7 @@ class AnthropicHelper(AbstractAIHelper):
         self,
         anthropic_key: str,
         # Dont add /v1 to the path. Anthropic already adds it, so it will be a double /v1/v1
-        api_base: str = "https://anthropic.hconeai.com/",
+        api_base: str = "https://api.anthropic.com",
         headers=None,
         openai_anthropic_translation: bool = True,
         cache: bool | None = True,
@@ -387,8 +387,8 @@ class MultiProviderAIHelper(AbstractAIHelper):
         self,
         openai_key: str,
         anthropic_key: str | None = None,
-        openai_base: str = "https://oai.hconeai.com/v1",
-        anthropic_base: str = "https://anthropic.hconeai.com/",
+        openai_base: str = "https://api.openai.com/v1",
+        anthropic_base: str = "https://api.anthropic.com",
         headers=None,
         use_openai: bool = True,
         use_claude: bool = True,

@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     import rich.repr
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.file import SourceFile
     from codegen.sdk.core.interfaces.exportable import Exportable
     from codegen.sdk.core.interfaces.has_name import HasName
@@ -84,7 +84,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         self,
         ts_node: TSNode,
         file_node_id: NodeId,
-        G: CodebaseGraph,
+        ctx: CodebaseContext,
         parent: ImportStatement,
         module_node: TSNode | None,
         name_node: TSNode | None,
@@ -92,10 +92,10 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         import_type: ImportType = ImportType.UNKNOWN,
     ) -> None:
         self.to_file_id = file_node_id
-        super().__init__(ts_node, file_node_id, G, parent)
-        self.module = self.G.parser.parse_expression(module_node, self.file_node_id, G, self, default=Name) if module_node else None
-        self.alias = self.G.parser.parse_expression(alias_node, self.file_node_id, G, self, default=Name) if alias_node else None
-        self.symbol_name = self.G.parser.parse_expression(name_node, self.file_node_id, G, self, default=Name) if name_node else None
+        super().__init__(ts_node, file_node_id, ctx, parent)
+        self.module = self.ctx.parser.parse_expression(module_node, self.file_node_id, ctx, self, default=Name) if module_node else None
+        self.alias = self.ctx.parser.parse_expression(alias_node, self.file_node_id, ctx, self, default=Name) if alias_node else None
+        self.symbol_name = self.ctx.parser.parse_expression(name_node, self.file_node_id, ctx, self, default=Name) if name_node else None
         self._name_node = self._parse_expression(name_node, default=Name)
         self.import_type = import_type
 
@@ -133,24 +133,25 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         # =====[ Case: Can't resolve the filepath ]=====
         if resolution is None:
             # =====[ Check if we are importing an external module in the graph ]=====
-            ext = self.G.get_external_module(self.source, self._unique_node.source)
+            ext = self.ctx.get_external_module(self.source, self._unique_node.source)
             if ext is None:
                 ext = ExternalModule.from_import(self)
-            self.G.add_edge(self.node_id, ext.node_id, type=EdgeType.IMPORT_SYMBOL_RESOLUTION)
+            self.ctx.add_edge(self.node_id, ext.node_id, type=EdgeType.IMPORT_SYMBOL_RESOLUTION)
         # =====[ Case: Can resolve the filepath ]=====
         elif resolution.symbol:
             if resolution.symbol.node_id == self.node_id:
                 return []  # Circular to self
-            self.G.add_edge(
+            self.ctx.add_edge(
                 self.node_id,
                 resolution.symbol.node_id,
                 type=EdgeType.IMPORT_SYMBOL_RESOLUTION,
             )
 
         elif resolution.imports_file:
-            self.G.add_edge(self.node_id, resolution.from_file.node_id, type=EdgeType.IMPORT_SYMBOL_RESOLUTION)
-        else:
-            pass
+            self.ctx.add_edge(self.node_id, resolution.from_file.node_id, type=EdgeType.IMPORT_SYMBOL_RESOLUTION)
+            # for symbol in resolution.from_file.symbols:
+            #     usage = SymbolUsage(parent_symbol_name=self.name, child_symbol_name=self.name, type=SymbolUsageType.IMPORTED, match=self, usage_type=UsageType.DIRECT)
+            #     self.ctx.add_edge(self.node_id, symbol.node_id, type=EdgeType.SYMBOL_USAGE, usage=usage)
 
         #  Referenced symbols that we can't find.
         #  Could be:
@@ -285,7 +286,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         Returns:
             TSourceFile: The source file containing this import statement.
         """
-        return self.G.get_node(self.to_file_id)
+        return self.ctx.get_node(self.to_file_id)
 
     @property
     @reader
@@ -325,7 +326,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         """
         from codegen.sdk.typescript.file import TSFile
 
-        symbol = next(iter(self.G.successors(self.node_id, edge_type=EdgeType.IMPORT_SYMBOL_RESOLUTION, sort=False)), None)
+        symbol = next(iter(self.ctx.successors(self.node_id, edge_type=EdgeType.IMPORT_SYMBOL_RESOLUTION, sort=False)), None)
         if symbol is None:
             # Unresolve import - could occur during unparse()
             return None
@@ -422,7 +423,7 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
 
         # always traverses upto the module level
         while curr:
-            if curr.type in self.G.node_classes.dynamic_import_parent_types:
+            if curr.type in self.ctx.node_classes.dynamic_import_parent_types:
                 return True
             curr = curr.parent
 
@@ -627,11 +628,11 @@ class Import(Usable[ImportStatement], Chainable, Generic[TSourceFile], HasAttrib
         #     for _, wildcard in self._wildcards.items():
         #         for used_frame in wildcard.resolved_type_frames:
         #             if used_frame.parent_frame:
-        #                 used_frame.parent_frame.add_usage(self.symbol_name or self.module, SymbolUsageType.IMPORTED_WILDCARD, self, self.G)
+        #                 used_frame.parent_frame.add_usage(self.symbol_name or self.module, SymbolUsageType.IMPORTED_WILDCARD, self, self.ctx)
         # else:
         for used_frame in self.resolved_type_frames:
             if used_frame.parent_frame:
-                used_frame.parent_frame.add_usage(self._unique_node, UsageKind.IMPORTED, self, self.G)
+                used_frame.parent_frame.add_usage(self._unique_node, UsageKind.IMPORTED, self, self.ctx)
 
     @property
     def _unique_node(self):

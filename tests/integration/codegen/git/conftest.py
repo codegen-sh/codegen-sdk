@@ -15,12 +15,11 @@ def mock_config():
 
 
 @pytest.fixture(autouse=True)
-def repo_config():
+def repo_config(tmpdir):
     repo_config = RepoConfig(
-        id=321,
         name="Kevin-s-Adventure-Game",
         full_name="codegen-sh/Kevin-s-Adventure-Game",
-        organization_id=123,
         organization_name="codegen-sh",
+        base_dir=str(tmpdir),
     )
     yield repo_config

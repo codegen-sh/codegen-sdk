@@ -57,18 +57,6 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
     size = list(map(Size, metafunc.config.getoption("--size")))
 
     match metafunc.definition.name:
-        # case "test_codemods_diffs":
-        #     cases = []
-        #     for case in find_codemod_test_cases(repos):
-        #         cases.append(case)
-
-        #     metafunc.parametrize(
-        #         "raw_codemod,repo,expected",
-        #         [pytest.param(i.codemod_metadata.codemod, i.repo, i.test_dir, marks=pytest.mark.xdist_group(i.repo.name)) for i in cases],
-        #         indirect=["repo", "expected"],
-        #         ids=[f"{i.codemod_metadata.name}-{i.repo.name}" for i in cases],
-        #         scope="session",
-        #     )
         case "test_codemods_cloned_repos":
             cases = []
             for case in find_codemod_test_cases(repos):

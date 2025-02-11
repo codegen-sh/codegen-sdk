@@ -95,7 +95,7 @@ class MyClass {
         assert isinstance(b, TSAttribute)
         assert isinstance(b, TSAssignmentStatement)
         assert b.file_node_id == cls.file_node_id
-        assert b.G == cls.G
+        assert b.ctx == cls.ctx
 
 
 def test_attribute_from_parent_symbol(tmpdir) -> None:
@@ -116,7 +116,7 @@ type MyType = {
         assert isinstance(b, TSAttribute)
         assert isinstance(b, TSAssignmentStatement)
         assert b.file_node_id == type.file_node_id
-        assert b.G == type.G
+        assert b.ctx == type.ctx
 
 
 def test_ts_attributes_within_function(tmpdir) -> None:

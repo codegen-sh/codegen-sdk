@@ -393,8 +393,8 @@ class Function(
 
         Only enabled for specific languages that support native type inference.
         """
-        if self.G.language_engine:
-            return self.G.language_engine.get_return_type(self)
+        if self.ctx.language_engine:
+            return self.ctx.language_engine.get_return_type(self)
         else:
             msg = "Language engine not enabled for this repo or language."
             raise NotImplementedError(msg)
@@ -412,4 +412,4 @@ class Function(
 
     @noapidoc
     def register_api(self, url: str):
-        self.G.global_context.multigraph.api_definitions[url] = self
+        self.ctx.global_context.multigraph.api_definitions[url] = self

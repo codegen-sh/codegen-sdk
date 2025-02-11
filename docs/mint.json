@@ -41,8 +41,8 @@
 		"thumbsRating": true
 	},
 	"topbarCtaButton": {
-		"name": "Codegen",
-		"url": "https://codegen.sh/new"
+		"name": "GitHub",
+		"url": "https://github.com/codegen-sh/codegen-sdk"
 	},
 	"tabs": [
 		{
@@ -82,9 +82,11 @@
 			"group": "Tutorials",
 			"pages": [
 				"tutorials/at-a-glance",
-				"tutorials/migrating-apis",
-				"tutorials/codebase-visualization",
+				"tutorials/build-code-agent",
+				"tutorials/slack-bot",
 				"tutorials/training-data",
+				"tutorials/codebase-visualization",
+				"tutorials/migrating-apis",
 				"tutorials/organize-your-codebase",
 				"tutorials/modularity",
 				"tutorials/manage-feature-flags",
@@ -134,6 +136,7 @@
 				"building-with-codegen/codebase-visualization",
 				"building-with-codegen/flagging-symbols",
 				"building-with-codegen/calling-out-to-llms",
+				"building-with-codegen/semantic-code-search",
 				"building-with-codegen/reducing-conditions"
 			]
 		},

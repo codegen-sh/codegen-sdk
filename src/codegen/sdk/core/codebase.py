@@ -27,7 +27,7 @@ from codegen.git.utils.pr_review import CodegenPR
 from codegen.sdk._proxy import proxy_property
 from codegen.sdk.ai.helpers import AbstractAIHelper, MultiProviderAIHelper
 from codegen.sdk.codebase.codebase_ai import generate_system_prompt, generate_tools
-from codegen.sdk.codebase.codebase_graph import GLOBAL_FILE_IGNORE_LIST, CodebaseGraph
+from codegen.sdk.codebase.codebase_context import GLOBAL_FILE_IGNORE_LIST, CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig, DefaultConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.diff_lite import DiffLite
 from codegen.sdk.codebase.flagging.code_flag import CodeFlag
@@ -174,7 +174,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._op = main_project.repo_operator
         self.viz = VisualizationManager(op=self._op)
         self.repo_path = Path(self._op.repo_path)
-        self.G = CodebaseGraph(projects, config=config)
+        self.ctx = CodebaseContext(projects, config=config)
         self.console = Console(record=True, soft_wrap=True)
 
     @noapidoc
@@ -186,9 +186,9 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         return str(self)
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "repo", self.G.repo_name
-        yield "nodes", len(self.G.nodes)
-        yield "edges", len(self.G.edges)
+        yield "repo", self.ctx.repo_name
+        yield "nodes", len(self.ctx.nodes)
+        yield "edges", len(self.ctx.edges)
 
     __rich_repr__.angular = ANGULAR_STYLE
 
@@ -205,12 +205,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @property
     def name(self) -> str:
         """The name of the repository."""
-        return self.G.repo_name
+        return self.ctx.repo_name
 
     @property
     def language(self) -> ProgrammingLanguage:
         """The programming language of the repository."""
-        return self.G.programming_language
+        return self.ctx.programming_language
 
     ####################################################################################################################
     # NODES
@@ -218,7 +218,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
     @noapidoc
     def _symbols(self, symbol_type: SymbolType | None = None) -> list[TSymbol | TClass | TFunction | TGlobalVar]:
-        matches: list[Symbol] = self.G.get_nodes(NodeType.SYMBOL)
+        matches: list[Symbol] = self.ctx.get_nodes(NodeType.SYMBOL)
         return [x for x in matches if x.is_top_level and (symbol_type is None or x.symbol_type == symbol_type)]
 
     # =====[ Node Types ]=====
@@ -245,7 +245,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         """
         if extensions is None:
             # Return all source files
-            files = self.G.get_nodes(NodeType.FILE)
+            files = self.ctx.get_nodes(NodeType.FILE)
         elif isinstance(extensions, str) and extensions != "*":
             msg = "extensions must be a list of extensions or '*'"
             raise ValueError(msg)
@@ -267,7 +267,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             list[TDirectory]: A list of Directory objects in the codebase.
         """
-        return list(self.G.directories.values())
+        return list(self.ctx.directories.values())
 
     @property
     def imports(self) -> list[TImport]:
@@ -283,7 +283,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             list[TImport]: A list of Import nodes representing all imports in the codebase.
             TImport can be PyImport for Python codebases or TSImport for TypeScript codebases.
         """
-        return self.G.get_nodes(NodeType.IMPORT)
+        return self.ctx.get_nodes(NodeType.IMPORT)
 
     @property
     @py_noapidoc
@@ -305,7 +305,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             msg = "Exports are not supported for Python codebases since Python does not have an export mechanism."
             raise NotImplementedError(msg)
 
-        return self.G.get_nodes(NodeType.EXPORT)
+        return self.ctx.get_nodes(NodeType.EXPORT)
 
     @property
     def external_modules(self) -> list[ExternalModule]:
@@ -316,7 +316,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             list[ExternalModule]: List of external module nodes from the codebase graph.
         """
-        return self.G.get_nodes(NodeType.EXTERNAL)
+        return self.ctx.get_nodes(NodeType.EXTERNAL)
 
     @property
     def symbols(self) -> list[TSymbol]:
@@ -417,17 +417,17 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         # if os.path.exists(filepath):
         #     raise ValueError(f"File {filepath} already exists on disk.")
 
-        file_exts = self.G.extensions
+        file_exts = self.ctx.extensions
         # Create file as source file if it has a registered extension
         if any(filepath.endswith(ext) for ext in file_exts):
-            file_cls = self.G.node_classes.file_cls
-            file = file_cls.from_content(filepath, content, self.G, sync=sync)
+            file_cls = self.ctx.node_classes.file_cls
+            file = file_cls.from_content(filepath, content, self.ctx, sync=sync)
             if file is None:
                 msg = f"Failed to parse file with content {content}. Please make sure the content syntax is valid with respect to the filepath extension."
                 raise ValueError(msg)
         else:
             # Create file as non-source file
-            file = File.from_content(filepath, content, self.G, sync=False)
+            file = File.from_content(filepath, content, self.ctx, sync=False)
 
         # This is to make sure we keep track of this file for diff purposes
         uncache_all()
@@ -444,7 +444,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Raises:
             FileExistsError: If the directory already exists and exist_ok is False.
         """
-        self.G.to_absolute(dir_path).mkdir(parents=parents, exist_ok=exist_ok)
+        self.ctx.to_absolute(dir_path).mkdir(parents=parents, exist_ok=exist_ok)
 
     def has_file(self, filepath: str, ignore_case: bool = False) -> bool:
         """Determines if a file exists in the codebase.
@@ -481,26 +481,26 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         def get_file_from_path(path: Path) -> File | None:
             try:
-                return File.from_content(path, path.read_text(), self.G, sync=False)
+                return File.from_content(path, self.ctx.io.read_text(path), self.ctx, sync=False)
             except UnicodeDecodeError:
                 # Handle when file is a binary file
-                return File.from_content(path, path.read_bytes(), self.G, sync=False, binary=True)
+                return File.from_content(path, self.ctx.io.read_bytes(path), self.ctx, sync=False, binary=True)
 
         # Try to get the file from the graph first
-        file = self.G.get_file(filepath, ignore_case=ignore_case)
+        file = self.ctx.get_file(filepath, ignore_case=ignore_case)
         if file is not None:
             return file
-        absolute_path = self.G.to_absolute(filepath)
-        if absolute_path.exists():
+        absolute_path = self.ctx.to_absolute(filepath)
+        if self.ctx.io.file_exists(absolute_path):
             return get_file_from_path(absolute_path)
         elif ignore_case:
             parent = absolute_path.parent
-            if parent == Path(self.G.repo_path):
-                for file in self.G.to_absolute(self.G.repo_path).iterdir():
+            if parent == Path(self.ctx.repo_path):
+                for file in self.ctx.to_absolute(self.ctx.repo_path).iterdir():
                     if str(absolute_path).lower() == str(file).lower():
                         return get_file_from_path(file)
             else:
-                dir = self.G.get_directory(parent, ignore_case=ignore_case)
+                dir = self.ctx.get_directory(parent, ignore_case=ignore_case)
                 if dir is None:
                     return None
                 for file in dir.path.iterdir():
@@ -540,7 +540,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         # Sanitize the path
         dir_path = os.path.normpath(dir_path)
         dir_path = "" if dir_path == "." else dir_path
-        directory = self.G.get_directory(self.G.to_absolute(dir_path), ignore_case=ignore_case)
+        directory = self.ctx.get_directory(self.ctx.to_absolute(dir_path), ignore_case=ignore_case)
         if directory is None and not optional:
             msg = f"Directory {dir_path} not found in codebase. Use optional=True to return None instead."
             raise ValueError(msg)
@@ -710,7 +710,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             GitCommit | None: The commit object if changes were committed, None otherwise.
         """
-        self.G.commit_transactions(sync_graph=False)
+        self.ctx.commit_transactions(sync_graph=False)
         if self._op.stage_and_commit_all_changes(message, verify):
             logger.info(f"Commited repository to {self._op.head_commit} on {self._op.get_active_branch_or_commit()}")
             return self._op.head_commit
@@ -728,7 +728,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             None
         """
-        self.G.commit_transactions(sync_graph=sync_graph and self.G.config.feature_flags.sync_enabled)
+        self.ctx.commit_transactions(sync_graph=sync_graph and self.ctx.config.feature_flags.sync_enabled)
 
     @noapidoc
     def git_push(self, *args, **kwargs) -> PushInfoList:
@@ -776,7 +776,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             self._op.discard_changes()  # Discard any changes made to the raw file state
         self._num_ai_requests = 0
         self.reset_logs()
-        self.G.undo_applied_diffs()
+        self.ctx.undo_applied_diffs()
 
     def checkout(self, *, commit: str | GitCommit | None = None, branch: str | None = None, create_if_missing: bool = False, remote: bool = False) -> CheckoutResult:
         """Checks out a git branch or commit and syncs the codebase graph to the new state.
@@ -816,11 +816,11 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @noapidoc
     def sync_to_commit(self, target_commit: GitCommit) -> None:
         """Updates the current base to a new commit."""
-        origin_commit = self.G.synced_commit
+        origin_commit = self.ctx.synced_commit
         if origin_commit.hexsha == target_commit.hexsha:
             logger.info(f"Codebase is already synced to {target_commit.hexsha}. Skipping sync_to_commit.")
             return
-        if not self.G.config.feature_flags.sync_enabled:
+        if not self.ctx.config.feature_flags.sync_enabled:
             logger.info(f"Syncing codebase is disabled for repo {self._op.repo_name}. Skipping sync_to_commit.")
             return
 
@@ -829,8 +829,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         diff_lites = []
         for diff in diff_index:
             diff_lites.append(DiffLite.from_git_diff(diff))
-        self.G.apply_diffs(diff_lites)
-        self.G.save_commit(target_commit)
+        self.ctx.apply_diffs(diff_lites)
+        self.ctx.save_commit(target_commit)
 
     @noapidoc
     def get_diffs(self, base: str | None = None) -> list[Diff]:
@@ -902,7 +902,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             list[CodeFlag]: A list of all flags in the codebase.
         """
-        return self.G.flags._flags
+        return self.ctx.flags._flags
 
     @noapidoc
     def flag_instance(
@@ -922,7 +922,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             CodeFlag: A flag object representing the flagged entity.
         """
-        return self.G.flags.flag_instance(symbol, **kwargs)
+        return self.ctx.flags.flag_instance(symbol, **kwargs)
 
     def should_fix(self, flag: CodeFlag) -> bool:
         """Returns True if the flag should be fixed based on the current mode and active group.
@@ -938,17 +938,17 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             Returns True if no active group is set.
             Returns True if the flag's hash exists in the active group hashes.
         """
-        return self.G.flags.should_fix(flag)
+        return self.ctx.flags.should_fix(flag)
 
     @noapidoc
     def set_find_mode(self, find_mode: bool) -> None:
-        self.G.flags.set_find_mode(find_mode)
+        self.ctx.flags.set_find_mode(find_mode)
 
     @noapidoc
     def set_active_group(self, group: Group) -> None:
         """Will only fix these flags."""
         # TODO - flesh this out more with Group datatype and GroupBy
-        self.G.flags.set_active_group(group)
+        self.ctx.flags.set_active_group(group)
 
     ####################################################################################################################
     # LOGGING
@@ -965,7 +965,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         At the end, we will save a tail of these logs on the CodemodRun
         """
-        self.G.transaction_manager.check_max_preview_time()
+        self.ctx.transaction_manager.check_max_preview_time()
         if self.console.export_text(clear=False).count("\n") >= MAX_LINES:
             return  # if max lines has been reached, skip logging
         for arg in args:
@@ -996,31 +996,31 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @contextmanager
     @noapidoc
     def session(self, sync_graph: bool = True, commit: bool = True, session_options: SessionOptions = SessionOptions()) -> Generator[None, None, None]:
-        with self.G.session(sync_graph=sync_graph, commit=commit, session_options=session_options):
+        with self.ctx.session(sync_graph=sync_graph, commit=commit, session_options=session_options):
             yield None
 
     @noapidoc
     def _enable_experimental_language_engine(self, async_start: bool = False, install_deps: bool = False, use_v8: bool = False) -> None:
         """Debug option to enable experimental language engine for the current codebase."""
-        if install_deps and not self.G.language_engine:
+        if install_deps and not self.ctx.language_engine:
             from codegen.sdk.core.external.dependency_manager import get_dependency_manager
 
             logger.info("Cold installing dependencies...")
             logger.info("This may take a while for large repos...")
-            self.G.dependency_manager = get_dependency_manager(self.G.projects[0].programming_language, self.G, enabled=True)
-            self.G.dependency_manager.start(async_start=False)
+            self.ctx.dependency_manager = get_dependency_manager(self.ctx.projects[0].programming_language, self.ctx, enabled=True)
+            self.ctx.dependency_manager.start(async_start=False)
             # Wait for the dependency manager to be ready
-            self.G.dependency_manager.wait_until_ready(ignore_error=False)
+            self.ctx.dependency_manager.wait_until_ready(ignore_error=False)
             logger.info("Dependencies ready")
-        if not self.G.language_engine:
+        if not self.ctx.language_engine:
             from codegen.sdk.core.external.language_engine import get_language_engine
 
             logger.info("Cold starting language engine...")
             logger.info("This may take a while for large repos...")
-            self.G.language_engine = get_language_engine(self.G.projects[0].programming_language, self.G, use_ts=True, use_v8=use_v8)
-            self.G.language_engine.start(async_start=async_start)
+            self.ctx.language_engine = get_language_engine(self.ctx.projects[0].programming_language, self.ctx, use_ts=True, use_v8=use_v8)
+            self.ctx.language_engine.start(async_start=async_start)
             # Wait for the language engine to be ready
-            self.G.language_engine.wait_until_ready(ignore_error=False)
+            self.ctx.language_engine.wait_until_ready(ignore_error=False)
             logger.info("Language engine ready")
 
     ####################################################################################################################
@@ -1036,11 +1036,11 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         """Enables calling AI/LLM APIs - re-export of the initialized `openai` module"""
         # Create a singleton AIHelper instance
         if self._ai_helper is None:
-            if self.G.config.secrets.openai_key is None:
+            if self.ctx.config.secrets.openai_key is None:
                 msg = "OpenAI key is not set"
                 raise ValueError(msg)
 
-            self._ai_helper = MultiProviderAIHelper(openai_key=self.G.config.secrets.openai_key, use_openai=True, use_claude=False)
+            self._ai_helper = MultiProviderAIHelper(openai_key=self.ctx.config.secrets.openai_key, use_openai=True, use_claude=False)
         return self._ai_helper
 
     def ai(self, prompt: str, target: Editable | None = None, context: Editable | list[Editable] | dict[str, Editable | list[Editable]] | None = None, model: str = "gpt-4o") -> str:
@@ -1064,10 +1064,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         # Check max transactions
         logger.info("Creating call to OpenAI...")
         self._num_ai_requests += 1
-        if self.G.session_options.max_ai_requests is not None and self._num_ai_requests > self.G.session_options.max_ai_requests:
-            logger.info(f"Max AI requests reached: {self.G.session_options.max_ai_requests}. Stopping codemod.")
-            msg = f"Maximum number of AI requests reached: {self.G.session_options.max_ai_requests}"
-            raise MaxAIRequestsError(msg, threshold=self.G.session_options.max_ai_requests)
+        if self.ctx.session_options.max_ai_requests is not None and self._num_ai_requests > self.ctx.session_options.max_ai_requests:
+            logger.info(f"Max AI requests reached: {self.ctx.session_options.max_ai_requests}. Stopping codemod.")
+            msg = f"Maximum number of AI requests reached: {self.ctx.session_options.max_ai_requests}"
+            raise MaxAIRequestsError(msg, threshold=self.ctx.session_options.max_ai_requests)
 
         params = {
             "messages": [{"role": "system", "content": generate_system_prompt(target, context)}, {"role": "user", "content": prompt}],
@@ -1123,7 +1123,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._ai_helper = None
 
         # Set the AI key
-        self.G.config.secrets.openai_key = key
+        self.ctx.config.secrets.openai_key = key
 
     def find_by_span(self, span: Span) -> list[Editable]:
         """Finds editable objects that overlap with the given source code span.
@@ -1158,9 +1158,9 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             - max_ai_requests (int, optional): The maximum number of AI requests
               allowed in a session.
         """
-        self.G.session_options = self.G.session_options.model_copy(update=kwargs)
-        self.G.transaction_manager.set_max_transactions(self.G.session_options.max_transactions)
-        self.G.transaction_manager.reset_stopwatch(self.G.session_options.max_seconds)
+        self.ctx.session_options = self.ctx.session_options.model_copy(update=kwargs)
+        self.ctx.transaction_manager.set_max_transactions(self.ctx.session_options.max_transactions)
+        self.ctx.transaction_manager.reset_stopwatch(self.ctx.session_options.max_seconds)
 
     @classmethod
     def from_repo(

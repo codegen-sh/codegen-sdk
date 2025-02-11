@@ -26,8 +26,9 @@ dependencies = [
   "watchfiles<1.1.0,>=1.0.0",
   "rich<14.0.0,>=13.7.1",
   "pydantic<3.0.0,>=2.9.2",
+  "pydantic-settings>=2.0.0",
   "docstring-parser<1.0,>=0.16",
-  "plotly<6.0.0,>=5.24.0",
+  "plotly>=5.24.0,<7.0.0",
   "humanize<5.0.0,>=4.10.0",
   "pytest-snapshot>=0.9.0",
   "anthropic==0.23.1",
@@ -62,6 +63,10 @@ dependencies = [
   "tomlkit>=0.13.2",
   "python-semantic-release",
   "uvicorn[standard]>=0.30.0",
+  "langchain[openai]",
+  "langchain_core",
+  "langchain_openai",
+  "numpy>=2.2.2",
 ]
 
 license = { text = "Apache-2.0" }
@@ -146,11 +151,14 @@ dev-dependencies = [
   "pytest-asyncio<1.0.0,>=0.21.1",
   "loguru>=0.7.3",
   "httpx<0.28.2,>=0.28.1",
+  "jupyterlab>=4.3.5",
+  "modal>=0.73.25",
 ]
 
 
 [tool.uv.workspace]
-members = []
+members = ["codegen", "codegen-examples"]
+exclude = ["codegen-examples"]
 
 [tool.cython-lint]
 max-line-length = 200

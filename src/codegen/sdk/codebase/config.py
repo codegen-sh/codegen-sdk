@@ -7,6 +7,7 @@ from pydantic.fields import Field
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
+from codegen.git.schemas.repo_config import RepoConfig
 from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.secrets import Secrets
 from codegen.sdk.utils import determine_project_language, split_git_path
@@ -35,7 +36,7 @@ class GSFeatureFlags(BaseModel):
     model_config = ConfigDict(frozen=True)
     debug: bool = False
     verify_graph: bool = False
-    track_graph: bool = True  # Track the initial graph state
+    track_graph: bool = False  # Track the initial graph state
     method_usages: bool = True
     sync_enabled: bool = True
     ts_dependency_manager: bool = False  # Enable Typescript Dependency Manager
@@ -50,7 +51,7 @@ class GSFeatureFlags(BaseModel):
 
 DefaultFlags = GSFeatureFlags(sync_enabled=False)
 
-TestFlags = GSFeatureFlags(debug=True, verify_graph=True, full_range_index=True)
+TestFlags = GSFeatureFlags(debug=True, track_graph=True, verify_graph=True, full_range_index=True)
 LintFlags = GSFeatureFlags(method_usages=False)
 ParseTestFlags = GSFeatureFlags(debug=False, track_graph=False)
 
@@ -60,6 +61,8 @@ class ProjectConfig(BaseModel):
 
     model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
     repo_operator: RepoOperator
+
+    # TODO: clean up these fields. Duplicated across RepoConfig and CodebaseContext
     base_path: str | None = None
     subdirectories: list[str] | None = None
     programming_language: ProgrammingLanguage = ProgrammingLanguage.PYTHON
@@ -69,12 +72,15 @@ class ProjectConfig(BaseModel):
         # Split repo_path into (git_root, base_path)
         repo_path = os.path.abspath(path)
         git_root, base_path = split_git_path(repo_path)
+        subdirectories = [base_path] if base_path else None
+        programming_language = programming_language or determine_project_language(repo_path)
+        repo_config = RepoConfig.from_repo_path(repo_path=git_root, language=programming_language, subdirectories=subdirectories)
         # Create main project
         return cls(
-            repo_operator=LocalRepoOperator(repo_path=git_root),
-            programming_language=programming_language or determine_project_language(repo_path),
+            repo_operator=LocalRepoOperator(repo_config=repo_config),
+            programming_language=programming_language,
             base_path=base_path,
-            subdirectories=[base_path] if base_path else None,
+            subdirectories=subdirectories,
         )
 
     @classmethod

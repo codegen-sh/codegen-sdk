@@ -188,7 +188,7 @@ def foo(x: int, y: str) -> MyClass:
     assert len(obj_usages) == 1
     assert obj_usages[0].source == "obj"
     obj_usages[0].edit("renamed_obj")
-    codebase.G.commit_transactions()
+    codebase.ctx.commit_transactions()
     assert "renamed_obj.attr1 = renamed_attribute.obj" in file.content
 
     random = code_block.get_local_var_assignment("random")
