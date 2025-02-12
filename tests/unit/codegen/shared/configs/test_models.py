@@ -12,7 +12,7 @@ from codegen.shared.configs.models.session import SessionConfig
 @pytest.fixture
 def sample_config(tmpdir):
     codebase_flags = CodebaseFeatureFlags(debug=True, verify_graph=False)
-    return SessionConfig(file_path=f"{tmpdir}/test_config.toml", repository=RepositoryConfig(full_name="test-org", repo_name="test-repo"), feature_flags=FeatureFlagsConfig(codebase=codebase_flags))
+    return Config(repository=RepositoryConfig(full_name="test-org/test-repo", repo_name="test-repo"), feature_flags=FeatureFlagsConfig(codebase=codebase_flags))
 
 
 def test_config_initialization(tmpdir):
@@ -22,9 +22,9 @@ def test_config_initialization(tmpdir):
     assert config.secrets is not None
 
 
-def test_config_with_values(tmpdir):
-    config = SessionConfig(file_path=f"{tmpdir}/test_config.toml", repository={"full_name": "test-org", "repo_name": "test-repo"})
-    assert config.repository.full_name == "test-org"
+def test_config_with_values():
+    config = Config(repository={"full_name": "test-org/test-repo", "repo_name": "test-repo"})
+    assert config.repository.full_name == "test-org/test-repo"
     assert config.repository.repo_name == "test-repo"
 
 
@@ -39,12 +39,12 @@ def test_save_config(mock_mkdir, mock_file, sample_config):
     # Verify the content being written
     written_data = mock_file().write.call_args[0][0]
     parsed_data = toml.loads(written_data)
-    assert parsed_data["repository"]["full_name"] == "test-org"
+    assert parsed_data["repository"]["full_name"] == "test-org/test-repo"
 
 
 def test_get_config_value(sample_config):
     # Test getting a simple value
-    assert json.loads(sample_config.get("repository.full_name")) == "test-org"
+    assert json.loads(sample_config.get("repository.full_name")) == "test-org/test-repo"
 
     # Test getting a nested value
     assert json.loads(sample_config.get("feature_flags.codebase.debug")) is True
@@ -57,8 +57,8 @@ def test_set_config_value(sample_config):
     # Instead of mocking save, we'll mock the open function used within save
     with patch("builtins.open", new_callable=mock_open) as mock_file:
         # Test setting a simple string value
-        sample_config.set("repository.full_name", "new-org")
-        assert sample_config.repository.full_name == "new-org"
+        sample_config.set("repository.full_name", "new-org/test-repo")
+        assert sample_config.repository.full_name == "new-org/test-repo"
 
         # Test setting a boolean value
         sample_config.set("feature_flags.codebase.debug", "false")
@@ -83,7 +83,7 @@ def test_config_str_representation(sample_config):
     assert isinstance(config_str, str)
     # Verify it's valid JSON
     parsed = json.loads(config_str)
-    assert parsed["repository"]["full_name"] == "test-org"
+    assert parsed["repository"]["full_name"] == "test-org/test-repo"
 
 
 def test_set_config_new_override_key(sample_config):
