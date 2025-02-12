@@ -20,7 +20,7 @@ class CodegenSession:
     def __init__(self, repo_path: Path):
         self.repo_path = repo_path
         self.codegen_dir = repo_path / CODEGEN_DIR_NAME
-        self.existing = global_config.get_active_session(repo_path) is not None
+        self.existing = global_config.get_session(repo_path) is not None
         self.config = load(self.codegen_dir / CONFIG_FILENAME)
         global_config.set_active_session(repo_path)
 

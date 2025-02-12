@@ -1,13 +1,11 @@
 import functools
+import sys
 from collections.abc import Callable
 
 import click
-import rich
-from rich.status import Status
 
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.rich.pretty_print import pretty_print_error
-from codegen.cli.workspace.initialize_workspace import initialize_codegen
 
 
 def requires_init(f: Callable) -> Callable:
@@ -18,9 +16,8 @@ def requires_init(f: Callable) -> Callable:
         # Create a session if one wasn't provided
         session = kwargs.get("session") or CodegenSession.from_active_session()
         if session is None:
-            rich.print("Codegen not initialized. Running init command first...")
-            with Status("[bold]Initializing Codegen...", spinner="dots", spinner_style="purple") as status:
-                session = initialize_codegen(status)
+            pretty_print_error("Codegen not initialized. Please run `codegen init` from a git repo workspace.")
+            sys.exit(1)
 
         # Check for valid session
         if not session.is_valid():

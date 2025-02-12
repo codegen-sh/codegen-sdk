@@ -125,7 +125,6 @@ class RestAPI:
         """Run a codemod transformation.
 
         Args:
-            session: The currently active codegen session
             function: The function or codemod to run
             include_source: Whether to include the source code in the request.
                           If False, uses the deployed version.

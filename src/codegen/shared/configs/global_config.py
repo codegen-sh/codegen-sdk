@@ -13,6 +13,9 @@ class GlobalSessionConfig(BaseSettings):
     active_session_path: str | None = None
     sessions: list[str]
 
+    def get_session(self, session_root_path: Path) -> str | None:
+        return next((s for s in self.sessions if s == str(session_root_path)), None)
+
     def get_active_session(self) -> Path | None:
         if not self.active_session_path:
             return None
@@ -27,6 +30,8 @@ class GlobalSessionConfig(BaseSettings):
         self.active_session_path = str(session_root_path)
         if session_root_path.name not in self.sessions:
             self.sessions.append(str(session_root_path))
+
+        self.save()
 
     def save(self) -> None:
         if not SESSION_FILE.parent.exists():
