@@ -12,10 +12,10 @@ from codegen.extensions.lsp.execute import execute_action, get_execute_action
 from codegen.extensions.lsp.io import LSPIO
 from codegen.extensions.lsp.range import get_tree_sitter_range
 from codegen.extensions.lsp.utils import get_path
-from codegen.sdk.codebase.flagging.code_flag import Symbol
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.core.file import File, SourceFile
 from codegen.sdk.core.interfaces.editable import Editable
+from codegen.sdk.core.symbol import Symbol
 
 logger = logging.getLogger(__name__)
 
@@ -38,13 +38,14 @@ class CodegenLanguageServer(LanguageServer):
     def get_symbol(self, uri: str, position: Position) -> Symbol | None:
         node = self.get_node_under_cursor(uri, position)
         if node is None:
+            logger.warning(f"No node found for {uri} at {position}")
             return None
-        return node.parent_symbol
+        return node.parent_of_type(Symbol)
 
     def get_node_under_cursor(self, uri: str, position: Position, end_position: Position | None = None) -> Editable | None:
         file = self.get_file(uri)
         resolved_uri = file.path.absolute().as_uri()
-        logger.info(f"Getting node under cursor for {resolved_uri} at {position}")  
+        logger.info(f"Getting node under cursor for {resolved_uri} at {position}")
         document = self.workspace.get_text_document(resolved_uri)
         candidates = []
         target_byte = document.offset_at_position(position)

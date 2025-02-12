@@ -12,6 +12,8 @@ from codegen.sdk.codebase.io.file_io import FileIO
 from codegen.sdk.codebase.io.io import IO
 
 logger = logging.getLogger(__name__)
+
+
 @dataclass
 class File:
     doc: TextDocument
@@ -32,10 +34,12 @@ class File:
     def identifier(self) -> types.OptionalVersionedTextDocumentIdentifier:
         return types.OptionalVersionedTextDocumentIdentifier(uri=self.path.as_uri(), version=self.version)
 
+
 class LSPIO(IO):
     base_io: FileIO
     workspace: Workspace
     files: dict[Path, File]
+
     def __init__(self, workspace: Workspace):
         self.workspace = workspace
         self.base_io = FileIO()
@@ -57,10 +61,10 @@ class LSPIO(IO):
         if file.deleted:
             msg = f"File {path} has been deleted"
             raise FileNotFoundError(msg)
-        if file.created:
-            return ""
         if file.change:
             return file.change.new_text
+        if file.created:
+            return ""
         return file.doc.source
 
     def read_bytes(self, path: Path) -> bytes:
@@ -68,10 +72,10 @@ class LSPIO(IO):
         if file.deleted:
             msg = f"File {path} has been deleted"
             raise FileNotFoundError(msg)
-        if file.created:
-            return b""
         if file.change:
             return file.change.new_text.encode("utf-8")
+        if file.created:
+            return b""
         return file.doc.source.encode("utf-8")
 
     def write_bytes(self, path: Path, content: bytes) -> None:
@@ -88,6 +92,7 @@ class LSPIO(IO):
         else:
             file.other_change = CreateFile(uri=path.as_uri(), options=CreateFileOptions())
             file.change = TextEdit(range=Range(start=start, end=start), new_text=content.decode("utf-8"))
+
     def save_files(self, files: set[Path] | None = None) -> None:
         logger.info(f"Saving files {files}")
 

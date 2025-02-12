@@ -15,24 +15,10 @@ from pytest_lsp import (
     LanguageClient,
 )
 
-from codegen.extensions.lsp.utils import get_path
 from codegen.sdk.core.codebase import Codebase
+from tests.unit.codegen.extensions.lsp.utils import apply_edit
 
 logger = logging.getLogger(__name__)
-
-
-def apply_edit(codebase: Codebase, edit: types.WorkspaceEdit):
-    for change in edit.document_changes:
-        if isinstance(change, types.TextDocumentEdit):
-            path = get_path(change.text_document.uri)
-            file = codebase.get_file(str(path.relative_to(codebase.repo_path)))
-            for edit in change.edits:
-                print("BRUH")
-                file.edit(edit.new_text)
-        if isinstance(change, types.CreateFile):
-            path = get_path(change.uri)
-            codebase.create_file(str(path.relative_to(codebase.repo_path)))
-    codebase.commit()
 
 
 @pytest.mark.parametrize(
