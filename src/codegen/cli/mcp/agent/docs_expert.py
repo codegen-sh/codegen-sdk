@@ -1,15 +1,10 @@
 """Demo implementation of an agent with Codegen tools."""
 
-from langchain import hub
-from langchain.agents import AgentExecutor
-from langchain.agents.openai_functions_agent.base import OpenAIFunctionsAgent
-from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_openai import ChatOpenAI
 from langchain_core.messages import BaseMessage
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
 from codegen.extensions.langchain.agent import create_codebase_agent
 from codegen.sdk.core.codebase import Codebase
-
-
 
 AGENT_INSTRUCTIONS = """
 Instruction Set for Codegen SDK Expert Agent
@@ -41,6 +36,7 @@ Use the provided agent tools to look up additional information if needed.
 By following this instruction set, the agent will be well-equipped to assist users in effectively utilizing the Codegen SDK for their projects.
 """
 
+
 def create_sdk_expert_agent(
     codebase: Codebase,
     model_name: str = "gpt-4o",
@@ -62,12 +58,6 @@ def create_sdk_expert_agent(
 
     system_message: BaseMessage = BaseMessage(content=AGENT_INSTRUCTIONS, type="SYSTEM")
 
-    agent = create_codebase_agent(
-        chat_history=[system_message],
-        codebase=codebase,
-        model_name=model_name,
-        temperature=temperature,
-        verbose=verbose
-    )
+    agent = create_codebase_agent(chat_history=[system_message], codebase=codebase, model_name=model_name, temperature=temperature, verbose=verbose)
 
     return agent

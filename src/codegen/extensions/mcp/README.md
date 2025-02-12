@@ -3,7 +3,7 @@
 This directory contains reference implementations of MCP (Machine Control Protocol) servers that extend AI Agent capabilities using the Codegen SDK. These servers enable AI Agents to:
 
 - Query and analyze your codebase (`codebase_agent.py`)
-- Run deterministic codemods (`codebase_mods.py`) 
+- Run deterministic codemods (`codebase_mods.py`)
 - Invoke tools built with Codegen SDK (`codebase_tools.py`)
 
 ## What is MCP?
@@ -33,6 +33,7 @@ Add this to your `cline_mcp_settings.json` file to get started:
 ```
 
 ### Cursor:
+
 Under the `Settings` > `Feature` > `MCP Servers` section, click "Add New MCP Server" and add the following:
 
 ```
@@ -40,4 +41,3 @@ Name: codegen-mcp
 Type: Command
 Command: uv --directory <path to codegen installation>/codegen-sdk/src/codegen/cli/mcp run <codebase_agent.py | codebase_mods | codebase_tools>
 ```
-
