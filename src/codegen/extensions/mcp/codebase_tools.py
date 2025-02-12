@@ -1,10 +1,7 @@
-from codegen.extensions.mcp.reveal_symbol_tool import mcp
-from codegen.extensions.mcp.search_codebase_tool import mcp
 import json
 from typing import Annotated, Any, Literal, Optional
 from codegen.extensions.tools import reveal_symbol
 from codegen.extensions.tools.search import search
-from codegen.extensions.vector_index import VectorIndex
 from codegen.sdk.core.codebase import Codebase
 from mcp.server.fastmcp import FastMCP
 from codegen.sdk.enums import ProgrammingLanguage
@@ -52,5 +49,5 @@ def search_codebase_tool(
 
 if __name__ == "__main__":
     # Initialize and run the server
-    print("Starting codebase toolsen server...")
+    print("Starting codebase tools server...")
     mcp.run(transport="stdio")
