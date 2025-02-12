@@ -336,6 +336,29 @@ class SemanticSearchTool(BaseTool):
         return json.dumps(result, indent=2)
 
 
+class CreatePRInput(BaseModel):
+    """Input for creating a PR"""
+
+    title: str = Field(..., description="The title of the PR")
+    body: str = Field(..., description="The body of the PR")
+
+
+class CreatePRTool(BaseTool):
+    """Tool for creating a PR."""
+
+    name: ClassVar[str] = "create_pr"
+    description: ClassVar[str] = "Create a PR for the current branch"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, title: str, body: str) -> str:
+        pr = self.codebase.create_pr(title=title, body=body)
+        return pr.html_url
+
+
 def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
     """Get all workspace tools initialized with a codebase.
 
@@ -345,26 +368,15 @@ def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
     Returns:
         List of initialized Langchain tools
     """
-    from .tools import (
-        CommitTool,
-        CreateFileTool,
-        DeleteFileTool,
-        EditFileTool,
-        ListDirectoryTool,
-        RevealSymbolTool,
-        SearchTool,
-        SemanticEditTool,
-        ViewFileTool,
-    )
-
     return [
-        ViewFileTool(codebase),
-        ListDirectoryTool(codebase),
-        SearchTool(codebase),
-        EditFileTool(codebase),
-        CreateFileTool(codebase),
-        DeleteFileTool(codebase),
         CommitTool(codebase),
+        CreateFileTool(codebase),
+        CreatePRTool(codebase),
+        DeleteFileTool(codebase),
+        EditFileTool(codebase),
+        ListDirectoryTool(codebase),
         RevealSymbolTool(codebase),
+        SearchTool(codebase),
         SemanticEditTool(codebase),
+        ViewFileTool(codebase),
     ]
