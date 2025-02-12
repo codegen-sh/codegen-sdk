@@ -1,6 +1,6 @@
 import codegen
 from codegen import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, Secrets
 import json
 
@@ -17,12 +17,9 @@ def run(codebase: Codebase):
     modified_symbols = codebase.get_modified_symbols_in_pr(pr_number)
     for symbol in modified_symbols:
         # Get direct dependencies
-        deps = codebase.get_symbol_dependencies(symbol, max_depth=2)
+        deps = symbol.dependencies(max_depth=2)
         context_symbols.update(deps)
 
-        # Get reverse dependencies (symbols that depend on this one)
-        rev_deps = codebase.get_symbol_dependents(symbol, max_depth=2)
-        context_symbols.update(rev_deps)
 
     # Prepare context for LLM
     context = {

@@ -183,7 +183,7 @@ class LocalRepoOperator(RepoOperator):
             if repo is None:
                 logger.warning("GitHub API key is required to fetch pull requests")
                 return None
-            return repo.get_pull(pr_number)
+            return repo.get_pull_safe(pr_number)
         except Exception as e:
             logger.warning(f"Failed to get PR {pr_number}: {e!s}")
             return None

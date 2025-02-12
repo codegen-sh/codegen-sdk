@@ -1259,11 +1259,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
-    def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
+    def get_modified_symbols_in_pr(self, pr_id: int) -> tuple[list[Symbol], str]:
         """Get all modified symbols in a pull request"""
         pr = self._op.get_pull_request(pr_id)
         cg_pr = CodegenPR(self._op, self, pr)
-        return cg_pr.modified_symbols
+        patch = cg_pr.get_pr_diff()
+        return cg_pr.modified_symbols, patch
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py

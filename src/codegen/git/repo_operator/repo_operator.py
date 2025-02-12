@@ -600,3 +600,13 @@ class RepoOperator(ABC):
 
     def stash_pop(self) -> None:
         self.git_cli.git.stash("pop")
+
+    ####################################################################################################################
+    # PR UTILITIES
+    ####################################################################################################################
+
+    def get_pr_data(self, pr_number: int) -> dict:
+        """Returns the data associated with a PR"""
+
+        return self.remote_git_repo.get_pr_data(pr_number)
+
