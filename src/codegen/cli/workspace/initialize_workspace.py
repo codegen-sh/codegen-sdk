@@ -82,18 +82,17 @@ def initialize_codegen(
             modify_gitignore(CODEGEN_FOLDER)
 
             # Create or update config.toml with basic repo info
-            if not session:  # Only create if session doesn't exist (it handles config itself)
-                org_name, repo_name = get_git_organization_and_repo(repo)
-                config = {}
-                if CONFIG_PATH.exists():
-                    config = toml.load(CONFIG_PATH)
-                config.update(
-                    {
-                        "organization_name": config.get("organization_name", org_name),
-                        "repo_name": config.get("repo_name", repo_name),
-                    }
-                )
-                CONFIG_PATH.write_text(toml.dumps(config))
+            org_name, repo_name = get_git_organization_and_repo(repo)
+            config = {}
+            if CONFIG_PATH.exists():
+                config = toml.load(CONFIG_PATH)
+            config.update(
+                {
+                    "organization_name": config.get("organization_name", org_name),
+                    "repo_name": config.get("repo_name", repo_name),
+                }
+            )
+            CONFIG_PATH.write_text(toml.dumps(config))
 
             # Create notebook template
             create_notebook(JUPYTER_DIR)
