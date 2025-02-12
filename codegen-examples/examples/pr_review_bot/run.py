@@ -1,8 +1,11 @@
 import codegen
 from codegen import Codebase
 from codegen.sdk.enums import ProgrammingLanguage
-from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, Secrets
+from codegen.sdk.codebase.config import CodebaseConfig
 import json
+
+from codegen.sdk.secrets import Secrets
+from codegen.shared.configs.models import CodebaseFeatureFlags
 
 github_token = "Your github token"
 open_ai_key = "your open ai key"
@@ -81,7 +84,7 @@ if __name__ == "__main__":
         programming_language=ProgrammingLanguage.PYTHON,
         config=CodebaseConfig(
             secrets=Secrets(openai_key=open_ai_key, github_api_key=github_token),
-            feature_flags=GSFeatureFlags(
+            feature_flags=CodebaseFeatureFlags(
                 sync_enabled=True,
             ),
         ),
