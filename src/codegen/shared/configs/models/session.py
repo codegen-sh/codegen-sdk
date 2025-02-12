@@ -5,69 +5,12 @@ import toml
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-def _get_setting_config(group_name: str) -> SettingsConfigDict:
-    return SettingsConfigDict(
-        env_prefix=f"CODEGEN_{group_name}__",
-        case_sensitive=False,
-        extra="ignore",
-        exclude_defaults=False,
-    )
+from codegen.shared.configs.models.feature_flags import FeatureFlagsConfig
+from codegen.shared.configs.models.repository import RepositoryConfig
+from codegen.shared.configs.models.secrets import SecretsConfig
 
 
-# TODO: break up these models into separate files and nest in shared/configs/models
-class TypescriptConfig(BaseSettings):
-    model_config = _get_setting_config("FEATURE_FLAGS_TYPESCRIPT")
-
-    ts_dependency_manager: bool = False
-    ts_language_engine: bool = False
-    v8_ts_engine: bool = False
-
-
-class CodebaseFeatureFlags(BaseSettings):
-    model_config = _get_setting_config("FEATURE_FLAGS")
-
-    debug: bool = False
-    verify_graph: bool = False
-    track_graph: bool = False
-    method_usages: bool = True
-    sync_enabled: bool = True
-    full_range_index: bool = False
-    ignore_process_errors: bool = True
-    disable_graph: bool = False
-    generics: bool = True
-    import_resolution_overrides: dict[str, str] = Field(default_factory=lambda: {})
-    typescript: TypescriptConfig = Field(default_factory=TypescriptConfig)
-
-
-class RepositoryConfig(BaseSettings):
-    """Configuration for the repository context to run codegen.
-    To populate this config, call `codegen init` from within a git repository.
-    """
-
-    model_config = _get_setting_config("REPOSITORY")
-
-    repo_path: str | None = None  # replace with base_dir
-    repo_name: str | None = None
-    full_name: str | None = None  # replace with org_name
-    language: str | None = None
-    user_name: str | None = None
-    user_email: str | None = None
-
-
-class SecretsConfig(BaseSettings):
-    model_config = _get_setting_config("SECRETS")
-
-    github_token: str | None = None
-    openai_api_key: str | None = None
-
-
-class FeatureFlagsConfig(BaseModel):
-    codebase: CodebaseFeatureFlags = Field(default_factory=CodebaseFeatureFlags)
-
-
-# TODO: rename to SessionConfig
-class Config(BaseSettings):
+class SessionConfig(BaseSettings):
     model_config = SettingsConfigDict(
         extra="ignore",
         exclude_defaults=False,
@@ -124,7 +67,7 @@ class Config(BaseSettings):
         field_info = current_attr.model_fields[keys[-1]].annotation
         if isinstance(field_info, BaseModel):
             try:
-                Config.model_validate(value, strict=False)
+                SessionConfig.model_validate(value, strict=False)
             except Exception as e:
                 msg = f"Value does not match the expected type for key: {full_key}\n\nError:{e}"
                 raise ValueError(msg)

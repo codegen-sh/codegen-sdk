@@ -11,7 +11,7 @@ from codegen.shared.configs.config import (
     _merge_configs,
     load,
 )
-from codegen.shared.configs.models import CodebaseFeatureFlags, FeatureFlagsConfig, SecretsConfig
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags, FeatureFlagsConfig, SecretsConfig
 
 
 # Test _merge_configs
