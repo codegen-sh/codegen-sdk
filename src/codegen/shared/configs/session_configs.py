@@ -1,4 +1,3 @@
-# TODO: rename this file to local.py
 import json
 from pathlib import Path
 
