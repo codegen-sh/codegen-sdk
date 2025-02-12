@@ -6,7 +6,7 @@ from mcp.server.fastmcp import FastMCP
 from codegen.extensions.tools import reveal_symbol
 from codegen.extensions.tools.search import search
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 mcp = FastMCP(
     "codebase-tools-mcp",
