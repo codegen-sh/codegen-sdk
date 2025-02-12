@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, NamedTuple
 from pydantic import BaseModel, ConfigDict
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 from tests.shared.codemod.constants import DIFF_FILEPATH
 from tests.shared.codemod.verified_codemod_utils import CodemodAPI

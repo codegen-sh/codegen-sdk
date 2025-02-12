@@ -4,9 +4,10 @@ from collections.abc import Callable
 import click
 import rich
 
+from codegen.cli.auth.auth_session import CodegenAuthenticatedSession
 from codegen.cli.auth.login import login_routine
-from codegen.cli.auth.session import CodegenSession
 from codegen.cli.errors import AuthError, InvalidTokenError, NoTokenError
+from codegen.cli.rich.pretty_print import pretty_print_error
 
 
 def requires_auth(f: Callable) -> Callable:
@@ -14,7 +15,12 @@ def requires_auth(f: Callable) -> Callable:
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        session = CodegenSession()
+        session = CodegenAuthenticatedSession.from_active_session()
+
+        # Check for valid session
+        if not session.is_valid():
+            pretty_print_error(f"The session at path {session.repo_path} is missing or corrupt.\nPlease run 'codegen init' to re-initialize the project.")
+            raise click.Abort()
 
         try:
             if not session.is_authenticated():

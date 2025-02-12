@@ -23,7 +23,7 @@ from codegen.runner.models.apis import (
 )
 from codegen.runner.sandbox.middlewares import CodemodRunMiddleware
 from codegen.runner.sandbox.runner import SandboxRunner
-from codegen.shared.configs.config import config
+from codegen.shared.configs.session_configs import config
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.shared.performance.memory_utils import get_memory_stats
 

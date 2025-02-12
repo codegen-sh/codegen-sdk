@@ -1,5 +1,3 @@
-import os
-import subprocess
 import sys
 from pathlib import Path
 
@@ -13,9 +11,7 @@ from codegen.cli.commands.init.render import get_success_message
 from codegen.cli.rich.codeblocks import format_command
 from codegen.cli.workspace.initialize_workspace import initialize_codegen
 from codegen.git.repo_operator.local_git_repo import LocalGitRepo
-from codegen.shared.configs.config import config
-from codegen.shared.configs.constants import CONFIG_PATH
-from codegen.shared.enums.programming_language import ProgrammingLanguage
+from codegen.git.utils.path import get_git_root_path
 
 
 @click.command(name="init")
@@ -26,12 +22,9 @@ from codegen.shared.enums.programming_language import ProgrammingLanguage
 def init_command(path: str | None = None, token: str | None = None, language: str | None = None, fetch_docs: bool = False):
     """Initialize or update the Codegen folder."""
     # Print a message if not in a git repo
-    path = str(Path.cwd()) if path is None else path
-    try:
-        os.chdir(path)
-        output = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, check=True, text=True)
-        local_git = LocalGitRepo(repo_path=output.stdout.strip())
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    path = Path.cwd() if path is None else Path(path)
+    repo_path = get_git_root_path(path)
+    if repo_path is None:
         rich.print(f"\n[bold red]Error:[/bold red] Path={path} is not in a git repository")
         rich.print("[white]Please run this command from within a git repository.[/white]")
         rich.print("\n[dim]To initialize a new git repository:[/dim]")
@@ -39,12 +32,16 @@ def init_command(path: str | None = None, token: str | None = None, language: st
         rich.print(format_command("codegen init"))
         sys.exit(1)
 
+    local_git = LocalGitRepo(repo_path=repo_path)
     if local_git.origin_remote is None:
         rich.print("\n[bold red]Error:[/bold red] No remote found for repository")
         rich.print("[white]Please add a remote to the repository.[/white]")
         rich.print("\n[dim]To add a remote to the repository:[/dim]")
         rich.print(format_command("git remote add origin <your-repo-url>"))
         sys.exit(1)
+
+    session = CodegenSession(repo_path=repo_path)
+    config = session.config
 
     if token is None:
         token = config.secrets.github_token
@@ -67,7 +64,7 @@ def init_command(path: str | None = None, token: str | None = None, language: st
             sys.exit(1)
 
     # Save repo config
-    config.repository.repo_path = local_git.repo_path
+    config.repository.repo_path = str(local_git.repo_path)
     config.repository.repo_name = local_git.name
     config.repository.full_name = local_git.full_name
     config.repository.user_name = local_git.user_name
@@ -75,10 +72,8 @@ def init_command(path: str | None = None, token: str | None = None, language: st
     config.repository.language = (language or local_git.get_language(access_token=token)).upper()
     config.save()
 
-    session = CodegenSession()
-    action = "Updating" if CONFIG_PATH.exists() else "Initializing"
-    rich.print("")
-    codegen_dir, docs_dir, examples_dir = initialize_codegen(action, session=session, fetch_docs=fetch_docs, programming_language=ProgrammingLanguage(config.repository.language))
+    action = "Updating" if session.existing else "Initializing"
+    codegen_dir, docs_dir, examples_dir = initialize_codegen(status=action, session=session, fetch_docs=fetch_docs)
 
     # Print success message
     rich.print(f"✅ {action} complete\n")

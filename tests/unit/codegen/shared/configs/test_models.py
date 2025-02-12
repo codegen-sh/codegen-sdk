@@ -5,7 +5,7 @@ from unittest.mock import mock_open, patch
 import pytest
 import toml
 
-from codegen.shared.configs.models import CodebaseFeatureFlags, Config, FeatureFlagsConfig, RepositoryConfig
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags, Config, FeatureFlagsConfig, RepositoryConfig
 
 
 @pytest.fixture

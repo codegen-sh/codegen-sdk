@@ -4,13 +4,13 @@ import rich
 import rich_click as click
 
 from codegen.cli.api.webapp_routes import USER_SECRETS_ROUTE
-from codegen.cli.auth.session import CodegenSession
+from codegen.cli.auth.auth_session import CodegenAuthenticatedSession
 from codegen.cli.auth.token_manager import TokenManager
 from codegen.cli.env.global_env import global_env
 from codegen.cli.errors import AuthError
 
 
-def login_routine(token: str | None = None) -> CodegenSession:
+def login_routine(token: str | None = None) -> CodegenAuthenticatedSession:
     """Guide user through login flow and return authenticated session.
 
     Args:
@@ -39,7 +39,7 @@ def login_routine(token: str | None = None) -> CodegenSession:
 
     # Validate and store token
     token_manager = TokenManager()
-    session = CodegenSession(_token)
+    session = CodegenAuthenticatedSession(token=_token)
 
     try:
         session.assert_authenticated()

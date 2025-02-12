@@ -14,7 +14,7 @@ from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.sdk.codebase.config import CodebaseConfig, ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 from tests.shared.codemod.constants import DIFF_FILEPATH
 from tests.shared.codemod.models import BASE_PATH, BASE_TMP_DIR, VERIFIED_CODEMOD_DIFFS, CodemodMetadata, Repo, Size
 from tests.shared.codemod.test_discovery import find_codemod_test_cases, find_repos, find_verified_codemod_cases
