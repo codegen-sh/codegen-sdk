@@ -11,7 +11,7 @@ from codegen.sdk.codebase.factory.codebase_factory import CodebaseFactory
 from codegen.sdk.core.codebase import Codebase, PyCodebaseType, TSCodebaseType
 from codegen.sdk.secrets import Secrets
 from codegen.sdk.tree_sitter_parser import print_errors
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 

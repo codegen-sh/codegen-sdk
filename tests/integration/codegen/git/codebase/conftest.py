@@ -8,7 +8,7 @@ from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone_url import get_authenticated_clone_url_for_repo_config
 from codegen.sdk.codebase.config import ProjectConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.shared.configs.config import config
+from codegen.shared.configs.session_configs import config
 
 
 @pytest.fixture
@@ -16,7 +16,6 @@ def repo_config(tmpdir):
     repo_config = RepoConfig(
         name="Kevin-s-Adventure-Game",
         full_name="codegen-sh/Kevin-s-Adventure-Game",
-        organization_name="codegen-sh",
         base_dir=str(tmpdir),
     )
     yield repo_config

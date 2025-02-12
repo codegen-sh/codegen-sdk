@@ -9,7 +9,7 @@ from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.clients.sandbox_client import SandboxClient
-from codegen.shared.configs.config import config
+from codegen.shared.configs.session_configs import config
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 

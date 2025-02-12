@@ -10,7 +10,7 @@ from codegen.extensions.lsp.io import LSPIO
 from codegen.extensions.lsp.utils import get_path
 from codegen.sdk.codebase.config import CodebaseConfig
 from codegen.sdk.core.codebase import Codebase
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 
 if TYPE_CHECKING:
     from codegen.extensions.lsp.server import CodegenLanguageServer
