@@ -8,13 +8,25 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from codegen.shared.configs.constants import CONFIG_PATH, ENV_PATH
 
 
-class TypescriptConfig(BaseModel):
+def _get_setting_config(group_name: str) -> SettingsConfigDict:
+    return SettingsConfigDict(
+        env_prefix=f"CODEGEN_{group_name}__",
+        env_file=ENV_PATH,
+        case_sensitive=False,
+        extra="ignore",
+        exclude_defaults=False,
+    )
+
+
+class TypescriptConfig(BaseSettings):
+    model_config = _get_setting_config("FEATURE_FLAGS_TYPESCRIPT")
     ts_dependency_manager: bool | None = None
     ts_language_engine: bool | None = None
     v8_ts_engine: bool | None = None
 
 
-class CodebaseFeatureFlags(BaseModel):
+class CodebaseFeatureFlags(BaseSettings):
+    model_config = _get_setting_config("FEATURE_FLAGS")
     debug: bool | None = None
     verify_graph: bool | None = None
     track_graph: bool | None = None
@@ -28,25 +40,23 @@ class CodebaseFeatureFlags(BaseModel):
     typescript: TypescriptConfig = Field(default_factory=TypescriptConfig)
 
 
-class RepositoryConfig(BaseModel):
+class RepositoryConfig(BaseSettings):
     """Configuration for the repository context to run codegen.
     To populate this config, call `codegen init` from within a git repository.
     """
 
+    model_config = _get_setting_config("REPOSITORY")
+
     repo_path: str | None = None
     repo_name: str | None = None
     full_name: str | None = None
+    language: str | None = None
     user_name: str | None = None
     user_email: str | None = None
-    language: str | None = None
 
 
 class SecretsConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_prefix="CODEGEN_SECRETS__",
-        env_file=ENV_PATH,
-        case_sensitive=False,
-    )
+    model_config = _get_setting_config("SECRETS")
     github_token: str | None = None
     openai_api_key: str | None = None
 
