@@ -32,7 +32,8 @@ class CodegenAuthenticatedSession(CodegenSession):
     _identity: Identity | None = None
 
     def __init__(self, token: str | None = None, repo_path: Path | None = None):
-        super().__init__(repo_path)
+        # TODO: fix jank.
+        # super().__init__(repo_path)
         self._token = token
 
     @property
