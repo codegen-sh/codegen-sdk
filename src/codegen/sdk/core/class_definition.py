@@ -21,7 +21,7 @@ from codegen.visualizations.enums import VizNode
 if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.detached_symbols.code_block import CodeBlock
     from codegen.sdk.core.detached_symbols.decorator import Decorator
     from codegen.sdk.core.detached_symbols.parameter import Parameter
@@ -64,8 +64,8 @@ class Class(Inherits[TType], HasBlock[TCodeBlock, TDecorator], Callable[TParamet
     parent_classes: Parents[TType, Self] | None = None
     _methods: MultiLineCollection[TFunction, Self] | None = None
 
-    def __init__(self, ts_node: TSNode, file_id: NodeId, G: CodebaseGraph, parent: SymbolStatement) -> None:
-        super().__init__(ts_node, file_id, G, parent)
+    def __init__(self, ts_node: TSNode, file_id: NodeId, ctx: CodebaseContext, parent: SymbolStatement) -> None:
+        super().__init__(ts_node, file_id, ctx, parent)
         self._methods = self._parse_methods()
         self._parameters = []
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from codegen.sdk.core.autocommit import commiter, reader, writer
 from codegen.sdk.core.file import SourceFile
 from codegen.sdk.core.interface import Interface
-from codegen.sdk.enums import ImportType, ProgrammingLanguage
+from codegen.sdk.enums import ImportType
 from codegen.sdk.extensions.utils import cached_property, iter_all_descendants
 from codegen.sdk.python import PyAssignment
 from codegen.sdk.python.class_definition import PyClass
@@ -17,9 +17,10 @@ from codegen.sdk.python.interfaces.has_block import PyHasBlock
 from codegen.sdk.python.statements.attribute import PyAttribute
 from codegen.sdk.python.statements.import_statement import PyImportStatement
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 if TYPE_CHECKING:
-    from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+    from codegen.sdk.codebase.codebase_context import CodebaseContext
     from codegen.sdk.core.import_resolution import WildcardImport
     from codegen.sdk.python.symbol import PySymbol
 
@@ -62,19 +63,19 @@ class PyFile(SourceFile[PyImport, PyFunction, PyClass, PyAssignment, Interface[P
     @commiter
     def _parse_imports(self) -> None:
         for import_node in iter_all_descendants(self.ts_node, frozenset({"import_statement", "import_from_statement", "future_import_statement"})):
-            PyImportStatement(import_node, self.node_id, self.G, self.code_block, 0)
+            PyImportStatement(import_node, self.node_id, self.ctx, self.code_block, 0)
 
     ####################################################################################################################
     # GETTERS
     ####################################################################################################################
 
     @noapidoc
-    def get_import_module_name_for_file(self, filepath: str, G: CodebaseGraph) -> str:
+    def get_import_module_name_for_file(self, filepath: str, ctx: CodebaseContext) -> str:
         """Returns the module name that this file gets imported as
 
         For example, `my/package/name.py` => `my.package.name`
         """
-        base_path = G.projects[0].base_path
+        base_path = ctx.projects[0].base_path
         module = filepath.replace(".py", "")
         if module.endswith("__init__"):
             module = "/".join(module.split("/")[:-1])

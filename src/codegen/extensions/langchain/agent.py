@@ -21,6 +21,7 @@ from .tools import (
     RevealSymbolTool,
     SearchTool,
     SemanticEditTool,
+    SemanticSearchTool,
     ViewFileTool,
 )
 
@@ -61,6 +62,7 @@ def create_codebase_agent(
         MoveSymbolTool(codebase),
         RevealSymbolTool(codebase),
         SemanticEditTool(codebase),
+        SemanticSearchTool(codebase),
         CommitTool(codebase),
     ]
 

@@ -562,11 +562,13 @@ dependencies = [
     { name = "networkx" },
     { name = "numpy" },
     { name = "openai" },
+    { name = "packaging" },
     { name = "pip" },
     { name = "plotly" },
     { name = "psutil" },
     { name = "pydantic" },
     { name = "pydantic-core" },
+    { name = "pydantic-settings" },
     { name = "pygit2" },
     { name = "pygithub" },
     { name = "pyinstrument" },
@@ -602,6 +604,10 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+lsp = [
+    { name = "lsprotocol" },
+    { name = "pygls" },
+]
 types = [
     { name = "types-networkx" },
     { name = "types-requests" },
@@ -636,6 +642,7 @@ dev = [
     { name = "pytest-asyncio" },
     { name = "pytest-benchmark", extra = ["histogram"] },
     { name = "pytest-cov" },
+    { name = "pytest-lsp" },
     { name = "pytest-mock" },
     { name = "pytest-timeout" },
     { name = "pytest-xdist" },
@@ -667,17 +674,21 @@ requires-dist = [
     { name = "langchain-core" },
     { name = "langchain-openai" },
     { name = "lazy-object-proxy", specifier = ">=0.0.0" },
+    { name = "lsprotocol", marker = "extra == 'lsp'", specifier = "==2024.0.0b1" },
     { name = "mini-racer", specifier = ">=0.12.4" },
     { name = "networkx", specifier = ">=3.4.1" },
     { name = "numpy", specifier = ">=2.2.2" },
     { name = "openai", specifier = "==1.61.1" },
+    { name = "packaging", specifier = ">=24.2" },
     { name = "pip", specifier = ">=24.3.1" },
     { name = "plotly", specifier = ">=5.24.0,<7.0.0" },
     { name = "psutil", specifier = ">=5.8.0" },
     { name = "pydantic", specifier = ">=2.9.2,<3.0.0" },
     { name = "pydantic-core", specifier = ">=2.23.4" },
+    { name = "pydantic-settings", specifier = ">=2.0.0" },
     { name = "pygit2", specifier = ">=1.16.0" },
     { name = "pygithub", specifier = "==2.5.0" },
+    { name = "pygls", marker = "extra == 'lsp'", specifier = ">=2.0.0a2" },
     { name = "pyinstrument", specifier = ">=5.0.0" },
     { name = "pyjson5", specifier = "==1.6.8" },
     { name = "pyright", specifier = ">=1.1.372,<2.0.0" },
@@ -741,6 +752,7 @@ dev = [
     { name = "pytest-asyncio", specifier = ">=0.21.1,<1.0.0" },
     { name = "pytest-benchmark", extras = ["histogram"], specifier = ">=5.1.0" },
     { name = "pytest-cov", specifier = ">=6.0.0,<6.0.1" },
+    { name = "pytest-lsp", specifier = ">=1.0.0b1" },
     { name = "pytest-mock", specifier = ">=3.14.0,<4.0.0" },
     { name = "pytest-timeout", specifier = ">=2.3.1" },
     { name = "pytest-xdist", specifier = ">=3.6.1,<4.0.0" },
@@ -2037,15 +2049,15 @@ wheels = [
 
 [[package]]
 name = "lsprotocol"
-version = "2023.0.1"
+version = "2024.0.0b1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "cattrs" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/9d/f6/6e80484ec078d0b50699ceb1833597b792a6c695f90c645fbaf54b947e6f/lsprotocol-2023.0.1.tar.gz", hash = "sha256:cc5c15130d2403c18b734304339e51242d3018a05c4f7d0f198ad6e0cd21861d", size = 69434 }
+sdist = { url = "https://files.pythonhosted.org/packages/dc/21/0282716d19591e573d20564ee4df65cb5cd8911bfdff35fcde1de2b54072/lsprotocol-2024.0.0b1.tar.gz", hash = "sha256:d3667fb70894d361aa6c495c5c8a1b2e6a44be65ff84c21a9cbb67ebfb4830fd", size = 75358 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/37/2351e48cb3309673492d3a8c59d407b75fb6630e560eb27ecd4da03adc9a/lsprotocol-2023.0.1-py3-none-any.whl", hash = "sha256:c75223c9e4af2f24272b14c6375787438279369236cd568f596d4951052a60f2", size = 70826 },
+    { url = "https://files.pythonhosted.org/packages/4d/1b/526af91cd43eba22ac7d9dbdec729dd9d91c2ad335085a61dd42307a7b35/lsprotocol-2024.0.0b1-py3-none-any.whl", hash = "sha256:93785050ac155ae2be16b1ebfbd74c214feb3d3ef77b10399ce941e5ccef6ebd", size = 76600 },
 ]
 
 [[package]]
@@ -2747,6 +2759,19 @@ wheels = [
 ]
 
 [[package]]
+name = "pydantic-settings"
+version = "2.7.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/73/7b/c58a586cd7d9ac66d2ee4ba60ca2d241fa837c02bca9bea80a9a8c3d22a9/pydantic_settings-2.7.1.tar.gz", hash = "sha256:10c9caad35e64bfb3c2fbf70a078c0e25cc92499782e5200747f942a065dec93", size = 79920 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b4/46/93416fdae86d40879714f72956ac14df9c7b76f7d41a4d68aa9f71a0028b/pydantic_settings-2.7.1-py3-none-any.whl", hash = "sha256:590be9e6e24d06db33a4262829edef682500ef008565a969c73d39d5f8bfb3fd", size = 29718 },
+]
+
+[[package]]
 name = "pyflakes"
 version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2820,15 +2845,15 @@ wheels = [
 
 [[package]]
 name = "pygls"
-version = "1.3.1"
+version = "2.0.0a2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "cattrs" },
     { name = "lsprotocol" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/86/b9/41d173dad9eaa9db9c785a85671fc3d68961f08d67706dc2e79011e10b5c/pygls-1.3.1.tar.gz", hash = "sha256:140edceefa0da0e9b3c533547c892a42a7d2fd9217ae848c330c53d266a55018", size = 45527 }
+sdist = { url = "https://files.pythonhosted.org/packages/68/a9/2110bbc90fde62ab7b8f21164caacb5288c06d98486cc569526ec6c0c9ca/pygls-2.0.0a2.tar.gz", hash = "sha256:03e00634ed8d989918268aaa4b4a0c3ab857ea2d4ee94514a52efa5ddd6d5d9f", size = 46279 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/11/19/b74a10dd24548e96e8c80226cbacb28b021bc3a168a7d2709fb0d0185348/pygls-1.3.1-py3-none-any.whl", hash = "sha256:6e00f11efc56321bdeb6eac04f6d86131f654c7d49124344a9ebb968da3dd91e", size = 56031 },
+    { url = "https://files.pythonhosted.org/packages/f8/47/7d7b3911fbd27153ee38a1a15e3977c72733a41ee8d7f6ce6dca65843fe9/pygls-2.0.0a2-py3-none-any.whl", hash = "sha256:b202369321409343aa6440d73111d9fa0c22e580466ff1c7696b8358bb91f243", size = 58504 },
 ]
 
 [[package]]
@@ -3017,6 +3042,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/be/45/9b538de8cef30e17c7b45ef42f538a94889ed6a16f2387a6c89e73220651/pytest-cov-6.0.0.tar.gz", hash = "sha256:fde0b595ca248bb8e2d76f020b465f3b107c9632e6a1d1705f17834c89dcadc0", size = 66945 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/36/3b/48e79f2cd6a61dbbd4807b4ed46cb564b4fd50a76166b1c4ea5c1d9e2371/pytest_cov-6.0.0-py3-none-any.whl", hash = "sha256:eee6f1b9e61008bd34975a4d5bab25801eb31898b032dd55addc93e96fcaaa35", size = 22949 },
+]
+
+[[package]]
+name = "pytest-lsp"
+version = "1.0.0b2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+    { name = "pygls" },
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a9/47/1207bf70218c9cbb6e8a184a1957f699c35d9bf8b43dfa2be5885d35c283/pytest_lsp-1.0.0b2.tar.gz", hash = "sha256:459f62d578d700b63c4ea0b500b5a621461eb2c60d0fd941c3583b0d7930a1ea", size = 26634 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/cc/2f46f5a3db66e50e813cba64da0fed2c517c28b80877585461534c953f22/pytest_lsp-1.0.0b2-py3-none-any.whl", hash = "sha256:d989c69e134ac66e297f0e0eae5edb13470059d7028e50fb06c01674b067fc14", size = 24115 },
 ]
 
 [[package]]

@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict
 
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.sdk.codebase.config import GSFeatureFlags
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from tests.shared.codemod.constants import DIFF_FILEPATH
 from tests.shared.codemod.verified_codemod_utils import CodemodAPI
 

@@ -8,7 +8,7 @@ from mcp.server.fastmcp import Context, FastMCP
 from codegen.cli.api.client import RestAPI
 from codegen.cli.mcp.resources.system_prompt import SYSTEM_PROMPT
 from codegen.cli.mcp.resources.system_setup_instructions import SETUP_INSTRUCTIONS
-from codegen.cli.utils.constants import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 # Initialize FastMCP server
 

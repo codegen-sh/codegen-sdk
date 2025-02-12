@@ -83,6 +83,7 @@
 			"pages": [
 				"tutorials/at-a-glance",
 				"tutorials/build-code-agent",
+				"tutorials/slack-bot",
 				"tutorials/training-data",
 				"tutorials/codebase-visualization",
 				"tutorials/migrating-apis",

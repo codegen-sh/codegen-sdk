@@ -7,7 +7,7 @@ import networkx as nx
 from tabulate import tabulate
 
 from codegen.sdk.codebase.factory.get_dev_customer_codebase import get_codebase_codegen
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 logging.basicConfig(level=logging.INFO)
 codegen = get_codebase_codegen("../codegen", ".")

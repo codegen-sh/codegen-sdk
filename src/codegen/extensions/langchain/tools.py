@@ -312,8 +312,8 @@ class MoveSymbolTool(BaseTool):
 
 
 class SemanticSearchInput(BaseModel):
-    """Input for Semant search of a codebase"""
-
+    """Input for Semantic search of a codebase"""
+  
     query: str = Field(..., description="The natural language search query")
     k: int = Field(default=5, description="Number of results to return")
     preview_length: int = Field(default=200, description="Length of content preview in characters")

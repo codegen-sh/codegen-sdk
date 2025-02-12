@@ -1,6 +1,7 @@
 import rich_click as click
 from rich.traceback import install
 
+from codegen.cli.commands.config.main import config_command
 from codegen.cli.commands.create.main import create_command
 from codegen.cli.commands.deploy.main import deploy_command
 from codegen.cli.commands.expert.main import expert_command
@@ -14,6 +15,7 @@ from codegen.cli.commands.reset.main import reset_command
 from codegen.cli.commands.run.main import run_command
 from codegen.cli.commands.run_on_pr.main import run_on_pr_command
 from codegen.cli.commands.style_debug.main import style_debug_command
+from codegen.cli.commands.update.main import update_command
 
 click.rich_click.USE_RICH_MARKUP = True
 install(show_locals=True)
@@ -39,6 +41,8 @@ main.add_command(style_debug_command)
 main.add_command(run_on_pr_command)
 main.add_command(notebook_command)
 main.add_command(reset_command)
+main.add_command(update_command)
+main.add_command(config_command)
 
 
 if __name__ == "__main__":

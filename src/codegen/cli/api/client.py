@@ -45,8 +45,8 @@ from codegen.cli.codemod.convert import convert_to_ui
 from codegen.cli.env.global_env import global_env
 from codegen.cli.errors import InvalidTokenError, ServerError
 from codegen.cli.utils.codemods import Codemod
-from codegen.cli.utils.constants import ProgrammingLanguage
 from codegen.cli.utils.function_finder import DecoratedFunction
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 InputT = TypeVar("InputT", bound=BaseModel)
 OutputT = TypeVar("OutputT", bound=BaseModel)
