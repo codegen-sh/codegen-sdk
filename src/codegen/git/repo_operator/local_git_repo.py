@@ -60,13 +60,14 @@ class LocalGitRepo:
 
     def get_language(self, access_token: str | None = None) -> str:
         """Returns the majority language of the repository"""
-        if access_token is None:
-            return str(determine_project_language(self.repo_path))
+        if access_token is not None:
+            repo_config = RepoConfig.from_repo_path(repo_path=self.repo_path)
+            repo_config.full_name = self.full_name
+            remote_git = GitRepoClient(repo_config=repo_config, access_token=access_token)
+            if (language := remote_git.repo.language) is not None:
+                return language.upper()
 
-        repo_config = RepoConfig.from_repo_path(repo_path=self.repo_path)
-        repo_config.full_name = self.full_name
-        remote_git = GitRepoClient(repo_config=repo_config, access_token=access_token)
-        return remote_git.repo.language.upper()
+        return str(determine_project_language(self.repo_path))
 
     def has_remote(self) -> bool:
         return bool(self.git_cli.remotes)
