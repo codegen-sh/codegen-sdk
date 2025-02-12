@@ -24,6 +24,7 @@ def init_command(path: str | None = None, token: str | None = None, language: st
     # Print a message if not in a git repo
     path = Path.cwd() if path is None else Path(path)
     repo_path = get_git_root_path(path)
+    rich.print(f"Found git repository at: {repo_path}")
     if repo_path is None:
         rich.print(f"\n[bold red]Error:[/bold red] Path={path} is not in a git repository")
         rich.print("[white]Please run this command from within a git repository.[/white]")

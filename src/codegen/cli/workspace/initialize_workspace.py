@@ -55,7 +55,7 @@ def initialize_codegen(session: CodegenSession, status: Status | str = "Initiali
 
         # Initialize virtual environment
         status_obj.update(f"   {'Creating' if isinstance(status, str) else 'Checking'} virtual environment...")
-        venv = VenvManager()
+        venv = VenvManager(session.codegen_dir)
         if not venv.is_initialized():
             venv.create_venv()
             venv.install_packages("codegen")
