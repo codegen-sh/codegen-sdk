@@ -607,6 +607,4 @@ class RepoOperator(ABC):
 
     def get_pr_data(self, pr_number: int) -> dict:
         """Returns the data associated with a PR"""
-
         return self.remote_git_repo.get_pr_data(pr_number)
-

@@ -1,7 +1,7 @@
 import codegen
 from codegen import Codebase
 from codegen.shared.enums.programming_language import ProgrammingLanguage
-from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, Secrets
+from codegen.sdk.codebase.config import CodebaseConfig, Secrets
 import json
 
 from codegen.sdk.secrets import Secrets
@@ -22,7 +22,6 @@ def run(codebase: Codebase):
         # Get direct dependencies
         deps = symbol.dependencies(max_depth=2)
         context_symbols.update(deps)
-
 
     # Prepare context for LLM
     context = {
