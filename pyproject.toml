@@ -69,6 +69,7 @@ dependencies = [
   "langchain_openai",
   "numpy>=2.2.2",
   "mcp[cli]",
+  "neo4j",
 ]
 
 license = { text = "Apache-2.0" }

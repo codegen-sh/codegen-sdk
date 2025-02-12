@@ -101,7 +101,8 @@
 				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
 				"tutorials/flask-to-fastapi",
-				"tutorials/build-mcp"
+				"tutorials/build-mcp",
+				"tutorials/neo4j-graph"
 			]
 		},
 		{
