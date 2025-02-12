@@ -12,13 +12,14 @@ from codegen.sdk.core.file import File
 
 
 @pytest.fixture
-def mock_codebase_context(tmp_path):
+def mock_codebase_graph(tmp_path):
     mock = MagicMock(spec=CodebaseContext)
     mock.transaction_manager = MagicMock()
     mock.config = CodebaseConfig()
     mock.repo_path = tmp_path
     mock.to_absolute = types.MethodType(CodebaseContext.to_absolute, mock)
     mock.to_relative = types.MethodType(CodebaseContext.to_relative, mock)
+    mock.io = MagicMock()
     return mock
 
 
@@ -39,7 +40,7 @@ def sub_dir(subdir_path, tmp_path):
 
 @pytest.fixture
 def mock_file(dir_path, mock_codebase_graph):
-    return File(filepath=dir_path / "example.py", G=mock_codebase_graph)
+    return File(filepath=dir_path / "example.py", ctx=mock_codebase_graph)
 
 
 @pytest.fixture
@@ -67,7 +68,7 @@ def test_name_property(mock_directory):
 
 def test_add_and_file(mock_directory, mock_codebase_graph):
     """Test adding a file to the directory."""
-    mock_file = File(filepath=Path("mock_dir/example_2.py"), G=mock_codebase_graph)
+    mock_file = File(filepath=Path("mock_dir/example_2.py"), ctx=mock_codebase_graph)
     mock_directory.add_file(mock_file)
     rel_path = os.path.relpath(mock_file.file_path, mock_directory.dirpath)
     assert rel_path in mock_directory.items
@@ -143,7 +144,7 @@ def test_files_property(mock_directory, sub_dir, mock_codebase_graph):
     all_files = mock_directory.files
     assert len(all_files) == 1
 
-    new_file = File(filepath=Path("mock_dir/example_2.py"), G=mock_codebase_graph)
+    new_file = File(filepath=Path("mock_dir/example_2.py"), ctx=mock_codebase_graph)
     sub_dir.add_file(new_file)
 
     all_files = mock_directory.files
