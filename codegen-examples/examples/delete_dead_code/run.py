@@ -2,6 +2,7 @@ import codegen
 from codegen import Codebase
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 
+
 @codegen.function("delete-dead-code")
 def run(codebase: Codebase):
     removed_functions_count = 0
