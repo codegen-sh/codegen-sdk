@@ -378,13 +378,10 @@ class GetPRcontentsTool(BaseTool):
 
     def _run(self, pr_id: int) -> str:
         modified_symbols, patch = self.codebase.get_modified_symbols_in_pr(pr_id)
-        
+
         # Convert modified_symbols set to list for JSON serialization
-        result = {
-            "modified_symbols": list(modified_symbols),
-            "patch": patch
-        }
-        
+        result = {"modified_symbols": list(modified_symbols), "patch": patch}
+
         return json.dumps(result, indent=2)
 
 

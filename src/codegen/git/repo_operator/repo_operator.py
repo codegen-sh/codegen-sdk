@@ -654,4 +654,3 @@ class RepoOperator(ABC):
                     side=side,
                     start_line=start_line,
                 )
-
