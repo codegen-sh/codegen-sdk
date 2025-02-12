@@ -1,5 +1,6 @@
 import os
 from functools import cached_property
+from pathlib import Path
 
 from git import Repo
 from git.remote import Remote
@@ -11,9 +12,9 @@ from codegen.git.utils.language import determine_project_language
 
 # TODO: merge this with RepoOperator
 class LocalGitRepo:
-    repo_path: str
+    repo_path: Path
 
-    def __init__(self, repo_path: str):
+    def __init__(self, repo_path: Path):
         self.repo_path = repo_path
 
     @cached_property
@@ -61,13 +62,13 @@ class LocalGitRepo:
     def get_language(self, access_token: str | None = None) -> str:
         """Returns the majority language of the repository"""
         if access_token is not None:
-            repo_config = RepoConfig.from_repo_path(repo_path=self.repo_path)
+            repo_config = RepoConfig.from_repo_path(repo_path=str(self.repo_path))
             repo_config.full_name = self.full_name
             remote_git = GitRepoClient(repo_config=repo_config, access_token=access_token)
             if (language := remote_git.repo.language) is not None:
                 return language.upper()
 
-        return str(determine_project_language(self.repo_path))
+        return str(determine_project_language(str(self.repo_path)))
 
     def has_remote(self) -> bool:
         return bool(self.git_cli.remotes)

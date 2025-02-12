@@ -1,107 +1,42 @@
-from dataclasses import dataclass
 from pathlib import Path
 
 from pygit2.repository import Repository
 
-from codegen.cli.auth.constants import CODEGEN_DIR
-from codegen.cli.auth.token_manager import get_current_token
-from codegen.cli.errors import AuthError, NoTokenError
 from codegen.cli.git.repo import get_git_repo
-from codegen.cli.utils.config import Config, get_config, write_config
-from codegen.shared.enums.programming_language import ProgrammingLanguage
-
-
-@dataclass
-class Identity:
-    token: str
-    expires_at: str
-    status: str
-    user: "User"
-
-
-@dataclass
-class User:
-    full_name: str
-    email: str
-    github_username: str
-
-
-@dataclass
-class UserProfile:
-    """User profile populated from /identity endpoint"""
-
-    name: str
-    email: str
-    username: str
+from codegen.shared.configs.config import load
+from codegen.shared.configs.constants import CODEGEN_DIR_NAME, CONFIG_FILENAME
+from codegen.shared.configs.global_config import config as global_config
+from codegen.shared.configs.models import Config
 
 
 class CodegenSession:
     """Represents an authenticated codegen session with user and repository context"""
 
-    # =====[ Instance attributes ]=====
-    _token: str | None = None
+    repo_path: Path  # TODO: rename to root_path
+    codegen_dir: Path
+    config: Config
+    existing: bool
 
-    # =====[ Lazy instance attributes ]=====
-    _config: Config | None = None
-    _identity: Identity | None = None
-    _profile: UserProfile | None = None
+    def __init__(self, repo_path: Path):
+        self.repo_path = repo_path
+        self.codegen_dir = repo_path / CODEGEN_DIR_NAME
+        self.existing = global_config.get_active_session(repo_path) is not None
+        self.config = load(self.codegen_dir / CONFIG_FILENAME)
+        global_config.set_active_session(repo_path)
 
-    @property
-    def token(self) -> str | None:
-        """Get the current authentication token"""
-        if self._token:
-            return self._token
-        return get_current_token()
-
-    @property
-    def config(self) -> Config:
-        """Get the config for the current session"""
-        if self._config:
-            return self._config
-        self._config = get_config(self.codegen_dir)
-        return self._config
-
-    @property
-    def identity(self) -> Identity | None:
-        """Get the identity of the user, if a token has been provided"""
-        if self._identity:
-            return self._identity
-        if not self.token:
-            msg = "No authentication token found"
-            raise NoTokenError(msg)
-
-        from codegen.cli.api.client import RestAPI
-
-        identity = RestAPI(self.token).identify()
-        if not identity:
+    @classmethod
+    def from_active_session(cls) -> "CodegenSession | None":
+        active_session = global_config.get_active_session()
+        if not active_session:
             return None
 
-        self._identity = Identity(
-            token=self.token,
-            expires_at=identity.auth_context.expires_at,
-            status=identity.auth_context.status,
-            user=User(
-                full_name=identity.user.full_name,
-                email=identity.user.email,
-                github_username=identity.user.github_username,
-            ),
-        )
-        return self._identity
+        return cls(active_session)
 
-    @property
-    def profile(self) -> UserProfile | None:
-        """Get the user profile information"""
-        if self._profile:
-            return self._profile
-        if not self.identity:
-            return None
-
-        self._profile = UserProfile(
-            name=self.identity.user.full_name,
-            email=self.identity.user.email,
-            username=self.identity.user.github_username,
-        )
-        return self._profile
+    def is_valid(self) -> bool:
+        """Validates that the session configuration is correct"""
+        # TODO: also make sure all the expected prompt, jupyter, codemods are present
+        # TODO: make sure there is still a git instance here.
+        return self.repo_path.exists() and self.codegen_dir.exists() and Path(self.config.file_path).exists()
 
     @property
     def git_repo(self) -> Repository:
@@ -111,39 +46,5 @@ class CodegenSession:
             raise ValueError(msg)
         return git_repo
 
-    @property
-    def repo_name(self) -> str:
-        """Get the current repository name"""
-        return self.config.repo_full_name
-
-    @property
-    def language(self) -> ProgrammingLanguage:
-        """Get the current language"""
-        # TODO(jayhack): This is a temporary solution to get the language.
-        # We should eventually get the language on init.
-        return self.config.programming_language or ProgrammingLanguage.PYTHON
-
-    @property
-    def codegen_dir(self) -> Path:
-        """Get the path to the  codegen-sh directory"""
-        return Path.cwd() / CODEGEN_DIR
-
     def __str__(self) -> str:
-        return f"CodegenSession(user={self.profile.name}, repo={self.repo_name})"
-
-    def is_authenticated(self) -> bool:
-        """Check if the session is fully authenticated, including token expiration"""
-        return bool(self.identity and self.identity.status == "active")
-
-    def assert_authenticated(self) -> None:
-        """Raise an AuthError if the session is not fully authenticated"""
-        if not self.identity:
-            msg = "No identity found for session"
-            raise AuthError(msg)
-        if self.identity.status != "active":
-            msg = "Current session is not active. API Token may be invalid or may have expired."
-            raise AuthError(msg)
-
-    def write_config(self) -> None:
-        """Write the config to the codegen-sh/config.toml file"""
-        write_config(self.config, self.codegen_dir)
+        return f"CodegenSession(user={self.config.repository.user_name}, repo={self.config.repository.repo_name})"

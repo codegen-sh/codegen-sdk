@@ -5,19 +5,17 @@ import toml
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from codegen.shared.configs.constants import CONFIG_PATH, ENV_PATH
-
 
 def _get_setting_config(group_name: str) -> SettingsConfigDict:
     return SettingsConfigDict(
         env_prefix=f"CODEGEN_{group_name}__",
-        env_file=ENV_PATH,
         case_sensitive=False,
         extra="ignore",
         exclude_defaults=False,
     )
 
 
+# TODO: break up these models into separate files and nest in shared/configs/models
 class TypescriptConfig(BaseSettings):
     model_config = _get_setting_config("FEATURE_FLAGS_TYPESCRIPT")
 
@@ -49,9 +47,9 @@ class RepositoryConfig(BaseSettings):
 
     model_config = _get_setting_config("REPOSITORY")
 
-    repo_path: str | None = None
+    repo_path: str | None = None  # replace with base_dir
     repo_name: str | None = None
-    full_name: str | None = None
+    full_name: str | None = None  # replace with org_name
     language: str | None = None
     user_name: str | None = None
     user_email: str | None = None
@@ -68,22 +66,23 @@ class FeatureFlagsConfig(BaseModel):
     codebase: CodebaseFeatureFlags = Field(default_factory=CodebaseFeatureFlags)
 
 
+# TODO: rename to SessionConfig
 class Config(BaseSettings):
     model_config = SettingsConfigDict(
         extra="ignore",
         exclude_defaults=False,
     )
+    file_path: str
     secrets: SecretsConfig = Field(default_factory=SecretsConfig)
     repository: RepositoryConfig = Field(default_factory=RepositoryConfig)
     feature_flags: FeatureFlagsConfig = Field(default_factory=FeatureFlagsConfig)
 
-    def save(self, config_path: Path | None = None) -> None:
+    def save(self) -> None:
         """Save configuration to the config file."""
-        path = config_path or CONFIG_PATH
+        config_dir = Path(self.file_path).parent
+        config_dir.mkdir(parents=True, exist_ok=True)
 
-        path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(path, "w") as f:
+        with open(self.file_path, "w") as f:
             toml.dump(self.model_dump(exclude_none=True), f)
 
     def get(self, full_key: str) -> str | None:

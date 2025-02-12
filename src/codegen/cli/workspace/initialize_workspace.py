@@ -1,7 +1,6 @@
 import shutil
 from contextlib import nullcontext
 from pathlib import Path
-from typing import Optional
 
 import requests
 import rich
@@ -11,6 +10,7 @@ from rich.status import Status
 from codegen.cli.api.client import RestAPI
 from codegen.cli.auth.constants import CODEGEN_DIR, DOCS_DIR, EXAMPLES_DIR, PROMPTS_DIR
 from codegen.cli.auth.session import CodegenSession
+from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.git.url import get_git_organization_and_repo
 from codegen.cli.rich.spinners import create_spinner
@@ -18,29 +18,24 @@ from codegen.cli.utils.notebooks import create_notebook
 from codegen.cli.workspace.docs_workspace import populate_api_docs
 from codegen.cli.workspace.examples_workspace import populate_examples
 from codegen.cli.workspace.venv_manager import VenvManager
-from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
-def initialize_codegen(
-    status: Status | str = "Initializing", session: CodegenSession | None = None, fetch_docs: bool = False, programming_language: Optional[ProgrammingLanguage] = None
-) -> tuple[Path, Path, Path]:
+def initialize_codegen(session: CodegenSession, status: Status | str = "Initializing", fetch_docs: bool = False) -> CodegenSession:
     """Initialize or update the codegen directory structure and content.
 
     Args:
         status: Either a Status object to update, or a string action being performed ("Initializing" or "Updating")
         session: Optional CodegenSession for fetching docs and examples
         fetch_docs: Whether to fetch docs and examples (requires auth)
-        programming_language: Optional override for the programming language
 
     Returns:
         Tuple of (codegen_folder, docs_folder, examples_folder)
     """
     repo = get_git_repo()
-    REPO_PATH = Path(repo.workdir)
-    CODEGEN_FOLDER = REPO_PATH / CODEGEN_DIR
-    PROMPTS_FOLDER = REPO_PATH / PROMPTS_DIR
-    DOCS_FOLDER = REPO_PATH / DOCS_DIR
-    EXAMPLES_FOLDER = REPO_PATH / EXAMPLES_DIR
+    CODEGEN_FOLDER = session.repo_path / CODEGEN_DIR
+    PROMPTS_FOLDER = session.repo_path / PROMPTS_DIR
+    DOCS_FOLDER = session.repo_path / DOCS_DIR
+    EXAMPLES_FOLDER = session.repo_path / EXAMPLES_DIR
     CONFIG_PATH = CODEGEN_FOLDER / "config.toml"
     JUPYTER_DIR = CODEGEN_FOLDER / "jupyter"
     CODEMODS_DIR = CODEGEN_FOLDER / "codemods"
@@ -107,17 +102,9 @@ def initialize_codegen(
             DOCS_FOLDER.mkdir(parents=True, exist_ok=True)
             EXAMPLES_FOLDER.mkdir(parents=True, exist_ok=True)
 
-            response = RestAPI(session.token).get_docs()
+            response = RestAPI(get_current_token()).get_docs()
             populate_api_docs(DOCS_FOLDER, response.docs, status_obj)
             populate_examples(session, EXAMPLES_FOLDER, response.examples, status_obj)
-
-            # Set programming language
-            if programming_language:
-                session.config.programming_language = programming_language
-            else:
-                session.config.programming_language = str(response.language)
-
-            session.write_config()
 
     return CODEGEN_FOLDER, DOCS_FOLDER, EXAMPLES_FOLDER
 

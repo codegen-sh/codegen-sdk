@@ -20,7 +20,7 @@ def run_on_pr(session: CodegenSession, codemod_name: str, pr_number: int) -> Non
         try:
             response = RestAPI(session.token).run_on_pr(
                 codemod_name=codemod_name,
-                repo_full_name=session.repo_name,
+                repo_full_name=session.config.repository.full_name,
                 github_pr_number=pr_number,
             )
             status.stop()

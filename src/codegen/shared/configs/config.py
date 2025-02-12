@@ -1,3 +1,4 @@
+# TODO: rename this file to local.py
 from pathlib import Path
 
 import tomllib
@@ -6,23 +7,27 @@ from codegen.shared.configs.constants import CONFIG_PATH
 from codegen.shared.configs.models import Config
 
 
-def load(config_path: Path | None = None) -> Config:
+def load(config_path: Path) -> Config:
     """Loads configuration from various sources."""
     # Load from .env file
-    env_config = _load_from_env()
+    env_config = _load_from_env(config_path)
 
     # Load from .codegen/config.toml file
-    toml_config = _load_from_toml(config_path or CONFIG_PATH)
+    toml_config = _load_from_toml(config_path)
 
     # Merge configurations recursively
     config_dict = _merge_configs(env_config.model_dump(), toml_config.model_dump())
+    loaded_config = Config(**config_dict)
 
-    return Config(**config_dict)
+    # Save the configuration to file if it doesn't exist
+    if not config_path.exists():
+        loaded_config.save()
+    return loaded_config
 
 
-def _load_from_env() -> Config:
+def _load_from_env(config_path: Path) -> Config:
     """Load configuration from the environment variables."""
-    return Config()
+    return Config(file_path=str(config_path))
 
 
 def _load_from_toml(config_path: Path) -> Config:
@@ -30,9 +35,10 @@ def _load_from_toml(config_path: Path) -> Config:
     if config_path.exists():
         with open(config_path, "rb") as f:
             toml_config = tomllib.load(f)
+            toml_config["file_path"] = str(config_path)
             return Config.model_validate(toml_config, strict=False)
 
-    return Config()
+    return Config(file_path=str(config_path))
 
 
 def _merge_configs(base: dict, override: dict) -> dict:
@@ -48,7 +54,7 @@ def _merge_configs(base: dict, override: dict) -> dict:
     return merged
 
 
-config = load()
+config = load(CONFIG_PATH)
 
 if __name__ == "__main__":
     print(config)
