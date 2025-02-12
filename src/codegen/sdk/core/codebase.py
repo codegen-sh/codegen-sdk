@@ -149,7 +149,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str | None = None,
         *,
-        language: Literal["python", "typescript"] | None = None,
+        language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
@@ -1204,7 +1204,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         tmp_dir: str | None = None,
         commit: str | None = None,
         shallow: bool = True,
-        language: Literal["python", "typescript"] | None = None,
+        language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
