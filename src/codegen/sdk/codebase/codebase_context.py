@@ -22,10 +22,11 @@ from codegen.sdk.core.autocommit import AutoCommit, commiter
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.external.dependency_manager import DependencyManager, get_dependency_manager
 from codegen.sdk.core.external.language_engine import LanguageEngine, get_language_engine
-from codegen.sdk.enums import Edge, EdgeType, NodeType, ProgrammingLanguage
+from codegen.sdk.enums import Edge, EdgeType, NodeType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.typescript.external.ts_declassify.ts_declassify import TSDeclassify
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.shared.exceptions.control_flow import StopCodemodException
 from codegen.shared.performance.stopwatch_utils import stopwatch, stopwatch_with_sentry
 

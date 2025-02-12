@@ -1,7 +1,8 @@
 import codegen
 from codegen import Codebase
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 import shutil
 import subprocess
 from pathlib import Path
@@ -92,7 +93,7 @@ def process_soft_deletes(codebase):
 
 if __name__ == "__main__":
     from codegen.sdk.core.codebase import Codebase
-    from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags
+    from codegen.sdk.codebase.config import CodebaseConfig
 
     repo_path = Path("/tmp/core")
     repo_url = "https://github.com/hasgeek/funnel.git"
@@ -100,7 +101,7 @@ if __name__ == "__main__":
     try:
         clone_repo(repo_url, repo_path)
         subprocess.run(["git", "-C", str(repo_path), "checkout", "8454e15"], check=True)
-        codebase = Codebase(str(repo_path), programming_language=ProgrammingLanguage.PYTHON, config=CodebaseConfig(feature_flags=GSFeatureFlags(disable_graph=True)))
+        codebase = Codebase(str(repo_path), programming_language=ProgrammingLanguage.PYTHON, config=CodebaseConfig(feature_flags=CodebaseFeatureFlags(disable_graph=True)))
         process_soft_deletes(codebase)
     finally:
         shutil.rmtree(repo_path)

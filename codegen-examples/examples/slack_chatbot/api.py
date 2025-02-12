@@ -6,7 +6,7 @@ from typing import Any
 import modal
 from codegen import Codebase
 from codegen.extensions import VectorIndex
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from fastapi import FastAPI, Request
 from openai import OpenAI
 from slack_bolt import App

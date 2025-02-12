@@ -9,8 +9,8 @@ from codegen.sdk.core.expressions.type import Type
 from codegen.sdk.core.function import Function
 from codegen.sdk.core.interfaces.callable import Callable
 from codegen.sdk.core.symbol import Symbol
-from codegen.sdk.enums import ProgrammingLanguage
 from codegen.sdk.python.statements.attribute import PyAttribute
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 logger = logging.getLogger(__name__)
 

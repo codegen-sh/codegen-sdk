@@ -14,6 +14,7 @@ from git import Diff, GitCommandError, InvalidGitRepositoryError, Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
 
+from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
@@ -30,16 +31,22 @@ class RepoOperator(ABC):
     repo_config: RepoConfig
     base_dir: str
     bot_commit: bool = True
+    access_token: str | None = None
+
+    # lazy attributes
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
+    _remote_git_repo: GitRepoClient | None = None
 
     def __init__(
         self,
         repo_config: RepoConfig,
+        access_token: str | None = None,
         bot_commit: bool = True,
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
+        self.access_token = access_token
         self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
 
@@ -54,6 +61,12 @@ class RepoOperator(ABC):
     @property
     def repo_path(self) -> str:
         return os.path.join(self.base_dir, self.repo_name)
+
+    @property
+    def remote_git_repo(self) -> GitRepoClient:
+        if not self._remote_git_repo:
+            self._remote_git_repo = GitRepoClient(self.repo_config, access_token=self.access_token)
+        return self._remote_git_repo
 
     @property
     def clone_url(self) -> str:
@@ -587,3 +600,57 @@ class RepoOperator(ABC):
 
     def stash_pop(self) -> None:
         self.git_cli.git.stash("pop")
+
+    ####################################################################################################################
+    # PR UTILITIES
+    ####################################################################################################################
+
+    def get_pr_data(self, pr_number: int) -> dict:
+        """Returns the data associated with a PR"""
+        return self.remote_git_repo.get_pr_data(pr_number)
+
+    def create_pr_comment(self, pr_number: int, body: str) -> None:
+        """Create a general comment on a pull request.
+
+        Args:
+            pr_number (int): The PR number to comment on
+            body (str): The comment text
+        """
+        pr = self.remote_git_repo.get_pull_safe(pr_number)
+        if pr:
+            self.remote_git_repo.create_issue_comment(pr, body)
+
+    def create_pr_review_comment(
+        self,
+        pr_number: int,
+        body: str,
+        commit_sha: str,
+        path: str,
+        line: int | None = None,
+        side: str | None = None,
+        start_line: int | None = None,
+    ) -> None:
+        """Create an inline review comment on a specific line in a pull request.
+
+        Args:
+            pr_number (int): The PR number to comment on
+            body (str): The comment text
+            commit_sha (str): The commit SHA to attach the comment to
+            path (str): The file path to comment on
+            line (int | None, optional): The line number to comment on. Defaults to None.
+            side (str | None, optional): Which version of the file to comment on ('LEFT' or 'RIGHT'). Defaults to None.
+            start_line (int | None, optional): For multi-line comments, the starting line. Defaults to None.
+        """
+        pr = self.remote_git_repo.get_pull_safe(pr_number)
+        if pr:
+            commit = self.remote_git_repo.get_commit_safe(commit_sha)
+            if commit:
+                self.remote_git_repo.create_review_comment(
+                    pull=pr,
+                    body=body,
+                    commit=commit,
+                    path=path,
+                    line=line,
+                    side=side,
+                    start_line=start_line,
+                )

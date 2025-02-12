@@ -52,7 +52,7 @@ from codegen.sdk.core.interfaces.editable import Editable
 from codegen.sdk.core.interfaces.has_name import HasName
 from codegen.sdk.core.symbol import Symbol
 from codegen.sdk.core.type_alias import TypeAlias
-from codegen.sdk.enums import NodeType, ProgrammingLanguage, SymbolType
+from codegen.sdk.enums import NodeType, SymbolType
 from codegen.sdk.extensions.sort import sort_editables
 from codegen.sdk.extensions.utils import uncache_all
 from codegen.sdk.output.constants import ANGULAR_STYLE
@@ -78,6 +78,7 @@ from codegen.sdk.typescript.statements.import_statement import TSImportStatement
 from codegen.sdk.typescript.symbol import TSSymbol
 from codegen.sdk.typescript.type_alias import TSTypeAlias
 from codegen.shared.decorators.docs import apidoc, noapidoc, py_noapidoc
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.shared.exceptions.control_flow import MaxAIRequestsError
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.visualizations.visualization_manager import VisualizationManager
@@ -903,7 +904,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             raise ValueError(msg)
         self._op.stage_and_commit_all_changes(message=title)
         self._op.push_changes()
-        return self._op.remote_git_repo.create_pull(head=self._op.git_cli.active_branch.name, base=self._op.default_branch, title=title, body=body)
+        return self._op.remote_git_repo.create_pull(head_branch_name=self._op.git_cli.active_branch.name, base_branch_name=self._op.default_branch, title=title, body=body)
 
     ####################################################################################################################
     # GRAPH VISUALIZATION
@@ -1242,10 +1243,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             # Use LocalRepoOperator to fetch the repository
             logger.info("Cloning repository...")
             if commit is None:
-                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
+                repo_operator = LocalRepoOperator.create_from_repo(repo_path=repo_path, url=repo_url, access_token=config.secrets.github_api_key if config.secrets else None)
             else:
                 # Ensure the operator can handle remote operations
-                repo_operator = LocalRepoOperator.create_from_commit(repo_path=repo_path, commit=commit, url=repo_url, github_api_key=config.secrets.github_api_key if config.secrets else None)
+                repo_operator = LocalRepoOperator.create_from_commit(repo_path=repo_path, commit=commit, url=repo_url, access_token=config.secrets.github_api_key if config.secrets else None)
             logger.info("Clone completed successfully")
 
             # Initialize and return codebase with proper context
@@ -1258,11 +1259,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
-    def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
+    def get_modified_symbols_in_pr(self, pr_id: int) -> tuple[list[Symbol], str]:
         """Get all modified symbols in a pull request"""
         pr = self._op.get_pull_request(pr_id)
         cg_pr = CodegenPR(self._op, self, pr)
-        return cg_pr.modified_symbols
+        patch = cg_pr.get_pr_diff()
+        return cg_pr.modified_symbols, patch
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py

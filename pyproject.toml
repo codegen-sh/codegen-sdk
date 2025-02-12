@@ -68,6 +68,8 @@ dependencies = [
   "langchain_core",
   "langchain_openai",
   "numpy>=2.2.2",
+  "mcp[cli]",
+  "neo4j",
 ]
 
 license = { text = "Apache-2.0" }
@@ -160,7 +162,6 @@ dev-dependencies = [
 
 
 [tool.uv.workspace]
-members = ["codegen", "codegen-examples"]
 exclude = ["codegen-examples"]
 
 [tool.cython-lint]

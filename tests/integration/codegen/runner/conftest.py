@@ -9,7 +9,8 @@ from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.clients.sandbox_client import SandboxClient
-from codegen.shared.configs.config import config
+from codegen.shared.configs.session_configs import config
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 @pytest.fixture
@@ -28,7 +29,7 @@ def repo_config(tmpdir) -> Generator[RepoConfig, None, None]:
         name="Kevin-s-Adventure-Game",
         full_name="codegen-sh/Kevin-s-Adventure-Game",
         organization_name="codegen-sh",
-        language="PYTHON",
+        language=ProgrammingLanguage.PYTHON,
         base_dir=str(tmpdir),
     )
 

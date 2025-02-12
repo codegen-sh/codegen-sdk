@@ -6,6 +6,7 @@ from rich.panel import Panel
 
 from codegen.cli.api.client import RestAPI
 from codegen.cli.auth.session import CodegenSession
+from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.errors import ServerError
 from codegen.cli.git.patch import apply_patch
 from codegen.cli.rich.codeblocks import format_command
@@ -24,7 +25,7 @@ def run_cloud(session: CodegenSession, function, apply_local: bool = False, diff
     """
     with create_spinner(f"Running {function.name}...") as status:
         try:
-            run_output = RestAPI(session.token).run(
+            run_output = RestAPI(get_current_token()).run(
                 function=function,
             )
 
