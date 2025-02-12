@@ -6,12 +6,11 @@ from git import Commit as GitCommit
 from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
-from codegen.runner.models.configs import get_codebase_config
 from codegen.runner.sandbox.executor import SandboxExecutor
-from codegen.sdk.codebase.config import ProjectConfig, SessionOptions
+from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 from codegen.sdk.core.codebase import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.sdk.secrets import Secrets
 from codegen.shared.compilation.string_to_code import create_execute_function_from_codeblock
 from codegen.shared.configs.config import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
@@ -31,12 +30,9 @@ class SandboxRunner:
     codebase: CodebaseType
     executor: SandboxExecutor
 
-    def __init__(
-        self,
-        repo_config: RepoConfig,
-    ) -> None:
+    def __init__(self, repo_config: RepoConfig, access_token: str) -> None:
         self.repo = repo_config
-        self.op = RemoteRepoOperator(repo_config=repo_config, access_token=config.secrets.github_token)
+        self.op = RemoteRepoOperator(repo_config=self.repo, access_token=access_token)
         self.commit = self.op.git_cli.head.commit
 
     async def warmup(self) -> None:
@@ -49,9 +45,11 @@ class SandboxRunner:
 
     async def _build_graph(self) -> Codebase:
         logger.info("> Building graph...")
-        programming_language = ProgrammingLanguage(self.op.repo_config.language.upper())
-        projects = [ProjectConfig(programming_language=programming_language, repo_operator=self.op, base_path=self.op.repo_config.base_path, subdirectories=self.op.repo_config.subdirectories)]
-        return Codebase(projects=projects, config=get_codebase_config())
+        projects = [ProjectConfig(programming_language=self.repo.language, repo_operator=self.op, base_path=self.repo.base_path, subdirectories=self.repo.subdirectories)]
+        gs_ffs = GSFeatureFlags(**config.feature_flags.model_dump())
+        secrets = Secrets(openai_key=config.secrets.openai_api_key)
+        codebase_config = CodebaseConfig(secrets=secrets, feature_flags=gs_ffs)
+        return Codebase(projects=projects, config=codebase_config)
 
     @stopwatch
     def reset_runner(self) -> None:

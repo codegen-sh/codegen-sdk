@@ -1327,7 +1327,7 @@ Construct a Codebase by passing in a path to a local `git` repository or any sub
 
 ```python
 from codegen import Codebase
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 # Parse from a git repository root
 codebase = Codebase("path/to/repository")
@@ -1360,7 +1360,7 @@ To fetch and parse a repository directly from GitHub, use the `from_repo` functi
 
 ```python
 import codegen
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 # Fetch and parse a repository (defaults to /tmp/codegen/{repo_name})
 codebase = codegen.from_repo('fastapi/fastapi')
@@ -1423,7 +1423,7 @@ from codegen import Codebase
 from codegen.git.repo_operator.local_repo_operator import LocalRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.sdk.codebase.config import ProjectConfig
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 codebase = Codebase(
     projects = [

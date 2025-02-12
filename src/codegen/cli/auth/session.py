@@ -8,7 +8,7 @@ from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.errors import AuthError, NoTokenError
 from codegen.cli.git.repo import get_git_repo
 from codegen.cli.utils.config import Config, get_config, write_config
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 @dataclass
@@ -39,15 +39,19 @@ class CodegenSession:
     """Represents an authenticated codegen session with user and repository context"""
 
     # =====[ Instance attributes ]=====
-    token: str | None = None
+    _token: str | None = None
 
     # =====[ Lazy instance attributes ]=====
     _config: Config | None = None
     _identity: Identity | None = None
     _profile: UserProfile | None = None
 
-    def __init__(self, token: str | None = None):
-        self.token = token or get_current_token()
+    @property
+    def token(self) -> str | None:
+        """Get the current authentication token"""
+        if self._token:
+            return self._token
+        return get_current_token()
 
     @property
     def config(self) -> Config:

@@ -3,7 +3,7 @@ from codegen import Codebase
 
 from codegen.sdk.typescript.file import TSImport
 
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 processed_imports = set()
 

@@ -4,7 +4,7 @@ from codegen.sdk.core.codebase import (
     Codebase,
     CodebaseType,
 )
-from codegen.sdk.enums import ProgrammingLanguage
+from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 
 class CodebaseFactory:
