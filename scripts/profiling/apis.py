@@ -66,3 +66,5 @@ print(f"Base64 encoded graph size: {len(graph_base64)} bytes")
 print(f"Base64 string: {graph_base64}")
 Path("out.txt").write_text(graph_base64)
 print()
+
+# 🌈 Adding a rainbow emoji as requested
