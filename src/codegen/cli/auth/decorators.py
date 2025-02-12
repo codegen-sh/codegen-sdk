@@ -4,9 +4,10 @@ from collections.abc import Callable
 import click
 import rich
 
-from codegen.cli.auth.auth_session import CodegenAuthenticatedSession
 from codegen.cli.auth.login import login_routine
-from codegen.cli.errors import AuthError, InvalidTokenError, NoTokenError
+from codegen.cli.auth.session import CodegenSession
+from codegen.cli.auth.token_manager import TokenManager, get_current_token
+from codegen.cli.errors import AuthError
 from codegen.cli.rich.pretty_print import pretty_print_error
 
 
@@ -15,22 +16,23 @@ def requires_auth(f: Callable) -> Callable:
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        session = CodegenAuthenticatedSession.from_active_session()
+        session = CodegenSession.from_active_session()
 
         # Check for valid session
-        if not session.is_valid():
-            pretty_print_error(f"The session at path {session.repo_path} is missing or corrupt.\nPlease run 'codegen init' to re-initialize the project.")
+        if session is None or not session.is_valid():
+            pretty_print_error("There is currently no active session.\nPlease run 'codegen init' to initialize the project.")
             raise click.Abort()
 
-        try:
-            if not session.is_authenticated():
-                rich.print("[yellow]Not authenticated. Let's get you logged in first![/yellow]\n")
-                session = login_routine()
-        except (InvalidTokenError, NoTokenError) as e:
-            rich.print("[yellow]Authentication token is invalid or expired. Let's get you logged in again![/yellow]\n")
-            session = login_routine()
-        except AuthError as e:
-            raise click.ClickException(str(e))
+        if (token := get_current_token()) is None:
+            rich.print("[yellow]Not authenticated. Let's get you logged in first![/yellow]\n")
+            login_routine()
+        else:
+            try:
+                token_manager = TokenManager()
+                token_manager.authenticate_token(token)
+            except AuthError:
+                rich.print("[yellow]Authentication token is invalid or expired. Let's get you logged in again![/yellow]\n")
+                login_routine()
 
         return f(*args, session=session, **kwargs)
 
