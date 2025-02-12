@@ -608,3 +608,50 @@ class RepoOperator(ABC):
     def get_pr_data(self, pr_number: int) -> dict:
         """Returns the data associated with a PR"""
         return self.remote_git_repo.get_pr_data(pr_number)
+
+    def create_pr_comment(self, pr_number: int, body: str) -> None:
+        """Create a general comment on a pull request.
+
+        Args:
+            pr_number (int): The PR number to comment on
+            body (str): The comment text
+        """
+        pr = self.remote_git_repo.get_pull_safe(pr_number)
+        if pr:
+            self.remote_git_repo.create_issue_comment(pr, body)
+
+    def create_pr_review_comment(
+        self,
+        pr_number: int,
+        body: str,
+        commit_sha: str,
+        path: str,
+        line: int | None = None,
+        side: str | None = None,
+        start_line: int | None = None,
+    ) -> None:
+        """Create an inline review comment on a specific line in a pull request.
+
+        Args:
+            pr_number (int): The PR number to comment on
+            body (str): The comment text
+            commit_sha (str): The commit SHA to attach the comment to
+            path (str): The file path to comment on
+            line (int | None, optional): The line number to comment on. Defaults to None.
+            side (str | None, optional): Which version of the file to comment on ('LEFT' or 'RIGHT'). Defaults to None.
+            start_line (int | None, optional): For multi-line comments, the starting line. Defaults to None.
+        """
+        pr = self.remote_git_repo.get_pull_safe(pr_number)
+        if pr:
+            commit = self.remote_git_repo.get_commit_safe(commit_sha)
+            if commit:
+                self.remote_git_repo.create_review_comment(
+                    pull=pr,
+                    body=body,
+                    commit=commit,
+                    path=path,
+                    line=line,
+                    side=side,
+                    start_line=start_line,
+                )
+
