@@ -313,6 +313,8 @@ class MoveSymbolTool(BaseTool):
 
 
 class SemanticSearchInput(BaseModel):
+    """Input for Semantic search of a codebase"""
+
     query: str = Field(..., description="The natural language search query")
     k: int = Field(default=5, description="Number of results to return")
     preview_length: int = Field(default=200, description="Length of content preview in characters")
@@ -332,3 +334,37 @@ class SemanticSearchTool(BaseTool):
     def _run(self, query: str, k: int = 5, preview_length: int = 200) -> str:
         result = semantic_search(self.codebase, query, k=k, preview_length=preview_length)
         return json.dumps(result, indent=2)
+
+
+def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
+    """Get all workspace tools initialized with a codebase.
+
+    Args:
+        codebase: The codebase to operate on
+
+    Returns:
+        List of initialized Langchain tools
+    """
+    from .tools import (
+        CommitTool,
+        CreateFileTool,
+        DeleteFileTool,
+        EditFileTool,
+        ListDirectoryTool,
+        RevealSymbolTool,
+        SearchTool,
+        SemanticEditTool,
+        ViewFileTool,
+    )
+
+    return [
+        ViewFileTool(codebase),
+        ListDirectoryTool(codebase),
+        SearchTool(codebase),
+        EditFileTool(codebase),
+        CreateFileTool(codebase),
+        DeleteFileTool(codebase),
+        CommitTool(codebase),
+        RevealSymbolTool(codebase),
+        SemanticEditTool(codebase),
+    ]

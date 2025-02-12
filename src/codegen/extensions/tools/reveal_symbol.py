@@ -212,10 +212,10 @@ def get_extended_context(
 
 def reveal_symbol(
     symbol: Symbol,
-    degree: int = 1,
+    degree: Optional[int] = 1,
     max_tokens: Optional[int] = None,
-    collect_dependencies: bool = True,
-    collect_usages: bool = True,
+    collect_dependencies: Optional[bool] = True,
+    collect_usages: Optional[bool] = True,
 ) -> dict[str, Any]:
     """Reveal the dependencies and usages of a symbol up to N degrees.
 

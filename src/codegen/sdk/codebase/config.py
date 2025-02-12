@@ -11,6 +11,7 @@ from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.file_utils import split_git_path
 from codegen.git.utils.language import determine_project_language
 from codegen.sdk.secrets import Secrets
+from codegen.shared.configs.models import CodebaseFeatureFlags
 from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 HARD_MAX_AI_LIMIT = 500  # Global limit for AI requests
@@ -25,36 +26,10 @@ class SessionOptions(BaseModel):
     max_ai_requests: int = Field(default=150, le=HARD_MAX_AI_LIMIT)
 
 
-class GSFeatureFlags(BaseModel):
-    """Config for building the graph sitter graph. These are non-repo specific options that are set per-usecase.
-
-    Attributes:
-        debug: Warning if there are errors during parsing (such as unimplemented nodes)
-        verify_graph: Verify the accuracy of the graph between resets. Will result in lag
-        method_usages: Resolve . usages
-    """
-
-    model_config = ConfigDict(frozen=True)
-    debug: bool = False
-    verify_graph: bool = False
-    track_graph: bool = False  # Track the initial graph state
-    method_usages: bool = True
-    sync_enabled: bool = True
-    ts_dependency_manager: bool = False  # Enable Typescript Dependency Manager
-    ts_language_engine: bool = False  # Enable Typescript Language Engine
-    v8_ts_engine: bool = False  # Enable V8 Based Typescript Language Engine Instead of NodeJS
-    full_range_index: bool = False
-    ignore_process_errors: bool = True  # Ignore errors from dependency manager and language engine
-    import_resolution_overrides: dict[str, str] = {}  # Override import resolution for specific modules
-    disable_graph: bool = False  # Turn of graph generation entirely. Speeds up parsing but disables usages and dependencies
-    generics: bool = True  # Enable parsing of generic types
-
-
-DefaultFlags = GSFeatureFlags(sync_enabled=False)
-
-TestFlags = GSFeatureFlags(debug=True, track_graph=True, verify_graph=True, full_range_index=True)
-LintFlags = GSFeatureFlags(method_usages=False)
-ParseTestFlags = GSFeatureFlags(debug=False, track_graph=False)
+DefaultFlags = CodebaseFeatureFlags(sync_enabled=False)
+TestFlags = CodebaseFeatureFlags(debug=True, track_graph=True, verify_graph=True, full_range_index=True)
+LintFlags = CodebaseFeatureFlags(method_usages=False)
+ParseTestFlags = CodebaseFeatureFlags(debug=False, track_graph=False)
 
 
 class ProjectConfig(BaseModel):
@@ -103,7 +78,7 @@ class CodebaseConfig(BaseModel):
 
     model_config = ConfigDict(frozen=True)
     secrets: Secrets = Secrets()
-    feature_flags: GSFeatureFlags = DefaultFlags
+    feature_flags: CodebaseFeatureFlags = DefaultFlags
 
 
 DefaultConfig = CodebaseConfig()
