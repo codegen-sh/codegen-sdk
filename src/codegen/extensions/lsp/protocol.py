@@ -36,6 +36,6 @@ class CodegenLanguageServerProtocol(LanguageServerProtocol):
     def lsp_initialize(self, params: InitializeParams) -> InitializeResult:
         ret = super().lsp_initialize(params)
         if params.work_done_token:
-            self._server.work_done_progress.create(params.work_done_token, WorkDoneProgressBegin(title="Parsing codebase..."))
+            self._server.work_done_progress.begin(params.work_done_token, WorkDoneProgressBegin(title="Parsing codebase..."))
         self._init_codebase(params)
         return ret
