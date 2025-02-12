@@ -36,11 +36,6 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
     return {
         "filepath": file.filepath,
         "content": file.content,
-        "extension": file.extension,
-        "name": file.name,
-        "functions": [f.name for f in file.functions],
-        "classes": [c.name for c in file.classes],
-        "imports": [i.source for i in file.imports],
     }
 
 

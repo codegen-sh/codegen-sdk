@@ -7,7 +7,7 @@ from codegen.git.repo_operator.remote_repo_operator import RemoteRepoOperator
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.runner.models.apis import CreateBranchRequest, CreateBranchResponse, GetDiffRequest, GetDiffResponse
 from codegen.runner.sandbox.executor import SandboxExecutor
-from codegen.sdk.codebase.config import CodebaseConfig, GSFeatureFlags, ProjectConfig, SessionOptions
+from codegen.sdk.codebase.config import CodebaseConfig, ProjectConfig, SessionOptions
 from codegen.sdk.codebase.factory.codebase_factory import CodebaseType
 from codegen.sdk.core.codebase import Codebase
 from codegen.sdk.secrets import Secrets
@@ -46,9 +46,8 @@ class SandboxRunner:
     async def _build_graph(self) -> Codebase:
         logger.info("> Building graph...")
         projects = [ProjectConfig(programming_language=self.repo.language, repo_operator=self.op, base_path=self.repo.base_path, subdirectories=self.repo.subdirectories)]
-        gs_ffs = GSFeatureFlags(**config.feature_flags.model_dump())
         secrets = Secrets(openai_key=config.secrets.openai_api_key)
-        codebase_config = CodebaseConfig(secrets=secrets, feature_flags=gs_ffs)
+        codebase_config = CodebaseConfig(secrets=secrets, feature_flags=config.feature_flags.codebase)
         return Codebase(projects=projects, config=codebase_config)
 
     @stopwatch

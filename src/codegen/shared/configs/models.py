@@ -20,22 +20,24 @@ def _get_setting_config(group_name: str) -> SettingsConfigDict:
 
 class TypescriptConfig(BaseSettings):
     model_config = _get_setting_config("FEATURE_FLAGS_TYPESCRIPT")
-    ts_dependency_manager: bool | None = None
-    ts_language_engine: bool | None = None
-    v8_ts_engine: bool | None = None
+
+    ts_dependency_manager: bool = False
+    ts_language_engine: bool = False
+    v8_ts_engine: bool = False
 
 
 class CodebaseFeatureFlags(BaseSettings):
     model_config = _get_setting_config("FEATURE_FLAGS")
-    debug: bool | None = None
-    verify_graph: bool | None = None
-    track_graph: bool | None = None
-    method_usages: bool | None = None
-    sync_enabled: bool | None = None
-    full_range_index: bool | None = None
-    ignore_process_errors: bool | None = None
-    disable_graph: bool | None = None
-    generics: bool | None = None
+
+    debug: bool = False
+    verify_graph: bool = False
+    track_graph: bool = False
+    method_usages: bool = True
+    sync_enabled: bool = True
+    full_range_index: bool = False
+    ignore_process_errors: bool = True
+    disable_graph: bool = False
+    generics: bool = True
     import_resolution_overrides: dict[str, str] = Field(default_factory=lambda: {})
     typescript: TypescriptConfig = Field(default_factory=TypescriptConfig)
 
@@ -57,6 +59,7 @@ class RepositoryConfig(BaseSettings):
 
 class SecretsConfig(BaseSettings):
     model_config = _get_setting_config("SECRETS")
+
     github_token: str | None = None
     openai_api_key: str | None = None
 
