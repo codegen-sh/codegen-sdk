@@ -1,6 +1,7 @@
 """Langchain tools for workspace operations."""
 
 import json
+import uuid
 from typing import ClassVar, Literal, Optional
 
 from langchain.tools import BaseTool
@@ -355,6 +356,9 @@ class CreatePRTool(BaseTool):
         super().__init__(codebase=codebase)
 
     def _run(self, title: str, body: str) -> str:
+        if self.codebase._op.git_cli.active_branch.name == self.codebase._op.default_branch:
+            # If the current checked out branch is the default branch, checkout onto a new branch
+            self.codebase.checkout(branch=f"{uuid.uuid4()}", create_if_missing=True)
         pr = self.codebase.create_pr(title=title, body=body)
         return pr.html_url
 
