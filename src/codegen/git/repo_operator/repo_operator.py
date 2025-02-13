@@ -7,12 +7,14 @@ from collections.abc import Generator
 from datetime import UTC, datetime
 from functools import cached_property
 from time import perf_counter
+from typing import Self
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Commit as GitCommit
 from git import Diff, GitCommandError, InvalidGitRepositoryError, Remote
 from git import Repo as GitCLI
 from git.remote import PushInfoList
+from github.PullRequest import PullRequest
 
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
@@ -22,6 +24,10 @@ from codegen.git.utils.remote_progress import CustomRemoteProgress
 from codegen.shared.configs.session_configs import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.shared.performance.time_utils import humanize_duration
+from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
+from codegen.git.utils.clone_url import add_access_token_to_url
+from codegen.git.repo_operator.local_git_repo import LocalGitRepo
+from codegen.git.utils.file_utils import create_files
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +44,7 @@ class RepoOperator(ABC):
     _codeowners_parser: CodeOwnersParser | None = None
     _default_branch: str | None = None
     _remote_git_repo: GitRepoClient | None = None
+    _local_git_repo: LocalGitRepo | None = None
 
     def __init__(
         self,
@@ -50,6 +57,11 @@ class RepoOperator(ABC):
         self.access_token = access_token or config.secrets.github_token
         self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
+        os.makedirs(self.repo_path, exist_ok=True)
+        GitCLI.init(self.repo_path)
+        self._local_git_repo = LocalGitRepo(repo_path=repo_config.repo_path)
+        if repo_config.full_name is None:
+            repo_config.full_name = self._local_git_repo.full_name
 
     ####################################################################################################################
     # PROPERTIES
@@ -65,6 +77,22 @@ class RepoOperator(ABC):
 
     @property
     def remote_git_repo(self) -> GitRepoClient:
+        """Get the remote GitRepoClient object for the current repo.
+        
+        Returns:
+            GitRepoClient: The GitHub client for remote operations.
+            
+        Raises:
+            ValueError: If access token is not provided or if repo has no remote.
+        """
+        if not self.access_token:
+            msg = "Must initialize with access_token to get remote"
+            raise ValueError(msg)
+
+        if not self._local_git_repo.has_remote():
+            msg = "Cannot initialize remote GitRepoClient from local Git"
+            raise ValueError(msg)
+
         if not self._remote_git_repo:
             self._remote_git_repo = GitRepoClient(self.repo_config, access_token=self.access_token)
         return self._remote_git_repo
@@ -164,8 +192,11 @@ class RepoOperator(ABC):
         # Priority 3: Fallback to the active branch
         return self.git_cli.active_branch.name
 
-    @abstractmethod
-    def codeowners_parser(self) -> CodeOwnersParser | None: ...
+    @property
+    def codeowners_parser(self) -> CodeOwnersParser | None:
+        if not self._codeowners_parser:
+            self._codeowners_parser = create_codeowners_parser_for_repo(self.remote_git_repo)
+        return self._codeowners_parser
 
     ####################################################################################################################
     # SET UP
@@ -219,9 +250,9 @@ class RepoOperator(ABC):
             logger.info(f"Deleting branch {branch.name} ...")
             self.git_cli.delete_head(branch.name, force=True)
 
-    @abstractmethod
     def pull_repo(self) -> None:
         """Pull the latest commit down to an existing local repo"""
+        pull_repo(repo_path=self.repo_path, clone_url=self.clone_url)
 
     ####################################################################################################################
     # CHECKOUT, BRANCHES & COMMITS
@@ -593,8 +624,10 @@ class RepoOperator(ABC):
                         modified_files.append(file)
         return modified_files, deleted_files
 
-    @abstractmethod
-    def base_url(self) -> str | None: ...
+    @cached_property
+    def base_url(self) -> str | None:
+        """Returns the base URL for the repository."""
+        return self._local_git_repo.base_url if self._local_git_repo else None
 
     def stash_push(self) -> None:
         self.git_cli.git.stash("push")
@@ -603,8 +636,121 @@ class RepoOperator(ABC):
         self.git_cli.git.stash("pop")
 
     ####################################################################################################################
+    # CLASS METHODS
+    ####################################################################################################################
+
+    @classmethod
+    def create_from_files(cls, repo_path: str, files: dict[str, str], bot_commit: bool = True) -> Self:
+        """Used when you want to create a directory from a set of files and then create a RepoOperator that points to that directory.
+        Use cases:
+        - Unit testing
+        - Playground
+        - Codebase eval
+
+        Args:
+            repo_path (str): The path to the directory to create.
+            files (dict[str, str]): A dictionary of file names and contents to create in the directory.
+            bot_commit (bool): Whether to use bot commit settings. Defaults to True.
+
+        Returns:
+            Self: A new instance of the operator pointing to the created repository.
+        """
+        # Step 1: Create dir (if not exists) + files
+        os.makedirs(repo_path, exist_ok=True)
+        create_files(base_dir=repo_path, files=files)
+
+        # Step 2: Init git repo
+        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=bot_commit)
+        if op.stage_and_commit_all_changes("[Codegen] initial commit"):
+            op.checkout_branch(None, create_if_missing=True)
+        return op
+
+    @classmethod
+    def create_from_repo(cls, repo_path: str, url: str, access_token: str | None = None) -> Self:
+        """Create a fresh clone of a repository or use existing one if up to date.
+
+        Args:
+            repo_path (str): Path where the repo should be cloned
+            url (str): Git URL of the repository
+            access_token (str | None): Optional GitHub API key for operations that need GitHub access
+        """
+        access_token = access_token or config.secrets.github_token
+        url = add_access_token_to_url(url=url, token=access_token)
+
+        # Check if repo already exists
+        if os.path.exists(repo_path):
+            try:
+                # Try to initialize git repo from existing path
+                git_cli = GitCLI(repo_path)
+                # Check if it has our remote URL
+                if any(remote.url == url for remote in git_cli.remotes):
+                    # Fetch to check for updates
+                    git_cli.remotes.origin.fetch()
+                    # Get current and remote HEADs
+                    local_head = git_cli.head.commit
+                    remote_head = git_cli.remotes.origin.refs[git_cli.active_branch.name].commit
+                    # If up to date, use existing repo
+                    if local_head.hexsha == remote_head.hexsha:
+                        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
+            except Exception:
+                # If any git operations fail, fallback to fresh clone
+                pass
+
+            # If we get here, repo exists but is not up to date or valid
+            # Remove the existing directory to do a fresh clone
+            import shutil
+            shutil.rmtree(repo_path)
+
+        # Clone the repository
+        GitCLI.clone_from(url=url, to_path=repo_path, depth=1)
+
+        # Initialize with the cloned repo
+        return cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
+
+    @classmethod
+    def create_from_commit(cls, repo_path: str, commit: str, url: str, access_token: str | None = None) -> Self:
+        """Do a shallow checkout of a particular commit to get a repository from a given remote URL.
+
+        Args:
+            repo_path (str): Path where the repo should be cloned
+            commit (str): The commit hash to checkout
+            url (str): Git URL of the repository
+            access_token (str | None): Optional GitHub API key for operations that need GitHub access
+        """
+        op = cls(repo_config=RepoConfig.from_repo_path(repo_path), bot_commit=False, access_token=access_token)
+        op.discard_changes()
+        if op.get_active_branch_or_commit() != commit:
+            op.create_remote("origin", url)
+            op.git_cli.remotes["origin"].fetch(commit, depth=1)
+            op.checkout_commit(commit)
+        return op
+
+    ####################################################################################################################
     # PR UTILITIES
     ####################################################################################################################
+
+    def get_pull_request(self, pr_number: int) -> PullRequest | None:
+        """Get a GitHub Pull Request object for the given PR number.
+
+        Args:
+            pr_number (int): The PR number to fetch
+
+        Returns:
+            PullRequest | None: The PyGitHub PullRequest object if found, None otherwise
+
+        Note:
+            This requires a GitHub API key to be set when initializing the operator
+        """
+        try:
+            # Create GitHub client and get the PR
+            repo = self.remote_git_repo
+            if repo is None:
+                logger.warning("GitHub API key is required to fetch pull requests")
+                return None
+            return repo.get_pull_safe(pr_number)
+        except Exception as e:
+            logger.warning(f"Failed to get PR {pr_number}: {e!s}")
+            return None
 
     def get_pr_data(self, pr_number: int) -> dict:
         """Returns the data associated with a PR"""
