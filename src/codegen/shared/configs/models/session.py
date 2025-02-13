@@ -5,72 +5,27 @@ import toml
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from codegen.shared.configs.constants import CONFIG_PATH, ENV_PATH
+from codegen.shared.configs.models.feature_flags import FeatureFlagsConfig
+from codegen.shared.configs.models.repository import RepositoryConfig
+from codegen.shared.configs.models.secrets import SecretsConfig
 
 
-class TypescriptConfig(BaseModel):
-    ts_dependency_manager: bool | None = None
-    ts_language_engine: bool | None = None
-    v8_ts_engine: bool | None = None
-
-
-class CodebaseFeatureFlags(BaseModel):
-    debug: bool | None = None
-    verify_graph: bool | None = None
-    track_graph: bool | None = None
-    method_usages: bool | None = None
-    sync_enabled: bool | None = None
-    full_range_index: bool | None = None
-    ignore_process_errors: bool | None = None
-    disable_graph: bool | None = None
-    generics: bool | None = None
-    import_resolution_overrides: dict[str, str] = Field(default_factory=lambda: {})
-    typescript: TypescriptConfig = Field(default_factory=TypescriptConfig)
-
-
-class RepositoryConfig(BaseModel):
-    """Configuration for the repository context to run codegen.
-    To populate this config, call `codegen init` from within a git repository.
-    """
-
-    repo_path: str | None = None
-    repo_name: str | None = None
-    full_name: str | None = None
-    user_name: str | None = None
-    user_email: str | None = None
-    language: str | None = None
-
-
-class SecretsConfig(BaseSettings):
-    model_config = SettingsConfigDict(
-        env_prefix="CODEGEN_SECRETS__",
-        env_file=ENV_PATH,
-        case_sensitive=False,
-    )
-    github_token: str | None = None
-    openai_api_key: str | None = None
-
-
-class FeatureFlagsConfig(BaseModel):
-    codebase: CodebaseFeatureFlags = Field(default_factory=CodebaseFeatureFlags)
-
-
-class Config(BaseSettings):
+class SessionConfig(BaseSettings):
     model_config = SettingsConfigDict(
         extra="ignore",
         exclude_defaults=False,
     )
+    file_path: str
     secrets: SecretsConfig = Field(default_factory=SecretsConfig)
     repository: RepositoryConfig = Field(default_factory=RepositoryConfig)
     feature_flags: FeatureFlagsConfig = Field(default_factory=FeatureFlagsConfig)
 
-    def save(self, config_path: Path | None = None) -> None:
+    def save(self) -> None:
         """Save configuration to the config file."""
-        path = config_path or CONFIG_PATH
+        config_dir = Path(self.file_path).parent
+        config_dir.mkdir(parents=True, exist_ok=True)
 
-        path.parent.mkdir(parents=True, exist_ok=True)
-
-        with open(path, "w") as f:
+        with open(self.file_path, "w") as f:
             toml.dump(self.model_dump(exclude_none=True), f)
 
     def get(self, full_key: str) -> str | None:
@@ -112,7 +67,7 @@ class Config(BaseSettings):
         field_info = current_attr.model_fields[keys[-1]].annotation
         if isinstance(field_info, BaseModel):
             try:
-                Config.model_validate(value, strict=False)
+                SessionConfig.model_validate(value, strict=False)
             except Exception as e:
                 msg = f"Value does not match the expected type for key: {full_key}\n\nError:{e}"
                 raise ValueError(msg)

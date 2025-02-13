@@ -12,7 +12,9 @@ from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.git.repo_operator.repo_operator import RepoOperator
 from codegen.git.schemas.enums import FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.clone_url import add_access_token_to_url
 from codegen.git.utils.file_utils import create_files
+from codegen.shared.configs.session_configs import config
 
 logger = logging.getLogger(__name__)
 
@@ -112,6 +114,9 @@ class LocalRepoOperator(RepoOperator):
             url (str): Git URL of the repository
             access_token (str | None): Optional GitHub API key for operations that need GitHub access
         """
+        access_token = access_token or config.secrets.github_token
+        url = add_access_token_to_url(url=url, token=access_token)
+
         # Check if repo already exists
         if os.path.exists(repo_path):
             try:
@@ -183,7 +188,7 @@ class LocalRepoOperator(RepoOperator):
             if repo is None:
                 logger.warning("GitHub API key is required to fetch pull requests")
                 return None
-            return repo.get_pull(pr_number)
+            return repo.get_pull_safe(pr_number)
         except Exception as e:
             logger.warning(f"Failed to get PR {pr_number}: {e!s}")
             return None

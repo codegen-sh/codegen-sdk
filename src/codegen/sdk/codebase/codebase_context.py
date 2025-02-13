@@ -421,12 +421,12 @@ class CodebaseContext:
         add_to_remove = []
         if incremental:
             for file_path in files_to_sync[SyncType.ADD]:
-                if not self.to_absolute(file_path).exists():
+                if not self.io.file_exists(self.to_absolute(file_path)):
                     add_to_remove.append(file_path)
                     logger.warning(f"SYNC: SourceFile {file_path} no longer exists! Removing from graph")
             reparse_to_remove = []
             for file_path in files_to_sync[SyncType.REPARSE]:
-                if not self.to_absolute(file_path).exists():
+                if not self.io.file_exists(self.to_absolute(file_path)):
                     reparse_to_remove.append(file_path)
                     logger.warning(f"SYNC: SourceFile {file_path} no longer exists! Removing from graph")
             files_to_sync[SyncType.ADD] = [f for f in files_to_sync[SyncType.ADD] if f not in add_to_remove]

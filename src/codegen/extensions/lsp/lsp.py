@@ -24,6 +24,7 @@ def did_open(server: CodegenLanguageServer, params: types.DidOpenTextDocumentPar
     # The document is automatically added to the workspace by pygls
     # We can perform any additional processing here if needed
     path = get_path(params.text_document.uri)
+    server.io.update_file(path, params.text_document.version)
     file = server.codebase.get_file(str(path), optional=True)
     if not isinstance(file, SourceFile) and path.suffix in server.codebase.ctx.extensions:
         sync = DiffLite(change_type=ChangeType.Added, path=path)
@@ -37,6 +38,7 @@ def did_change(server: CodegenLanguageServer, params: types.DidChangeTextDocumen
     # The document is automatically updated in the workspace by pygls
     # We can perform any additional processing here if needed
     path = get_path(params.text_document.uri)
+    server.io.update_file(path, params.text_document.version)
     sync = DiffLite(change_type=ChangeType.Modified, path=path)
     server.codebase.ctx.apply_diffs([sync])
 
@@ -63,6 +65,8 @@ def did_close(server: CodegenLanguageServer, params: types.DidCloseTextDocumentP
     logger.info(f"Document closed: {params.text_document.uri}")
     # The document is automatically removed from the workspace by pygls
     # We can perform any additional cleanup here if needed
+    path = get_path(params.text_document.uri)
+    server.io.close_file(path)
 
 
 @server.feature(
@@ -76,9 +80,7 @@ def rename(server: CodegenLanguageServer, params: types.RenameParams) -> types.R
     logger.info(f"Renaming symbol {symbol.name} to {params.new_name}")
     symbol.rename(params.new_name)
     server.codebase.commit()
-    return types.WorkspaceEdit(
-        document_changes=server.io.get_document_changes(),
-    )
+    return server.io.get_workspace_edit()
 
 
 @server.feature(
@@ -102,6 +104,27 @@ def definition(server: CodegenLanguageServer, params: types.DefinitionParams):
         uri=resolved.file.path.as_uri(),
         range=get_range(resolved),
     )
+
+
+@server.feature(
+    types.TEXT_DOCUMENT_CODE_ACTION,
+    options=types.CodeActionOptions(resolve_provider=True),
+)
+def code_action(server: CodegenLanguageServer, params: types.CodeActionParams) -> types.CodeActionResult:
+    logger.info(f"Received code action: {params}")
+    if params.context.only:
+        only = [types.CodeActionKind(kind) for kind in params.context.only]
+    else:
+        only = None
+    actions = server.get_actions_for_range(params.text_document.uri, params.range, only)
+    return actions
+
+
+@server.feature(
+    types.CODE_ACTION_RESOLVE,
+)
+def code_action_resolve(server: CodegenLanguageServer, params: types.CodeAction) -> types.CodeAction:
+    return server.resolve_action(params)
 
 
 if __name__ == "__main__":

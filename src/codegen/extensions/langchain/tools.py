@@ -11,6 +11,9 @@ from codegen import Codebase
 from ..tools import (
     commit,
     create_file,
+    create_pr,
+    create_pr_comment,
+    create_pr_review_comment,
     delete_file,
     edit_file,
     list_directory,
@@ -21,6 +24,7 @@ from ..tools import (
     semantic_edit,
     semantic_search,
     view_file,
+    view_pr,
 )
 
 
@@ -204,12 +208,11 @@ class RevealSymbolTool(BaseTool):
         collect_dependencies: bool = True,
         collect_usages: bool = True,
     ) -> str:
-        # Find the symbol first
-        found_symbol = self.codebase.get_symbol(symbol_name)
         result = reveal_symbol(
-            found_symbol,
-            degree,
-            max_tokens,
+            codebase=self.codebase,
+            symbol_name=symbol_name,
+            degree=degree,
+            max_tokens=max_tokens,
             collect_dependencies=collect_dependencies,
             collect_usages=collect_usages,
         )
@@ -313,6 +316,8 @@ class MoveSymbolTool(BaseTool):
 
 
 class SemanticSearchInput(BaseModel):
+    """Input for Semantic search of a codebase"""
+
     query: str = Field(..., description="The natural language search query")
     k: int = Field(default=5, description="Number of results to return")
     preview_length: int = Field(default=200, description="Length of content preview in characters")
@@ -332,3 +337,146 @@ class SemanticSearchTool(BaseTool):
     def _run(self, query: str, k: int = 5, preview_length: int = 200) -> str:
         result = semantic_search(self.codebase, query, k=k, preview_length=preview_length)
         return json.dumps(result, indent=2)
+
+
+class CreatePRInput(BaseModel):
+    """Input for creating a PR"""
+
+    title: str = Field(..., description="The title of the PR")
+    body: str = Field(..., description="The body of the PR")
+
+
+class CreatePRTool(BaseTool):
+    """Tool for creating a PR."""
+
+    name: ClassVar[str] = "create_pr"
+    description: ClassVar[str] = "Create a PR for the current branch"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, title: str, body: str) -> str:
+        result = create_pr(self.codebase, title, body)
+        return json.dumps(result, indent=2)
+
+
+class GetPRContentsInput(BaseModel):
+    """Input for getting PR contents."""
+
+    pr_id: int = Field(..., description="Number of the PR to get the contents for")
+
+
+class GetPRcontentsTool(BaseTool):
+    """Tool for getting PR data."""
+
+    name: ClassVar[str] = "get_pr_contents"
+    description: ClassVar[str] = "Get the diff and modified symbols of a PR along with the dependencies of the modified symbols"
+    args_schema: ClassVar[type[BaseModel]] = GetPRContentsInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, pr_id: int) -> str:
+        result = view_pr(self.codebase, pr_id)
+        return json.dumps(result, indent=2)
+
+
+class CreatePRCommentInput(BaseModel):
+    """Input for creating a PR comment"""
+
+    pr_number: int = Field(..., description="The PR number to comment on")
+    body: str = Field(..., description="The comment text")
+
+
+class CreatePRCommentTool(BaseTool):
+    """Tool for creating a general PR comment."""
+
+    name: ClassVar[str] = "create_pr_comment"
+    description: ClassVar[str] = "Create a general comment on a pull request"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRCommentInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, pr_number: int, body: str) -> str:
+        result = create_pr_comment(self.codebase, pr_number, body)
+        return json.dumps(result, indent=2)
+
+
+class CreatePRReviewCommentInput(BaseModel):
+    """Input for creating an inline PR review comment"""
+
+    pr_number: int = Field(..., description="The PR number to comment on")
+    body: str = Field(..., description="The comment text")
+    commit_sha: str = Field(..., description="The commit SHA to attach the comment to")
+    path: str = Field(..., description="The file path to comment on")
+    line: int | None = Field(None, description="The line number to comment on")
+    side: str | None = Field(None, description="Which version of the file to comment on ('LEFT' or 'RIGHT')")
+    start_line: int | None = Field(None, description="For multi-line comments, the starting line")
+
+
+class CreatePRReviewCommentTool(BaseTool):
+    """Tool for creating inline PR review comments."""
+
+    name: ClassVar[str] = "create_pr_review_comment"
+    description: ClassVar[str] = "Create an inline review comment on a specific line in a pull request"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRReviewCommentInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(
+        self,
+        pr_number: int,
+        body: str,
+        commit_sha: str,
+        path: str,
+        line: int | None = None,
+        side: str | None = None,
+        start_line: int | None = None,
+    ) -> str:
+        result = create_pr_review_comment(
+            self.codebase,
+            pr_number=pr_number,
+            body=body,
+            commit_sha=commit_sha,
+            path=path,
+            line=line,
+            side=side,
+            start_line=start_line,
+        )
+        return json.dumps(result, indent=2)
+
+
+def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
+    """Get all workspace tools initialized with a codebase.
+
+    Args:
+        codebase: The codebase to operate on
+
+    Returns:
+        List of initialized Langchain tools
+    """
+    return [
+        CommitTool(codebase),
+        CreateFileTool(codebase),
+        CreatePRTool(codebase),
+        CreatePRCommentTool(codebase),
+        CreatePRReviewCommentTool(codebase),
+        DeleteFileTool(codebase),
+        EditFileTool(codebase),
+        GetPRcontentsTool(codebase),
+        ListDirectoryTool(codebase),
+        MoveSymbolTool(codebase),
+        RenameFileTool(codebase),
+        RevealSymbolTool(codebase),
+        SearchTool(codebase),
+        SemanticEditTool(codebase),
+        SemanticSearchTool(codebase),
+        ViewFileTool(codebase),
+    ]

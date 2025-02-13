@@ -9,6 +9,7 @@ from pytest_lsp import (
 )
 
 from codegen.sdk.core.codebase import Codebase
+from tests.unit.codegen.extensions.lsp.utils import apply_edit
 
 
 @pytest.mark.parametrize(
@@ -33,10 +34,12 @@ def world():
 async def test_rename(client: LanguageClient, codebase: Codebase, assert_expected):
     result = await client.text_document_rename_async(
         params=RenameParams(
-            position=Position(line=0, character=0),
-            text_document=TextDocumentIdentifier(uri="file://test.py"),
+            position=Position(line=0, character=5),
+            text_document=TextDocumentIdentifier(uri=f"file://{codebase.repo_path}/test.py"),
             new_name="world",
         )
     )
+    if result:
+        apply_edit(codebase, result)
 
     assert_expected(codebase, check_codebase=False)
