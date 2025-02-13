@@ -41,6 +41,9 @@ def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> d
         depth: How deep to traverse the directory tree. Default is 1 (immediate children only).
                Use -1 for unlimited depth.
 
+    TODO(CG-10729): add support for directories that only including non-SourceFiles (code files). At the moment,
+     only files and directories that have SourceFile objects are included.
+
     Returns:
         Dict containing directory contents and metadata in a nested structure:
         {
