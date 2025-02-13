@@ -123,8 +123,14 @@ def add_links_to_message(message: str, codebase: Codebase, channel: MessageChann
             # If not a file, try as directory
             try:
                 directory = codebase.get_directory(snippet, optional=True)
-                github_url = codebase.files[0].github_url
                 if directory:
+                    # TODO: implement `Directory.github_url`
+                    github_url = codebase.ctx.base_url
+                    if github_url.endswith(".git"):
+                        github_url = github_url.replace(".git", "/tree/develop/") + str(directory.dirpath)
+                    else:
+                        github_url = github_url + str(directory.dirpath)
+                    print(github_url)
                     link = format_link(snippet, github_url, channel)
                     message = message.replace(f"`{snippet}`", link)
             except (IsADirectoryError, OSError):
