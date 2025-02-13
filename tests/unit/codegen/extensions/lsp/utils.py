@@ -10,7 +10,6 @@ def apply_edit(codebase: Codebase, edit: WorkspaceEdit):
             path = get_path(change.text_document.uri)
             file = codebase.get_file(str(path.relative_to(codebase.repo_path)))
             for edit in change.edits:
-                print("BRUH")
                 file.edit(edit.new_text)
         if isinstance(change, CreateFile):
             path = get_path(change.uri)
