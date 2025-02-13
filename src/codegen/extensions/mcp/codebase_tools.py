@@ -25,7 +25,7 @@ def reveal_symbol_tool(
     collect_dependencies: Annotated[Optional[bool], "includes dependencies of symbol"],
     collect_usages: Annotated[Optional[bool], "includes usages of symbol"],
 ):
-    codebase = Codebase(repo_path=codebase_dir, programming_language=codebase_language)
+    codebase = Codebase(repo_path=codebase_dir, language=codebase_language)
     result = reveal_symbol(
         codebase=codebase,
         symbol_name=symbol_name,
@@ -45,7 +45,7 @@ def search_codebase_tool(
     codebase_language: Annotated[ProgrammingLanguage, "The language the codebase is written in"],
     use_regex: Annotated[bool, "use regex for the search query"],
 ):
-    codebase = Codebase(repo_path=codebase_dir, programming_language=codebase_language)
+    codebase = Codebase(repo_path=codebase_dir, language=codebase_language)
     result = search(codebase, query, target_directories, use_regex=use_regex)
     return json.dumps(result, indent=2)
 

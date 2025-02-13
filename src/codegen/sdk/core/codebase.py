@@ -128,7 +128,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: None = None,
         *,
-        programming_language: None = None,
+        language: None = None,
         projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
@@ -140,7 +140,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str,
         *,
-        programming_language: ProgrammingLanguage | None = None,
+        language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
@@ -151,7 +151,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self,
         repo_path: str | None = None,
         *,
-        programming_language: ProgrammingLanguage | None = None,
+        language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
@@ -166,8 +166,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             msg = "Must specify either repo_path or projects"
             raise ValueError(msg)
 
-        if projects is not None and programming_language is not None:
-            msg = "Cannot specify both projects and programming_language. Use ProjectConfig.from_path() to create projects with a custom programming_language."
+        if projects is not None and language is not None:
+            msg = "Cannot specify both projects and language. Use ProjectConfig.from_path() to create projects with a custom language."
             raise ValueError(msg)
 
         # If projects is a single ProjectConfig, convert it to a list
@@ -176,7 +176,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
         # Initialize project with repo_path if projects is None
         if repo_path is not None:
-            main_project = ProjectConfig.from_path(repo_path, programming_language=programming_language)
+            main_project = ProjectConfig.from_path(repo_path, programming_language=ProgrammingLanguage(language.upper()) if language else None)
             projects = [main_project]
         else:
             main_project = projects[0]
@@ -1240,7 +1240,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         *,
         tmp_dir: str | None = "/tmp/codegen",
         commit: str | None = None,
-        programming_language: ProgrammingLanguage | None = None,
+        language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> "Codebase":
         """Fetches a codebase from GitHub and returns a Codebase instance.
@@ -1250,7 +1250,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             tmp_dir (Optional[str]): The directory to clone the repo into. Defaults to /tmp/codegen
             commit (Optional[str]): The specific commit hash to clone. Defaults to HEAD
             shallow (bool): Whether to do a shallow clone. Defaults to True
-            programming_language (ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
+            language (Literal["python", "typescript"] | ProgrammingLanguage | None): The programming language of the repo. Defaults to None.
             config (CodebaseConfig): Configuration for the codebase. Defaults to DefaultConfig.
 
         Returns:
@@ -1285,7 +1285,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
 
             # Initialize and return codebase with proper context
             logger.info("Initializing Codebase...")
-            project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=programming_language)
+            project = ProjectConfig.from_repo_operator(repo_operator=repo_operator, programming_language=ProgrammingLanguage(language.upper()) if language else None)
             codebase = Codebase(projects=[project], config=config)
             logger.info("Codebase initialization complete")
             return codebase

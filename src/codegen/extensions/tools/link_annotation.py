@@ -95,7 +95,7 @@ def add_links_to_message(message: str, codebase: Codebase, channel: MessageChann
 
     This function:
     1. Links code snippets that match symbol names
-    2. Links anything that looks like a filepath
+    2. Links anything that looks like a filepath (files or directories)
 
     Args:
         message: The message to process
@@ -109,10 +109,34 @@ def add_links_to_message(message: str, codebase: Codebase, channel: MessageChann
     for snippet in snippets:
         # Filepaths
         if is_likely_filepath(snippet):
-            file = codebase.get_file(snippet, optional=True)
-            if file:
-                link = format_link(snippet, file.github_url, channel)
-                message = message.replace(f"`{snippet}`", link)
+            # Try as file first
+            try:
+                file = codebase.get_file(snippet, optional=True)
+                if file:
+                    link = format_link(snippet, file.github_url, channel)
+                    message = message.replace(f"`{snippet}`", link)
+                    continue
+            except (IsADirectoryError, OSError):
+                # Skip if there are any filesystem errors with file access
+                pass
+
+            # If not a file, try as directory
+            try:
+                directory = codebase.get_directory(snippet, optional=True)
+                if directory:
+                    # TODO: implement `Directory.github_url`
+                    github_url = codebase.ctx.base_url
+                    github_url = github_url or "https://github.com/your/repo/tree/develop/"  # Fallback URL
+                    if github_url.endswith(".git"):
+                        github_url = github_url.replace(".git", "/tree/develop/") + str(directory.dirpath)
+                    else:
+                        github_url = github_url + str(directory.dirpath)
+                    print(github_url)
+                    link = format_link(snippet, github_url, channel)
+                    message = message.replace(f"`{snippet}`", link)
+            except (IsADirectoryError, OSError):
+                # Skip if there are any filesystem errors with directory access
+                pass
 
         # Symbols
         else:

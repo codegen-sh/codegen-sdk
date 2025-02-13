@@ -183,6 +183,7 @@
 						"api-reference/core/ChainedAttribute",
 						"api-reference/core/Class",
 						"api-reference/core/CodeBlock",
+						"api-reference/core/CodeOwner",
 						"api-reference/core/Codebase",
 						"api-reference/core/Comment",
 						"api-reference/core/CommentGroup",
