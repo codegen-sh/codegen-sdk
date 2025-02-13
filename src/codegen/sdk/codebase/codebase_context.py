@@ -316,12 +316,11 @@ class CodebaseContext:
                 self.remove_node(module.node_id)
                 self._ext_module_idx.pop(module._idx_key, None)
 
-
     def build_directory_tree(self, files: list[SourceFile]) -> None:
         """Builds the directory tree for the codebase"""
         # Reset and rebuild the directory tree
         self.directories = dict()
-        created_dirs=set()
+        created_dirs = set()
         for file in files:
             directory = self.get_directory(file.path.parent, create_on_missing=True)
             directory.add_file(file)
@@ -330,16 +329,15 @@ class CodebaseContext:
 
         def _dir_has_file(filepath):
             gen = os.scandir(filepath)
-            while entry := next(gen,None):
+            while entry := next(gen, None):
                 if entry.is_file():
                     return True
             return False
 
-
         for rel_filepath in self._op.get_filepaths_for_repo(GLOBAL_FILE_IGNORE_LIST):
             abs_filepath = self.to_absolute(rel_filepath)
             if not abs_filepath.is_dir():
-                abs_filepath=abs_filepath.parent
+                abs_filepath = abs_filepath.parent
 
             if abs_filepath not in created_dirs and self.is_subdir(abs_filepath) and _dir_has_file(abs_filepath):
                 directory = self.get_directory(abs_filepath, create_on_missing=True)
