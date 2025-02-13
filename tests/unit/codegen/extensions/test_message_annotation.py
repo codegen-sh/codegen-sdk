@@ -37,6 +37,7 @@ class Greeter_duplicate:
     files = {
         "src/main.py": content,
         "src/utils/helpers.py": "# Helper functions",
+        "src/utils/more/nested.py": "# Nested module",
         "docs/README.md": "# Documentation",
         "tsconfig.json": "{}",
     }
@@ -112,6 +113,14 @@ def test_add_links_filepath(codebase):
     assert "|src/utils/helpers.py>" in result
 
 
+def test_add_links_directory(codebase):
+    """Test adding links for directories."""
+    message = "Look in the `src/utils` directory and `src/utils/more`"
+    result = add_links_to_message(message, codebase)
+    assert "|src/utils>" in result
+    assert "|src/utils/more>" in result
+
+
 def test_add_links_filepath_with_extension(codebase):
     """Test adding links for files with common extensions."""
     message = "See `tsconfig.json` and `docs/README.md`"
@@ -123,6 +132,13 @@ def test_add_links_filepath_with_extension(codebase):
 def test_nonexistent_filepath(codebase):
     """Test handling of nonexistent filepaths."""
     message = "This `src/nonexistent.py` should not be linked"
+    result = add_links_to_message(message, codebase)
+    assert result == message  # Message should remain unchanged
+
+
+def test_nonexistent_directory(codebase):
+    """Test handling of nonexistent directories."""
+    message = "This `src/nonexistent/dir` should not be linked"
     result = add_links_to_message(message, codebase)
     assert result == message  # Message should remain unchanged
 
@@ -163,8 +179,10 @@ def test_mixed_content(codebase):
     message = """Here's a complex message:
 - Valid symbol: `hello`
 - Valid file: `src/main.py`
+- Valid directory: `src/utils`
 - Invalid symbol: `nonexistent`
 - Invalid file: `src/nonexistent.py`
+- Invalid directory: `src/nonexistent/dir`
 - Code block:
 ```python
 def hello():
@@ -184,9 +202,13 @@ def hello():
     assert "|src/main.py>" in result
     assert "|docs/README.md>" in result
 
+    # Valid directories should be linked
+    assert "|src/utils>" in result
+
     # Invalid symbols and files should remain as-is
     assert "`nonexistent`" in result
     assert "`src/nonexistent.py`" in result
+    assert "`src/nonexistent/dir`" in result
     assert "`hello_duplicate`" in result
 
     # Code block should be preserved
