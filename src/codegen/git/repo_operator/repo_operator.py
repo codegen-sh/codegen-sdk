@@ -23,6 +23,7 @@ from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone import pull_repo
 from codegen.git.utils.clone_url import add_access_token_to_url
+from codegen.git.utils.codeowner_utils import create_codeowners_parser_for_repo
 from codegen.git.utils.file_utils import create_files
 from codegen.git.utils.remote_progress import CustomRemoteProgress
 from codegen.shared.configs.session_configs import config
