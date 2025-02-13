@@ -100,7 +100,9 @@
 				"tutorials/sqlalchemy-1.6-to-2.0",
 				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
-				"tutorials/flask-to-fastapi"
+				"tutorials/flask-to-fastapi",
+				"tutorials/build-mcp",
+				"tutorials/neo4j-graph"
 			]
 		},
 		{

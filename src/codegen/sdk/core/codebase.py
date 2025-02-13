@@ -510,7 +510,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if file is not None:
             return file
         absolute_path = self.ctx.to_absolute(filepath)
-        if absolute_path.suffix in self.ctx.extensions:
+        if absolute_path.suffix in self.ctx.extensions and not self.ctx.io.file_exists(absolute_path):
             return None
         if self.ctx.io.file_exists(absolute_path):
             return get_file_from_path(absolute_path)
@@ -898,9 +898,29 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     ####################################################################################################################
 
     def create_pr(self, title: str, body: str) -> PullRequest:
-        """Creates a PR from the current branch."""
+        """Creates a pull request from the current branch to the repository's default branch.
+
+        This method will:
+        1. Stage and commit any pending changes with the PR title as the commit message
+        2. Push the current branch to the remote repository
+        3. Create a pull request targeting the default branch
+
+        Args:
+            title (str): The title for the pull request
+            body (str): The description/body text for the pull request
+
+        Returns:
+            PullRequest: The created GitHub pull request object
+
+        Raises:
+            ValueError: If attempting to create a PR while in a detached HEAD state
+            ValueError: If the current branch is the default branch
+        """
         if self._op.git_cli.head.is_detached:
             msg = "Cannot make a PR from a detached HEAD"
+            raise ValueError(msg)
+        if self._op.git_cli.active_branch.name == self._op.default_branch:
+            msg = "Cannot make a PR from the default branch"
             raise ValueError(msg)
         self._op.stage_and_commit_all_changes(message=title)
         self._op.push_changes()
@@ -1199,11 +1219,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @classmethod
     def from_repo(
         cls,
-        repo_name: str,
+        repo_full_name: str,
         *,
-        tmp_dir: str | None = None,
+        tmp_dir: str | None = "/tmp/codegen",
         commit: str | None = None,
-        shallow: bool = True,
         programming_language: ProgrammingLanguage | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> "Codebase":
@@ -1220,23 +1239,21 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
         """
-        logger.info(f"Fetching codebase for {repo_name}")
+        logger.info(f"Fetching codebase for {repo_full_name}")
 
         # Parse repo name
-        if "/" not in repo_name:
+        if "/" not in repo_full_name:
             msg = "repo_name must be in format 'owner/repo'"
             raise ValueError(msg)
-        owner, repo = repo_name.split("/")
+        owner, repo = repo_full_name.split("/")
 
         # Setup temp directory
-        if tmp_dir is None:
-            tmp_dir = "/tmp/codegen"
         os.makedirs(tmp_dir, exist_ok=True)
         logger.info(f"Using directory: {tmp_dir}")
 
         # Setup repo path and URL
         repo_path = os.path.join(tmp_dir, repo)
-        repo_url = f"https://github.com/{repo_name}.git"
+        repo_url = f"https://github.com/{repo_full_name}.git"
         logger.info(f"Will clone {repo_url} to {repo_path}")
 
         try:
@@ -1259,11 +1276,12 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
             logger.exception(f"Failed to initialize codebase: {e}")
             raise
 
-    def get_modified_symbols_in_pr(self, pr_id: int) -> list[Symbol]:
+    def get_modified_symbols_in_pr(self, pr_id: int) -> tuple[list[Symbol], str]:
         """Get all modified symbols in a pull request"""
         pr = self._op.get_pull_request(pr_id)
         cg_pr = CodegenPR(self._op, self, pr)
-        return cg_pr.modified_symbols
+        patch = cg_pr.get_pr_diff()
+        return cg_pr.modified_symbols, patch
 
 
 # The last 2 lines of code are added to the runner. See codegen-backend/cli/generate/utils.py
