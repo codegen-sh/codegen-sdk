@@ -1,9 +1,8 @@
-from functools import lru_cache
 from threading import Event
 
 import pytest
 
-from codegen.sdk.extensions.utils import uncache_all
+from codegen.sdk.extensions.utils import lru_cache, uncache_all
 
 
 def test_lru_cache_with_uncache_all():
