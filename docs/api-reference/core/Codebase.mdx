@@ -310,8 +310,8 @@ Fetches a codebase from GitHub and returns a Codebase instance.
     defaultValue=""
 />
 <Parameter
-    name="programming_language"
-    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">ProgrammingLanguage | None</code> }
+    name="language"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">Literal["python", "typescript"] | ProgrammingLanguage | None</code> }
     description="The programming language of the repo. Defaults to None."
     defaultValue=""
 />
