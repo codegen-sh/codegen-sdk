@@ -38,7 +38,22 @@ LINK_FORMATS: dict[MessageChannel, Callable[[str, str], str]] = {
 }
 
 
+def clean_github_url(url: str) -> str:
+    """Clean a GitHub URL by removing access tokens and standardizing format."""
+    # Remove access token if present
+    url = re.sub(r"https://[^@]+@", "https://", url)
+
+    # Ensure it starts with standard github.com
+    if not url.startswith("https://github.com"):
+        url = "https://github.com" + url.split("github.com")[-1]
+
+    return url
+
+
 def format_link(name: str, url: str, format: MessageChannel = MessageChannel.SLACK) -> str:
+    # Clean the URL if it's a GitHub URL
+    if "github.com" in url:
+        url = clean_github_url(url)
     return LINK_FORMATS[format](name, url)
 
 
