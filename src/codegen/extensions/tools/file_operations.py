@@ -25,13 +25,7 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
         pass
 
     if not file:
-        for f in codebase.files:
-            if f.file_path.endswith(filepath):
-                file = f
-                break
-
-    if not file:
-        return {"error": f"File not found: {filepath}"}
+        return {"error": f"File not found: {filepath}. Please use full filepath relative to workspace root."}
 
     return {
         "filepath": file.filepath,
@@ -106,6 +100,8 @@ def edit_file(codebase: Codebase, filepath: str, content: str) -> dict[str, Any]
         file = codebase.get_file(filepath)
     except ValueError:
         return {"error": f"File not found: {filepath}"}
+    if file is None:
+        return {"error": f"File not found: {filepath}"}
 
     file.edit(content)
     codebase.commit()
@@ -144,6 +140,8 @@ def delete_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
         file = codebase.get_file(filepath)
     except ValueError:
         return {"error": f"File not found: {filepath}"}
+    if file is None:
+        return {"error": f"File not found: {filepath}"}
 
     file.remove()
     codebase.commit()
@@ -164,6 +162,8 @@ def rename_file(codebase: Codebase, filepath: str, new_filepath: str) -> dict[st
     try:
         file = codebase.get_file(filepath)
     except ValueError:
+        return {"error": f"File not found: {filepath}"}
+    if file is None:
         return {"error": f"File not found: {filepath}"}
 
     if codebase.has_file(new_filepath):
@@ -203,6 +203,8 @@ def move_symbol(
     try:
         source = codebase.get_file(source_file)
     except ValueError:
+        return {"error": f"Source file not found: {source_file}"}
+    if source is None:
         return {"error": f"Source file not found: {source_file}"}
 
     try:
