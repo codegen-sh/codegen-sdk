@@ -213,8 +213,8 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @property
     def github(self) -> RepoOperator:
         """Access GitHub operations through the repo operator.
-        
-        This property provides access to GitHub operations like creating PRs, 
+
+        This property provides access to GitHub operations like creating PRs,
         working with branches, commenting on PRs, etc. The implementation is built
         on top of PyGitHub (python-github library) and provides a simplified interface
         for common GitHub operations.
