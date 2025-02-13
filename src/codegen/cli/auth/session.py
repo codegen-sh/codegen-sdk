@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from pygit2.repository import Repository
-
 from codegen.cli.git.repo import get_git_repo
+from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.shared.configs.constants import CODEGEN_DIR_NAME, CONFIG_FILENAME
 from codegen.shared.configs.models.session import SessionConfig
 from codegen.shared.configs.session_configs import global_config, load_session_config
@@ -11,7 +10,7 @@ from codegen.shared.configs.session_configs import global_config, load_session_c
 class CodegenSession:
     """Represents an authenticated codegen session with user and repository context"""
 
-    repo_path: Path  # TODO: rename to root_path
+    repo_path: Path
     codegen_dir: Path
     config: SessionConfig
     existing: bool
@@ -23,6 +22,9 @@ class CodegenSession:
         self.config = load_session_config(self.codegen_dir / CONFIG_FILENAME)
         global_config.set_active_session(repo_path)
 
+        if not self.existing:
+            self._initialize_repo_config()
+
     @classmethod
     def from_active_session(cls) -> "CodegenSession | None":
         active_session = global_config.get_active_session()
@@ -31,19 +33,35 @@ class CodegenSession:
 
         return cls(active_session)
 
+    @classmethod
+    def from_local_git(cls, git_repo: LocalGitRepo, token: str | None = None) -> "CodegenSession":
+        session = cls(git_repo.repo_path)
+        session._initialize_repo_config(git_repo, token)
+        return session
+
+    def _initialize_repo_config(self, git_repo: LocalGitRepo, token: str | None = None):
+        """Initialize the codegen session"""
+        self.config.repository.repo_path = str(git_repo.repo_path)
+        self.config.repository.repo_name = git_repo.name
+        self.config.repository.full_name = git_repo.full_name
+        self.config.repository.user_name = git_repo.user_name
+        self.config.repository.user_email = git_repo.user_email
+        self.config.repository.language = git_repo.get_language(access_token=token)
+        self.config.save()
+
     def is_valid(self) -> bool:
         """Validates that the session configuration is correct"""
-        # TODO: also make sure all the expected prompt, jupyter, codemods are present
-        # TODO: make sure there is still a git instance here.
-        return self.repo_path.exists() and self.codegen_dir.exists() and Path(self.config.file_path).exists()
+        if not self.repo_path.exists():
+            return False
 
-    @property
-    def git_repo(self) -> Repository:
-        git_repo = get_git_repo(Path.cwd())
-        if not git_repo:
-            msg = "No git repository found"
-            raise ValueError(msg)
-        return git_repo
+        if not self.codegen_dir.exists():
+            return False
+
+        if not Path(self.config.file_path).exists():
+            return False
+
+        if get_git_repo(self.repo_path) is None:
+            return False
 
     def __str__(self) -> str:
         return f"CodegenSession(user={self.config.repository.user_name}, repo={self.config.repository.repo_name})"

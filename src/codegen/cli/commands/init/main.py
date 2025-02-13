@@ -25,6 +25,7 @@ def init_command(path: str | None = None, token: str | None = None, language: st
     path = Path.cwd() if path is None else Path(path)
     repo_path = get_git_root_path(path)
     rich.print(f"Found git repository at: {repo_path}")
+
     if repo_path is None:
         rich.print(f"\n[bold red]Error:[/bold red] Path={path} is not in a git repository")
         rich.print("[white]Please run this command from within a git repository.[/white]")
@@ -41,7 +42,7 @@ def init_command(path: str | None = None, token: str | None = None, language: st
         rich.print(format_command("git remote add origin <your-repo-url>"))
         sys.exit(1)
 
-    session = CodegenSession(repo_path=repo_path)
+    session = CodegenSession.from_local_git(local_git)
     config = session.config
 
     if token is None:
