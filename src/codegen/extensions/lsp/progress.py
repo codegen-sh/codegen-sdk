@@ -42,17 +42,17 @@ class LSPProgress(Progress[LSPTask | StubTask]):
         if initial_token is not None:
             self.server.work_done_progress.begin(initial_token, types.WorkDoneProgressBegin(title="Parsing codebase..."))
 
-    def begin_with_token(self, message: str, token: ProgressToken | None = None, *, count: int | None = None) -> LSPTask | StubTask:
+    def begin_with_token(self, message: str, token: ProgressToken | None = None, *, count: int | None = None, create_token: bool = True) -> LSPTask | StubTask:
         if token is None:
             return StubTask()
-        return LSPTask(self.server, message, token, count, create_token=False)
+        return LSPTask(self.server, message, token, count, create_token=create_token)
 
     def begin(self, message: str, count: int | None = None) -> LSPTask | StubTask:
         if self.initialized:
             token = str(uuid.uuid4())
             self.server.work_done_progress.create(token).result()
             return LSPTask(self.server, message, token, count, create_token=False)
-        return self.begin_with_token(message, self.initial_token, count=None)
+        return self.begin_with_token(message, self.initial_token, count=None, create_token=False)
 
     def finish_initialization(self) -> None:
         self.initialized = False  # We can't initiate server work during syncs
