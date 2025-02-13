@@ -161,7 +161,7 @@ dev-dependencies = [
   "modal>=0.73.25",
   "pytest-lsp>=1.0.0b1",
 ]
-
+prerelease = "allow"
 
 [tool.uv.workspace]
 exclude = ["codegen-examples"]
