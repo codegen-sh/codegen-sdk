@@ -1,6 +1,6 @@
 """Langchain tools for workspace operations."""
 
-from langchain.tools import BaseTool
+from langchain_core.tools.base import BaseTool
 
 from codegen import Codebase
 

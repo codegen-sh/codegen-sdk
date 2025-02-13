@@ -7,6 +7,36 @@ from codegen import Codebase
 from codegen.sdk.core.directory import Directory
 
 
+def _add_line_numbers(content: str) -> str:
+    """Add line numbers to source code.
+
+    Args:
+        source: The source code as a string
+        line_range: Optional tuple of (start_line, end_line) to only show specific lines.
+                Line numbers are 1-indexed.
+
+    Returns:
+        Source code with line numbers prefixed
+    """
+    lines = content.splitlines()
+    total_lines = len(lines)
+
+    # Calculate padding for line numbers based on max line number
+    max_line_num = total_lines
+    padding = len(str(max_line_num))
+
+    # Get the line range to display
+    start = 0
+    end = total_lines
+
+    # Add line numbers
+    numbered_lines = []
+    for i, line in enumerate(lines[start:end], start=start + 1):
+        numbered_lines.append(f"{i:>{padding}}|{line}")
+
+    return "\n".join(numbered_lines)
+
+
 def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
     """View the contents and metadata of a file.
 
@@ -27,7 +57,7 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
 
     return {
         "filepath": file.filepath,
-        "content": file.content,
+        "content": _add_line_numbers(file.content),
         "extension": file.extension,
         "name": file.name,
         "functions": [f.name for f in file.functions],

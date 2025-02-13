@@ -67,6 +67,7 @@ dependencies = [
   "langchain[openai]",
   "langchain_core",
   "langchain_openai",
+  "langchain_community",
   "numpy>=2.2.2",
 ]
 
