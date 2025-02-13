@@ -4,15 +4,13 @@ from pathlib import Path
 
 import requests
 import rich
-import toml
 from rich.status import Status
 
 from codegen.cli.api.client import RestAPI
+from codegen.cli.api.endpoints import CODEGEN_SYSTEM_PROMPT_URL
 from codegen.cli.auth.constants import CODEGEN_DIR, DOCS_DIR, EXAMPLES_DIR, PROMPTS_DIR
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.auth.token_manager import get_current_token
-from codegen.cli.git.repo import get_git_repo
-from codegen.cli.git.url import get_git_organization_and_repo
 from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.utils.notebooks import create_notebook
 from codegen.cli.workspace.docs_workspace import populate_api_docs
@@ -31,12 +29,10 @@ def initialize_codegen(session: CodegenSession, status: Status | str = "Initiali
     Returns:
         Tuple of (codegen_folder, docs_folder, examples_folder)
     """
-    repo = get_git_repo()
     CODEGEN_FOLDER = session.repo_path / CODEGEN_DIR
     PROMPTS_FOLDER = session.repo_path / PROMPTS_DIR
     DOCS_FOLDER = session.repo_path / DOCS_DIR
     EXAMPLES_FOLDER = session.repo_path / EXAMPLES_DIR
-    CONFIG_PATH = CODEGEN_FOLDER / "config.toml"
     JUPYTER_DIR = CODEGEN_FOLDER / "jupyter"
     CODEMODS_DIR = CODEGEN_FOLDER / "codemods"
     SYSTEM_PROMPT_PATH = CODEGEN_FOLDER / "codegen-system-prompt.txt"
@@ -62,35 +58,17 @@ def initialize_codegen(session: CodegenSession, status: Status | str = "Initiali
 
         # Download system prompt
         try:
-            from codegen.cli.api.endpoints import CODEGEN_SYSTEM_PROMPT_URL
-
             response = requests.get(CODEGEN_SYSTEM_PROMPT_URL)
             response.raise_for_status()
             SYSTEM_PROMPT_PATH.write_text(response.text)
         except Exception as e:
             rich.print(f"[yellow]Warning: Could not download system prompt: {e}[/yellow]")
 
-        if not repo:
-            rich.print("No git repository found. Please run this command in a git repository.")
-        else:
-            status_obj.update(f"   {'Updating' if isinstance(status, Status) else status} .gitignore...")
-            modify_gitignore(CODEGEN_FOLDER)
+        status_obj.update(f"   {'Updating' if isinstance(status, Status) else status} .gitignore...")
+        modify_gitignore(CODEGEN_FOLDER)
 
-            # Create or update config.toml with basic repo info
-            org_name, repo_name = get_git_organization_and_repo(repo)
-            config = {}
-            if CONFIG_PATH.exists():
-                config = toml.load(CONFIG_PATH)
-            config.update(
-                {
-                    "organization_name": config.get("organization_name", org_name),
-                    "repo_name": config.get("repo_name", repo_name),
-                }
-            )
-            CONFIG_PATH.write_text(toml.dumps(config))
-
-            # Create notebook template
-            create_notebook(JUPYTER_DIR)
+        # Create notebook template
+        create_notebook(JUPYTER_DIR)
 
         # Only fetch docs and examples if requested and session is provided
         if fetch_docs and session:
