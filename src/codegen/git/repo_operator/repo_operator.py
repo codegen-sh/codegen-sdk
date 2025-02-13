@@ -18,16 +18,16 @@ from github.PullRequest import PullRequest
 
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
+from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
+from codegen.git.utils.clone import pull_repo
+from codegen.git.utils.clone_url import add_access_token_to_url
+from codegen.git.utils.file_utils import create_files
 from codegen.git.utils.remote_progress import CustomRemoteProgress
 from codegen.shared.configs.session_configs import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.shared.performance.time_utils import humanize_duration
-from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
-from codegen.git.utils.clone_url import add_access_token_to_url
-from codegen.git.repo_operator.local_git_repo import LocalGitRepo
-from codegen.git.utils.file_utils import create_files
 
 logger = logging.getLogger(__name__)
 
@@ -78,10 +78,10 @@ class RepoOperator(ABC):
     @property
     def remote_git_repo(self) -> GitRepoClient:
         """Get the remote GitRepoClient object for the current repo.
-        
+
         Returns:
             GitRepoClient: The GitHub client for remote operations.
-            
+
         Raises:
             ValueError: If access token is not provided or if repo has no remote.
         """
@@ -699,6 +699,7 @@ class RepoOperator(ABC):
             # If we get here, repo exists but is not up to date or valid
             # Remove the existing directory to do a fresh clone
             import shutil
+
             shutil.rmtree(repo_path)
 
         # Clone the repository
