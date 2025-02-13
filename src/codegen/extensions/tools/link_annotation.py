@@ -126,6 +126,7 @@ def add_links_to_message(message: str, codebase: Codebase, channel: MessageChann
                 if directory:
                     # TODO: implement `Directory.github_url`
                     github_url = codebase.ctx.base_url
+                    github_url = github_url or "https://github.com/your/repo/tree/develop/"  # Fallback URL
                     if github_url.endswith(".git"):
                         github_url = github_url.replace(".git", "/tree/develop/") + str(directory.dirpath)
                     else:
