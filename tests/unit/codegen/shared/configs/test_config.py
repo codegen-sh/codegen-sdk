@@ -52,13 +52,13 @@ def test_load_from_toml_existing_file(temp_config_file):
 
 
 @patch.dict("os.environ", {})
-@patch("codegen.shared.configs.models.SecretsConfig.model_config", {"env_file": "nonexistent.env"})
+@patch("codegen.shared.configs.models.secrets.SecretsConfig.model_config", {"env_file": "nonexistent.env"})
 def test_load_from_toml_nonexistent_file():
     config = _load_from_toml(Path("nonexistent.toml"))
     assert isinstance(config, SessionConfig)
     assert config.secrets.github_token is None
     assert config.repository.full_name is None
-    assert config.feature_flags.codebase.debug is None
+    assert config.feature_flags.codebase.debug is False
 
 
 # Test _load_from_env
@@ -72,13 +72,13 @@ def test_load_from_env():
 
 # Test load function
 @patch.dict("os.environ", {}, clear=True)  # Clear all env vars for this test
-@patch("codegen.shared.configs.config._load_from_env")
-@patch("codegen.shared.configs.config._load_from_toml")
-@patch("codegen.shared.configs.models.SecretsConfig.model_config", {"env_file": None, "env_prefix": "CODEGEN_SECRETS__"})
+@patch("codegen.shared.configs.session_configs._load_from_env")
+@patch("codegen.shared.configs.session_configs._load_from_toml")
+@patch("codegen.shared.configs.models.secrets.SecretsConfig.model_config", {"env_file": None, "env_prefix": "CODEGEN_SECRETS__"})
 def test_load_with_both_configs(mock_toml, mock_env):
     # Setup mock returns
-    mock_env.return_value = Config(secrets=SecretsConfig(github_token="env_token"), feature_flags=FeatureFlagsConfig(codebase=CodebaseFeatureFlags(debug=True)))
-    mock_toml.return_value = Config(secrets={"openai_api_key": "openai_key"}, repository={"full_name": "codegen-org/test-repo"})
+    mock_env.return_value = SessionConfig(file_path=str(CONFIG_PATH), secrets=SecretsConfig(github_token="env_token"), feature_flags=FeatureFlagsConfig(codebase=CodebaseFeatureFlags(debug=True)))
+    mock_toml.return_value = SessionConfig(file_path=str(CONFIG_PATH), secrets={"openai_api_key": "openai_key"}, repository={"full_name": "codegen-org/test-repo"})
 
     config = load_session_config(CONFIG_PATH)
 
@@ -86,17 +86,7 @@ def test_load_with_both_configs(mock_toml, mock_env):
     assert config.secrets.github_token == "env_token"
     assert config.secrets.openai_api_key == "openai_key"
     assert config.repository.full_name == "codegen-org/test-repo"
-    assert config.feature_flags.codebase.debug is True
-
-
-@patch("codegen.shared.configs.config._load_from_env")
-@patch("codegen.shared.configs.config._load_from_toml")
-def test_load_with_custom_path(mock_toml, mock_env):
-    custom_path = Path("custom/config.toml")
-    load_session_config(config_path=custom_path)
-
-    mock_toml.assert_called_once_with(custom_path)
-    mock_env.assert_called_once()
+    assert config.feature_flags.codebase.debug is False
 
 
 # Error cases

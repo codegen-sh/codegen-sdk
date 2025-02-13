@@ -4,6 +4,7 @@ from unittest.mock import mock_open, patch
 import pytest
 import toml
 
+from codegen.shared.configs.constants import CONFIG_PATH
 from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags, FeatureFlagsConfig
 from codegen.shared.configs.models.repository import RepositoryConfig
 from codegen.shared.configs.models.session import SessionConfig
@@ -12,7 +13,7 @@ from codegen.shared.configs.models.session import SessionConfig
 @pytest.fixture
 def sample_config(tmpdir):
     codebase_flags = CodebaseFeatureFlags(debug=True, verify_graph=False)
-    return Config(repository=RepositoryConfig(full_name="test-org/test-repo", repo_name="test-repo"), feature_flags=FeatureFlagsConfig(codebase=codebase_flags))
+    return SessionConfig(file_path=str(CONFIG_PATH), repository=RepositoryConfig(full_name="test-org/test-repo", repo_name="test-repo"), feature_flags=FeatureFlagsConfig(codebase=codebase_flags))
 
 
 def test_config_initialization(tmpdir):
@@ -23,7 +24,7 @@ def test_config_initialization(tmpdir):
 
 
 def test_config_with_values():
-    config = Config(repository={"full_name": "test-org/test-repo", "repo_name": "test-repo"})
+    config = SessionConfig(file_path=str(CONFIG_PATH), repository={"full_name": "test-org/test-repo", "repo_name": "test-repo"})
     assert config.repository.full_name == "test-org/test-repo"
     assert config.repository.repo_name == "test-repo"
 
