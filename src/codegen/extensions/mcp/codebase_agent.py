@@ -27,7 +27,7 @@ def query_codebase(
     if not os.path.exists(codebase_dir):
         return {"error": f"Codebase directory '{codebase_dir}' does not exist. Please provide a valid directory path."}
     # Initialize codebase
-    codebase = Codebase(repo_path=codebase_dir, programming_language=codebase_language)
+    codebase = Codebase(repo_path=codebase_dir, language=codebase_language)
 
     # Create the agent
     agent = create_codebase_inspector_agent(codebase=codebase, model_name="gpt-4", verbose=True)
