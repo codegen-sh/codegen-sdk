@@ -75,7 +75,6 @@ class UsageKind(IntEnum):
         IMPORTED: Imported with an import statement.
         IMPORTED_WILDCARD: Imported with a wildcard import statement.
         DEFAULT_VALUE: Represents a default value in a function/method parameter.
-        ASSIGNMENT_SIBLING: Usage within the assigment where it is necessary for the assigment of another.
     """
 
     SUBCLASS = auto()
@@ -91,4 +90,3 @@ class UsageKind(IntEnum):
     IMPORTED = auto()
     IMPORTED_WILDCARD = auto()
     DEFAULT_VALUE = auto()
-    ASSIGNMENT_SIBLING = auto()

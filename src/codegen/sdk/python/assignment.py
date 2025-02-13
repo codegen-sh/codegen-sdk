@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from codegen.sdk._proxy import proxy_property
+from codegen.sdk.codebase.transactions import RemoveTransaction, TransactionPriority
 from codegen.sdk.core.assignment import Assignment
-from codegen.sdk.core.dataclasses.usage import Usage, UsageKind, UsageType
+from codegen.sdk.core.autocommit.decorators import remover
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
-from codegen.sdk.enums import EdgeType
-from codegen.sdk.extensions.autocommit import commiter, reader
+from codegen.sdk.core.symbol_groups.collection import Collection
+from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
 from codegen.shared.decorators.docs import noapidoc, py_apidoc
@@ -16,7 +16,6 @@ if TYPE_CHECKING:
     from tree_sitter import Node as TSNode
 
     from codegen.sdk.codebase.codebase_context import CodebaseContext
-    from codegen.sdk.core.interfaces.has_name import HasName
     from codegen.sdk.core.node_id_factory import NodeId
     from codegen.sdk.python.statements.assignment_statement import PyAssignmentStatement
 
@@ -101,56 +100,72 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         # HACK: This is a temporary solution until comments are fixed
         return PyCommentGroup.from_symbol_inline_comments(self, self.ts_node.parent)
 
-    @noapidoc
-    @commiter
-    def _compute_dependencies(self, usage_type: UsageKind | None = None, dest: HasName | None = None) -> None:
-        super()._compute_dependencies(usage_type, dest)
-        if len(self.parent.assignments) >= 2:
-            for assigment_sibling in self.parent.assignments:
-                if assigment_sibling.name != self.name:
-                    self.ctx.add_edge(
-                        self.node_id,
-                        assigment_sibling.node_id,
-                        EdgeType.SYMBOL_USAGE,
-                        usage=Usage(match=self.get_name(), kind=UsageKind.ASSIGNMENT_SIBLING, usage_type=UsageType.DIRECT, usage_symbol=self, imported_by=None),
-                    )
 
-    @proxy_property
-    @reader(cache=False)
-    def usages(self, usage_types: UsageType | None = None) -> list[Usage]:
-        """Returns a list of usages of the PyAssignment object.
 
-        Retrieves all locations where the exportable object is used in the codebase. By default, returns all usages, such as imports or references within the same file.
+    @remover
+    def remove(self, delete_formatting: bool = True, priority: int = 0, dedupe: bool = True) -> None:
+        """Deletes this assignment and its related extended nodes (e.g. decorators, comments).
+
+
+        Removes the current node and its extended nodes (e.g. decorators, comments) from the codebase.
+        After removing the node, it handles cleanup of any surrounding formatting based on the context.
 
         Args:
-            usage_types (UsageType | None): Specifies which types of usages to include in the results. Default is any usages.
+            delete_formatting (bool): Whether to delete surrounding whitespace and formatting. Defaults to True.
+            priority (int): Priority of the removal transaction. Higher priority transactions are executed first. Defaults to 0.
+            dedupe (bool): Whether to deduplicate removal transactions at the same location. Defaults to True.
 
         Returns:
-            list[Usage]: A sorted list of Usage objects representing where this exportable is used, ordered by source location in reverse.
-
-        Raises:
-            ValueError: If no usage types are specified or if only ALIASED and DIRECT types are specified together.
-
-        Note:
-            This method can be called as both a property or a method. If used as a property, it is equivalent to invoking it without arguments.
+            None
         """
-        if usage_types == UsageType.DIRECT | UsageType.ALIASED:
-            msg = "Combination of only Aliased and Direct usages makes no sense"
-            raise ValueError(msg)
+        if  getattr(self.parent,"assignments",None) and len(self.parent.assignments)>1:
+            #Unpacking assignments
+            name = self.get_name()
+            if isinstance(self.value,Collection):
+                # Tuples
+                transaction_count = [
+                        any(self.transaction_manager.get_transactions_at_range(
+                                self.file.path,
+                                start_byte=asgnmt.get_name().start_byte,
+                                end_byte=asgnmt.get_name().end_byte,
+                                transaction_order=TransactionPriority.Remove))
+                        for asgnmt in self.parent.assignments
+                    ].count(True)
+                #Check for existing transactions
+                if transaction_count < len(self.parent.assignments)-1:
+                    idx = self.parent.left.index(name)
+                    value = self.value[idx]
+                    removal_queue_values = getattr(self.parent,"removal_queue",[])
+                    self.parent.removal_queue=removal_queue_values
+                    removal_queue_values.append(str(value))
+                    if len(self.value)-transaction_count==2:
+                        remainder = str(next(x for x in self.value if x not in removal_queue_values))
+                        r_t = RemoveTransaction(self.value.start_byte, self.value.end_byte, self.file, priority=priority)
+                        self.transaction_manager.add_transaction(r_t)
+                        self.value.insert_at(self.value.start_byte, remainder,priority=priority)
+                    else:
+                        value.remove(delete_formatting=delete_formatting,priority=priority,dedupe=dedupe)
+                    name.remove(delete_formatting=delete_formatting,priority=priority,dedupe=dedupe)
+                    return
+            else:
+                transaction_count = [
+                        any(self.transaction_manager.get_transactions_at_range(
+                                self.file.path,
+                                start_byte=asgnmt.get_name().start_byte,
+                                end_byte=asgnmt.get_name().end_byte,
+                                transaction_order=TransactionPriority.Edit))
+                        for asgnmt in self.parent.assignments
+                    ].count(True)
+                throwaway=[asgnmt.name=="_" for asgnmt in self.parent.assignments].count(True)
+                if transaction_count+throwaway < len(self.parent.assignments)-1:
+                    name.edit('_',priority=priority,dedupe=dedupe)
+                    return
+        if getattr(self.parent,"removal_queue",None):
+            for node in self.extended_nodes:
+                transactions = self.transaction_manager.get_transactions_at_range(self.file.path,start_byte=node.start_byte,end_byte=node.end_byte)
+                for transaction in transactions:
+                    self.transaction_manager.queued_transactions[self.file.path].remove(transaction)
 
-        assert self.node_id is not None
-        usages_to_return = []
-        in_edges = self.ctx.in_edges(self.node_id)
-        for edge in in_edges:
-            meta_data = edge[2]
-            if meta_data.type == EdgeType.SYMBOL_USAGE:
-                if usage := meta_data.usage:
-                    if usage.kind == UsageKind.ASSIGNMENT_SIBLING:
-                        sibling = self.ctx.get_node(edge[0])
-                        for s_edge in self.ctx.in_edges(sibling.node_id):
-                            if s_edge[2].usage.kind != UsageKind.ASSIGNMENT_SIBLING:
-                                usages_to_return.append(usage)
-                                break
-                    elif usage_types is None or usage.usage_type in usage_types:
-                        usages_to_return.append(usage)
-        return sorted(dict.fromkeys(usages_to_return), key=lambda x: x.match.ts_node.start_byte if x.match else x.usage_symbol.ts_node.start_byte, reverse=True)
+        for node in self.extended_nodes:
+            node._remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
+
