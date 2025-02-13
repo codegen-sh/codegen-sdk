@@ -30,6 +30,7 @@ class CodegenLanguageServerProtocol(LanguageServerProtocol):
         config = CodebaseConfig(feature_flags=CodebaseFeatureFlags(full_range_index=True))
         io = LSPIO(self.workspace)
         self._server.codebase = Codebase(repo_path=str(root), config=config, io=io, progress=progress)
+        self._server.progress_manager = progress
         self._server.io = io
         progress.finish_initialization()
 
