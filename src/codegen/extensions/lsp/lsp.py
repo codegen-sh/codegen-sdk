@@ -24,6 +24,7 @@ def did_open(server: CodegenLanguageServer, params: types.DidOpenTextDocumentPar
     # The document is automatically added to the workspace by pygls
     # We can perform any additional processing here if needed
     path = get_path(params.text_document.uri)
+    server.io.update_file(path, params.text_document.version)
     file = server.codebase.get_file(str(path), optional=True)
     if not isinstance(file, SourceFile) and path.suffix in server.codebase.ctx.extensions:
         sync = DiffLite(change_type=ChangeType.Added, path=path)
@@ -37,6 +38,7 @@ def did_change(server: CodegenLanguageServer, params: types.DidChangeTextDocumen
     # The document is automatically updated in the workspace by pygls
     # We can perform any additional processing here if needed
     path = get_path(params.text_document.uri)
+    server.io.update_file(path, params.text_document.version)
     sync = DiffLite(change_type=ChangeType.Modified, path=path)
     server.codebase.ctx.apply_diffs([sync])
 
@@ -63,6 +65,8 @@ def did_close(server: CodegenLanguageServer, params: types.DidCloseTextDocumentP
     logger.info(f"Document closed: {params.text_document.uri}")
     # The document is automatically removed from the workspace by pygls
     # We can perform any additional cleanup here if needed
+    path = get_path(params.text_document.uri)
+    server.io.close_file(path)
 
 
 @server.feature(

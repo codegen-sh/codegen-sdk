@@ -137,7 +137,7 @@ def example_function():
     pass
                 """.strip(),
             },
-            "file://{worskpaceFolder}test.py",
+            "file://{worskpaceFolder}/test.py",
         ),
     ],
 )
@@ -165,7 +165,7 @@ async def test_did_close(
 
     # Verify the document is removed from the workspace
     document = await client.workspace_text_document_content_async(TextDocumentContentParams(uri=document_uri))
-    assert document.text == ""
+    assert document.text == original["test.py"]
 
 
 @pytest.mark.parametrize(
