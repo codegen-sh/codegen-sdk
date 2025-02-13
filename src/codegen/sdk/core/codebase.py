@@ -898,7 +898,24 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     ####################################################################################################################
 
     def create_pr(self, title: str, body: str) -> PullRequest:
-        """Creates a PR from the current branch."""
+        """Creates a pull request from the current branch to the repository's default branch.
+
+        This method will:
+        1. Stage and commit any pending changes with the PR title as the commit message
+        2. Push the current branch to the remote repository
+        3. Create a pull request targeting the default branch
+
+        Args:
+            title (str): The title for the pull request
+            body (str): The description/body text for the pull request
+
+        Returns:
+            PullRequest: The created GitHub pull request object
+
+        Raises:
+            ValueError: If attempting to create a PR while in a detached HEAD state
+            ValueError: If the current branch is the default branch
+        """
         if self._op.git_cli.head.is_detached:
             msg = "Cannot make a PR from a detached HEAD"
             raise ValueError(msg)
