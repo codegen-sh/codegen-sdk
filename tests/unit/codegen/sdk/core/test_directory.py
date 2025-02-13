@@ -12,7 +12,7 @@ from codegen.sdk.core.file import File
 
 
 @pytest.fixture
-def mock_codebase_graph(tmp_path):
+def mock_codebase_context(tmp_path):
     mock = MagicMock(spec=CodebaseContext)
     mock.transaction_manager = MagicMock()
     mock.config = CodebaseConfig()
