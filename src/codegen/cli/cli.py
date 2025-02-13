@@ -9,6 +9,7 @@ from codegen.cli.commands.init.main import init_command
 from codegen.cli.commands.list.main import list_command
 from codegen.cli.commands.login.main import login_command
 from codegen.cli.commands.logout.main import logout_command
+from codegen.cli.commands.lsp.lsp import lsp_command
 from codegen.cli.commands.notebook.main import notebook_command
 from codegen.cli.commands.profile.main import profile_command
 from codegen.cli.commands.reset.main import reset_command
@@ -43,7 +44,7 @@ main.add_command(notebook_command)
 main.add_command(reset_command)
 main.add_command(update_command)
 main.add_command(config_command)
-
+main.add_command(lsp_command)
 
 if __name__ == "__main__":
     main()
