@@ -2,7 +2,7 @@
 
 import pytest
 
-from codegen.extensions.langchain.link_annotation import (
+from codegen.extensions.tools.link_annotation import (
     MessageChannel,
     add_links_to_message,
     extract_code_snippets,
