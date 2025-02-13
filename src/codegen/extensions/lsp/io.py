@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @dataclass
 class File:
-    doc: TextDocument
+    doc: TextDocument | None
     path: Path
     change: TextEdit | None = None
     other_change: CreateFile | RenameFile | DeleteFile | None = None
@@ -65,6 +65,8 @@ class LSPIO(IO):
             return file.change.new_text
         if file.created:
             return ""
+        if file.doc is None:
+            return self.base_io.read_text(path)
         return file.doc.source
 
     def read_bytes(self, path: Path) -> bytes:
@@ -76,6 +78,8 @@ class LSPIO(IO):
             return file.change.new_text.encode("utf-8")
         if file.created:
             return b""
+        if file.doc is None:
+            return self.base_io.read_bytes(path)
         return file.doc.source.encode("utf-8")
 
     def write_bytes(self, path: Path, content: bytes) -> None:
@@ -112,6 +116,8 @@ class LSPIO(IO):
             return True
         if file.created:
             return True
+        if file.doc is None:
+            return self.base_io.file_exists(path)
         try:
             file.doc.source
             return True
@@ -134,3 +140,13 @@ class LSPIO(IO):
                 file.change = None
         logger.info(f"Workspace edit: {pprint.pformat(list(map(asdict, document_changes)))}")
         return types.WorkspaceEdit(document_changes=document_changes)
+
+    def update_file(self, path: Path, version: int | None = None) -> None:
+        file = self._get_file(path)
+        file.doc = self.workspace.get_text_document(path.as_uri())
+        if version is not None:
+            file.version = version
+
+    def close_file(self, path: Path) -> None:
+        file = self._get_file(path)
+        file.doc = None

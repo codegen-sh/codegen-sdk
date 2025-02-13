@@ -25,7 +25,7 @@ def repo_config(tmpdir):
 def op(repo_config):
     os.chdir(repo_config.base_dir)
     GitRepo.clone_from(url=get_authenticated_clone_url_for_repo_config(repo_config, token=config.secrets.github_token), to_path=os.path.join(repo_config.base_dir, repo_config.name), depth=1)
-    op = LocalRepoOperator(repo_config=repo_config, access_token=config.secrets.github_token)
+    op = LocalRepoOperator(repo_config=repo_config)
     yield op
 
 
