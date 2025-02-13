@@ -5,20 +5,20 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.file import File
 
 
 @pytest.fixture
-def mock_codebase_graph(tmp_path):
-    mock = MagicMock(spec=CodebaseGraph)
+def mock_codebase_context(tmp_path):
+    mock = MagicMock(spec=CodebaseContext)
     mock.transaction_manager = MagicMock()
     mock.config = CodebaseConfig()
     mock.repo_path = tmp_path
-    mock.to_absolute = types.MethodType(CodebaseGraph.to_absolute, mock)
-    mock.to_relative = types.MethodType(CodebaseGraph.to_relative, mock)
+    mock.to_absolute = types.MethodType(CodebaseContext.to_absolute, mock)
+    mock.to_relative = types.MethodType(CodebaseContext.to_relative, mock)
     return mock
 
 

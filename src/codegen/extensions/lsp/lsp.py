@@ -76,9 +76,7 @@ def rename(server: CodegenLanguageServer, params: types.RenameParams) -> types.R
     logger.info(f"Renaming symbol {symbol.name} to {params.new_name}")
     symbol.rename(params.new_name)
     server.codebase.commit()
-    return types.WorkspaceEdit(
-        document_changes=server.io.get_document_changes(),
-    )
+    return server.io.get_workspace_edit()
 
 
 @server.feature(
@@ -102,6 +100,27 @@ def definition(server: CodegenLanguageServer, params: types.DefinitionParams):
         uri=resolved.file.path.as_uri(),
         range=get_range(resolved),
     )
+
+
+@server.feature(
+    types.TEXT_DOCUMENT_CODE_ACTION,
+    options=types.CodeActionOptions(resolve_provider=True),
+)
+def code_action(server: CodegenLanguageServer, params: types.CodeActionParams) -> types.CodeActionResult:
+    logger.info(f"Received code action: {params}")
+    if params.context.only:
+        only = [types.CodeActionKind(kind) for kind in params.context.only]
+    else:
+        only = None
+    actions = server.get_actions_for_range(params.text_document.uri, params.range, only)
+    return actions
+
+
+@server.feature(
+    types.CODE_ACTION_RESOLVE,
+)
+def code_action_resolve(server: CodegenLanguageServer, params: types.CodeAction) -> types.CodeAction:
+    return server.resolve_action(params)
 
 
 if __name__ == "__main__":

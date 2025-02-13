@@ -1,8 +1,11 @@
 import logging
+import pprint
+from dataclasses import dataclass
 from pathlib import Path
 
+from attr import asdict
 from lsprotocol import types
-from lsprotocol.types import Position, Range, TextEdit
+from lsprotocol.types import CreateFile, CreateFileOptions, DeleteFile, Position, Range, RenameFile, TextEdit
 from pygls.workspace import TextDocument, Workspace
 
 from codegen.sdk.codebase.io.file_io import FileIO
@@ -11,61 +14,123 @@ from codegen.sdk.codebase.io.io import IO
 logger = logging.getLogger(__name__)
 
 
+@dataclass
+class File:
+    doc: TextDocument
+    path: Path
+    change: TextEdit | None = None
+    other_change: CreateFile | RenameFile | DeleteFile | None = None
+    version: int = 0
+
+    @property
+    def deleted(self) -> bool:
+        return self.other_change is not None and self.other_change.kind == "delete"
+
+    @property
+    def created(self) -> bool:
+        return self.other_change is not None and self.other_change.kind == "create"
+
+    @property
+    def identifier(self) -> types.OptionalVersionedTextDocumentIdentifier:
+        return types.OptionalVersionedTextDocumentIdentifier(uri=self.path.as_uri(), version=self.version)
+
+
 class LSPIO(IO):
     base_io: FileIO
     workspace: Workspace
-    changes: dict[str, TextEdit] = {}
+    files: dict[Path, File]
 
     def __init__(self, workspace: Workspace):
         self.workspace = workspace
         self.base_io = FileIO()
+        self.files = {}
 
-    def _get_doc(self, path: Path) -> TextDocument | None:
+    def _get_doc(self, path: Path) -> TextDocument:
         uri = path.as_uri()
         logger.info(f"Getting document for {uri}")
         return self.workspace.get_text_document(uri)
 
+    def _get_file(self, path: Path) -> File:
+        if path not in self.files:
+            doc = self._get_doc(path)
+            self.files[path] = File(doc=doc, path=path, version=doc.version or 0)
+        return self.files[path]
+
+    def read_text(self, path: Path) -> str:
+        file = self._get_file(path)
+        if file.deleted:
+            msg = f"File {path} has been deleted"
+            raise FileNotFoundError(msg)
+        if file.change:
+            return file.change.new_text
+        if file.created:
+            return ""
+        return file.doc.source
+
     def read_bytes(self, path: Path) -> bytes:
-        if self.changes.get(path.as_uri()):
-            return self.changes[path.as_uri()].new_text.encode("utf-8")
-        if doc := self._get_doc(path):
-            return doc.source.encode("utf-8")
-        return self.base_io.read_bytes(path)
+        file = self._get_file(path)
+        if file.deleted:
+            msg = f"File {path} has been deleted"
+            raise FileNotFoundError(msg)
+        if file.change:
+            return file.change.new_text.encode("utf-8")
+        if file.created:
+            return b""
+        return file.doc.source.encode("utf-8")
 
     def write_bytes(self, path: Path, content: bytes) -> None:
         logger.info(f"Writing bytes to {path}")
         start = Position(line=0, character=0)
-        if doc := self._get_doc(path):
-            end = Position(line=len(doc.source), character=len(doc.source))
+        file = self._get_file(path)
+        if self.file_exists(path):
+            lines = self.read_text(path).splitlines()
+            if len(lines) == 0:
+                end = Position(line=0, character=0)
+            else:
+                end = Position(line=len(lines) - 1, character=len(lines[-1]))
+            file.change = TextEdit(range=Range(start=start, end=end), new_text=content.decode("utf-8"))
         else:
-            end = Position(line=0, character=0)
-        self.changes[path.as_uri()] = TextEdit(range=Range(start=start, end=end), new_text=content.decode("utf-8"))
+            file.other_change = CreateFile(uri=path.as_uri(), options=CreateFileOptions())
+            file.change = TextEdit(range=Range(start=start, end=start), new_text=content.decode("utf-8"))
 
     def save_files(self, files: set[Path] | None = None) -> None:
-        self.base_io.save_files(files)
+        logger.info(f"Saving files {files}")
 
     def check_changes(self) -> None:
         self.base_io.check_changes()
 
     def delete_file(self, path: Path) -> None:
+        file = self._get_file(path)
+        file.other_change = DeleteFile(uri=path.as_uri())
         self.base_io.delete_file(path)
 
     def file_exists(self, path: Path) -> bool:
-        if doc := self._get_doc(path):
-            try:
-                doc.source
-            except FileNotFoundError:
-                return False
+        file = self._get_file(path)
+        if file.deleted:
+            return False
+        if file.change:
             return True
-        return self.base_io.file_exists(path)
+        if file.created:
+            return True
+        try:
+            file.doc.source
+            return True
+        except FileNotFoundError:
+            return False
 
     def untrack_file(self, path: Path) -> None:
         self.base_io.untrack_file(path)
 
-    def get_document_changes(self) -> list[types.TextDocumentEdit]:
-        ret = []
-        for uri, change in self.changes.items():
-            id = types.OptionalVersionedTextDocumentIdentifier(uri=uri)
-            ret.append(types.TextDocumentEdit(text_document=id, edits=[change]))
-        self.changes = {}
-        return ret
+    def get_workspace_edit(self) -> types.WorkspaceEdit:
+        document_changes = []
+        for _, file in self.files.items():
+            id = file.identifier
+            if file.other_change:
+                document_changes.append(file.other_change)
+                file.other_change = None
+            if file.change:
+                document_changes.append(types.TextDocumentEdit(text_document=id, edits=[file.change]))
+                file.version += 1
+                file.change = None
+        logger.info(f"Workspace edit: {pprint.pformat(list(map(asdict, document_changes)))}")
+        return types.WorkspaceEdit(document_changes=document_changes)

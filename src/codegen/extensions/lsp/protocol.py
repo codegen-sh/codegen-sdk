@@ -1,9 +1,8 @@
 import os
-import threading
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from lsprotocol.types import INITIALIZE, INITIALIZED, InitializedParams, InitializeParams, InitializeResult
+from lsprotocol.types import INITIALIZE, InitializeParams, InitializeResult, WorkDoneProgressBegin, WorkDoneProgressEnd
 from pygls.protocol import LanguageServerProtocol, lsp_method
 
 from codegen.extensions.lsp.io import LSPIO
@@ -30,23 +29,13 @@ class CodegenLanguageServerProtocol(LanguageServerProtocol):
         io = LSPIO(self.workspace)
         self._server.codebase = Codebase(repo_path=str(root), config=config, io=io)
         self._server.io = io
+        if params.work_done_token:
+            self._server.work_done_progress.end(params.work_done_token, WorkDoneProgressEnd(message="Parsing codebase..."))
 
     @lsp_method(INITIALIZE)
     def lsp_initialize(self, params: InitializeParams) -> InitializeResult:
-        if params.root_path:
-            root = Path(params.root_path)
-        elif params.root_uri:
-            root = get_path(params.root_uri)
-        else:
-            root = os.getcwd()
-        config = CodebaseConfig(feature_flags=CodebaseFeatureFlags(full_range_index=True))
         ret = super().lsp_initialize(params)
-
-        self._worker = threading.Thread(target=self._init_codebase, args=(params,))
-        self._worker.start()
+        if params.work_done_token:
+            self._server.work_done_progress.begin(params.work_done_token, WorkDoneProgressBegin(title="Parsing codebase..."))
+        self._init_codebase(params)
         return ret
-
-    @lsp_method(INITIALIZED)
-    def lsp_initialized(self, params: InitializedParams) -> None:
-        self._worker.join()
-        super().lsp_initialized(params)
