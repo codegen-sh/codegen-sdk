@@ -134,7 +134,7 @@ async def test_go_to_definition(
 ):
     result = await client.text_document_definition_async(
         params=DefinitionParams(
-            text_document=TextDocumentIdentifier(uri="file://test.py"),
+            text_document=TextDocumentIdentifier(uri=f"file://{codebase.repo_path}/test.py"),
             position=position,
         )
     )

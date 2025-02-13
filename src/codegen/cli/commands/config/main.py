@@ -5,7 +5,8 @@ import rich
 import rich_click as click
 from rich.table import Table
 
-from codegen.shared.configs.config import config
+from codegen.cli.auth.session import CodegenSession
+from codegen.cli.workspace.decorators import requires_init
 
 
 @click.group(name="config")
@@ -15,7 +16,8 @@ def config_command():
 
 
 @config_command.command(name="list")
-def list_command():
+@requires_init
+def list_command(session: CodegenSession):
     """List current configuration values."""
     table = Table(title="Configuration Values", border_style="blue", show_header=True)
     table.add_column("Key", style="cyan", no_wrap=True)
@@ -35,7 +37,7 @@ def list_command():
         return items
 
     # Get flattened config and sort by keys
-    flat_config = flatten_dict(config.model_dump())
+    flat_config = flatten_dict(session.config.model_dump())
     sorted_items = sorted(flat_config.items(), key=lambda x: x[0])
 
     # Group by top-level prefix
@@ -54,10 +56,11 @@ def list_command():
 
 
 @config_command.command(name="get")
+@requires_init
 @click.argument("key")
-def get_command(key: str):
+def get_command(session: CodegenSession, key: str):
     """Get a configuration value."""
-    value = config.get(key)
+    value = session.config.get(key)
     if value is None:
         rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
         return
@@ -66,18 +69,19 @@ def get_command(key: str):
 
 
 @config_command.command(name="set")
+@requires_init
 @click.argument("key")
 @click.argument("value")
-def set_command(key: str, value: str):
+def set_command(session: CodegenSession, key: str, value: str):
     """Set a configuration value and write to config.toml."""
-    cur_value = config.get(key)
+    cur_value = session.config.get(key)
     if cur_value is None:
         rich.print(f"[red]Error: Configuration key '{key}' not found[/red]")
         return
 
     if cur_value.lower() != value.lower():
         try:
-            config.set(key, value)
+            session.config.set(key, value)
         except Exception as e:
             logging.exception(e)
             rich.print(f"[red]{e}[/red]")

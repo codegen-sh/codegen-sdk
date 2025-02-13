@@ -1,6 +1,7 @@
 """Langchain tools for workspace operations."""
 
 import json
+import uuid
 from typing import ClassVar, Literal, Optional
 
 from langchain_core.prompts import ChatPromptTemplate
@@ -328,7 +329,7 @@ class MoveSymbolTool(BaseTool):
 
 
 class SemanticSearchInput(BaseModel):
-    """Input for semantic search."""
+    """Input for Semantic search of a codebase"""
 
     query: str = Field(..., description="The natural language search query")
     k: int = Field(default=5, description="Number of results to return")
@@ -349,3 +350,149 @@ class SemanticSearchTool(BaseTool):
     def _run(self, query: str, k: int = 5, preview_length: int = 200) -> str:
         result = semantic_search(self.codebase, query, k=k, preview_length=preview_length)
         return json.dumps(result, indent=2)
+
+
+class CreatePRInput(BaseModel):
+    """Input for creating a PR"""
+
+    title: str = Field(..., description="The title of the PR")
+    body: str = Field(..., description="The body of the PR")
+
+
+class CreatePRTool(BaseTool):
+    """Tool for creating a PR."""
+
+    name: ClassVar[str] = "create_pr"
+    description: ClassVar[str] = "Create a PR for the current branch"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, title: str, body: str) -> str:
+        if self.codebase._op.git_cli.active_branch.name == self.codebase._op.default_branch:
+            # If the current checked out branch is the default branch, checkout onto a new branch
+            self.codebase.checkout(branch=f"{uuid.uuid4()}", create_if_missing=True)
+        pr = self.codebase.create_pr(title=title, body=body)
+        return pr.html_url
+
+
+class GetPRContentsInput(BaseModel):
+    """Input for getting PR contents."""
+
+    pr_id: int = Field(..., description="Number of the PR to get the contents for")
+
+
+class GetPRcontentsTool(BaseTool):
+    """Tool for getting PR data."""
+
+    name: ClassVar[str] = "get_pr_contents"
+    description: ClassVar[str] = "Get the diff and modified symbols of a PR along with the dependencies of the modified symbols"
+    args_schema: ClassVar[type[BaseModel]] = GetPRContentsInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, pr_id: int) -> str:
+        modified_symbols, patch = self.codebase.get_modified_symbols_in_pr(pr_id)
+
+        # Convert modified_symbols set to list for JSON serialization
+        result = {"modified_symbols": list(modified_symbols), "patch": patch}
+
+        return json.dumps(result, indent=2)
+
+
+class CreatePRCommentInput(BaseModel):
+    """Input for creating a PR comment"""
+
+    pr_number: int = Field(..., description="The PR number to comment on")
+    body: str = Field(..., description="The comment text")
+
+
+class CreatePRCommentTool(BaseTool):
+    """Tool for creating a general PR comment."""
+
+    name: ClassVar[str] = "create_pr_comment"
+    description: ClassVar[str] = "Create a general comment on a pull request"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRCommentInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(self, pr_number: int, body: str) -> str:
+        self.codebase.create_pr_comment(pr_number=pr_number, body=body)
+        return "Comment created successfully"
+
+
+class CreatePRReviewCommentInput(BaseModel):
+    """Input for creating an inline PR review comment"""
+
+    pr_number: int = Field(..., description="The PR number to comment on")
+    body: str = Field(..., description="The comment text")
+    commit_sha: str = Field(..., description="The commit SHA to attach the comment to")
+    path: str = Field(..., description="The file path to comment on")
+    line: int | None = Field(None, description="The line number to comment on")
+    side: str | None = Field(None, description="Which version of the file to comment on ('LEFT' or 'RIGHT')")
+    start_line: int | None = Field(None, description="For multi-line comments, the starting line")
+
+
+class CreatePRReviewCommentTool(BaseTool):
+    """Tool for creating inline PR review comments."""
+
+    name: ClassVar[str] = "create_pr_review_comment"
+    description: ClassVar[str] = "Create an inline review comment on a specific line in a pull request"
+    args_schema: ClassVar[type[BaseModel]] = CreatePRReviewCommentInput
+    codebase: Codebase = Field(exclude=True)
+
+    def __init__(self, codebase: Codebase) -> None:
+        super().__init__(codebase=codebase)
+
+    def _run(
+        self,
+        pr_number: int,
+        body: str,
+        commit_sha: str,
+        path: str,
+        line: int | None = None,
+        side: str | None = None,
+        start_line: int | None = None,
+    ) -> str:
+        self.codebase.create_pr_review_comment(
+            pr_number=pr_number,
+            body=body,
+            commit_sha=commit_sha,
+            path=path,
+            line=line,
+            side=side,
+            start_line=start_line,
+        )
+        return "Review comment created successfully"
+
+
+def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
+    """Get all workspace tools initialized with a codebase.
+
+    Args:
+        codebase: The codebase to operate on
+
+    Returns:
+        List of initialized Langchain tools
+    """
+    return [
+        CommitTool(codebase),
+        CreateFileTool(codebase),
+        CreatePRTool(codebase),
+        CreatePRCommentTool(codebase),
+        CreatePRReviewCommentTool(codebase),
+        DeleteFileTool(codebase),
+        EditFileTool(codebase),
+        GetPRcontentsTool(codebase),
+        ListDirectoryTool(codebase),
+        RevealSymbolTool(codebase),
+        SearchTool(codebase),
+        SemanticEditTool(codebase),
+        ViewFileTool(codebase),
+    ]
