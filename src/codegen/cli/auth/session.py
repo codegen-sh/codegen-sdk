@@ -34,8 +34,7 @@ class CodegenSession:
         self.config.secrets.github_token = git_token or self.config.secrets.github_token
         self.existing = global_config.get_session(repo_path) is not None
 
-        self.validate()
-        self.initialize()
+        self._initialize()
         global_config.set_active_session(repo_path)
 
     @classmethod
@@ -46,17 +45,19 @@ class CodegenSession:
 
         return cls(active_session)
 
-    def initialize(self) -> None:
+    def _initialize(self) -> None:
         """Initialize the codegen session"""
-        self.config.repository.repo_path = str(self.local_git.repo_path)
-        self.config.repository.repo_name = self.local_git.name
-        self.config.repository.full_name = self.local_git.full_name
-        self.config.repository.user_name = self.local_git.user_name
-        self.config.repository.user_email = self.local_git.user_email
-        self.config.repository.language = self.local_git.get_language(access_token=self.config.secrets.github_token).upper()
+        self._validate()
+
+        self.config.repository.repo_path = self.config.repository.repo_path or str(self.local_git.repo_path)
+        self.config.repository.repo_name = self.config.repository.repo_name or self.local_git.name
+        self.config.repository.full_name = self.config.repository.full_name or self.local_git.full_name
+        self.config.repository.user_name = self.config.repository.user_name or self.local_git.user_name
+        self.config.repository.user_email = self.config.repository.user_email or self.local_git.user_email
+        self.config.repository.language = self.config.repository.language or self.local_git.get_language(access_token=self.config.secrets.github_token).upper()
         self.config.save()
 
-    def validate(self) -> None:
+    def _validate(self) -> None:
         """Validates that the session configuration is correct, otherwise raises an error"""
         if not self.codegen_dir.exists():
             rich.print(f"\n[bold red]Error:[/bold red] Codegen folder is missing at {self.codegen_dir}")
