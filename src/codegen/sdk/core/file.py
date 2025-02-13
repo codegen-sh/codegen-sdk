@@ -224,7 +224,6 @@ class File(Editable[None]):
     def github_url(self) -> str | None:
         if self.ctx.base_url:
             if self.ctx.base_url.endswith(".git"):
-                print("HERE")
                 return self.ctx.base_url.replace(".git", "/blob/develop/") + self.file_path
             else:
                 return self.ctx.base_url + "/" + self.file_path
