@@ -16,6 +16,7 @@ from lsprotocol.types import (
 from pytest_lsp import LanguageClient
 
 from codegen.sdk.core.codebase import Codebase
+from tests.unit.codegen.extensions.lsp.utils import apply_edit
 
 
 @pytest.fixture()
@@ -243,6 +244,8 @@ async def test_rename_after_sync(
             new_name=new_name,
         )
     )
+    if result:
+        apply_edit(codebase, result)
 
     # Verify the rename was successful
     document = await client.workspace_text_document_content_async(TextDocumentContentParams(uri=document_uri))
