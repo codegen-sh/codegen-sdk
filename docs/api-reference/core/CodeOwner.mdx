@@ -1,8 +1,8 @@
 ---
-title: "Directory"
-sidebarTitle: "Directory"
+title: "CodeOwner"
+sidebarTitle: "CodeOwner"
 icon: ""
-description: "Directory representation for codebase. GraphSitter abstraction of a file directory that can be used to look for files and symbols within a specific directory."
+description: "CodeOwner is a class that represents a code owner in a codebase. It is used to iterate over all files that are owned by a specific owner."
 ---
 import {Parameter} from '/snippets/Parameter.mdx';
 import {ParameterWrapper} from '/snippets/ParameterWrapper.mdx';
@@ -11,7 +11,7 @@ import {HorizontalDivider} from '/snippets/HorizontalDivider.mdx';
 import {GithubLinkNote} from '/snippets/GithubLinkNote.mdx';
 import {Attribute} from '/snippets/Attribute.mdx';
 
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L24-L185" />
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/codeowner.py#L26-L97" />
 
 
 ## Attributes
@@ -20,17 +20,13 @@ import {Attribute} from '/snippets/Attribute.mdx';
 <HorizontalDivider light={true} />
 <Attribute type={ <><span>list[</span> <a href="/api-reference/core/Class" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Class</a> <span>]</span></> } description="Get a recursive list of all classes in files container." />
 
-### <span className="text-primary">dirpath</span>
-<HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="Relative path of the directory." />
-
 ### <span className="text-primary">exports</span>
 <HorizontalDivider light={true} />
 <Attribute type={ <><span>list[</span> <a href="/api-reference/typescript/TSExport" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSExport</a> <span>]</span></> } description="Get a recursive list of all exports in files container." />
 
-### <span className="text-primary">files</span>
+### <span className="text-primary">files_source</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">list[TFile]</code> } description="Get a recursive list of all files in the directory and its subdirectories." />
+<Attribute type={ <><a href="/api-reference/core/Callable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Callable</a> <span>[FilesParam, Iterable[TFile]]</span></> } description="A callable that returns an iterable of all files in the codebase." />
 
 ### <span className="text-primary">functions</span>
 <HorizontalDivider light={true} />
@@ -50,19 +46,15 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ### <span className="text-primary">name</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="Get the base name of the directory's path." />
+<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="The name of the code owner." />
 
-### <span className="text-primary">parent</span>
+### <span className="text-primary">owner_type</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <><a href="/api-reference/core/Directory" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Directory</a> <span>| None</span></> } description="The parent directory, if any." />
+<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">Literal[USERNAME, TEAM, EMAIL]</code> } description="The type of the owner (USERNAME, TEAM, EMAIL)." />
 
-### <span className="text-primary">path</span>
+### <span className="text-primary">owner_value</span>
 <HorizontalDivider light={true} />
-<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">Path</code> } description="Absolute path of the directory." />
-
-### <span className="text-primary">subdirectories</span>
-<HorizontalDivider light={true} />
-<Attribute type={ <><span>list[</span> <a href="/api-reference/core/Directory" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Directory</a> <span>]</span></> } description="Get a recursive list of all subdirectories in the directory and its subdirectories." />
+<Attribute type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">str</code> } description="The value of the owner." />
 
 ### <span className="text-primary">symbols</span>
 <HorizontalDivider light={true} />
@@ -71,20 +63,35 @@ import {Attribute} from '/snippets/Attribute.mdx';
 
 ## Methods
 <HorizontalDivider />
-### <span className="text-primary">add_file</span>
-Add a file to the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L123-L126" />
+### <span className="text-primary">files</span>
+Recursively iterate over all files in the codebase that are owned by the current code owner.
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/codeowner.py#L84-L86" />
 
 
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
+<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">Iterable[TFile]</code> } description=""/>
 
 
-### <span className="text-primary">add_subdirectory</span>
-Add a subdirectory to the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L149-L152" />
+### <span className="text-primary">from_parser</span>
+Create a list of CodeOwner objects from a CodeOwnersParser.
+<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/codeowner.py#L55-L73" />
+
+<ParameterWrapper>
+<Parameter
+    name="parser"
+    type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">CodeOwnersParser</code> }
+    description="The CodeOwnersParser to use."
+    defaultValue=""
+/>
+<Parameter
+    name="file_source"
+    type={ <><a href="/api-reference/core/Callable" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Callable</a> <span>[FilesParam, Iterable[TFile]]</span></> }
+    description="A callable that returns an iterable of all files in the codebase."
+    defaultValue=""
+/>
+</ParameterWrapper>
 
 
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
+<Return return_type={ <><span>list[</span> <a href="/api-reference/core/CodeOwner" style={ {fontWeight: "inherit", fontSize: "inherit"} }>CodeOwner</a> <span>]</span></> } description="A list of CodeOwner objects."/>
 
 
 ### <span className="text-primary">get_class</span>
@@ -101,14 +108,6 @@ Get an export by name in files container (supports only typescript).
 
 
 <Return return_type={ <><a href="/api-reference/typescript/TSExport" style={ {fontWeight: "inherit", fontSize: "inherit"} }>TSExport</a> <span>| None</span></> } description=""/>
-
-
-### <span className="text-primary">get_file</span>
-Get a file by its name relative to the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L138-L147" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">TFile | None</code> } description=""/>
 
 
 ### <span className="text-primary">get_function</span>
@@ -143,76 +142,12 @@ Get an import statement by name in files container.
 <Return return_type={ <><a href="/api-reference/core/ImportStatement" style={ {fontWeight: "inherit", fontSize: "inherit"} }>ImportStatement</a> <span>| None</span></> } description=""/>
 
 
-### <span className="text-primary">get_subdirectory</span>
-Get a subdirectory by its name (relative to the directory).
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L164-L166" />
-
-
-<Return return_type={ <><a href="/api-reference/core/Directory" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Directory</a> <span>| None</span></> } description=""/>
-
-
 ### <span className="text-primary">get_symbol</span>
 Get a symbol by name in files container.
 <GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/interfaces/has_symbols.py#L87-L89" />
 
 
 <Return return_type={ <><a href="/api-reference/core/Symbol" style={ {fontWeight: "inherit", fontSize: "inherit"} }>Symbol</a> <span>| None</span></> } description=""/>
-
-
-### <span className="text-primary">remove</span>
-Remove all the files in the files container.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L176-L179" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">remove_file</span>
-Remove a file from the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L128-L131" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">remove_file_by_path</span>
-Remove a file from the directory by its path.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L133-L136" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">remove_subdirectory</span>
-Remove a subdirectory from the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L154-L157" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">remove_subdirectory_by_path</span>
-Remove a subdirectory from the directory by its path.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L159-L162" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">rename</span>
-Rename the directory.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L181-L185" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
-
-
-### <span className="text-primary">update_filepath</span>
-Update the filepath of the directory and its contained files.
-<GithubLinkNote link="https://github.com/codegen-sh/codegen-sdk/blob/develop/src/codegen/sdk/core/directory.py#L168-L174" />
-
-
-<Return return_type={ <code className="text-sm bg-gray-100 px-2 py-0.5 rounded">None</code> } description=""/>
 
 
 
