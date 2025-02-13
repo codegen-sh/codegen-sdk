@@ -18,26 +18,17 @@ def run(codebase: Codebase):
         results.append({"name": cls.name, "doi": doi})
         total_doi += doi
 
-    results.sort(key=lambda x: x["doi"], reverse=True)
-
     if results:
-        print("\nClasses by Depth of Inheritance:")
-        # Find the highest DOI value
-        max_doi = results[0]["doi"]
-        # Print classes with highest DOI first, then the rest
-        print("\n🏆 Classes with highest DOI:")
+        max_doi = max(result["doi"] for result in results)
+        print(f"Highest Depth of Inheritance (DOI): {max_doi}")
+        print("\nClasses with highest DOI:")
         for result in results:
             if result["doi"] == max_doi:
-                print(f"Class: {result['name']}, DOI: {result['doi']}")
-
-        print("\nOther classes:")
-        for result in results:
-            if result["doi"] < max_doi:
-                print(f"Class: {result['name']}, DOI: {result['doi']}")
+                print(f"- {result['name']}")
     else:
         print("❌ No classes found in the codebase to analyze.")
 
 
 if __name__ == "__main__":
-    codebase = Codebase.from_repo("modal-labs/modal-client")
+    codebase = Codebase.from_repo("posthog/posthog")
     run(codebase)

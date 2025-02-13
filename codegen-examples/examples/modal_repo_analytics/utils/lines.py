@@ -19,7 +19,6 @@ def count_lines(source: str):
     loc = len(lines)
     sloc = len([line for line in lines if line])
 
-    # Count both single-line and multi-line comments
     in_multiline = False
     comments = 0
     code_lines = []
@@ -27,12 +26,9 @@ def count_lines(source: str):
     i = 0
     while i < len(lines):
         line = lines[i]
-
-        # Handle inline comments
         code_part = line
         if not in_multiline and "#" in line:
             comment_start = line.find("#")
-            # Check if # is actually part of a string
             if not re.search(r'["\'].*#.*["\']', line[:comment_start]):
                 code_part = line[:comment_start].strip()
                 if line[comment_start:].strip():
@@ -46,7 +42,6 @@ def count_lines(source: str):
             else:
                 in_multiline = True
                 comments += 1
-                # Check if there's code before the comment
                 if line.strip().startswith('"""') or line.strip().startswith("'''"):
                     code_part = ""
         elif in_multiline:
@@ -61,7 +56,6 @@ def count_lines(source: str):
 
         i += 1
 
-    # Count logical lines (handling multiple statements per line and continued lines)
     lloc = 0
     continued_line = False
     for line in code_lines:
@@ -72,7 +66,6 @@ def count_lines(source: str):
 
         lloc += len([stmt for stmt in line.split(";") if stmt.strip()])
 
-        # Check for line continuation
         if any(line.rstrip().endswith(c) for c in ("\\", ",", "{", "[", "(")):
             continued_line = True
 
@@ -112,7 +105,6 @@ def run(codebase: Codebase):
     print("\n📝 Top 10 Largest Files:")
     print("-" * 60)
     for result in results[:10]:
-        # Truncate filepath if too long
         filepath = result["filepath"]
         if len(filepath) > 40:
             filepath = "..." + filepath[-37:]
