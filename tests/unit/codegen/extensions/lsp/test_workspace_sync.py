@@ -1,3 +1,5 @@
+from typing import Callable
+
 import pytest
 from lsprotocol.types import (
     DidChangeTextDocumentParams,
@@ -16,6 +18,7 @@ from lsprotocol.types import (
 from pytest_lsp import LanguageClient
 
 from codegen.sdk.core.codebase import Codebase
+from tests.unit.codegen.extensions.lsp.utils import apply_edit
 
 
 @pytest.fixture()
@@ -88,6 +91,7 @@ def example_function():
             """.strip(),
         ),
     ],
+    ids=["example_function"],
     indirect=["document_uri", "original"],
 )
 async def test_did_change(
@@ -137,7 +141,7 @@ def example_function():
     pass
                 """.strip(),
             },
-            "file://{worskpaceFolder}test.py",
+            "file://{worskpaceFolder}/test.py",
         ),
     ],
 )
@@ -165,11 +169,11 @@ async def test_did_close(
 
     # Verify the document is removed from the workspace
     document = await client.workspace_text_document_content_async(TextDocumentContentParams(uri=document_uri))
-    assert document.text == ""
+    assert document.text == original["test.py"]
 
 
 @pytest.mark.parametrize(
-    "original, document_uri, position, new_name, expected_text",
+    "original, document_uri, position, new_name, expected",
     [
         (
             {
@@ -182,15 +186,17 @@ def main():
                 """.strip(),
             },
             "file://{workspaceFolder}/test.py",
-            Position(line=0, character=0),  # Position of 'example_function'
+            Position(line=0, character=5),  # Position of 'example_function'
             "renamed_function",
-            """
+            {
+                "test.py": """
 def renamed_function():
     pass # modified
 
 def main():
     renamed_function()
                 """.strip(),
+            },
         ),
     ],
     indirect=["document_uri", "original"],
@@ -202,7 +208,7 @@ async def test_rename_after_sync(
     document_uri: str,
     position: Position,
     new_name: str,
-    expected_text: str,
+    assert_expected: Callable,
 ):
     # First open the document
     client.text_document_did_open(
@@ -243,8 +249,6 @@ async def test_rename_after_sync(
             new_name=new_name,
         )
     )
-
-    # Verify the rename was successful
-    document = await client.workspace_text_document_content_async(TextDocumentContentParams(uri=document_uri))
-    assert document is not None
-    assert document.text == expected_text
+    if result:
+        apply_edit(codebase, result)
+    assert_expected(codebase)

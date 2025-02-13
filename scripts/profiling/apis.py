@@ -62,7 +62,7 @@ graph_pickle = pickle.dumps(G)
 # Convert to base64
 graph_base64 = base64.b64encode(graph_pickle).decode("utf-8")
 
-print(f"Base64 encoded graph size: {len(graph_base64)} bytes")
+print(f"Base64 encoded graph size: {len(graph_base64)} bytes 🌈")
 print(f"Base64 string: {graph_base64}")
 Path("out.txt").write_text(graph_base64)
 print()

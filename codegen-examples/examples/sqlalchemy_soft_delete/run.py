@@ -5,7 +5,7 @@ from pathlib import Path
 import codegen
 from codegen import Codebase
 from codegen.sdk.core.detached_symbols.function_call import FunctionCall
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 
 
 def should_process_join_call(call, soft_delete_models, join_methods):

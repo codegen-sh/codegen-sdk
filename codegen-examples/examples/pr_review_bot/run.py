@@ -4,7 +4,7 @@ import codegen
 from codegen import Codebase
 from codegen.sdk.codebase.config import CodebaseConfig
 from codegen.sdk.secrets import Secrets
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 
 github_token = "Your github token"
 open_ai_key = "your open ai key"

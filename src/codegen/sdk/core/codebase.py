@@ -36,6 +36,7 @@ from codegen.sdk.codebase.flagging.code_flag import CodeFlag
 from codegen.sdk.codebase.flagging.enums import FlagKwargs
 from codegen.sdk.codebase.flagging.group import Group
 from codegen.sdk.codebase.io.io import IO
+from codegen.sdk.codebase.progress.progress import Progress
 from codegen.sdk.codebase.span import Span
 from codegen.sdk.core.assignment import Assignment
 from codegen.sdk.core.class_definition import Class
@@ -132,6 +133,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         projects: list[ProjectConfig] | ProjectConfig,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
+        progress: Progress | None = None,
     ) -> None: ...
 
     @overload
@@ -143,6 +145,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         projects: None = None,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
+        progress: Progress | None = None,
     ) -> None: ...
 
     def __init__(
@@ -153,6 +156,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         projects: list[ProjectConfig] | ProjectConfig | None = None,
         config: CodebaseConfig = DefaultConfig,
         io: IO | None = None,
+        progress: Progress | None = None,
     ) -> None:
         # Sanity check inputs
         if repo_path is not None and projects is not None:
@@ -182,7 +186,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         self._op = main_project.repo_operator
         self.viz = VisualizationManager(op=self._op)
         self.repo_path = Path(self._op.repo_path)
-        self.ctx = CodebaseContext(projects, config=config, io=io)
+        self.ctx = CodebaseContext(projects, config=config, io=io, progress=progress)
         self.console = Console(record=True, soft_wrap=True)
 
     @noapidoc
@@ -510,7 +514,7 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         if file is not None:
             return file
         absolute_path = self.ctx.to_absolute(filepath)
-        if absolute_path.suffix in self.ctx.extensions:
+        if absolute_path.suffix in self.ctx.extensions and not self.ctx.io.file_exists(absolute_path):
             return None
         if self.ctx.io.file_exists(absolute_path):
             return get_file_from_path(absolute_path)
@@ -898,9 +902,29 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     ####################################################################################################################
 
     def create_pr(self, title: str, body: str) -> PullRequest:
-        """Creates a PR from the current branch."""
+        """Creates a pull request from the current branch to the repository's default branch.
+
+        This method will:
+        1. Stage and commit any pending changes with the PR title as the commit message
+        2. Push the current branch to the remote repository
+        3. Create a pull request targeting the default branch
+
+        Args:
+            title (str): The title for the pull request
+            body (str): The description/body text for the pull request
+
+        Returns:
+            PullRequest: The created GitHub pull request object
+
+        Raises:
+            ValueError: If attempting to create a PR while in a detached HEAD state
+            ValueError: If the current branch is the default branch
+        """
         if self._op.git_cli.head.is_detached:
             msg = "Cannot make a PR from a detached HEAD"
+            raise ValueError(msg)
+        if self._op.git_cli.active_branch.name == self._op.default_branch:
+            msg = "Cannot make a PR from the default branch"
             raise ValueError(msg)
         self._op.stage_and_commit_all_changes(message=title)
         self._op.push_changes()
@@ -1199,11 +1223,10 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
     @classmethod
     def from_repo(
         cls,
-        repo_name: str,
+        repo_full_name: str,
         *,
-        tmp_dir: str | None = None,
+        tmp_dir: str | None = "/tmp/codegen",
         commit: str | None = None,
-        shallow: bool = True,
         language: Literal["python", "typescript"] | ProgrammingLanguage | None = None,
         config: CodebaseConfig = DefaultConfig,
     ) -> "Codebase":
@@ -1220,23 +1243,21 @@ class Codebase(Generic[TSourceFile, TDirectory, TSymbol, TClass, TFunction, TImp
         Returns:
             Codebase: A Codebase instance initialized with the cloned repository
         """
-        logger.info(f"Fetching codebase for {repo_name}")
+        logger.info(f"Fetching codebase for {repo_full_name}")
 
         # Parse repo name
-        if "/" not in repo_name:
+        if "/" not in repo_full_name:
             msg = "repo_name must be in format 'owner/repo'"
             raise ValueError(msg)
-        owner, repo = repo_name.split("/")
+        owner, repo = repo_full_name.split("/")
 
         # Setup temp directory
-        if tmp_dir is None:
-            tmp_dir = "/tmp/codegen"
         os.makedirs(tmp_dir, exist_ok=True)
         logger.info(f"Using directory: {tmp_dir}")
 
         # Setup repo path and URL
         repo_path = os.path.join(tmp_dir, repo)
-        repo_url = f"https://github.com/{repo_name}.git"
+        repo_url = f"https://github.com/{repo_full_name}.git"
         logger.info(f"Will clone {repo_url} to {repo_path}")
 
         try:
