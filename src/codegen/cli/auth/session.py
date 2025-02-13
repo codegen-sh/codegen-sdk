@@ -30,15 +30,13 @@ class CodegenSession:
         self.repo_path = repo_path
         self.local_git = LocalGitRepo(repo_path=repo_path)
         self.codegen_dir = repo_path / CODEGEN_DIR_NAME
-        self.existing = global_config.get_session(repo_path) is not None
         self.config = load_session_config(self.codegen_dir / CONFIG_FILENAME)
         self.config.secrets.github_token = git_token or self.config.secrets.github_token
-
-        global_config.set_active_session(repo_path)
-        if not self.existing:
-            self.initialize()
+        self.existing = global_config.get_session(repo_path) is not None
 
         self.validate()
+        self.initialize()
+        global_config.set_active_session(repo_path)
 
     @classmethod
     def from_active_session(cls) -> "CodegenSession | None":
