@@ -91,6 +91,7 @@ def example_function():
             """.strip(),
         ),
     ],
+    ids=["example_function"],
     indirect=["document_uri", "original"],
 )
 async def test_did_change(
