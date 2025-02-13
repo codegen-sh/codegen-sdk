@@ -19,6 +19,7 @@ from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.remote_progress import CustomRemoteProgress
+from codegen.shared.configs.session_configs import config
 from codegen.shared.performance.stopwatch_utils import stopwatch
 from codegen.shared.performance.time_utils import humanize_duration
 
@@ -46,7 +47,7 @@ class RepoOperator(ABC):
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
-        self.access_token = access_token
+        self.access_token = access_token or config.secrets.github_token
         self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
 
