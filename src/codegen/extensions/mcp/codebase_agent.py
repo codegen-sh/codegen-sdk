@@ -11,7 +11,8 @@ from codegen.shared.enums.programming_language import ProgrammingLanguage
 
 mcp = FastMCP(
     "codebase-agent-mcp",
-    instructions="Use this server to access any information from your codebase. This tool can provide information ranging from AST Symbol details and information from across the codebase. Use this tool for all questions, queries regarding your codebase.",
+    instructions="""Use this server to access any information from your codebase. This tool can provide information ranging from AST Symbol details and information from across the codebase.
+    Use this tool for all questions, queries regarding your codebase.""",
 )
 
 
