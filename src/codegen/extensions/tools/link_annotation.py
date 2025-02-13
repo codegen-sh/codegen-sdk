@@ -50,8 +50,10 @@ def clean_github_url(url: str) -> str:
     return url
 
 
-def format_link(name: str, url: str, format: MessageChannel = MessageChannel.SLACK) -> str:
+def format_link(name: str, url: str | None, format: MessageChannel = MessageChannel.SLACK) -> str:
     # Clean the URL if it's a GitHub URL
+    if url is None:
+        url = ""
     if "github.com" in url:
         url = clean_github_url(url)
     return LINK_FORMATS[format](name, url)
