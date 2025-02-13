@@ -8,8 +8,9 @@ _FILE_EDIT_DESCRIPTION = (
 * If specifying start and end, leave some room for context (e.g., 30 lines before and 30 lines after the edit range). However, for the end parameter, do not exceed the last line of the file.
 * For example if the file is 500 lines long and an edit is requested from line 450 to 500, make the start parameter 430 and the end parameter 500.
 * Another example if the file is 500 lines long and an edit is requested from line 450 to 490, make the start parameter 430 and the end parameter 500.
-* ALWAYS ALWAYS ALWAYS choose edit ranges that include full code blocks!
-* ENSURE that if the file is less than 300 lines, do not specify a start or end parameter. Only specify for large files over 300 lines.
+* Always choose edit ranges that include full code blocks.
+* Ensure that if the file is less than 300 lines, do not specify a start or end parameter. Only specify for large files over 300 lines.
+
 * IMPORTANT: If it's not specified or implied where the code should be added, just append it to the end of the file by setting  the start=-1 and end=-1
 
 **Example 1: general edit for short files**
