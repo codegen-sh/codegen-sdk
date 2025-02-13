@@ -2,6 +2,7 @@ import webbrowser
 
 import rich
 import rich_click as click
+from pygit2._pygit2 import Repository
 from rich.panel import Panel
 
 from codegen.cli.api.client import RestAPI
@@ -87,7 +88,8 @@ def run_cloud(session: CodegenSession, function, apply_local: bool = False, diff
 
             if apply_local and run_output.observation:
                 try:
-                    apply_patch(session.git_repo, f"\n{run_output.observation}\n")
+                    git_repo = Repository(str(session.repo_path))
+                    apply_patch(git_repo, f"\n{run_output.observation}\n")
                     rich.print("")
                     rich.print("[green]✓ Changes have been applied to your local filesystem[/green]")
                     rich.print("[yellow]→ Don't forget to commit your changes:[/yellow]")

@@ -1,6 +1,5 @@
 """File operations for manipulating the codebase."""
 
-import os
 from typing import Any, Literal
 
 from codegen import Codebase
@@ -36,17 +35,31 @@ def view_file(codebase: Codebase, filepath: str) -> dict[str, Any]:
 def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> dict[str, Any]:
     """List contents of a directory.
 
-    TODO(CG-10729): add support for directories that only including non-SourceFiles (code files). At the moment,
-     only files and directories that have SourceFile objects are included.
-
     Args:
         codebase: The codebase to operate on
         dirpath: Path to directory relative to workspace root
         depth: How deep to traverse the directory tree. Default is 1 (immediate children only).
                Use -1 for unlimited depth.
 
+    TODO(CG-10729): add support for directories that only including non-SourceFiles (code files). At the moment,
+     only files and directories that have SourceFile objects are included.
+
     Returns:
-        Dict containing directory contents and metadata, or error information if directory not found
+        Dict containing directory contents and metadata in a nested structure:
+        {
+            "path": str,
+            "name": str,
+            "files": list[str],
+            "subdirectories": [
+                {
+                    "path": str,
+                    "name": str,
+                    "files": list[str],
+                    "subdirectories": [...],
+                },
+                ...
+            ]
+        }
     """
     try:
         directory = codebase.get_directory(dirpath)
@@ -56,33 +69,33 @@ def list_directory(codebase: Codebase, dirpath: str = "./", depth: int = 1) -> d
     if not directory:
         return {"error": f"Directory not found: {dirpath}"}
 
-    # Get immediate files
-    files = []
-    subdirs = []
+    def get_directory_info(dir_obj: Directory, current_depth: int) -> dict[str, Any]:
+        """Helper function to get directory info recursively."""
+        # Get direct files
+        all_files = []
+        for file in dir_obj.files:
+            if file.directory == dir_obj:
+                all_files.append(file.filepath.split("/")[-1])
 
-    for item in directory.items.values():
-        if isinstance(item, Directory):
-            subdirs.append(item.name)
-        else:
-            # Get full filename with extension from filepath
-            files.append(os.path.basename(item.filepath))
+        # Get direct subdirectories
+        subdirs = []
+        for subdir in dir_obj.subdirectories:
+            # Only include direct descendants
+            if subdir.parent == dir_obj:
+                if current_depth != 1:
+                    new_depth = current_depth - 1 if current_depth > 1 else -1
+                    subdirs.append(get_directory_info(subdir, new_depth))
+                else:
+                    # At max depth, just include name
+                    subdirs.append(subdir.name)
+        return {
+            "name": dir_obj.name,
+            "path": dir_obj.dirpath,
+            "files": all_files,
+            "subdirectories": subdirs,
+        }
 
-    # If depth > 1 or unlimited (-1), recursively get subdirectories
-    if depth != 1:
-        new_depth = depth - 1 if depth > 1 else -1
-        for item in directory.items.values():
-            if isinstance(item, Directory):
-                subdir_result = list_directory(codebase, os.path.join(dirpath, item.name), depth=new_depth)
-                if "error" not in subdir_result:
-                    files.extend(subdir_result["files"])
-                    subdirs.extend(subdir_result["subdirectories"])
-
-    return {
-        "path": str(directory.path),  # Convert PosixPath to string
-        "name": directory.name,
-        "files": files,
-        "subdirectories": subdirs,
-    }
+    return get_directory_info(directory, depth)
 
 
 def edit_file(codebase: Codebase, filepath: str, content: str) -> dict[str, Any]:

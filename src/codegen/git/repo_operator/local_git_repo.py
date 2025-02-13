@@ -2,6 +2,7 @@ import os
 from functools import cached_property
 from pathlib import Path
 
+import giturlparse
 from git import Repo
 from git.remote import Remote
 
@@ -30,8 +31,8 @@ class LocalGitRepo:
         if not self.origin_remote:
             return None
 
-        url_segments = self.origin_remote.url.split("/")
-        return f"{url_segments[-2]}/{url_segments[-1].replace('.git', '')}"
+        parsed = giturlparse.parse(self.origin_remote.url)
+        return f"{parsed.owner}/{parsed.name}"
 
     @cached_property
     def origin_remote(self) -> Remote | None:

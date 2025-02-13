@@ -19,7 +19,7 @@ def requires_auth(f: Callable) -> Callable:
         session = CodegenSession.from_active_session()
 
         # Check for valid session
-        if session is None or not session.is_valid():
+        if session is None:
             pretty_print_error("There is currently no active session.\nPlease run 'codegen init' to initialize the project.")
             raise click.Abort()
 
