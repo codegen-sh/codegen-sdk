@@ -1,6 +1,5 @@
 from codegen.sdk.codebase.factory.get_session import get_codebase_session
 from codegen.sdk.core.dataclasses.usage import UsageType
-from codegen.sdk.core.interfaces.usable import Usable
 
 
 def test_usages_max_depth_python(tmpdir) -> None:
@@ -145,4 +144,4 @@ class MultiChild(Child, Mixin):
 
         # Test with specific usage types but no depth
         method_usages = child_class.usages(usage_types=UsageType.DIRECT | UsageType.CHAINED)
-        assert len(method_usages) >= 4  # Direct instantiations and method calls 
+        assert len(method_usages) >= 4  # Direct instantiations and method calls
