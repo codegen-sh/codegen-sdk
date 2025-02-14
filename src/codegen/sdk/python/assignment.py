@@ -117,7 +117,7 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         Returns:
             None
         """
-        if isinstance(self.parent,AssignmentStatement) and len(self.parent.assignments) > 1:
+        if isinstance(self.parent, AssignmentStatement) and len(self.parent.assignments) > 1:
             # Unpacking assignments
             name = self.get_name()
             if isinstance(self.value, Collection):
