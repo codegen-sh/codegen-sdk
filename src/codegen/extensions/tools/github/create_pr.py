@@ -3,6 +3,8 @@
 import uuid
 from typing import Any
 
+from github import GithubException
+
 from codegen import Codebase
 
 
@@ -18,12 +20,25 @@ def create_pr(codebase: Codebase, title: str, body: str) -> dict[str, Any]:
         Dict containing PR info, or error information if operation fails
     """
     try:
+        # Check for uncommitted changes and commit them
+        if len(codebase.get_diff()) == 0:
+            return {"error": "No changes to create a PR."}
+
+        # TODO: this is very jank. We should ideally check out the branch before
+        # making the changes, but it looks like `codebase.checkout` blows away
+        # all of your changes
+        codebase.git_commit(".")
+
         # If on default branch, create a new branch
         if codebase._op.git_cli.active_branch.name == codebase._op.default_branch:
             codebase.checkout(branch=f"{uuid.uuid4()}", create_if_missing=True)
 
         # Create the PR
-        pr = codebase.create_pr(title=title, body=body)
+        try:
+            pr = codebase.create_pr(title=title, body=body)
+        except GithubException as e:
+            print(e)
+            return {"error": "Failed to create PR. Check if the PR already exists."}
         return {
             "status": "success",
             "url": pr.html_url,
