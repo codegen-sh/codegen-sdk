@@ -1,7 +1,6 @@
 """Langchain tools for workspace operations."""
 
 import json
-import uuid
 from typing import ClassVar, Literal, Optional
 
 from langchain.tools import BaseTool
@@ -12,6 +11,9 @@ from codegen import Codebase
 from ..tools import (
     commit,
     create_file,
+    create_pr,
+    create_pr_comment,
+    create_pr_review_comment,
     delete_file,
     edit_file,
     list_directory,
@@ -22,6 +24,7 @@ from ..tools import (
     semantic_edit,
     semantic_search,
     view_file,
+    view_pr,
 )
 
 
@@ -205,12 +208,11 @@ class RevealSymbolTool(BaseTool):
         collect_dependencies: bool = True,
         collect_usages: bool = True,
     ) -> str:
-        # Find the symbol first
-        found_symbol = self.codebase.get_symbol(symbol_name)
         result = reveal_symbol(
-            found_symbol,
-            degree,
-            max_tokens,
+            codebase=self.codebase,
+            symbol_name=symbol_name,
+            degree=degree,
+            max_tokens=max_tokens,
             collect_dependencies=collect_dependencies,
             collect_usages=collect_usages,
         )
@@ -356,11 +358,8 @@ class CreatePRTool(BaseTool):
         super().__init__(codebase=codebase)
 
     def _run(self, title: str, body: str) -> str:
-        if self.codebase._op.git_cli.active_branch.name == self.codebase._op.default_branch:
-            # If the current checked out branch is the default branch, checkout onto a new branch
-            self.codebase.checkout(branch=f"{uuid.uuid4()}", create_if_missing=True)
-        pr = self.codebase.create_pr(title=title, body=body)
-        return pr.html_url
+        result = create_pr(self.codebase, title, body)
+        return json.dumps(result, indent=2)
 
 
 class GetPRContentsInput(BaseModel):
@@ -381,11 +380,7 @@ class GetPRcontentsTool(BaseTool):
         super().__init__(codebase=codebase)
 
     def _run(self, pr_id: int) -> str:
-        modified_symbols, patch = self.codebase.get_modified_symbols_in_pr(pr_id)
-
-        # Convert modified_symbols set to list for JSON serialization
-        result = {"modified_symbols": list(modified_symbols), "patch": patch}
-
+        result = view_pr(self.codebase, pr_id)
         return json.dumps(result, indent=2)
 
 
@@ -408,8 +403,8 @@ class CreatePRCommentTool(BaseTool):
         super().__init__(codebase=codebase)
 
     def _run(self, pr_number: int, body: str) -> str:
-        self.codebase.create_pr_comment(pr_number=pr_number, body=body)
-        return "Comment created successfully"
+        result = create_pr_comment(self.codebase, pr_number, body)
+        return json.dumps(result, indent=2)
 
 
 class CreatePRReviewCommentInput(BaseModel):
@@ -445,7 +440,8 @@ class CreatePRReviewCommentTool(BaseTool):
         side: str | None = None,
         start_line: int | None = None,
     ) -> str:
-        self.codebase.create_pr_review_comment(
+        result = create_pr_review_comment(
+            self.codebase,
             pr_number=pr_number,
             body=body,
             commit_sha=commit_sha,
@@ -454,7 +450,7 @@ class CreatePRReviewCommentTool(BaseTool):
             side=side,
             start_line=start_line,
         )
-        return "Review comment created successfully"
+        return json.dumps(result, indent=2)
 
 
 def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
@@ -476,8 +472,11 @@ def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
         EditFileTool(codebase),
         GetPRcontentsTool(codebase),
         ListDirectoryTool(codebase),
+        MoveSymbolTool(codebase),
+        RenameFileTool(codebase),
         RevealSymbolTool(codebase),
         SearchTool(codebase),
         SemanticEditTool(codebase),
+        SemanticSearchTool(codebase),
         ViewFileTool(codebase),
     ]
