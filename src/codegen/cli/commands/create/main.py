@@ -13,6 +13,7 @@ from codegen.cli.rich.codeblocks import format_command, format_path
 from codegen.cli.rich.pretty_print import pretty_print_error
 from codegen.cli.rich.spinners import create_spinner
 from codegen.cli.utils.default_code import DEFAULT_CODEMOD
+from codegen.cli.workspace.decorators import requires_init
 
 
 def get_prompts_dir() -> Path:
@@ -65,6 +66,7 @@ def make_relative(path: Path) -> str:
 
 
 @click.command(name="create")
+@requires_init
 @click.argument("name", type=str)
 @click.argument("path", type=click.Path(path_type=Path), default=Path.cwd())
 @click.option("--description", "-d", default=None, help="Description of what this codemod does.")
@@ -84,7 +86,6 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
         pretty_print_error(f"File already exists at {format_path(rel_path)}\n\nTo overwrite the file:\n{format_command(f'codegen create {name} {rel_path} --overwrite')}")
         return
 
-    rich.print("")  # Add a newline before output
     response = None
     code = None
     try:
