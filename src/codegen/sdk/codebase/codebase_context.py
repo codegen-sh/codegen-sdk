@@ -149,7 +149,6 @@ class CodebaseContext:
         self.repo_path = str(Path(context.repo_operator.repo_path).resolve())
         self.codeowners_parser = context.repo_operator.codeowners_parser
         self.base_url = context.repo_operator.base_url
-        self._op = context.repo_operator
         # =====[ computed attributes ]=====
         self.transaction_manager = TransactionManager()
         self._autocommit = AutoCommit(self)
@@ -339,14 +338,15 @@ class CodebaseContext:
                     return True
             return False
 
-        for rel_filepath in self._op.get_filepaths_for_repo(GLOBAL_FILE_IGNORE_LIST):
-            abs_filepath = self.to_absolute(rel_filepath)
-            if not abs_filepath.is_dir():
-                abs_filepath = abs_filepath.parent
+        for ctx in self.projects:
+            for rel_filepath in ctx.repo_operator.get_filepaths_for_repo(GLOBAL_FILE_IGNORE_LIST):
+                abs_filepath = self.to_absolute(rel_filepath)
+                if not abs_filepath.is_dir():
+                    abs_filepath = abs_filepath.parent
 
-            if abs_filepath not in created_dirs and self.is_subdir(abs_filepath) and _dir_has_file(abs_filepath):
-                directory = self.get_directory(abs_filepath, create_on_missing=True)
-                created_dirs.add(abs_filepath)
+                if abs_filepath not in created_dirs and self.is_subdir(abs_filepath) and _dir_has_file(abs_filepath):
+                    directory = self.get_directory(abs_filepath, create_on_missing=True)
+                    created_dirs.add(abs_filepath)
 
     def get_directory(self, directory_path: PathLike, create_on_missing: bool = False, ignore_case: bool = False) -> Directory | None:
         """Returns the directory object for the given path, or None if the directory does not exist.
