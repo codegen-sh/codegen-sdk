@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Generator
 from typing import TYPE_CHECKING, Self, override
 
 from codegen.sdk.core.autocommit import reader
@@ -34,6 +35,7 @@ class PyImport(Import["PyFile"]):
     def __init__(self, ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type=ImportType.UNKNOWN):
         super().__init__(ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type)
         self.requesting_names = set()
+
 
     @reader
     def is_module_import(self) -> bool:
@@ -264,6 +266,15 @@ class PyImport(Import["PyFile"]):
                 if name in self.requesting_names:
                     yield from [frame.parent_frame for frame in wildcard_import.resolved_type_frames]
 
+
+    @noapidoc
+    def set_requesting_names(self, requester: PyImport):
+        if requester.is_wildcard_import():
+            self.requesting_names.update(requester.requesting_names)
+        else:
+            self.requesting_names.add(requester.name)
+
+
     @property
     @reader
     def import_specifier(self) -> Editable:
@@ -286,12 +297,6 @@ class PyImport(Import["PyFile"]):
             if is_match:
                 return Name(import_specifier, self.file_node_id, self.ctx, self)
 
-    @noapidoc
-    def set_requesting_names(self, requester: PyImport):
-        if requester.is_wildcard_import():
-            self.requesting_names.update(requester.requesting_names)
-        else:
-            self.requesting_names.add(requester.name)
 
     @reader
     def get_import_string(
