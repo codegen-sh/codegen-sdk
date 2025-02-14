@@ -73,7 +73,8 @@ class Repo(BaseModel):
             if '[credential "https://github.codegen.app"]' not in (Path.home() / ".gitconfig").read_text():
                 os.system("gh auth login -h github.codegen.app")
                 os.system("gh auth setup-git -h github.codegen.app")
-        return RepoOperator.create_from_commit(str(base_path), self.commit, url)
+        from codegen.git.repo_operator.remote_repo_operator import RepoOperator
+        return RepoOperator.create_from_commit(str(base_path), self.commit, url, access_token=token)
 
 
 @dataclass

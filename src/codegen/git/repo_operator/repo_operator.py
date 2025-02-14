@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from functools import cached_property
 from time import perf_counter
 from typing import Self
+from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Commit as GitCommit
@@ -21,7 +22,7 @@ from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.repo_operator.local_git_repo import LocalGitRepo
 from codegen.git.schemas.enums import CheckoutResult, FetchResult
 from codegen.git.schemas.repo_config import RepoConfig
-from codegen.git.utils.clone import pull_repo
+from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
 from codegen.git.utils.clone_url import add_access_token_to_url
 from codegen.git.utils.codeowner_utils import create_codeowners_parser_for_repo
 from codegen.git.utils.file_utils import create_files
@@ -64,6 +65,37 @@ class RepoOperator(ABC):
         if repo_config.full_name is None:
             repo_config.full_name = self._local_git_repo.full_name
 
+    def setup_repo_dir(self, setup_option: SetupOption = SetupOption.PULL_OR_CLONE, shallow: bool = True) -> None:
+        """Sets up the repository directory with the necessary configuration.
+        
+        This method should handle any repository-specific setup like:
+        - Cloning/pulling from remote
+        - Setting up branches
+        - Configuring remotes
+        - Any other initialization needed
+        
+        The exact implementation will depend on the type of repository operator.
+        """
+        os.makedirs(self.base_dir, exist_ok=True)
+        os.chdir(self.base_dir)
+        if setup_option is SetupOption.CLONE:
+            # if repo exists delete, then clone, else clone
+            clone_repo(shallow=shallow, repo_path=self.repo_path, clone_url=self.clone_url)
+        elif setup_option is SetupOption.PULL_OR_CLONE:
+            # if repo exists, pull changes, else clone
+            self.clone_or_pull_repo(shallow=shallow)
+        elif setup_option is SetupOption.SKIP:
+            if not self.repo_exists():
+                logger.warning(f"Valid git repo does not exist at {self.repo_path}. Cannot skip setup with SetupOption.SKIP.")
+        os.chdir(self.repo_path)
+
+    def clone_or_pull_repo(self, shallow: bool = True) -> None:
+        """If repo exists, pulls changes. otherwise, clones the repo."""
+        # TODO(CG-7804): if repo is not valid we should delete it and re-clone. maybe we can create a pull_repo util + use the existing clone_repo util
+        if self.repo_exists():
+            self.clean_repo()
+        clone_or_pull_repo(repo_path=self.repo_path, clone_url=self.clone_url, shallow=shallow)
+
     ####################################################################################################################
     # PROPERTIES
     ####################################################################################################################
@@ -77,22 +109,20 @@ class RepoOperator(ABC):
         return os.path.join(self.base_dir, self.repo_name)
 
     @property
-    def remote_git_repo(self) -> GitRepoClient:
+    def remote_git_repo(self) -> GitRepoClient | None:
         """Get the remote GitRepoClient object for the current repo.
 
         Returns:
-            GitRepoClient: The GitHub client for remote operations.
+            GitRepoClient | None: The GitHub client for remote operations, or None if this is a local-only repo.
 
-        Raises:
-            ValueError: If access token is not provided or if repo has no remote.
+        Note:
+            Returns None if:
+            - This is a local-only repository (no remote configured)
+            - No access token is provided
+            - Repository full name is not set
         """
-        if not self.access_token:
-            msg = "Must initialize with access_token to get remote"
-            raise ValueError(msg)
-
-        if not self._local_git_repo.has_remote():
-            msg = "Cannot initialize remote GitRepoClient from local Git"
-            raise ValueError(msg)
+        if not self.access_token or not self.repo_config.full_name or not self._local_git_repo.has_remote():
+            return None
 
         if not self._remote_git_repo:
             self._remote_git_repo = GitRepoClient(self.repo_config, access_token=self.access_token)
@@ -195,8 +225,15 @@ class RepoOperator(ABC):
 
     @property
     def codeowners_parser(self) -> CodeOwnersParser | None:
+        """Returns the CodeOwners parser for the repository, if available.
+
+        Returns:
+            CodeOwnersParser | None: The parser if CODEOWNERS file exists and can be parsed, None otherwise.
+        """
         if not self._codeowners_parser:
-            self._codeowners_parser = create_codeowners_parser_for_repo(self.remote_git_repo)
+            remote_repo = self.remote_git_repo
+            if remote_repo:
+                self._codeowners_parser = create_codeowners_parser_for_repo(remote_repo)
         return self._codeowners_parser
 
     ####################################################################################################################
@@ -267,7 +304,6 @@ class RepoOperator(ABC):
             logger.warning(f"Failed to get commit {commit}:\n\t{e}")
             return None
 
-    @abstractmethod
     def fetch_remote(self, remote_name: str = "origin", refspec: str | None = None, force: bool = True) -> FetchResult:
         """Fetches and updates a ref from a remote repository.
 
@@ -287,6 +323,17 @@ class RepoOperator(ABC):
         Note:
             This force fetches by default b/c by default we prefer the remote branch over our local branch.
         """
+        logger.info(f"Fetching {remote_name} with refspec {refspec}")
+        progress = CustomRemoteProgress()
+
+        try:
+            self.git_cli.remotes[remote_name].fetch(refspec=refspec, force=force, progress=progress, no_tags=True)
+            return FetchResult.SUCCESS
+        except GitCommandError as e:
+            if progress.fetch_result == FetchResult.REFSPEC_NOT_FOUND:
+                return FetchResult.REFSPEC_NOT_FOUND
+            else:
+                raise e
 
     def delete_remote(self, remote_name: str) -> None:
         remote = self.git_cli.remote(remote_name)
