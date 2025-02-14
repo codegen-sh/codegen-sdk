@@ -13,32 +13,37 @@ This example demonstrates how to build a GitHub PR review bot using Codegen and 
 ## Prerequisites
 
 1. A Modal account and the Modal CLI installed
-2. A GitHub account and personal access token
-3. OpenAI API key (used by Codegen)
+1. A GitHub account and personal access token
+1. OpenAI API key (used by Codegen)
 
 ## Setup
 
 1. Install dependencies:
+
    ```bash
    pip install modal-client codegen PyGithub
    ```
 
-2. Create a Modal secret for the webhook:
+1. Create a Modal secret for the webhook:
+
    ```bash
    modal secret create webhook-secret
    ```
 
-3. Create a Modal secret for your credentials:
+1. Create a Modal secret for your credentials:
+
    ```bash
    modal secret create quick-pr-review-secrets GITHUB_TOKEN=your_github_token OPENAI_API_KEY=your_openai_key
    ```
 
-4. Deploy the service using Modal:
+1. Deploy the service using Modal:
+
    ```bash
    modal deploy api.py
    ```
 
-5. Set up GitHub webhook:
+1. Set up GitHub webhook:
+
    - Go to your repository's Settings > Webhooks
    - Add new webhook
    - Get your webhook URL from Modal's dashboard or by running:
@@ -52,7 +57,7 @@ This example demonstrates how to build a GitHub PR review bot using Codegen and 
 ## How it Works
 
 1. When a PR is opened or updated, GitHub sends a webhook event to the Modal endpoint
-2. The service:
+1. The service:
    - Initializes a Codegen codebase for the repository
    - Analyzes modified symbols and their dependencies
    - Generates a focused review using GPT-4
@@ -61,6 +66,7 @@ This example demonstrates how to build a GitHub PR review bot using Codegen and 
 ## Customization
 
 You can customize the review behavior by:
+
 - Adjusting the dependency depth in `review_pr()`
 - Modifying the system prompt for different review focuses
 - Changing the GPT-4 parameters (temperature, max_tokens)
@@ -91,4 +97,4 @@ The bot will post reviews in this format:
 
 - Currently supports Python codebases only
 - Reviews are focused on quick feedback rather than deep analysis
-- Requires appropriate GitHub permissions and webhook setup 
+- Requires appropriate GitHub permissions and webhook setup
