@@ -36,7 +36,6 @@ class PyImport(Import["PyFile"]):
         super().__init__(ts_node, file_node_id, G, parent, module_node, name_node, alias_node, import_type)
         self.requesting_names = set()
 
-
     @reader
     def is_module_import(self) -> bool:
         """Determines if the import is a module-level or wildcard import.
@@ -266,14 +265,12 @@ class PyImport(Import["PyFile"]):
                 if name in self.requesting_names:
                     yield from [frame.parent_frame for frame in wildcard_import.resolved_type_frames]
 
-
     @noapidoc
     def set_requesting_names(self, requester: PyImport):
         if requester.is_wildcard_import():
             self.requesting_names.update(requester.requesting_names)
         else:
             self.requesting_names.add(requester.name)
-
 
     @property
     @reader
@@ -296,7 +293,6 @@ class PyImport(Import["PyFile"]):
                 is_match = self.symbol_name.source == import_specifier.text.decode("utf-8")
             if is_match:
                 return Name(import_specifier, self.file_node_id, self.ctx, self)
-
 
     @reader
     def get_import_string(
