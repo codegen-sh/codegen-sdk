@@ -190,7 +190,10 @@ class RevealSymbolInput(BaseModel):
 
     symbol_name: str = Field(..., description="Name of the symbol to analyze")
     degree: int = Field(default=1, description="How many degrees of separation to traverse")
-    max_tokens: Optional[int] = Field(default=None, description="Optional maximum number of tokens for all source code combined")
+    max_tokens: Optional[int] = Field(
+        default=None,
+        description="Optional maximum number of tokens for all source code combined",
+    )
     collect_dependencies: bool = Field(default=True, description="Whether to collect dependencies")
     collect_usages: bool = Field(default=True, description="Whether to collect usages")
 
@@ -287,7 +290,10 @@ class MoveSymbolInput(BaseModel):
     source_file: str = Field(..., description="Path to the file containing the symbol")
     symbol_name: str = Field(..., description="Name of the symbol to move")
     target_file: str = Field(..., description="Path to the destination file")
-    strategy: Literal["update_all_imports", "add_back_edge"] = Field(default="update_all_imports", description="Strategy for handling imports: 'update_all_imports' (default) or 'add_back_edge'")
+    strategy: Literal["update_all_imports", "add_back_edge"] = Field(
+        default="update_all_imports",
+        description="Strategy for handling imports: 'update_all_imports' (default) or 'add_back_edge'",
+    )
     include_dependencies: bool = Field(default=True, description="Whether to move dependencies along with the symbol")
 
 
