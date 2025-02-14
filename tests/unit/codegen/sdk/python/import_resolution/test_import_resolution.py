@@ -543,28 +543,21 @@ module.some_func()
         assert len(some_func.symbol_usages) > 0
 
 
-def test_import_wildcard_preserves_import_resultion(tmpdir: str) -> None:
-    """Tests importing from a file that contains a wildcard import doesn't break further resolution.
-    This could occur depending on to_resolve ordering, if the outer file is processed first _wildcards will not be filled in time.
-    """
+def test_import_nested_installable_resolution(tmpdir: str) -> None:
+    """Tests that a nested installable resolves internally instead of as external"""
     # language=python
-    with get_codebase_session(
-        tmpdir,
-        files={
-            "testdir/sub/file.py": """
-                test_const=5
-                b=2
-            """,
-            "testdir/file.py": """
-            from testdir.sub.file import *
-            c=b
-            """,
-            "file.py": """
-            from testdir.file import test_const
-            test = test_const
-            """,
-        },
-    ) as codebase:
-        mainfile: SourceFile = codebase.get_file("file.py")
+    content1 = """
+        TEST_CONST=5
+    """
+    content2 = """from test_pack.test import TEST_CONST
+    test=TEST_CONST"""
+    with get_codebase_session(tmpdir=tmpdir, files={"test_pack/test_pack/test.py": content1, "test1.py": content2}) as codebase:
+        file1: SourceFile = codebase.get_file("test_pack/test_pack/test.py")
+        file2: SourceFile = codebase.get_file("test1.py")
 
-        assert len(mainfile.ctx.edges) == 12
+        symb = file1.get_symbol("TEST_CONST")
+        test = file2.get_symbol("test")
+        test_import = file2.get_import("TEST_CONST")
+
+        assert len(symb.usages) == 2
+        assert symb.symbol_usages == [test, test_import]
