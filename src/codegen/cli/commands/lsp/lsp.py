@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def lsp_command():
     try:
         from codegen.extensions.lsp.lsp import server
-    except ImportError:
+    except (ImportError, ModuleNotFoundError):
         logger.exception("LSP is not installed. Please install it with `uv tool install codegen[lsp]`")
         return
     logging.basicConfig(level=logging.INFO)
