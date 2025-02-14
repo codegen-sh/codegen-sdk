@@ -101,7 +101,8 @@
 				"tutorials/fixing-import-loops-in-pytorch",
 				"tutorials/python2-to-python3",
 				"tutorials/flask-to-fastapi",
-				"tutorials/build-mcp"
+				"tutorials/build-mcp",
+				"tutorials/neo4j-graph"
 			]
 		},
 		{
@@ -182,6 +183,7 @@
 						"api-reference/core/ChainedAttribute",
 						"api-reference/core/Class",
 						"api-reference/core/CodeBlock",
+						"api-reference/core/CodeOwner",
 						"api-reference/core/Codebase",
 						"api-reference/core/Comment",
 						"api-reference/core/CommentGroup",

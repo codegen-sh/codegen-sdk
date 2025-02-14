@@ -1,10 +1,10 @@
+import json
+
 import codegen
 from codegen import Codebase
-from codegen.shared.enums.programming_language import ProgrammingLanguage
 from codegen.sdk.codebase.config import CodebaseConfig
-import json
 from codegen.sdk.secrets import Secrets
-from codegen.shared.configs.models import CodebaseFeatureFlags
+from codegen.shared.configs.models.feature_flags import CodebaseFeatureFlags
 
 github_token = "Your github token"
 open_ai_key = "your open ai key"
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     codebase = Codebase.from_repo(
         "getsentry/sentry",
         shallow=False,
-        programming_language=ProgrammingLanguage.PYTHON,
+        language="python",
         config=CodebaseConfig(
             secrets=Secrets(openai_key=open_ai_key, github_api_key=github_token),
             feature_flags=CodebaseFeatureFlags(

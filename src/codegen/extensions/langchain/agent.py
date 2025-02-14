@@ -13,8 +13,12 @@ from codegen import Codebase
 from .tools import (
     CommitTool,
     CreateFileTool,
+    CreatePRCommentTool,
+    CreatePRReviewCommentTool,
+    CreatePRTool,
     DeleteFileTool,
     EditFileTool,
+    GetPRcontentsTool,
     ListDirectoryTool,
     MoveSymbolTool,
     RenameFileTool,
@@ -64,6 +68,10 @@ def create_codebase_agent(
         SemanticEditTool(codebase),
         SemanticSearchTool(codebase),
         CommitTool(codebase),
+        CreatePRTool(codebase),
+        GetPRcontentsTool(codebase),
+        CreatePRCommentTool(codebase),
+        CreatePRReviewCommentTool(codebase),
     ]
 
     # Get the prompt to use

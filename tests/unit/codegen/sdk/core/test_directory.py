@@ -5,20 +5,21 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from codegen.sdk.codebase.codebase_graph import CodebaseGraph
+from codegen.sdk.codebase.codebase_context import CodebaseContext
 from codegen.sdk.codebase.config import CodebaseConfig
 from codegen.sdk.core.directory import Directory
 from codegen.sdk.core.file import File
 
 
 @pytest.fixture
-def mock_codebase_graph(tmp_path):
-    mock = MagicMock(spec=CodebaseGraph)
+def mock_codebase_context(tmp_path):
+    mock = MagicMock(spec=CodebaseContext)
     mock.transaction_manager = MagicMock()
     mock.config = CodebaseConfig()
     mock.repo_path = tmp_path
-    mock.to_absolute = types.MethodType(CodebaseGraph.to_absolute, mock)
-    mock.to_relative = types.MethodType(CodebaseGraph.to_relative, mock)
+    mock.to_absolute = types.MethodType(CodebaseContext.to_absolute, mock)
+    mock.to_relative = types.MethodType(CodebaseContext.to_relative, mock)
+    mock.io = MagicMock()
     return mock
 
 
@@ -34,17 +35,17 @@ def dir_path(tmp_path):
 
 @pytest.fixture
 def sub_dir(subdir_path, tmp_path):
-    return Directory(path=subdir_path.absolute(), dirpath=subdir_path.relative_to(tmp_path), parent=None)
+    return Directory(path=subdir_path.absolute(), dirpath=str(subdir_path.relative_to(tmp_path)), parent=None)
 
 
 @pytest.fixture
-def mock_file(dir_path, mock_codebase_graph):
-    return File(filepath=dir_path / "example.py", G=mock_codebase_graph)
+def mock_file(dir_path, mock_codebase_context):
+    return File(filepath=dir_path / "example.py", ctx=mock_codebase_context)
 
 
 @pytest.fixture
 def mock_directory(tmp_path, dir_path, sub_dir, mock_file):
-    directory = Directory(path=dir_path.absolute(), dirpath=dir_path.relative_to(tmp_path), parent=None)
+    directory = Directory(path=dir_path.absolute(), dirpath=str(dir_path.relative_to(tmp_path)), parent=None)
     directory.add_file(mock_file)
     directory.add_subdirectory(sub_dir)
     return directory
@@ -53,7 +54,7 @@ def mock_directory(tmp_path, dir_path, sub_dir, mock_file):
 def test_directory_init(tmp_path, mock_directory):
     """Test initialization of Directory object."""
     assert mock_directory.path == tmp_path / "mock_dir"
-    assert mock_directory.dirpath == Path("mock_dir")
+    assert mock_directory.dirpath == "mock_dir"
     assert mock_directory.parent is None
     assert len(mock_directory.items) == 2
     assert mock_directory.items["subdir"] is not None
@@ -65,9 +66,9 @@ def test_name_property(mock_directory):
     assert mock_directory.name == "mock_dir"
 
 
-def test_add_and_file(mock_directory, mock_codebase_graph):
+def test_add_and_file(mock_directory, mock_codebase_context):
     """Test adding a file to the directory."""
-    mock_file = File(filepath=Path("mock_dir/example_2.py"), G=mock_codebase_graph)
+    mock_file = File(filepath=Path("mock_dir/example_2.py"), ctx=mock_codebase_context)
     mock_directory.add_file(mock_file)
     rel_path = os.path.relpath(mock_file.file_path, mock_directory.dirpath)
     assert rel_path in mock_directory.items
@@ -84,7 +85,7 @@ def test_remove_file(mock_directory, mock_file):
 
 def test_remove_file_by_path(mock_directory, mock_file):
     """Test removing a file by path."""
-    mock_directory.remove_file_by_path(mock_file.file_path)
+    mock_directory.remove_file_by_path(Path(mock_file.file_path))
 
     rel_path = os.path.relpath(mock_file.file_path, mock_directory.dirpath)
     assert rel_path not in mock_directory.items
@@ -108,7 +109,7 @@ def test_get_file_not_found(mock_directory):
 def test_add_subdirectory(mock_directory, dir_path):
     """Test adding a subdirectory."""
     new_subdir_path = dir_path / "new_subdir"
-    subdir = Directory(path=new_subdir_path.absolute(), dirpath=new_subdir_path.relative_to(dir_path), parent=mock_directory)
+    subdir = Directory(path=new_subdir_path.absolute(), dirpath=str(new_subdir_path.relative_to(dir_path)), parent=mock_directory)
     mock_directory.add_subdirectory(subdir)
     rel_path = os.path.relpath(subdir.dirpath, mock_directory.dirpath)
     assert rel_path in mock_directory.items
@@ -138,12 +139,12 @@ def test_get_subdirectory(mock_directory, sub_dir):
     assert retrieved_subdir is sub_dir
 
 
-def test_files_property(mock_directory, sub_dir, mock_codebase_graph):
+def test_files_property(mock_directory, sub_dir, mock_codebase_context):
     """Test the 'files' property returns all files recursively."""
     all_files = mock_directory.files
     assert len(all_files) == 1
 
-    new_file = File(filepath=Path("mock_dir/example_2.py"), G=mock_codebase_graph)
+    new_file = File(filepath=Path("mock_dir/example_2.py"), ctx=mock_codebase_context)
     sub_dir.add_file(new_file)
 
     all_files = mock_directory.files
@@ -162,7 +163,7 @@ def test_subdirectories_property(mock_directory, sub_dir):
     assert len(all_subdirs) == 1
     assert sub_dir in all_subdirs
 
-    new_sub_dir = Directory(path=sub_dir.path / "new_subdir", dirpath=sub_dir.dirpath / "new_subdir", parent=sub_dir)
+    new_sub_dir = Directory(path=sub_dir.path / "new_subdir", dirpath=str(Path(sub_dir.dirpath) / "new_subdir"), parent=sub_dir)
     sub_dir.add_subdirectory(new_sub_dir)
 
     all_subdirs = mock_directory.subdirectories
@@ -170,26 +171,26 @@ def test_subdirectories_property(mock_directory, sub_dir):
     assert new_sub_dir in all_subdirs
 
 
-def test_update_filepath(mock_directory, mock_codebase_graph, mock_file):
+def test_update_filepath(mock_directory, mock_codebase_context, mock_file):
     """Test updating file paths when the directory path changes."""
     mock_directory.update_filepath("/absolute/new_mock_dir")
 
     # Verify the files have updated file paths
-    mock_codebase_graph.transaction_manager.add_file_rename_transaction.assert_called_once_with(mock_file, "/absolute/new_mock_dir/example.py")
+    mock_codebase_context.transaction_manager.add_file_rename_transaction.assert_called_once_with(mock_file, "/absolute/new_mock_dir/example.py")
 
 
-def test_remove(mock_directory, sub_dir, mock_codebase_graph, mock_file):
+def test_remove(mock_directory, sub_dir, mock_codebase_context, mock_file):
     mock_directory.remove()
 
-    mock_codebase_graph.transaction_manager.add_file_remove_transaction.assert_called_once_with(mock_file)
+    mock_codebase_context.transaction_manager.add_file_remove_transaction.assert_called_once_with(mock_file)
 
 
-def test_rename(mock_directory, mock_codebase_graph, mock_file):
+def test_rename(mock_directory, mock_codebase_context, mock_file):
     """Test renaming the directory."""
     mock_directory.rename("renamed_dir")
     # This fails because it is not implemented to rename the directory itself.
     # assert mock_directory.dirpath == "/absolute/renamed_dir"
-    mock_codebase_graph.transaction_manager.add_file_rename_transaction.assert_called_once_with(mock_file, "renamed_dir/example.py")
+    mock_codebase_context.transaction_manager.add_file_rename_transaction.assert_called_once_with(mock_file, "renamed_dir/example.py")
 
 
 def test_iteration(mock_directory):
