@@ -160,7 +160,6 @@ dev-dependencies = [
   "pytest-lsp>=1.0.0b1",
 ]
 
-
 [tool.uv.workspace]
 exclude = ["codegen-examples"]
 
