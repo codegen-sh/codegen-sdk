@@ -230,8 +230,8 @@ wheels = [
 
 [[package]]
 name = "codegen"
-version = "0.10.4.dev7+g6d57f43"
-source = { git = "https://github.com/codegen-sh/codegen-sdk?rev=rpatel%2Fwip-events-decorator#6d57f4334bde320d24b18638560ab4e41bc5b386" }
+version = "0.14.4"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anthropic" },
     { name = "astor" },
@@ -254,6 +254,7 @@ dependencies = [
     { name = "lazy-object-proxy" },
     { name = "mcp", extra = ["cli"] },
     { name = "mini-racer" },
+    { name = "neo4j" },
     { name = "networkx" },
     { name = "numpy" },
     { name = "openai" },
@@ -296,6 +297,12 @@ dependencies = [
     { name = "watchfiles" },
     { name = "wrapt" },
     { name = "xmltodict" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3f/e3/f2d791aaca3657d546f1ee381796a4a3c277ece79ec65e2fb3a502cdfe81/codegen-0.14.4-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:88716a996a8747299b12a7230162b1b19534a556fed0392e6baa492565f7cb2f", size = 1040481 },
+    { url = "https://files.pythonhosted.org/packages/d9/b8/2124a3b5d461747f4a5190b8f7de5f42fc6ca4d411062e1031f6eca3a0de/codegen-0.14.4-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:e83819f5a0a0ca9caa295abf7e0a7085e1934ed24ce29752ce8821da393c8150", size = 1032153 },
+    { url = "https://files.pythonhosted.org/packages/06/9f/82f305ed703d0cdcd4f23c25dc3147ddbf51e8dbce494d5d7782d826409e/codegen-0.14.4-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_34_aarch64.whl", hash = "sha256:562847c59bd73d9e7fcf95ce1e8275d1f454356f59c2433a0d56cd011df60776", size = 2030728 },
+    { url = "https://files.pythonhosted.org/packages/a7/f6/a24130f13d15179305db67e4f2b8ff79cf7647c60f546b0611936d68d13d/codegen-0.14.4-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_34_x86_64.whl", hash = "sha256:53d83a9d9f506566194f7b5fb25f32855eb36474feef43cb1562b69b219aedfb", size = 2077164 },
 ]
 
 [[package]]
@@ -992,7 +999,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "codegen", git = "https://github.com/codegen-sh/codegen-sdk?rev=rpatel%2Fwip-events-decorator" },
+    { name = "codegen", specifier = ">=0.14.4" },
     { name = "modal", specifier = ">=0.73.25" },
 ]
 
@@ -1152,6 +1159,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/98/a4/1ab47638b92648243faf97a5aeb6ea83059cc3624972ab6b8d2316078d3f/mypy_extensions-1.0.0.tar.gz", hash = "sha256:75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782", size = 4433 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2a/e2/5d3f6ada4297caebe1a2add3b126fe800c96f56dbe5d1988a2cbe0b267aa/mypy_extensions-1.0.0-py3-none-any.whl", hash = "sha256:4392f6c0eb8a5668a69e23d168ffa70f0be9ccfd32b5cc2d26a34ae5b844552d", size = 4695 },
+]
+
+[[package]]
+name = "neo4j"
+version = "5.28.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytz" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4b/20/733dac16f7cedc80b23093415822c9763302519cba0e7c8bcdb5c01fc512/neo4j-5.28.1.tar.gz", hash = "sha256:ae8e37a1d895099062c75bc359b2cce62099baac7be768d0eba7180c1298e214", size = 231094 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6a/57/94225fe5e9dabdc0ff60c88cbfcedf11277f4b34e7ab1373d3e62dbdd207/neo4j-5.28.1-py3-none-any.whl", hash = "sha256:6755ef9e5f4e14b403aef1138fb6315b120631a0075c138b5ddb2a06b87b09fd", size = 312258 },
 ]
 
 [[package]]
@@ -1639,6 +1658,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/78/60/ca6f63f302325093137afc1b83bba60c0e717a51977f7ba65bf3dab33949/python_semantic_release-9.19.0.tar.gz", hash = "sha256:6b5a560ce263258c1f2918f6124bb92f8efcf5e8cadbf2b7ced9f0cb5a6e8566", size = 299801 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4f/2c/1d4b13166c4629e0001406a9eb90adcaccacff325aab33b37a615da4cf83/python_semantic_release-9.19.0-py3-none-any.whl", hash = "sha256:711edd1650fc59008209ba5058660306e2e365d64f3d03fc51d5de27badf6cfa", size = 127132 },
+]
+
+[[package]]
+name = "pytz"
+version = "2025.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/57/df1c9157c8d5a05117e455d66fd7cf6dbc46974f832b1058ed4856785d8a/pytz-2025.1.tar.gz", hash = "sha256:c2db42be2a2518b28e65f9207c4d05e6ff547d1efa4086469ef855e4ab70178e", size = 319617 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/eb/38/ac33370d784287baa1c3d538978b5e2ea064d4c1b93ffbd12826c190dd10/pytz-2025.1-py2.py3-none-any.whl", hash = "sha256:89dd22dca55b46eac6eda23b2d72721bf1bdfef212645d81513ef5d03038de57", size = 507930 },
 ]
 
 [[package]]

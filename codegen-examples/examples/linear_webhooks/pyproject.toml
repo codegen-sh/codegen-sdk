@@ -3,10 +3,4 @@ name = "linear-webhook-example"
 version = "0.1.0"
 description = "Linear webhook example for Codegen"
 requires-python = ">=3.13"
-dependencies = [
-    "modal>=0.73.25",
- "codegen",
-]
-
-[tool.uv.sources]
-codegen = { git = "https://github.com/codegen-sh/codegen-sdk", rev = "rpatel/wip-events-decorator" }
+dependencies = ["codegen>=0.14.4", "modal>=0.73.25"]
