@@ -41,3 +41,10 @@ def test_linear_comment_on_issue(client: LinearClient) -> None:
     test_comment = "Test comment from automated testing"
     result = linear_comment_on_issue_tool(client, "CG-10775", test_comment)
     assert result["status"] == "success"
+
+
+def test_search_issues(client: LinearClient) -> None:
+    """Test searching for issues in Linear."""
+    issues = client.search_issues("REVEAL_SYMBOL")
+    assert issues["status"] == "success"
+    assert len(issues["issues"]) > 0

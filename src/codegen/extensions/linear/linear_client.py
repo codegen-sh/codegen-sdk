@@ -151,3 +151,46 @@ class LinearClient:
         response = requests.post(self.api_endpoint, headers=self.api_headers, json={"query": mutation, "variables": variables})
         body = response.json()
         return body
+
+    def search_issues(self, query: str, limit: int = 10) -> list[LinearIssue]:
+        """Search for issues using a query string.
+
+        Args:
+            query: Search query string
+            limit: Maximum number of issues to return (default: 10)
+
+        Returns:
+            List of LinearIssue objects matching the search query
+        """
+        graphql_query = """
+            query searchIssues($query: String!, $limit: Int!) {
+                issueSearch(query: $query, first: $limit) {
+                    nodes {
+                        id
+                        title
+                        description
+                    }
+                }
+            }
+        """
+        variables = {"query": query, "limit": limit}
+        response = requests.post(
+            self.api_endpoint,
+            headers=self.api_headers,
+            json={"query": graphql_query, "variables": variables},
+        )
+        data = response.json()
+
+        try:
+            issues_data = data["data"]["issueSearch"]["nodes"]
+            return [
+                LinearIssue(
+                    id=issue["id"],
+                    title=issue["title"],
+                    description=issue["description"],
+                )
+                for issue in issues_data
+            ]
+        except Exception as e:
+            msg = f"Error searching issues\n{data}\n{e}"
+            raise Exception(msg)

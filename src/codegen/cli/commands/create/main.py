@@ -5,7 +5,6 @@ import rich_click as click
 
 from codegen.cli.api.client import RestAPI
 from codegen.cli.auth.constants import PROMPTS_DIR
-from codegen.cli.auth.decorators import requires_auth
 from codegen.cli.auth.session import CodegenSession
 from codegen.cli.auth.token_manager import get_current_token
 from codegen.cli.codemod.convert import convert_to_cli
@@ -66,7 +65,6 @@ def make_relative(path: Path) -> str:
 
 
 @click.command(name="create")
-@requires_auth
 @click.argument("name", type=str)
 @click.argument("path", type=click.Path(path_type=Path), default=Path.cwd())
 @click.option("--description", "-d", default=None, help="Description of what this codemod does.")
