@@ -2,13 +2,12 @@ import fnmatch
 import glob
 import logging
 import os
-from abc import ABC, abstractmethod
+from abc import ABC
 from collections.abc import Generator
 from datetime import UTC, datetime
 from functools import cached_property
 from time import perf_counter
 from typing import Self
-from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
 
 from codeowners import CodeOwners as CodeOwnersParser
 from git import Commit as GitCommit
@@ -20,7 +19,7 @@ from github.PullRequest import PullRequest
 from codegen.git.clients.git_repo_client import GitRepoClient
 from codegen.git.configs.constants import CODEGEN_BOT_EMAIL, CODEGEN_BOT_NAME
 from codegen.git.repo_operator.local_git_repo import LocalGitRepo
-from codegen.git.schemas.enums import CheckoutResult, FetchResult
+from codegen.git.schemas.enums import CheckoutResult, FetchResult, SetupOption
 from codegen.git.schemas.repo_config import RepoConfig
 from codegen.git.utils.clone import clone_or_pull_repo, clone_repo, pull_repo
 from codegen.git.utils.clone_url import add_access_token_to_url
@@ -67,13 +66,13 @@ class RepoOperator(ABC):
 
     def setup_repo_dir(self, setup_option: SetupOption = SetupOption.PULL_OR_CLONE, shallow: bool = True) -> None:
         """Sets up the repository directory with the necessary configuration.
-        
+
         This method should handle any repository-specific setup like:
         - Cloning/pulling from remote
         - Setting up branches
         - Configuring remotes
         - Any other initialization needed
-        
+
         The exact implementation will depend on the type of repository operator.
         """
         os.makedirs(self.base_dir, exist_ok=True)
