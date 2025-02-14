@@ -46,7 +46,12 @@ class RemoteRepoOperator(RepoOperator):
     @property
     def default_branch(self) -> str:
         if self._default_branch is None:
-            self._default_branch = self.remote_git_repo.default_branch
+            # Try to get from remote first
+            if self.remote_git_repo is not None:
+                self._default_branch = self.remote_git_repo.default_branch
+            else:
+                # Fall back to parent class implementation which handles local git state
+                self._default_branch = super().default_branch
         return self._default_branch
 
     @property
@@ -104,6 +109,13 @@ class RemoteRepoOperator(RepoOperator):
                 logger.warning(f"Valid git repo does not exist at {self.repo_path}. Cannot skip setup with SetupOption.SKIP.")
         os.chdir(self.repo_path)
 
+        # Ensure origin remote exists and has correct URL
+        if not any(remote.name == "origin" for remote in self.git_cli.remotes):
+            self.git_cli.create_remote("origin", url=self.clone_url)
+        else:
+            # Update URL in case token status changed
+            self.git_cli.remote("origin").set_url(new_url=self.clone_url)
+
     ####################################################################################################################
     # CHECKOUT, BRANCHES & COMMITS
     ####################################################################################################################
@@ -121,9 +133,6 @@ class RemoteRepoOperator(RepoOperator):
                 - SUCCESS: Fetch was successful.
                 - REFSPEC_NOT_FOUND: The specified refspec doesn't exist in the remote.
 
-        Raises:
-            GitCommandError: If the fetch operation fails for reasons other than a missing refspec.
-
         Note:
             This force fetches by default b/c by default we prefer the remote branch over our local branch.
         """
@@ -131,6 +140,11 @@ class RemoteRepoOperator(RepoOperator):
         progress = CustomRemoteProgress()
 
         try:
+            # Ensure remote exists
+            if remote_name not in self.git_cli.remotes:
+                logger.warning(f"Remote {remote_name} not found, creating it...")
+                self.git_cli.create_remote(remote_name, url=self.clone_url)
+
             self.git_cli.remotes[remote_name].fetch(refspec=refspec, force=force, progress=progress, no_tags=True)
             return FetchResult.SUCCESS
         except GitCommandError as e:

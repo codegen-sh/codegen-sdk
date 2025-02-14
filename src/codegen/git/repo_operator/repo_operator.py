@@ -55,7 +55,8 @@ class RepoOperator(ABC):
     ) -> None:
         assert repo_config is not None
         self.repo_config = repo_config
-        self.access_token = access_token or config.secrets.github_token
+        # Only use a token if either the passed token or config token exists and is not empty
+        self.access_token = access_token or config.secrets.github_token or None
         self.base_dir = repo_config.base_dir
         self.bot_commit = bot_commit
         os.makedirs(self.repo_path, exist_ok=True)
