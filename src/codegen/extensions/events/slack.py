@@ -4,8 +4,8 @@ import os
 from typing import Any, Callable
 
 import modal  # deptry: ignore
-from anthropic import BaseModel
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
+from pydantic import BaseModel
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
 
@@ -16,6 +16,10 @@ logger = logging.getLogger(__name__)
 
 class RegisteredEventHandler(BaseModel):
     handler_func: Callable
+
+
+# Global FastAPI app for handling Slack events
+slack_web_app = FastAPI()
 
 
 class Slack(EventHandlerManagerProtocol):
@@ -55,8 +59,8 @@ class Slack(EventHandlerManagerProtocol):
             # Register the handler with Slack's event system
             @self.slack_app.event(event_name)
             @functools.wraps(func)
-            def wrapper(*args: Any, **kwargs: Any):
-                return func(*args, **kwargs)
+            def wrapper(event: dict[str, Any], say: Any):
+                return func(event, say)
 
             return wrapper
 
@@ -64,11 +68,4 @@ class Slack(EventHandlerManagerProtocol):
 
     def get_asgi_app(self) -> FastAPI:
         """Get the FastAPI app for handling Slack events."""
-        web_app = FastAPI()
-
-        @web_app.post("/slack/events")
-        async def endpoint(request: Request):
-            """Handle Slack events and verify requests."""
-            return await self.handler.handle(request)
-
-        return web_app
+        return slack_web_app

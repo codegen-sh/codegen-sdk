@@ -15,10 +15,6 @@ from logging import getLogger
 from codegen.shared.performance.stopwatch_utils import stopwatch
 
 # ruff: noqa
-from agents.simpe_rag import format_response, simple_rag
-
-from agents.simple_agent import convert_slack_to_langchain_messages, simple_agent
-from images import base_image
 import logging
 
 # set logging to info level
@@ -29,7 +25,7 @@ logger = getLogger(__name__)
 # MODAL
 ########################################
 
-app = CodegenApp(name="slack", modal_api_key="", image=base_image)
+app = CodegenApp(name="slack", modal_api_key="")
 
 
 @app.slack.event("app_mention")
