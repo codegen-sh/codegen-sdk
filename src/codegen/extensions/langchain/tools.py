@@ -563,7 +563,7 @@ class LinearCreateIssueInput(BaseModel):
 
     title: str = Field(..., description="Title of the issue")
     description: str | None = Field(None, description="Optional description of the issue")
-    team_id: str | None = Field(None, description="Optional team ID. If not provided, uses the client's configured team_id")
+    team_id: str | None = Field(None, description="Optional team ID. If not provided, uses the default team_id (recommended)")
 
 
 class LinearCreateIssueTool(BaseTool):
