@@ -6,6 +6,7 @@ from codegen.sdk.codebase.resolution_stack import ResolutionStack
 from codegen.sdk.core.autocommit import reader, remover, writer
 from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.detached_symbols.argument import Argument
+from codegen.sdk.core.detached_symbols.promise_chain import TSPromiseChain
 from codegen.sdk.core.expressions import Expression, Name, Value
 from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.expressions.generic_type import GenericType
@@ -706,3 +707,10 @@ class FunctionCall(Expression[Parent], HasName, Resolvable, Generic[Parent]):
             else:
                 name = name.object
         return name
+
+    @reader
+    def get_promise_chain(self) -> TSPromiseChain | None:
+        """Returns a list of all promise chains in this function call chain, including this call."""
+        if any(call.name == "then" for call in self.call_chain) is True:
+            return TSPromiseChain(self.attribute_chain)
+        return None
