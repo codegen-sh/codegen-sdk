@@ -1,7 +1,7 @@
 import functools
 import logging
 import os
-from typing import Any, Callable
+from typing import Callable
 
 import modal  # deptry: ignore
 from fastapi import FastAPI, Request
@@ -35,10 +35,16 @@ class Slack(EventHandlerManagerProtocol):
         @slack_web_app.post("/")
         async def handle_verification(request: Request):
             """Handle Slack URL verification challenge."""
-            body = await request.json()
-            if body.get("type") == "url_verification":
-                return {"challenge": body["challenge"]}
-            return await self.handler.handle(request)
+            try:
+                body = await request.json()
+                # Handle URL verification
+                if body.get("type") == "url_verification":
+                    return {"challenge": body.get("challenge")}
+                # Handle all other events
+                return await self.handler.handle(request)
+            except Exception as e:
+                logger.exception(f"Error handling request: {e}")
+                return {"error": str(e)}
 
     def subscribe_handler_to_webhook(self, web_url: str, event_name: str):
         # Slack doesn't require explicit webhook registration like Linear
@@ -68,8 +74,8 @@ class Slack(EventHandlerManagerProtocol):
             # Register the handler with Slack's event system
             @self.slack_app.event(event_name)
             @functools.wraps(func)
-            def wrapper(event: dict[str, Any], say: Any):
-                return func(event, say)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
 
             return wrapper
 

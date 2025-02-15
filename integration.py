@@ -25,7 +25,7 @@ base_image = (
     .pip_install(
         "slack-bolt>=1.18.0",
         "openai>=1.1.0",
-        "git+https://github.com/codegen-sh/codegen-sdk.git@eb14984bcae25d8b46c5829c7691062860cf8ebf",
+        "git+https://github.com/codegen-sh/codegen-sdk.git@3af83611f5c80c2b4710a057e98cfb63fd5c7371",
     )
 )
 
