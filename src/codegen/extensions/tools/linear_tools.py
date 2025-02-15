@@ -48,10 +48,19 @@ def linear_search_issues_tool(client: LinearClient, query: str, limit: int = 10)
         return {"error": f"Failed to search issues: {e!s}"}
 
 
-def linear_create_issue_tool(client: LinearClient, team_id: str, title: str, description: str | None = None) -> dict[str, Any]:
+def linear_create_issue_tool(client: LinearClient, title: str, description: str | None = None, team_id: str | None = None) -> dict[str, Any]:
     """Create a new issue."""
     try:
-        issue = client.create_issue(team_id, title, description)
+        issue = client.create_issue(title, description, team_id)
         return {"status": "success", "issue": issue.dict()}
     except Exception as e:
         return {"error": f"Failed to create issue: {e!s}"}
+
+
+def linear_get_teams_tool(client: LinearClient) -> dict[str, Any]:
+    """Get all teams the authenticated user has access to."""
+    try:
+        teams = client.get_teams()
+        return {"status": "success", "teams": [team.dict() for team in teams]}
+    except Exception as e:
+        return {"error": f"Failed to get teams: {e!s}"}
