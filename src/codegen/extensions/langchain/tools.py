@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 from codegen import Codebase
 from codegen.extensions.linear.linear_client import LinearClient
-from codegen.extensions.tools.linear_tools import (
+from codegen.extensions.tools.linear.linear import (
     linear_comment_on_issue_tool,
     linear_create_issue_tool,
     linear_get_issue_comments_tool,
@@ -609,9 +609,6 @@ def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
     return [
         CommitTool(codebase),
         CreateFileTool(codebase),
-        CreatePRTool(codebase),
-        CreatePRCommentTool(codebase),
-        CreatePRReviewCommentTool(codebase),
         DeleteFileTool(codebase),
         EditFileTool(codebase),
         GetPRcontentsTool(codebase),
@@ -623,6 +620,12 @@ def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
         SemanticEditTool(codebase),
         SemanticSearchTool(codebase),
         ViewFileTool(codebase),
+        # Github
+        CreatePRTool(codebase),
+        CreatePRCommentTool(codebase),
+        CreatePRReviewCommentTool(codebase),
+        GetPRcontentsTool(codebase),
+        # Linear
         LinearGetIssueTool(codebase),
         LinearGetIssueCommentsTool(codebase),
         LinearCommentOnIssueTool(codebase),
