@@ -4,7 +4,7 @@ import os
 from typing import Any, Callable
 
 import modal  # deptry: ignore
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
@@ -30,6 +30,15 @@ class Slack(EventHandlerManagerProtocol):
         self.registered_handlers = {}
         self.slack_app = App(token=self.bot_token, signing_secret=self.signing_secret)
         self.handler = SlackRequestHandler(self.slack_app)
+
+        # Add URL verification endpoint
+        @slack_web_app.post("/")
+        async def handle_verification(request: Request):
+            """Handle Slack URL verification challenge."""
+            body = await request.json()
+            if body.get("type") == "url_verification":
+                return {"challenge": body["challenge"]}
+            return await self.handler.handle(request)
 
     def subscribe_handler_to_webhook(self, web_url: str, event_name: str):
         # Slack doesn't require explicit webhook registration like Linear

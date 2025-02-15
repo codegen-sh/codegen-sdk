@@ -18,18 +18,22 @@ logger = getLogger(__name__)
 
 # Create image with dependencies
 
-image = (
+
+base_image = (
     modal.Image.debian_slim(python_version="3.13")
     .apt_install("git")
     .pip_install(
-        "fastapi[standard]",
+        "slack-bolt>=1.18.0",
+        "openai>=1.1.0",
+        "git+https://github.com/codegen-sh/codegen-sdk.git@eb14984bcae25d8b46c5829c7691062860cf8ebf",
     )
 )
 
-app = CodegenApp(name="slack", modal_api_key="", image=image)
+
+app = CodegenApp(name="slack", modal_api_key="", image=base_image)
 
 
-@app.function()
+@app.function(secrets=[modal.Secret.from_dotenv()])
 @modal.web_endpoint(method="POST")
 @app.slack.event("app_mention")
 def handle_mention(event: dict[str, Any], say: Any):
