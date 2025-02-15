@@ -357,6 +357,30 @@ class SemanticSearchTool(BaseTool):
 
 
 ########################################################################################################################
+# BASH
+########################################################################################################################
+
+
+class RunBashCommandInput(BaseModel):
+    """Input for running a bash command."""
+
+    command: str = Field(..., description="The command to run")
+    is_background: bool = Field(default=False, description="Whether to run the command in the background")
+
+
+class RunBashCommandTool(BaseTool):
+    """Tool for running bash commands."""
+
+    name: ClassVar[str] = "run_bash_command"
+    description: ClassVar[str] = "Run a bash command and return its output"
+    args_schema: ClassVar[type[BaseModel]] = RunBashCommandInput
+
+    def _run(self, command: str, is_background: bool = False) -> str:
+        result = run_bash_command(command, is_background)
+        return json.dumps(result, indent=2)
+
+
+########################################################################################################################
 # GITHUB
 ########################################################################################################################
 
@@ -614,18 +638,22 @@ class LinearGetTeamsTool(BaseTool):
 ########################################################################################################################
 
 
-class SendMessageInput(BaseModel):
+class SlackSendMessageInput(BaseModel):
     """Input for sending a message to Slack."""
 
     content: str = Field(..., description="Message to send to Slack")
 
 
-class SendMessageTool(BaseTool):
+class SlackSendMessageTool(BaseTool):
     """Tool for sending a message to Slack."""
 
     name: ClassVar[str] = "send_slack_message"
-    description: ClassVar[str] = "Send a message to Slack. Write symbol names (classes, functions, etc.) or full filepaths in single backticks and they will be auto-linked to the code."
-    args_schema: ClassVar[type[BaseModel]] = SendMessageInput
+    description: ClassVar[str] = (
+        "Send a message via Slack."
+        "Write symbol names (classes, functions, etc.) or full filepaths in single backticks and they will be auto-linked to the code."
+        "Use Slack-style markdown for other links."
+    )
+    args_schema: ClassVar[type[BaseModel]] = SlackSendMessageInput
     say: Callable[[str], None] = Field(exclude=True)
     codebase: Codebase = Field(exclude=True)
 
@@ -645,25 +673,6 @@ class SendMessageTool(BaseTool):
 ########################################################################################################################
 # EXPORT
 ########################################################################################################################
-
-
-class RunBashCommandInput(BaseModel):
-    """Input for running a bash command."""
-
-    command: str = Field(..., description="The command to run")
-    is_background: bool = Field(default=False, description="Whether to run the command in the background")
-
-
-class RunBashCommandTool(BaseTool):
-    """Tool for running bash commands."""
-
-    name: ClassVar[str] = "run_bash_command"
-    description: ClassVar[str] = "Run a bash command and return its output"
-    args_schema: ClassVar[type[BaseModel]] = RunBashCommandInput
-
-    def _run(self, command: str, is_background: bool = False) -> str:
-        result = run_bash_command(command, is_background)
-        return json.dumps(result, indent=2)
 
 
 def get_workspace_tools(codebase: Codebase) -> list["BaseTool"]:
