@@ -45,14 +45,24 @@ class RemoteRepoOperator(RepoOperator):
 
     @property
     def default_branch(self) -> str:
-        if self._default_branch is None:
-            self._default_branch = self.remote_git_repo.default_branch
-        return self._default_branch
+        # Priority 1: If default branch has been set
+        if self._default_branch:
+            return self._default_branch
+
+        # Priority 2: If origin/HEAD ref exists
+        origin_prefix = "origin"
+        if f"{origin_prefix}/HEAD" in self.git_cli.refs:
+            return self.git_cli.refs[f"{origin_prefix}/HEAD"].reference.name.removeprefix(f"{origin_prefix}/")
+
+        # Priority 3: Fallback to the active branch
+        return self.git_cli.active_branch.name
 
     @property
     def codeowners_parser(self) -> CodeOwnersParser | None:
         if not self._codeowners_parser:
-            self._codeowners_parser = create_codeowners_parser_for_repo(self.remote_git_repo)
+            remote_repo = self.remote_git_repo
+            if remote_repo:
+                self._codeowners_parser = create_codeowners_parser_for_repo(remote_repo)
         return self._codeowners_parser
 
     ####################################################################################################################
@@ -104,6 +114,13 @@ class RemoteRepoOperator(RepoOperator):
                 logger.warning(f"Valid git repo does not exist at {self.repo_path}. Cannot skip setup with SetupOption.SKIP.")
         os.chdir(self.repo_path)
 
+        # Ensure origin remote exists and has correct URL
+        if not any(remote.name == "origin" for remote in self.git_cli.remotes):
+            self.git_cli.create_remote("origin", url=self.clone_url)
+        else:
+            # Update URL in case token status changed
+            self.git_cli.remote("origin").set_url(new_url=self.clone_url)
+
     ####################################################################################################################
     # CHECKOUT, BRANCHES & COMMITS
     ####################################################################################################################
@@ -121,9 +138,6 @@ class RemoteRepoOperator(RepoOperator):
                 - SUCCESS: Fetch was successful.
                 - REFSPEC_NOT_FOUND: The specified refspec doesn't exist in the remote.
 
-        Raises:
-            GitCommandError: If the fetch operation fails for reasons other than a missing refspec.
-
         Note:
             This force fetches by default b/c by default we prefer the remote branch over our local branch.
         """
@@ -131,6 +145,11 @@ class RemoteRepoOperator(RepoOperator):
         progress = CustomRemoteProgress()
 
         try:
+            # Ensure remote exists
+            if remote_name not in self.git_cli.remotes:
+                logger.warning(f"Remote {remote_name} not found, creating it...")
+                self.git_cli.create_remote(remote_name, url=self.clone_url)
+
             self.git_cli.remotes[remote_name].fetch(refspec=refspec, force=force, progress=progress, no_tags=True)
             return FetchResult.SUCCESS
         except GitCommandError as e:

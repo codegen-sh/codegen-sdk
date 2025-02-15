@@ -56,7 +56,7 @@ class SandboxRunner:
 
         At the start of every job the runner should be in the following state:
         - Codebase is checked out to the pinned commit (i.e. self.commit)
-        - Codebase LRP (LocalRepoOperator) has only the origin remote and no branches
+        - Codebase LRP (RepoOperator) has only the origin remote and no branches
 
         This method puts the runner in the above state and should be called at the end of every job.
         """
