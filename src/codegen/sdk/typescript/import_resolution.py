@@ -5,10 +5,12 @@ from collections import deque
 from typing import TYPE_CHECKING, Self, override
 
 from codegen.sdk.core.autocommit import reader
+from codegen.sdk.core.dataclasses.usage import UsageKind
 from codegen.sdk.core.expressions import Name
+from codegen.sdk.core.expressions.chained_attribute import ChainedAttribute
 from codegen.sdk.core.import_resolution import Import, ImportResolution, WildcardImport
 from codegen.sdk.core.interfaces.exportable import Exportable
-from codegen.sdk.enums import ImportType, NodeType
+from codegen.sdk.enums import ImportType, NodeType, SymbolType
 from codegen.sdk.utils import find_all_descendants, find_first_ancestor, find_first_descendant
 from codegen.shared.decorators.docs import noapidoc, ts_apidoc
 
@@ -152,6 +154,17 @@ class TSImport(Import["TSFile"], Exportable):
 
         if resolved_symbol is None:
             return None
+
+        # Track namespace-chained usages before any resolution happens
+        if hasattr(resolved_symbol, "get_symbol"):
+            for usage in self.usages:
+                if isinstance(usage.match, ChainedAttribute):
+                    # Get the accessed symbol through namespace
+                    if accessed := resolved_symbol.get_symbol(usage.match.attribute.source):
+                        # Create bi-directional usage relationship
+                        accessed.add_usage(usage.usage_symbol, UsageKind.CHAINED, usage.match, self.G)
+                        # The namespace itself maintains direct usage
+                        resolved_symbol.add_usage(usage.usage_symbol, UsageKind.DIRECT, usage.match, self.G)
 
         # If the default import is a single symbol export, resolve to the symbol
         if self.is_default_import():
@@ -570,6 +583,46 @@ class TSImport(Import["TSFile"], Exportable):
         if self.import_type == ImportType.SIDE_EFFECT:
             return
         yield from super().names
+
+    @property
+    def namespace_imports(self) -> list[TSNamespace]:
+        """Returns any namespace objects imported by this import statement.
+
+        For example:
+        import * as MyNS from './mymodule';
+
+        Returns:
+            List of namespace objects imported
+        """
+        if not self.is_namespace_import():
+            return []
+
+        resolved = self.resolved_symbol
+        if resolved is None or not isinstance(resolved, TSNamespace):
+            return []
+
+        return [resolved]
+
+    @property
+    def is_namespace_import(self) -> bool:
+        """Returns True if this import is importing a namespace.
+
+        Examples:
+            import { MathUtils } from './file1';  # True if MathUtils is a namespace
+            import * as AllUtils from './utils';   # True
+        """
+        # For wildcard imports with namespace alias
+        if self.import_type == ImportType.WILDCARD and self.namespace:
+            return True
+
+        # For named imports, check if any imported symbol is a namespace
+        if self.import_type == ImportType.NAMED_EXPORT:
+            for name, _ in self.names:
+                symbol = self.resolved_symbol
+                if symbol and symbol.symbol_type == SymbolType.Namespace:
+                    return True
+
+        return False
 
     @override
     def set_import_module(self, new_module: str) -> None:
