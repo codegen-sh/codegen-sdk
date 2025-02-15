@@ -37,3 +37,21 @@ def linear_register_webhook_tool(client: LinearClient, webhook_url: str, team_id
         return {"status": "success", "response": response}
     except Exception as e:
         return {"error": f"Failed to register webhook: {e!s}"}
+
+
+def linear_search_issues_tool(client: LinearClient, query: str, limit: int = 10) -> dict[str, Any]:
+    """Search for issues using a query string."""
+    try:
+        issues = client.search_issues(query, limit)
+        return {"status": "success", "issues": [issue.dict() for issue in issues]}
+    except Exception as e:
+        return {"error": f"Failed to search issues: {e!s}"}
+
+
+def linear_create_issue_tool(client: LinearClient, team_id: str, title: str, description: str | None = None) -> dict[str, Any]:
+    """Create a new issue."""
+    try:
+        issue = client.create_issue(team_id, title, description)
+        return {"status": "success", "issue": issue.dict()}
+    except Exception as e:
+        return {"error": f"Failed to create issue: {e!s}"}

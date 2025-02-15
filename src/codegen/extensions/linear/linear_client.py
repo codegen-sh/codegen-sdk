@@ -194,3 +194,53 @@ class LinearClient:
         except Exception as e:
             msg = f"Error searching issues\n{data}\n{e}"
             raise Exception(msg)
+
+    def create_issue(self, team_id: str, title: str, description: str | None = None) -> LinearIssue:
+        """Create a new issue.
+
+        Args:
+            team_id: ID of the team to create the issue in
+            title: Title of the issue
+            description: Optional description of the issue
+
+        Returns:
+            The created LinearIssue object
+        """
+        mutation = """
+            mutation createIssue($input: IssueCreateInput!) {
+                issueCreate(input: $input) {
+                    success
+                    issue {
+                        id
+                        title
+                        description
+                    }
+                }
+            }
+        """
+
+        variables = {
+            "input": {
+                "teamId": team_id,
+                "title": title,
+                "description": description,
+            }
+        }
+
+        response = requests.post(
+            self.api_endpoint,
+            headers=self.api_headers,
+            json={"query": mutation, "variables": variables},
+        )
+        data = response.json()
+
+        try:
+            issue_data = data["data"]["issueCreate"]["issue"]
+            return LinearIssue(
+                id=issue_data["id"],
+                title=issue_data["title"],
+                description=issue_data["description"],
+            )
+        except Exception as e:
+            msg = f"Error creating issue\n{data}\n{e}"
+            raise Exception(msg)
