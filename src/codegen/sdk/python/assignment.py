@@ -2,8 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from codegen.sdk.codebase.transactions import RemoveTransaction, TransactionPriority
 from codegen.sdk.core.assignment import Assignment
+from codegen.sdk.core.autocommit.decorators import remover
 from codegen.sdk.core.expressions.multi_expression import MultiExpression
+from codegen.sdk.core.symbol_groups.collection import Collection
 from codegen.sdk.extensions.autocommit import reader
 from codegen.sdk.python.symbol import PySymbol
 from codegen.sdk.python.symbol_groups.comment_group import PyCommentGroup
@@ -96,3 +99,70 @@ class PyAssignment(Assignment["PyAssignmentStatement"], PySymbol):
         """
         # HACK: This is a temporary solution until comments are fixed
         return PyCommentGroup.from_symbol_inline_comments(self, self.ts_node.parent)
+
+    @remover
+    def remove(self, delete_formatting: bool = True, priority: int = 0, dedupe: bool = True) -> None:
+        """Deletes this assignment and its related extended nodes (e.g. decorators, comments).
+
+
+        Removes the current node and its extended nodes (e.g. decorators, comments) from the codebase.
+        After removing the node, it handles cleanup of any surrounding formatting based on the context.
+
+        Args:
+            delete_formatting (bool): Whether to delete surrounding whitespace and formatting. Defaults to True.
+            priority (int): Priority of the removal transaction. Higher priority transactions are executed first. Defaults to 0.
+            dedupe (bool): Whether to deduplicate removal transactions at the same location. Defaults to True.
+
+        Returns:
+            None
+        """
+        if getattr(self.parent, "assignments", None) and len(self.parent.assignments) > 1:
+            # Unpacking assignments
+            name = self.get_name()
+            if isinstance(self.value, Collection):
+                # Tuples
+                transaction_count = [
+                    any(
+                        self.transaction_manager.get_transactions_at_range(
+                            self.file.path, start_byte=asgnmt.get_name().start_byte, end_byte=asgnmt.get_name().end_byte, transaction_order=TransactionPriority.Remove
+                        )
+                    )
+                    for asgnmt in self.parent.assignments
+                ].count(True)
+                # Check for existing transactions
+                if transaction_count < len(self.parent.assignments) - 1:
+                    idx = self.parent.left.index(name)
+                    value = self.value[idx]
+                    removal_queue_values = getattr(self.parent, "removal_queue", [])
+                    self.parent.removal_queue = removal_queue_values
+                    removal_queue_values.append(str(value))
+                    if len(self.value) - transaction_count == 2:
+                        remainder = str(next(x for x in self.value if x not in removal_queue_values))
+                        r_t = RemoveTransaction(self.value.start_byte, self.value.end_byte, self.file, priority=priority)
+                        self.transaction_manager.add_transaction(r_t)
+                        self.value.insert_at(self.value.start_byte, remainder, priority=priority)
+                    else:
+                        value.remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
+                    name.remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
+                    return
+            else:
+                transaction_count = [
+                    any(
+                        self.transaction_manager.get_transactions_at_range(
+                            self.file.path, start_byte=asgnmt.get_name().start_byte, end_byte=asgnmt.get_name().end_byte, transaction_order=TransactionPriority.Edit
+                        )
+                    )
+                    for asgnmt in self.parent.assignments
+                ].count(True)
+                throwaway = [asgnmt.name == "_" for asgnmt in self.parent.assignments].count(True)
+                if transaction_count + throwaway < len(self.parent.assignments) - 1:
+                    name.edit("_", priority=priority, dedupe=dedupe)
+                    return
+        if getattr(self.parent, "removal_queue", None):
+            for node in self.extended_nodes:
+                transactions = self.transaction_manager.get_transactions_at_range(self.file.path, start_byte=node.start_byte, end_byte=node.end_byte)
+                for transaction in transactions:
+                    self.transaction_manager.queued_transactions[self.file.path].remove(transaction)
+
+        for node in self.extended_nodes:
+            node._remove(delete_formatting=delete_formatting, priority=priority, dedupe=dedupe)
