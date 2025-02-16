@@ -710,7 +710,7 @@ requires-dist = [
     { name = "rich-click", specifier = ">=1.8.5" },
     { name = "rustworkx", specifier = ">=0.15.1" },
     { name = "sentry-sdk", specifier = "==2.20.0" },
-    { name = "slack-bolt" },
+    { name = "slack-bolt", specifier = ">=1.22.0" },
     { name = "starlette", specifier = ">=0.16.0,<1.0.0" },
     { name = "tabulate", specifier = ">=0.9.0,<1.0.0" },
     { name = "tenacity", specifier = ">=9.0.0" },
