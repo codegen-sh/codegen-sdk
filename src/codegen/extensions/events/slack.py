@@ -12,6 +12,7 @@ from slack_bolt.adapter.fastapi import SlackRequestHandler
 from codegen.extensions.events.interface import EventHandlerManagerProtocol
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
 
 class RegisteredEventHandler(BaseModel):
@@ -22,31 +23,62 @@ class RegisteredEventHandler(BaseModel):
 slack_web_app = FastAPI()
 
 
+@slack_web_app.middleware("http")
+async def log_requests(request: Request, call_next):
+    """Log all incoming requests."""
+    logger.info(f"[MIDDLEWARE] Received request: {request.method} {request.url}")
+    try:
+        body = await request.body()
+        logger.info(f"[MIDDLEWARE] Request body: {body.decode()}")
+    except Exception as e:
+        logger.exception(f"[MIDDLEWARE] Error reading body: {e}")
+    response = await call_next(request)
+    logger.info(f"[MIDDLEWARE] Response status: {response.status_code}")
+    return response
+
+
 class Slack(EventHandlerManagerProtocol):
     def __init__(self, app: modal.App):
+        logger.info("[INIT] Initializing Slack handler")
         self.app = app
         self.bot_token = os.environ["SLACK_BOT_TOKEN"]
         self.signing_secret = os.environ["SLACK_SIGNING_SECRET"]
         self.registered_handlers = {}
         self.slack_app = App(token=self.bot_token, signing_secret=self.signing_secret)
         self.handler = SlackRequestHandler(self.slack_app)
+        logger.info("[INIT] Slack handler initialized")
 
         # Add URL verification endpoint
         @slack_web_app.post("/")
         async def handle_verification(request: Request):
             """Handle Slack URL verification challenge."""
+            logger.info("[ENDPOINT] Received request at root endpoint")
             try:
-                body = await request.json()
+                # Log raw request details
+                logger.info(f"[ENDPOINT] Headers: {dict(request.headers)}")
+                body = await request.body()
+                logger.info(f"[ENDPOINT] Raw body: {body.decode()}")
+
+                # Parse JSON
+                body_json = await request.json()
+                logger.info(f"[ENDPOINT] Parsed JSON body: {body_json}")
+
                 # Handle URL verification
-                if body.get("type") == "url_verification":
-                    return {"challenge": body.get("challenge")}
+                if body_json.get("type") == "url_verification":
+                    logger.info("[ENDPOINT] Handling URL verification")
+                    challenge = body_json.get("challenge")
+                    logger.info(f"[ENDPOINT] Challenge value: {challenge}")
+                    return {"challenge": challenge}
+
                 # Handle all other events
+                logger.info("[ENDPOINT] Passing to Slack handler")
                 return await self.handler.handle(request)
             except Exception as e:
-                logger.exception(f"Error handling request: {e}")
+                logger.exception(f"[ENDPOINT] Error handling request: {e}")
                 return {"error": str(e)}
 
     def subscribe_handler_to_webhook(self, web_url: str, event_name: str):
+        logger.info(f"[WEBHOOK] Subscribing to {event_name} at {web_url}")
         # Slack doesn't require explicit webhook registration like Linear
         # The events are handled through the Events API
         pass
@@ -56,18 +88,18 @@ class Slack(EventHandlerManagerProtocol):
         pass
 
     def unsubscribe_all_handlers(self):
+        logger.info("[HANDLERS] Clearing all handlers")
         self.registered_handlers.clear()
 
     def event(self, event_name: str):
-        """Decorator for registering a Slack event handler.
-
-        :param event_name: The name of the Slack event to handle (e.g., 'app_mention', 'message', etc.)
-        """
+        """Decorator for registering a Slack event handler."""
+        logger.info(f"[EVENT] Registering handler for {event_name}")
 
         def decorator(func):
             # Register the handler with the app's registry
             modal_ready_func = func
             func_name = func.__qualname__
+            logger.info(f"[EVENT] Registering function {func_name} for {event_name}")
 
             self.registered_handlers[func_name] = RegisteredEventHandler(handler_func=modal_ready_func)
 
@@ -75,6 +107,9 @@ class Slack(EventHandlerManagerProtocol):
             @self.slack_app.event(event_name)
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
+                logger.info(f"[HANDLER] Executing handler {func_name}")
+                logger.info(f"[HANDLER] Args: {args}")
+                logger.info(f"[HANDLER] Kwargs: {kwargs}")
                 return func(*args, **kwargs)
 
             return wrapper
@@ -83,4 +118,5 @@ class Slack(EventHandlerManagerProtocol):
 
     def get_asgi_app(self) -> FastAPI:
         """Get the FastAPI app for handling Slack events."""
+        logger.info("[APP] Getting ASGI app")
         return slack_web_app

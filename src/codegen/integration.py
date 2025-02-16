@@ -18,18 +18,22 @@ from codegen.shared.performance.stopwatch_utils import stopwatch
 import logging
 
 # set logging to info level
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = getLogger(__name__)
 
 ########################################
 # MODAL
 ########################################
 
+logger.info("[INIT] Creating CodegenApp")
 app = CodegenApp(name="slack", modal_api_key="")
+logger.info("[INIT] CodegenApp created")
 
 
 @app.slack.event("app_mention")
 def handle_mention(event: dict[str, Any], say: Any):
+    logger.info("[HANDLER] Received app_mention event")
+    logger.info(f"[HANDLER] Event data: {event}")
     # Your event handling code here
     print("=====[ EVENT ]=====")
     print(event)
