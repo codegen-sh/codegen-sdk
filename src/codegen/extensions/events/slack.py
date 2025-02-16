@@ -4,7 +4,9 @@ import os
 from typing import Callable
 
 import modal  # deptry: ignore
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from slack_bolt import App
 from slack_bolt.adapter.fastapi import SlackRequestHandler
@@ -37,6 +39,26 @@ async def log_requests(request: Request, call_next):
     return response
 
 
+@slack_web_app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handle validation errors."""
+    logger.error(f"[ERROR] Validation error: {exc.errors()}")
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors(), "body": exc.body},
+    )
+
+
+@slack_web_app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle all other exceptions."""
+    logger.error(f"[ERROR] Unhandled exception: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)},
+    )
+
+
 class Slack(EventHandlerManagerProtocol):
     def __init__(self, app: modal.App):
         logger.info("[INIT] Initializing Slack handler")
@@ -48,11 +70,12 @@ class Slack(EventHandlerManagerProtocol):
         self.handler = SlackRequestHandler(self.slack_app)
         logger.info("[INIT] Slack handler initialized")
 
-        # Add URL verification endpoint
+        # Add handlers for both root and /slack/events paths
         @slack_web_app.post("/")
-        async def handle_verification(request: Request):
-            """Handle Slack URL verification challenge."""
-            logger.info("[ENDPOINT] Received request at root endpoint")
+        @slack_web_app.post("/slack/events")
+        async def handle_slack_events(request: Request):
+            """Handle all Slack events including verification."""
+            logger.info("[ENDPOINT] Received request")
             try:
                 # Log raw request details
                 logger.info(f"[ENDPOINT] Headers: {dict(request.headers)}")
@@ -75,7 +98,7 @@ class Slack(EventHandlerManagerProtocol):
                 return await self.handler.handle(request)
             except Exception as e:
                 logger.exception(f"[ENDPOINT] Error handling request: {e}")
-                return {"error": str(e)}
+                raise HTTPException(status_code=500, detail=str(e))
 
     def subscribe_handler_to_webhook(self, web_url: str, event_name: str):
         logger.info(f"[WEBHOOK] Subscribing to {event_name} at {web_url}")

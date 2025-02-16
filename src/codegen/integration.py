@@ -22,11 +22,25 @@ logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(leve
 logger = getLogger(__name__)
 
 ########################################
+# IMAGE
+########################################
+
+base_image = (
+    modal.Image.debian_slim(python_version="3.13")
+    .apt_install("git")
+    .pip_install(
+        "slack-bolt>=1.18.0",
+        "openai>=1.1.0",
+        "git+https://github.com/codegen-sh/codegen-sdk.git@cdb30e93f4c11b440cb293b9f9f5b1ab242052eb",
+    )
+)
+
+########################################
 # MODAL
 ########################################
 
 logger.info("[INIT] Creating CodegenApp")
-app = CodegenApp(name="slack", modal_api_key="")
+app = CodegenApp(name="slack", modal_api_key="", image=base_image)
 logger.info("[INIT] CodegenApp created")
 
 
