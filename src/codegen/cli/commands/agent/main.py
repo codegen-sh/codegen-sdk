@@ -1,4 +1,5 @@
 import uuid
+import warnings
 
 import rich_click as click
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
@@ -20,21 +21,42 @@ from codegen.extensions.langchain.tools import (
     ViewFileTool,
 )
 
+# Suppress specific warnings
+warnings.filterwarnings("ignore", message=".*Helicone.*")
+warnings.filterwarnings("ignore", message=".*LangSmith.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 console = Console()
+
+WELCOME_ART = r"""[bold blue]
+   ____          _
+  / ___|___   __| | ___  __ _  ___ _ __
+ | |   / _ \ / _` |/ _ \/ _` |/ _ \ '_ \
+ | |__| (_) | (_| |  __/ (_| |  __/ | | |
+  \____\___/ \__,_|\___|\__, |\___|_| |_|
+                        |___/
+
+[/bold blue]
+"""
 
 
 @click.command(name="agent")
 @click.option("--query", "-q", default=None, help="Initial query for the agent.")
 def agent_command(query: str):
     """Start an interactive chat session with the Codegen AI agent."""
+    # Show welcome message
+    console.print(WELCOME_ART)
+
     # Initialize codebase from current directory
     with console.status("[bold green]Initializing codebase...[/bold green]"):
         codebase = Codebase("./")
 
     # Helper function for agent to print messages
     def say(message: str):
+        console.print()  # Add blank line before message
         markdown = Markdown(message)
         console.print(markdown)
+        console.print()  # Add blank line after message
 
     # Initialize tools
     tools = [
@@ -47,6 +69,7 @@ def agent_command(query: str):
         MoveSymbolTool(codebase),
         RevealSymbolTool(codebase),
         EditFileTool(codebase),
+        # RunBashCommandTool(codebase),
     ]
 
     # Initialize chat history with system message
@@ -60,8 +83,13 @@ Always explain what you're planning to do before taking actions."""
 
     # Get initial query if not provided via command line
     if not query:
-        console.print("[bold]Welcome to the Codegen AI Agent! What can I help you with?[/bold]")
-        query = Prompt.ask(":speech_balloon: [bold]Your message[/bold]")
+        console.print("[bold]Welcome to the Codegen CLI Agent![/bold]")
+        console.print("I'm an AI assistant that can help you explore and modify code in this repository.")
+        console.print("I can help with tasks like viewing files, searching code, making edits, and more.")
+        console.print()
+        console.print("What would you like help with today?")
+        console.print()
+        query = Prompt.ask("[bold]>[/bold]")  # Simple arrow prompt
 
     # Create the agent
     agent = create_agent_with_tools(codebase, tools, chat_history=chat_history)
@@ -69,7 +97,7 @@ Always explain what you're planning to do before taking actions."""
     # Main chat loop
     while True:
         if not query:  # Only prompt for subsequent messages
-            user_input = Prompt.ask(":speech_balloon: [bold]Your message[/bold]")
+            user_input = Prompt.ask("\n[bold]>[/bold]")  # Simple arrow prompt
         else:
             user_input = query
             query = None  # Clear the initial query so we enter the prompt flow
