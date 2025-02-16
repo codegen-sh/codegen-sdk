@@ -55,7 +55,7 @@ class SlackWebhookPayload(BaseModel):
 class Slack(EventHandlerManagerProtocol):
     _client: WebClient | None = None
 
-    def __init__(self):
+    def __init__(self, app):
         self.registered_handlers = {}
 
     @property
