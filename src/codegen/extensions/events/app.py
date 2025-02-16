@@ -30,4 +30,4 @@ class CodegenApp(modal.App):
 
         # Expose attributes that provide event decorators for different providers.
         self.linear = Linear(self)
-        self.slack = Slack(self)
+        self.slack = Slack()
