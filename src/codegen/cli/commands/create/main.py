@@ -100,11 +100,15 @@ def create_command(session: CodegenSession, name: str, path: Path, description: 
             # Use default implementation
             code = DEFAULT_CODEMOD.format(name=name)
 
-        # Create the target directory if needed
         codemod_path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Write the function code
-        codemod_path.write_text(code)
+        if code is None:
+            raise click.ClickException("No code generated to write to the file.")
+
+        try:
+            codemod_path.write_text(code)
+        except Exception as e:
+            raise click.ClickException(f"Failed to write code to {codemod_path}: {str(e)}")
 
     except (ServerError, ValueError) as e:
         raise click.ClickException(str(e))
